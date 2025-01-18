@@ -20,6 +20,8 @@ namespace X4DataLoader
         public string Reference { get; set; }
         public (double x, double y, double z)? Position { get; private set; }
         public string PositionId { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         XElement? PositionXML { get; set; }
         XElement? XML { get; set; }
 
@@ -41,9 +43,11 @@ namespace X4DataLoader
             Reference = "";
             Position = null;
             PositionId = "";
+            Source = "vanilla";
+            FileName = "";
         }
 
-        public void Load(XElement element, Translation translation)
+        public void Load(XElement element, Translation translation, string source, string fileName)
         {
             var macro = element.Attribute("macro")?.Value;
             var sectorIdMatch = SectorRegex.Match(macro ?? "");
@@ -62,6 +66,8 @@ namespace X4DataLoader
                     Description = translation.Translate(descriptionId);
                     XML = element;
                     Console.WriteLine($"Sector Name: {Name}");
+                    Source = source;
+                    FileName = fileName;
                 }
                 else {
                     throw new ArgumentException("Sector must have name and description");

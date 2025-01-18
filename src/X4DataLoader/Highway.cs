@@ -9,9 +9,11 @@ namespace X4DataLoader
         public string Reference { get; private set; }
         public (double x, double y, double z)? EntryPoint { get; private set; }
         public (double x, double y, double z)? ExitPoint { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         public XElement XML { get; private set; }
 
-        public Highway(XElement element)
+        public Highway(XElement element, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -63,13 +65,16 @@ namespace X4DataLoader
                 throw new ArgumentException("Highway must have an exitpoint");
             }
 
+            Source = source;
+            FileName = fileName;
+
             XML = element;
         }
     }
 
     public class HighwayClusterLevel : Highway
     {
-        public HighwayClusterLevel(XElement element) : base(element)
+        public HighwayClusterLevel(XElement element, string source, string fileName) : base(element, source, fileName)
         {
             if (Reference != "standardsechighway")
             {
@@ -80,7 +85,7 @@ namespace X4DataLoader
 
     public class HighwaySectorLevel : Highway
     {
-        public HighwaySectorLevel(XElement element) : base(element)
+        public HighwaySectorLevel(XElement element, string source, string fileName) : base(element, source, fileName)
         {
             if (Reference != "standardzonehighway")
             {

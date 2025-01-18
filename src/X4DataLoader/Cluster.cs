@@ -19,6 +19,8 @@ namespace X4DataLoader
         public string Reference { get; set; }
         public (double x, double y, double z)? Position { get; private set; }
         public string PositionId { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         XElement? PositionXML { get; set; }
         XElement? XML { get; set; }
         public List<Sector> Sectors { get; private set; }
@@ -41,9 +43,11 @@ namespace X4DataLoader
             Position = null;
             PositionId = "";
             PositionXML = null;
+            Source = "vanilla";
+            FileName = "";
         }
 
-        public void Load(XElement element, Translation translation)
+        public void Load(XElement element, Translation translation, string source, string fileName)
         {
             var macro = element.Attribute("macro")?.Value;
             var sectorIdMatch = ClusterRegex.Match(macro ?? "");
@@ -58,6 +62,8 @@ namespace X4DataLoader
                     IdPrefix = sectorIdMatch.Groups[1].Value;
                     Name = translation.Translate(nameId);
                     Description = translation.Translate(descriptionId);
+                    Source = source;
+                    FileName = fileName;
                     XML = element;
                     Console.WriteLine($"Cluster Name: {Name}");
                 }

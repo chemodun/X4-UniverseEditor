@@ -14,9 +14,11 @@ namespace X4DataLoader
         public (double qx, double qy, double qz, double qw)? Quaternion { get; private set; }
         public string MacroReference { get; private set; }
         public string MacroConnection { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         public XElement XML { get; private set; }
 
-        public Connection(XElement element)
+        public Connection(XElement element, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -64,9 +66,11 @@ namespace X4DataLoader
             }
 
             XML = element;
+            Source = source;
+            FileName = fileName;
         }
 
-        public static void LoadConnections(XElement element, List<Cluster> allClusters, List<Sector> allSectors)
+        public static void LoadConnections(XElement element, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
         {
             string name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
             string connectionClass = XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
@@ -136,15 +140,15 @@ namespace X4DataLoader
                         } else {
                             Connection connection = connectionReference switch
                                 {
-                                    "entrypoint" => new EntryPointConnection(connectionElement),
-                                    "exitpoint" => new ExitPointConnection(connectionElement),
-                                    "zonehighways" => new ZoneHighwayConnection(connectionElement),
-                                    "zones" => new ZoneConnection(connectionElement),
-                                    "content" => new ContentConnection(connectionElement),
-                                    "regions" => new RegionConnection(connectionElement),
-                                    "sechighways" => new SecHighwayConnection(connectionElement),
-                                    "gate" => new GateConnection(connectionElement),
-                                    _ => new Connection(connectionElement)
+                                    "entrypoint" => new EntryPointConnection(connectionElement, source, fileName),
+                                    "exitpoint" => new ExitPointConnection(connectionElement, source, fileName),
+                                    "zonehighways" => new ZoneHighwayConnection(connectionElement, source, fileName),
+                                    "zones" => new ZoneConnection(connectionElement, source, fileName),
+                                    "content" => new ContentConnection(connectionElement, source, fileName),
+                                    "regions" => new RegionConnection(connectionElement, source, fileName),
+                                    "sechighways" => new SecHighwayConnection(connectionElement, source, fileName),
+                                    "gate" => new GateConnection(connectionElement, source, fileName),
+                                    _ => new Connection(connectionElement, source, fileName)
                                 };
                                 connections.Add(connection);
                         }
@@ -191,46 +195,41 @@ namespace X4DataLoader
 
     public class EntryPointConnection : Connection
     {
-        public EntryPointConnection(XElement element) : base(element) { }
+        public EntryPointConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class ExitPointConnection : Connection
     {
-        public ExitPointConnection(XElement element) : base(element) { }
+        public ExitPointConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class ZoneHighwayConnection : Connection
     {
-        public ZoneHighwayConnection(XElement element) : base(element) { }
+        public ZoneHighwayConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class ZoneConnection : Connection
     {
-        public ZoneConnection(XElement element) : base(element) { }
+        public ZoneConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class ContentConnection : Connection
     {
-        public ContentConnection(XElement element) : base(element) { }
+        public ContentConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class RegionConnection : Connection
     {
-        public RegionConnection(XElement element) : base(element) { }
+        public RegionConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class SecHighwayConnection : Connection
     {
-        public SecHighwayConnection(XElement element) : base(element) { }
-    }
-
-    public class SectorConnection : Connection
-    {
-        public SectorConnection(XElement element) : base(element) { }
+        public SecHighwayConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 
     public class GateConnection : Connection
     {
-        public GateConnection(XElement element) : base(element) { }
+        public GateConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
     }
 }

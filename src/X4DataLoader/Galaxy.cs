@@ -7,10 +7,12 @@ namespace X4DataLoader
     {
         public string Name { get; private set; }
         public string Reference { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         public List<Cluster> Clusters { get; private set; }
         public List<GalaxyConnection> Connections { get; private set; }
 
-        public Galaxy(XElement element, List<Cluster> allClusters)
+        public Galaxy(XElement element, List<Cluster> allClusters, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -26,6 +28,9 @@ namespace X4DataLoader
 
             Clusters = new List<Cluster>();
             Connections = new List<GalaxyConnection>();
+
+            Source = source;
+            FileName = fileName;
 
             var connectionsElement = element.Element("connections");
             if (connectionsElement != null)
@@ -64,7 +69,7 @@ namespace X4DataLoader
                     }
                     else if (reference == "destination")
                     {
-                        var galaxyConnection = new GalaxyConnection(connectionElement, Clusters);
+                        var galaxyConnection = new GalaxyConnection(connectionElement, Clusters, source, fileName);
                         Connections.Add(galaxyConnection);
                     }
                 }
@@ -75,11 +80,13 @@ namespace X4DataLoader
     public class GalaxyConnection
     {
         public string Name { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         public GalaxyConnectionPath PathDirect { get; private set; }
         public GalaxyConnectionPath PathOpposite { get; private set; }
         public XElement XML { get; private set; }
 
-        public GalaxyConnection(XElement element, List<Cluster> allClusters)
+        public GalaxyConnection(XElement element, List<Cluster> allClusters, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             var pathDirect = XmlHelper.GetAttribute(element, "path") ?? "";
@@ -95,6 +102,9 @@ namespace X4DataLoader
             {
                 throw new ArgumentException("GalaxyConnection must have a macro element with path attribute");
             }
+
+            Source = source;
+            FileName = fileName;
 
             XML = element;
         }

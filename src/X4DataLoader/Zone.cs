@@ -8,9 +8,11 @@ namespace X4DataLoader
         public string Name { get; private set; }
         public string Reference { get; private set; }
         public string ConnectionId { get; private set; }
+        public string Source { get; private set; }
+        public string FileName { get; private set; }
         public Dictionary<string, Connection> Connections { get; private set; }
 
-        public Zone(XElement element)
+        public Zone(XElement element, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -32,13 +34,15 @@ namespace X4DataLoader
                     var reference = connectionElement.Attribute("ref")?.Value;
                     Connection connection = reference switch
                     {
-                        "gates" => new GateConnection(connectionElement),
-                        _ => new Connection(connectionElement),
+                        "gates" => new GateConnection(connectionElement, source, fileName),
+                        _ => new Connection(connectionElement, source, fileName),
                     };
                     Connections[connection.Name] = connection;
                 }
             }
             ConnectionId = "";
+            Source = source;
+            FileName = fileName;
         }
 
         public void SetConnectionId(string connectionId)

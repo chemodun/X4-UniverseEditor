@@ -26,9 +26,10 @@ namespace X4DataLoader
 
             var clusters = new List<Cluster>();
             var sectors = new List<Sector>();
-
+            var source = "vanilla";
             var mapDefaultsDoc = XDocument.Load(mapDefaultsFilePath);
 
+            var fileName = relativePaths["mapDefaults"].fileName;
             foreach (var datasetElement in mapDefaultsDoc.XPathSelectElements("/defaults/dataset"))
             {
                 var macro = datasetElement.Attribute("macro")?.Value;
@@ -38,7 +39,7 @@ namespace X4DataLoader
                     {
                         var cluster = new Cluster();
                         try {
-                            cluster.Load(datasetElement, translation);
+                            cluster.Load(datasetElement, translation, source, fileName);
                             clusters.Add(cluster);
                             Console.WriteLine($"Cluster loaded: {cluster.Name}");
                         }
@@ -51,7 +52,7 @@ namespace X4DataLoader
                     {
                         var sector = new Sector();
                         try {
-                            sector.Load(datasetElement, translation);
+                            sector.Load(datasetElement, translation, source, fileName);
                             sectors.Add(sector);
                             var cluster = clusters.Find(c => c.Id == sector.ClusterId);
                             if (cluster != null)
@@ -68,35 +69,35 @@ namespace X4DataLoader
                     }
                 }
             }
-
+            fileName = relativePaths["clusters"].fileName;
             var clustersDoc = XDocument.Load(clustersFilePath);
             foreach (var macroElement in clustersDoc.XPathSelectElements("/macros/macro"))
             {
                 try {
-                    Connection.LoadConnections(macroElement, clusters, sectors);
+                    Connection.LoadConnections(macroElement, clusters, sectors, source, fileName);
                 }
                 catch (ArgumentException e)
                 {
                     Console.WriteLine($"Error loading Cluster Connections: {e.Message}");
                 }
             }
-
+            fileName = relativePaths["sectors"].fileName;
             var sectorsDoc = XDocument.Load(sectorsFilePath);
             foreach (var macroElement in sectorsDoc.XPathSelectElements("/macros/macro"))
             {
                 try {
-                    Connection.LoadConnections(macroElement, clusters, sectors);
+                    Connection.LoadConnections(macroElement, clusters, sectors, source, fileName);
                 }
                 catch (ArgumentException e)
                 {
                     Console.WriteLine($"Error loading Sector Connections: {e.Message}");
                 }
             }
-
+            fileName = relativePaths["zones"].fileName;
             var zonesDoc = XDocument.Load(zonesFilePath);
             foreach (var macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
             {
-                var zone = new Zone(macroElement);
+                var zone = new Zone(macroElement, source, fileName);
                 var sector = sectors
                     .FirstOrDefault(s => s.Connections.Values.Any(conn => conn.MacroReference == zone.Name));
                 if (sector != null)
@@ -115,11 +116,11 @@ namespace X4DataLoader
                     Console.WriteLine($"No matching sector found for Zone: {zone.Name}");
                 }
             }
-
+            fileName = relativePaths["sechighways"].fileName;
             var sechighwaysDoc = XDocument.Load(sechighwaysFilePath);
             foreach (var macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
             {
-                var highway = new HighwayClusterLevel(macroElement);
+                var highway = new HighwayClusterLevel(macroElement, source, fileName);
                 var cluster = clusters
                     .FirstOrDefault(c => c.Connections.Values.Any(conn => conn.MacroReference == highway.Name));
                 if (cluster != null)
@@ -132,11 +133,11 @@ namespace X4DataLoader
                     Console.WriteLine($"No matching cluster found for Sector Highway: {highway.Name}");
                 }
             }
-
+            fileName = relativePaths["zonehighways"].fileName;
             var zonehighwaysDoc = XDocument.Load(zonehighwaysFilePath);
             foreach (var macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
             {
-                var highway = new HighwaySectorLevel(macroElement);
+                var highway = new HighwaySectorLevel(macroElement, source, fileName);
                 var sector = sectors
                     .FirstOrDefault(s => s.Connections.Values.Any(conn => conn.MacroReference == highway.Name));
                 if (sector != null)
@@ -149,10 +150,10 @@ namespace X4DataLoader
                     Console.WriteLine($"No matching sector found for Zone Highway: {highway.Name}");
                 }
             }
-
+            fileName = relativePaths["galaxy"].fileName;
             var galaxyDoc = XDocument.Load(galaxyFilePath);
             var galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
-            var galaxy = new Galaxy(galaxyElement, clusters);
+            var galaxy = new Galaxy(galaxyElement, clusters, source, fileName);
             Console.WriteLine($"Galaxy loaded: {galaxy.Name}");
 
             // Load other data files (galaxy, clusters, sectors, zones, highways) similarly
