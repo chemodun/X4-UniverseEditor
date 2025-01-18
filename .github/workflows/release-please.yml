@@ -23,9 +23,6 @@ jobs:
         uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          release-type: simple  # Specifies that it's a Python project
-          # Optional configurations:
-          # version-file: version.py  # Specify the version file if different
-          #bump-minor-pre-major: true
-          monorepo-tags: true
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
           token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
