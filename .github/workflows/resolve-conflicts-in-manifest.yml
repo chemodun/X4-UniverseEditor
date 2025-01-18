@@ -1,0 +1,74 @@
+name: Resolve conflicts in Release Please manifest
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  repository-projects: read # needed for 'gh pr edit' https://github.com/cli/cli/issues/6274
+
+jobs:
+  check-conflicting-prs:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged || github.event_name == 'workflow_dispatch' }}
+    outputs:
+      need_rebase: ${{ steps.check-pending-prs.outputs.need_rebase }}
+    steps:
+      -
+        name: Get pending PRs
+        id: check-pending-prs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          pending_prs=$(gh pr list --repo "$REPO" --label "autorelease: pending" --state open --json number --jq '.[].number')
+          need_rebase=""
+
+          if [[ -n "$pending_prs" ]]; then
+              for pr_num in $pending_prs; do
+                  echo "Checking pr: $pr_num"
+                  mergeable=$(gh pr view --repo "$REPO" "$pr_num" --json mergeable --jq '.mergeable')
+                  echo "mergeable status: $mergeable"
+                  if [[ "$mergeable" != "MERGEABLE" ]]; then
+                      echo "pr: $pr_num is not MERGEABLE."
+                      echo "removing 'autorelease: pending' label from pr: $pr_num"
+                      gh pr edit --repo "$REPO" "$pr_num" --remove-label "autorelease: pending"
+                      need_rebase=true
+                  fi
+              done
+          else
+              echo "No pending PRs found."
+              exit 0
+          fi
+
+          if [[ -n "$need_rebase" ]]; then
+              echo "not MERGEABLE status PRs found."
+              echo "need_rebase=$need_rebase"
+              echo "need_rebase=$need_rebase" >> "$GITHUB_OUTPUT"
+          else
+              echo "All pending PRs are MERGEABLE."
+          fi
+
+  release-please-rebase:
+    needs: check-conflicting-prs
+    runs-on: ubuntu-latest
+    if: needs.check-conflicting-prs.outputs.need_rebase == 'true'
+    steps:
+      -
+        name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+      -
+        name: Release Please Action
+        uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
