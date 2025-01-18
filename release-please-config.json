@@ -1,41 +1,41 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "pull-request-title-pattern": "build${scope}: release${component} ${version}",
-  "include-component-in-tag": true,
-  "include-v-in-tag": true,
-  "tag-separator": "@",
-  "separate-pull-requests": true,
-  "changelog-sections" : [
-      { "type": "feat", "section": "Features", "hidden": false },
-      { "type": "fix", "section": "Bug Fixes", "hidden": false },
-      { "type": "refactor", "section": "Code Refactoring", "hidden": false },
-      { "type": "build", "section": "Build System", "hidden": true },
-      { "type": "ci", "section": "Continuous Integration", "hidden": true },
-      { "type": "chore", "section": "Miscellaneous Chores", "hidden": false },
-      { "type": "docs", "section": "Documentation", "hidden": false },
-      { "type": "perf", "section": "Performance Improvements", "hidden": false },
-      { "type": "revert", "section": "Reverts", "hidden": false },
-      { "type": "style", "section": "Styles", "hidden": true },
-      { "type": "test", "section": "Tests", "hidden": true }
+  "pullRequestTitlePattern": "build${scope}: release${component} ${version}",
+  "includeComponentInTag": true,
+  "includeVInTag": true,
+  "tagSeparator": "@",
+  "separatePullRequests": true,
+  "changelogSections": [
+    { "type": "feat", "section": "Features", "hidden": false },
+    { "type": "fix", "section": "Bug Fixes", "hidden": false },
+    { "type": "refactor", "section": "Code Refactoring", "hidden": false },
+    { "type": "build", "section": "Build System", "hidden": true },
+    { "type": "ci", "section": "Continuous Integration", "hidden": true },
+    { "type": "chore", "section": "Miscellaneous Chores", "hidden": false },
+    { "type": "docs", "section": "Documentation", "hidden": false },
+    { "type": "perf", "section": "Performance Improvements", "hidden": false },
+    { "type": "revert", "section": "Reverts", "hidden": false },
+    { "type": "style", "section": "Styles", "hidden": true },
+    { "type": "test", "section": "Tests", "hidden": true }
   ],
   "packages": {
     ".": {
       "path": ".",
-      "release-type": "simple",
-      "exclude-paths": [
+      "releaseType": "simple",
+      "excludePaths": [
         "./src/X4DataLoader",
         "./src/X4DataTestConsole"
       ]
     },
     "X4DataLoader": {
       "path": "./src/X4DataLoader",
-      "release-type": "simple",
-      "changelog-path": "docs/X4DataLoader/CHANGELOG.md"
+      "releaseType": "simple",
+      "changelogPath": "docs/X4DataLoader/CHANGELOG.md"
     },
     "X4DataTestConsole": {
       "path": "./src/X4DataTestConsole",
-      "release-type": "simple",
-      "changelog-path": "docs/X4DataTestConsole/CHANGELOG.md"
+      "releaseType": "simple",
+      "changelogPath": "docs/X4DataTestConsole/CHANGELOG.md"
     }
   }
 }
