@@ -28,13 +28,11 @@
     },
     "src/X4DataLoader": {
       "package-name": "X4DataLoader",
-      "release-type": "simple",
-      "changelog-path": "docs/X4DataLoader/CHANGELOG.md"
+      "release-type": "simple"
     },
     "src/X4DataTestConsole": {
       "package-name": "X4DataTestConsole",
-      "release-type": "simple",
-      "changelog-path": "docs/X4DataTestConsole/CHANGELOG.md"
+      "release-type": "simple"
     }
   }
 }
