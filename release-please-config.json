@@ -5,6 +5,7 @@
   "include-v-in-tag": true,
   "tag-separator": "@",
   "separate-pull-requests": true,
+  "release-type": "simple",
   "changelog-sections" : [
       { "type": "feat", "section": "Features", "hidden": false },
       { "type": "fix", "section": "Bug Fixes", "hidden": false },
