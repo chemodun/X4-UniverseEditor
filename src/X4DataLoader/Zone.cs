@@ -1,5 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {

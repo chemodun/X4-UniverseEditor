@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace X4DataLoader
+namespace X4DataLoader.Helpers
 {
     public static class XmlHelper
     {

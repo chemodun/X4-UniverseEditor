@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Xml.Linq;
 using System.Globalization;
 using System.ComponentModel;
+using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {
@@ -130,7 +131,7 @@ namespace X4DataLoader
                                 var macroConnection = XmlHelper.GetAttribute(macroElement, "connection");
                                 if (macroConnection == "cluster")
                                 {
-                                    var sector = allSectors.FirstOrDefault(s => s.Macro == macroRef);
+                                    var sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
                                     if (sector != null)
                                     {
                                         sector.SetPosition(position, connectionName, connectionElement);
