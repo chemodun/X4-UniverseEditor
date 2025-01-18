@@ -4,6 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <Copyright>Developed by Chem O`Dun</Copyright>
   </PropertyGroup>
+
+  <Target Name="ReadVersion" BeforeTargets="BeforeBuild">
+    <ReadLinesFromFile File="version.txt">
+      <Output TaskParameter="Lines" PropertyName="Version" />
+    </ReadLinesFromFile>
+  </Target>
 
 </Project>
