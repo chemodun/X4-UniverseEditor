@@ -23,17 +23,17 @@
       "path": ".",
       "release-type": "simple",
       "exclude-paths": [
-        "src/X4DataLoader",
-        "src/X4DataTestConsole"
+        "./src/X4DataLoader",
+        "./src/X4DataTestConsole"
       ]
     },
     "X4DataLoader": {
-      "path": "src/X4DataLoader",
+      "path": "./src/X4DataLoader",
       "release-type": "simple",
       "changelog-path": "docs/X4DataLoader/CHANGELOG.md"
     },
     "X4DataTestConsole": {
-      "path": "src/X4DataTestConsole",
+      "path": "./src/X4DataTestConsole",
       "release-type": "simple",
       "changelog-path": "docs/X4DataTestConsole/CHANGELOG.md"
     }
