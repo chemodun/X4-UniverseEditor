@@ -19,14 +19,6 @@
       { "type": "test", "section": "Tests", "hidden": true }
   ],
   "packages": {
-    ".": {
-      "path": ".",
-      "release-type": "simple",
-      "exclude-paths": [
-        "src/X4DataLoader",
-        "src/X4DataTestConsole"
-      ]
-    },
     "X4DataLoader": {
       "path": "src/X4DataLoader",
       "release-type": "simple",
