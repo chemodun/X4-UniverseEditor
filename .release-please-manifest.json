@@ -1,5 +1,6 @@
 {
   ".": "0.0.1",
   "X4DataLoader": "0.0.1",
-  "X4DataTestConsole": "0.0.1"
+  "X4DataTestConsole": "0.0.1",
+  "src/X4DataTestConsole": "0.0.1"
 }
