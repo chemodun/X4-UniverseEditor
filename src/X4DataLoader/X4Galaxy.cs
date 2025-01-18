@@ -5,16 +5,16 @@
         public void LoadData()
         {
             var coreFolderPath = "path/to/core/folder";
-            var relativePaths = new Dictionary<string, string>
+            var relativePaths = new Dictionary<string, (string path, string fileName)>
             {
-                { "translation", "t/0001-l044.xml" },
-                { "mapDefaults", "libraries/mapdefaults.xml" },
-                { "galaxy", "maps/xu_ep2_universe/galaxy.xml" },
-                { "clusters", "maps/xu_ep2_universe/clusters.xml" },
-                { "sectors", "maps/xu_ep2_universe/sectors.xml" },
-                { "zones", "maps/xu_ep2_universe/zones.xml" },
-                { "sechighways", "maps/xu_ep2_universe/sechighways.xml" },
-                { "zonehighways", "maps/xu_ep2_universe/zonehighways.xml" }
+                { "translation", ("t", "0001-l044.xml") },
+                { "mapDefaults", ("libraries", "mapdefaults.xml") },
+                { "galaxy", ("maps/xu_ep2_universe", "galaxy.xml") },
+                { "clusters", ("maps/xu_ep2_universe", "clusters.xml") },
+                { "sectors", ("maps/xu_ep2_universe", "sectors.xml") },
+                { "zones", ("maps/xu_ep2_universe", "zones.xml") },
+                { "sechighways", ("maps/xu_ep2_universe", "sechighways.xml") },
+                { "zonehighways", ("maps/xu_ep2_universe", "zonehighways.xml") }
             };
 
             var galaxy = DataLoader.LoadAllData(coreFolderPath, relativePaths);

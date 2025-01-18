@@ -9,16 +9,16 @@ namespace X4DataLoader
 {
     public static class DataLoader
     {
-        public static Galaxy LoadAllData(string coreFolderPath, Dictionary<string, string> relativePaths)
+        public static Galaxy LoadAllData(string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
         {
-            var translationFilePath = Path.Combine(coreFolderPath, relativePaths["translation"]);
-            var mapDefaultsFilePath = Path.Combine(coreFolderPath, relativePaths["mapDefaults"]);
-            var galaxyFilePath = Path.Combine(coreFolderPath, relativePaths["galaxy"]);
-            var clustersFilePath = Path.Combine(coreFolderPath, relativePaths["clusters"]);
-            var sectorsFilePath = Path.Combine(coreFolderPath, relativePaths["sectors"]);
-            var zonesFilePath = Path.Combine(coreFolderPath, relativePaths["zones"]);
-            var sechighwaysFilePath = Path.Combine(coreFolderPath, relativePaths["sechighways"]);
-            var zonehighwaysFilePath = Path.Combine(coreFolderPath, relativePaths["zonehighways"]);
+            var translationFilePath = Path.Combine(coreFolderPath, relativePaths["translation"].path, relativePaths["translation"].fileName);
+            var mapDefaultsFilePath = Path.Combine(coreFolderPath, relativePaths["mapDefaults"].path, relativePaths["mapDefaults"].fileName);
+            var galaxyFilePath = Path.Combine(coreFolderPath, relativePaths["galaxy"].path, relativePaths["galaxy"].fileName);
+            var clustersFilePath = Path.Combine(coreFolderPath, relativePaths["clusters"].path, relativePaths["clusters"].fileName);
+            var sectorsFilePath = Path.Combine(coreFolderPath, relativePaths["sectors"].path, relativePaths["sectors"].fileName);
+            var zonesFilePath = Path.Combine(coreFolderPath, relativePaths["zones"].path, relativePaths["zones"].fileName);
+            var sechighwaysFilePath = Path.Combine(coreFolderPath, relativePaths["sechighways"].path, relativePaths["sechighways"].fileName);
+            var zonehighwaysFilePath = Path.Combine(coreFolderPath, relativePaths["zonehighways"].path, relativePaths["zonehighways"].fileName);
 
             var translation = new Translation();
             translation.Load(translationFilePath);
