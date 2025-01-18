@@ -1,0 +1,31 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+
+      -
+        name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Release Please Action
+        uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: simple  # Specifies that it's a Python project
+          # Optional configurations:
+          # version-file: version.py  # Specify the version file if different
+          #bump-minor-pre-major: true
+          monorepo-tags: true
+          token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
