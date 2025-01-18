@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.0.1...X4DataLoader@v0.1.0) (2025-01-18)
+
+
+### Features
+
+* implemented load data not only from "vanilla", but from an extensions too, with storing information about sourcing of data ([87b4390](https://github.com/chemodun/X4-UniverseEditor/commit/87b4390125b57f12c117588c66b92b6ea959310a))
+
+
+### Code Refactoring
+
+* Organize helper methods into a new Helpers namespace and improve string comparison logic ([87b4390](https://github.com/chemodun/X4-UniverseEditor/commit/87b4390125b57f12c117588c66b92b6ea959310a))
+
+
+### Documentation
+
+* Change CHANGELOG.md location for X4DataLoader ([084abdc](https://github.com/chemodun/X4-UniverseEditor/commit/084abdce0bb14916d3c86dd70cda8b2475e100cf))
+
 ## 0.0.1 (2025-01-18)
 
 
