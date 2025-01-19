@@ -23,7 +23,8 @@
       "release-type": "simple",
       "exclude-paths": [
         "src/X4DataLoader",
-        "src/X4DataTestConsole"
+        "src/X4DataTestConsole",
+        "src/ChemGateBuilder"
       ]
     },
     "src/X4DataLoader": {
@@ -32,6 +33,10 @@
     },
     "src/X4DataTestConsole": {
       "package-name": "X4DataTestConsole",
+      "release-type": "simple"
+    },
+    "src/ChemGateBuilder": {
+      "package-name": "ChemGateBuilder",
       "release-type": "simple"
     }
   }
