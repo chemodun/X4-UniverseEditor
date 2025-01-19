@@ -8,6 +8,14 @@
         mc:Ignorable="d"
         Title="Chem Gate Builder" Height="800" Width="900"
         MinWidth="900" MinHeight="800">
+    <Window.Resources>
+        <DataTemplate x:Key="SectorTemplate">
+            <StackPanel Orientation="Horizontal" Margin="0">
+                <TextBlock Text="{Binding Name}" Margin="0" Width="200"/>
+                <TextBlock Text="{Binding Source}" Margin="0" Foreground="Gray" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
     <DockPanel>
         <fluent:Ribbon DockPanel.Dock="Top">
             <fluent:RibbonTabItem Header="Mod">
@@ -90,7 +98,15 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Content="Sector:" Grid.Column="0" VerticalAlignment="Center"/>
-                                        <ComboBox Margin="5" Grid.Column="1" ItemsSource="{Binding SectorsDirect}" DisplayMemberPath="Name" SelectedValuePath="Macro"/>
+                                        <!-- Sector Direct ComboBox -->
+                                        <ComboBox
+                                            x:Name="SectorDirectComboBox"
+                                            Grid.Column="1"
+                                            Margin="5"
+                                            ItemsSource="{Binding SectorsDirectViewSource.View}"
+                                            SelectedItem="{Binding SelectedSectorDirect, Mode=TwoWay}"
+                                            SelectedValuePath="Macro"
+                                            ItemTemplate="{StaticResource SectorTemplate}" />
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
@@ -192,7 +208,15 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Content="Sector:" Grid.Column="0" VerticalAlignment="Center"/>
-                                        <ComboBox Margin="5" Grid.Column="1" ItemsSource="{Binding SectorsOpposite}" DisplayMemberPath="Name" SelectedValuePath="Macro"/>
+                                        <!-- Sector Opposite ComboBox -->
+                                        <ComboBox
+                                            x:Name="SectorOppositeComboBox"
+                                            Margin="5"
+                                            Grid.Column="1"
+                                            ItemsSource="{Binding SectorsOppositeViewSource.View}"
+                                            SelectedItem="{Binding SelectedSectorOpposite, Mode=TwoWay}"
+                                            SelectedValuePath="Macro"
+                                            ItemTemplate="{StaticResource SectorTemplate}" />
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>

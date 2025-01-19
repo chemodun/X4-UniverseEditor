@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Data;
 using X4DataLoader;
 
 namespace ChemGateBuilder
@@ -53,10 +53,45 @@ namespace ChemGateBuilder
         private string _logLevel;
         private bool _logToFile;
 
-        public Galaxy Galaxy { get; private set; }
-        public List<SectorItem> SectorsDirect { get; private set; }
-        public List<SectorItem> SectorsOpposite { get; private set; }
+        // Master sector list
+        public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
 
+        // CollectionViewSources for filtering
+        public CollectionViewSource SectorsDirectViewSource { get; } = new CollectionViewSource();
+        public CollectionViewSource SectorsOppositeViewSource { get; } = new CollectionViewSource();
+
+        // Selected sectors
+        private SectorItem _selectedSectorDirect;
+        public SectorItem SelectedSectorDirect
+        {
+            get => _selectedSectorDirect;
+            set
+            {
+                if (_selectedSectorDirect != value)
+                {
+                    _selectedSectorDirect = value;
+                    OnPropertyChanged(nameof(SelectedSectorDirect));
+                    SectorsOppositeViewSource.View.Refresh();
+                }
+            }
+        }
+
+        private SectorItem _selectedSectorOpposite;
+        public SectorItem SelectedSectorOpposite
+        {
+            get => _selectedSectorOpposite;
+            set
+            {
+                if (_selectedSectorOpposite != value)
+                {
+                    _selectedSectorOpposite = value;
+                    OnPropertyChanged(nameof(SelectedSectorOpposite));
+                    SectorsDirectViewSource.View.Refresh();
+                }
+            }
+        }
+
+        // Other properties
         public string X4DataFolder
         {
             get => _x4DataFolder;
@@ -135,12 +170,23 @@ namespace ChemGateBuilder
             }
         }
 
+        // Galaxy and Sectors
+        public Galaxy Galaxy { get; private set; }
+
+        // Constructor
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             LoadConfiguration();
+
+            // Initialize CollectionViewSource filters
+            SectorsDirectViewSource.Filter += SectorsDirect_Filter;
+            SectorsOppositeViewSource.Filter += SectorsOpposite_Filter;
+
+            SectorsDirectViewSource.Source = AllSectors;
+            SectorsOppositeViewSource.Source = AllSectors;
 
             // Validate the loaded X4DataFolder
             if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
@@ -149,10 +195,21 @@ namespace ChemGateBuilder
                 // Prompt the user to select a valid folder
                 SelectX4DataFolder();
             }
+
+            // Load sectors if the folder is valid
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
-                Galaxy = X4Galaxy.LoadData(X4DataFolder);
                 LoadSectors();
+            }
+
+            // Optionally, set default selections
+            if (AllSectors.Count > 0)
+            {
+                SelectedSectorDirect = null;
+            }
+            if (AllSectors.Count > 1)
+            {
+                SelectedSectorOpposite = null;
             }
         }
 
@@ -206,8 +263,8 @@ namespace ChemGateBuilder
 
         private bool ValidateX4DataFolder(string folderPath, out string errorMessage)
         {
-            string subfolderPath = System.IO.Path.Combine(folderPath, "t");
-            string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
+            string subfolderPath = Path.Combine(folderPath, "t");
+            string filePath = Path.Combine(subfolderPath, "0001-l044.xml");
 
             if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
             {
@@ -233,11 +290,12 @@ namespace ChemGateBuilder
                 {
                     X4DataFolder = selectedPath;
                     LoadSectors();
+                    MessageBox.Show("X4 Data folder set successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
                     MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
-                    // Optionally, you can prompt the user again or handle as needed
+                    // Optionally, prompt again
                 }
             }
             else
@@ -248,10 +306,12 @@ namespace ChemGateBuilder
 
         private void LoadSectors()
         {
-            SectorsDirect = new List<SectorItem>();
-            SectorsOpposite = new List<SectorItem>();
+            AllSectors.Clear();
+
+            Galaxy = X4Galaxy.LoadData(X4DataFolder);
             var sectors = Galaxy.GetSectors();
-            foreach (var sector in sectors.Values)
+
+            foreach (var sector in sectors.Values.OrderBy(s => s.Name))
             {
                 var sectorItem = new SectorItem
                 {
@@ -259,13 +319,51 @@ namespace ChemGateBuilder
                     Source = sector.Source,
                     Macro = sector.Macro
                 };
-                SectorsDirect.Add(sectorItem);
-                SectorsOpposite.Add(sectorItem);
+                AllSectors.Add(sectorItem);
             }
-            SectorsDirect = SectorsDirect.OrderBy(s => s.Name).ToList();
-            SectorsOpposite = SectorsOpposite.OrderBy(s => s.Name).ToList();
-            OnPropertyChanged(nameof(SectorsDirect));
-            OnPropertyChanged(nameof(SectorsOpposite));
+            SectorsDirectViewSource.View.Refresh();
+            SectorsOppositeViewSource.View.Refresh();
+        }
+
+        // Filter methods
+        private void SectorsDirect_Filter(object sender, FilterEventArgs e)
+        {
+            if (e.Item is SectorItem sector)
+            {
+                // Exclude the sector selected in Opposite ComboBox
+                if (SelectedSectorOpposite != null && sector.Macro == SelectedSectorOpposite.Macro)
+                {
+                    e.Accepted = false;
+                }
+                else
+                {
+                    e.Accepted = true;
+                }
+            }
+            else
+            {
+                e.Accepted = false;
+            }
+        }
+
+        private void SectorsOpposite_Filter(object sender, FilterEventArgs e)
+        {
+            if (e.Item is SectorItem sector)
+            {
+                // Exclude the sector selected in Direct ComboBox
+                if (SelectedSectorDirect != null && sector.Macro == SelectedSectorDirect.Macro)
+                {
+                    e.Accepted = false;
+                }
+                else
+                {
+                    e.Accepted = true;
+                }
+            }
+            else
+            {
+                e.Accepted = false;
+            }
         }
 
         // Method to programmatically invoke folder selection
