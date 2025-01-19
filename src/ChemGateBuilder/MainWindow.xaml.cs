@@ -61,7 +61,16 @@ namespace ChemGateBuilder
             {
                 if (Directory.Exists(X4DataFolder))
                 {
-                    return System.IO.Path.GetFullPath(X4DataFolder);
+                    string subfolderPath = System.IO.Path.Combine(X4DataFolder, "t");
+                    string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
+                    if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
+                    {
+                        return System.IO.Path.GetFullPath(X4DataFolder);
+                    }
+                    else
+                    {
+                        return $"Error: Folder does not contain X4 data ({X4DataFolder})";
+                    }
                 }
                 else
                 {
