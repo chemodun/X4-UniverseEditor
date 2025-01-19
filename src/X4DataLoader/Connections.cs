@@ -231,6 +231,22 @@ namespace X4DataLoader
 
     public class GateConnection : Connection
     {
-        public GateConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public string GateMacro { get; private set; }
+        public bool IsActive { get; private set; }
+
+        public GateConnection(XElement element, string source, string fileName) : base(element, source, fileName) {
+            var macroElement = element.Element("macro") ?? throw new ArgumentException("Gate connection must have a macro element");
+            GateMacro = XmlHelper.GetAttribute(macroElement, "ref") ?? throw new ArgumentException("Gate connection must have a macro ref attribute");
+            IsActive = true;
+            var propertiesElement = macroElement.Element("properties");
+            if (propertiesElement != null)
+            {
+                var stateElement = propertiesElement.Element("state");
+                if (stateElement != null)
+                {
+                    IsActive = XmlHelper.GetAttribute(stateElement, "active") == "true";
+                }
+            }
+         }
     }
 }
