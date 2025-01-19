@@ -6,26 +6,62 @@
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:fluent="urn:fluent-ribbon"
         mc:Ignorable="d"
-        Title="Chem Gate Builder" Height="800" Width="900">
+        Title="Chem Gate Builder" Height="800" Width="900"
+        MinWidth="900" MinHeight="800">
     <DockPanel>
         <fluent:Ribbon DockPanel.Dock="Top">
-            <fluent:RibbonTabItem Header="File">
-                <fluent:RibbonGroupBox Header="File Actions">
-                    <fluent:Button Header="Open" />
+            <fluent:RibbonTabItem Header="Mod">
+                <fluent:RibbonGroupBox Header="Mod Actions">
+                    <fluent:Button Header="New" />
+                    <fluent:Button Header="Load" />
                     <fluent:Button Header="Save" />
                     <fluent:Button Header="Exit" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Edit">
-                <fluent:RibbonGroupBox Header="Edit Actions">
-                    <fluent:Button Header="Undo" />
-                    <fluent:Button Header="Redo" />
+                <fluent:RibbonGroupBox Header="Gate Connection Actions">
+                    <fluent:Button Header="Add/Save" />
+                    <fluent:Button Header="Reset" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="View">
-                <fluent:RibbonGroupBox Header="View Actions">
-                    <fluent:Button Header="Zoom In" />
-                    <fluent:Button Header="Zoom Out" />
+            <fluent:RibbonTabItem Header="X4 Data">
+                <fluent:RibbonGroupBox Header="X4 Data Actions">
+                    <fluent:Button Header="Load" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Options">
+                <fluent:RibbonGroupBox Header="Edit Options">
+                    <StackPanel>
+                        <CheckBox Content="Default Gate Active" Margin="5" IsChecked="{Binding GatesActiveByDefault}"/>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="Minimal Distance Between Gates:" VerticalAlignment="Center"/>
+                            <TextBox Width="100" Margin="5" Text="{Binding GatesMinimalDistanceBetween}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="X4 Data Options">
+                    <StackPanel Orientation="Vertical" Margin="0">
+                         <StackPanel Orientation="Horizontal" Margin="5">
+                            <Label Content="X4 Data Extracted" Margin="5"/>
+                            <Button Content="Select" Click="SelectX4DataFolder_Click" Margin="5"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding X4DataFolderStatus}" Width="200" Margin="5" ToolTip="{Binding X4DataFolderStatus}"/>
+                    </StackPanel>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Logging Options">
+                    <StackPanel>
+                        <ComboBox
+                            x:Name="LoggingLevelComboBox"
+                            Margin="5"
+                            SelectedValuePath="Content"
+                            SelectedValue="{Binding LogLevel, Mode=TwoWay}">
+                            <ComboBoxItem Content="Error"/>
+                            <ComboBoxItem Content="Warning"/>
+                            <ComboBoxItem Content="Info"/>
+                            <ComboBoxItem Content="Debug"/>
+                        </ComboBox>
+                        <CheckBox Content="Enable Writing to File" Margin="5" IsChecked="{Binding LogToFile}"/>
+                    </StackPanel>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Help">
