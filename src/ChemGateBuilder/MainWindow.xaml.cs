@@ -4,6 +4,8 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using X4DataLoader;
+
 
 namespace ChemGateBuilder
 {
@@ -135,6 +137,10 @@ namespace ChemGateBuilder
                 // Prompt the user to select a valid folder
                 SelectX4DataFolder();
             }
+            if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
+            {
+                Galaxy galaxy = X4Galaxy.LoadData(X4DataFolder);
+            }
         }
 
         private void LoadConfiguration()
@@ -212,9 +218,7 @@ namespace ChemGateBuilder
                 string selectedPath = dialog.SelectedPath;
                 if (ValidateX4DataFolder(selectedPath, out string errorMessage))
                 {
-                    X4DataFolder = selectedPath;
-                    MessageBox.Show("X4 Data folder set successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                    X4DataFolder = selectedPath;                }
                 else
                 {
                     MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);

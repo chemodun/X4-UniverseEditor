@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
+    <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
   </ItemGroup>
 
 </Project>
