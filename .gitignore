@@ -402,3 +402,5 @@ FodyWeavers.xsd
 #vscode
 .vscode/*
 
+# Application specific
+ChemGateBuilder.json
