@@ -80,6 +80,27 @@ namespace X4DataLoader
                 }
             }
         }
+        public Dictionary<string, Cluster> GetClusters()
+        {
+            var clusters = new Dictionary<string, Cluster>();
+            foreach (var cluster in Clusters)
+            {
+                clusters[cluster.PositionId] = cluster;
+            }
+            return clusters;
+        }
+        public Dictionary<string, Sector> GetSectors()
+        {
+            var sectors = new Dictionary<string, Sector>();
+            foreach (var cluster in Clusters)
+            {
+                foreach (var sector in cluster.Sectors)
+                {
+                    sectors[sector.PositionId] = sector;
+                }
+            }
+            return sectors;
+        }
     }
 
 
