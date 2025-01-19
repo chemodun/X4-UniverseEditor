@@ -1,10 +1,9 @@
 ﻿namespace X4DataLoader
 {
-    public class Class1
+    public class X4Galaxy
     {
-        public void LoadData()
+        public static Galaxy LoadData(string coreFolderPath)
         {
-            var coreFolderPath = "path/to/core/folder";
             var relativePaths = new Dictionary<string, (string path, string fileName)>
             {
                 { "translation", ("t", "0001-l044.xml") },
@@ -17,17 +16,7 @@
                 { "zonehighways", ("maps/xu_ep2_universe", "zonehighways.xml") }
             };
 
-            var galaxy = DataLoader.LoadAllData(coreFolderPath, relativePaths);
-
-            // Print the loaded data
-            foreach (var cluster in galaxy.Clusters)
-            {
-                Console.WriteLine($"Cluster: {cluster.Name}, Description: {cluster.Description}");
-                foreach (var sector in cluster.Sectors)
-                {
-                    Console.WriteLine($"  Sector: {sector.Name}, Description: {sector.Description}");
-                }
-            }
+            return DataLoader.LoadAllData(coreFolderPath, relativePaths);
         }
     }
 }
