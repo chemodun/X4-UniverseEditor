@@ -7,7 +7,7 @@ namespace ChemGateBuilder
 {
     public static class TextBoxExtensions
     {
-        // Attached property to enable integer-only input
+        // Existing IsIntegerOnly attached property
         public static readonly DependencyProperty IsIntegerOnlyProperty =
             DependencyProperty.RegisterAttached(
                 "IsIntegerOnly",
@@ -23,6 +23,42 @@ namespace ChemGateBuilder
         public static void SetIsIntegerOnly(TextBox textBox, bool value)
         {
             textBox.SetValue(IsIntegerOnlyProperty, value);
+        }
+
+        // New MinValue attached property
+        public static readonly DependencyProperty MinValueProperty =
+            DependencyProperty.RegisterAttached(
+                "MinValue",
+                typeof(int),
+                typeof(TextBoxExtensions),
+                new UIPropertyMetadata(int.MinValue));
+
+        public static int GetMinValue(TextBox textBox)
+        {
+            return (int)textBox.GetValue(MinValueProperty);
+        }
+
+        public static void SetMinValue(TextBox textBox, int value)
+        {
+            textBox.SetValue(MinValueProperty, value);
+        }
+
+        // New MaxValue attached property
+        public static readonly DependencyProperty MaxValueProperty =
+            DependencyProperty.RegisterAttached(
+                "MaxValue",
+                typeof(int),
+                typeof(TextBoxExtensions),
+                new UIPropertyMetadata(int.MaxValue));
+
+        public static int GetMaxValue(TextBox textBox)
+        {
+            return (int)textBox.GetValue(MaxValueProperty);
+        }
+
+        public static void SetMaxValue(TextBox textBox, int value)
+        {
+            textBox.SetValue(MaxValueProperty, value);
         }
 
         private static void OnIsIntegerOnlyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -44,28 +80,95 @@ namespace ChemGateBuilder
             }
         }
 
-        // Regex to match non-integer characters
-        private static readonly Regex _regex = new Regex("[^0-9]+");
+        // Updated regex to allow optional leading minus sign for negative integers
+        private static readonly Regex _regex = new Regex(@"^-?[0-9]+$");
 
         private static void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = _regex.IsMatch(e.Text);
+            if (sender is TextBox textBox)
+            {
+                string fullText = GetFullTextAfterInput(textBox, e.Text);
+                if (!_regex.IsMatch(fullText))
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+                // Attempt to parse the full text
+                if (int.TryParse(fullText, out int value))
+                {
+                    int min = GetMinValue(textBox);
+                    int max = GetMaxValue(textBox);
+
+                    if (value < min || value > max)
+                    {
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    // If parsing fails (e.g., only a minus sign), allow input
+                    // unless it's just "-", which is invalid but might be intermediate input
+                    if (fullText == "-")
+                    {
+                        e.Handled = false;
+                    }
+                    else
+                    {
+                        e.Handled = true;
+                    }
+                }
+            }
         }
 
         private static void TextBox_Pasting(object sender, DataObjectPastingEventArgs e)
         {
-            if (e.DataObject.GetDataPresent(typeof(string)))
+            if (sender is TextBox textBox)
             {
-                string text = (string)e.DataObject.GetData(typeof(string));
-                if (_regex.IsMatch(text))
+                if (e.DataObject.GetDataPresent(typeof(string)))
+                {
+                    string pasteText = (string)e.DataObject.GetData(typeof(string));
+                    string fullText = GetFullTextAfterPaste(textBox, pasteText);
+
+                    if (!_regex.IsMatch(fullText))
+                    {
+                        e.CancelCommand();
+                        return;
+                    }
+
+                    if (int.TryParse(fullText, out int value))
+                    {
+                        int min = GetMinValue(textBox);
+                        int max = GetMaxValue(textBox);
+
+                        if (value < min || value > max)
+                        {
+                            e.CancelCommand();
+                        }
+                    }
+                    else
+                    {
+                        // If parsing fails, cancel paste
+                        e.CancelCommand();
+                    }
+                }
+                else
                 {
                     e.CancelCommand();
                 }
             }
-            else
-            {
-                e.CancelCommand();
-            }
+        }
+
+        // Helper method to get the full text after input
+        private static string GetFullTextAfterInput(TextBox textBox, string input)
+        {
+            return textBox.Text.Insert(textBox.CaretIndex, input);
+        }
+
+        // Helper method to get the full text after paste
+        private static string GetFullTextAfterPaste(TextBox textBox, string pasteText)
+        {
+            return textBox.Text.Insert(textBox.SelectionStart, pasteText);
         }
     }
 }

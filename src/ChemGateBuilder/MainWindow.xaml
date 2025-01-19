@@ -142,14 +142,20 @@
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-400"
+                                                            local:TextBoxExtensions.MaxValue="400"
                                                             Text="{Binding GateDataDirect.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-400"
+                                                            local:TextBoxExtensions.MaxValue="400"
                                                             Text="{Binding GateDataDirect.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-400"
+                                                            local:TextBoxExtensions.MaxValue="400"
                                                             Text="{Binding GateDataDirect.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -171,14 +177,20 @@
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-999"
+                                                            local:TextBoxExtensions.MaxValue="999"
                                                             Text="{Binding GateDataDirect.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-999"
+                                                            local:TextBoxExtensions.MaxValue="999"
                                                             Text="{Binding GateDataDirect.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-999"
+
                                                             Text="{Binding GateDataDirect.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -200,14 +212,20 @@
                                                     <Label Content="Roll:" Grid.Column="0" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-180"
+                                                            local:TextBoxExtensions.MaxValue="180"
                                                             Text="{Binding GateDataDirect.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Pitch:" Grid.Column="2" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-180"
+                                                            local:TextBoxExtensions.MaxValue="180"
                                                             Text="{Binding GateDataDirect.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Yaw:" Grid.Column="4" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-180"
+                                                            local:TextBoxExtensions.MaxValue="180"
                                                             Text="{Binding GateDataDirect.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -272,14 +290,20 @@
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-400"
+                                                            local:TextBoxExtensions.MaxValue="400"
                                                             Text="{Binding GateDataOpposite.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-400"
+                                                            local:TextBoxExtensions.MaxValue="400"
                                                             Text="{Binding GateDataOpposite.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-400"
+                                                            local:TextBoxExtensions.MaxValue="400"
                                                             Text="{Binding GateDataOpposite.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -301,14 +325,20 @@
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-999"
+                                                            local:TextBoxExtensions.MaxValue="999"
                                                             Text="{Binding GateDataOpposite.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-999"
+                                                            local:TextBoxExtensions.MaxValue="999"
                                                             Text="{Binding GateDataOpposite.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-999"
+                                                            local:TextBoxExtensions.MaxValue="999"
                                                             Text="{Binding GateDataOpposite.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -330,14 +360,20 @@
                                                     <Label Content="Roll:" Grid.Column="0" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-180"
+                                                            local:TextBoxExtensions.MaxValue="180"
                                                             Text="{Binding GateDataOpposite.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Pitch:" Grid.Column="2" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-180"
+                                                            local:TextBoxExtensions.MaxValue="180"
                                                             Text="{Binding GateDataOpposite.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Yaw:" Grid.Column="4" VerticalAlignment="Center"/>
                                                     <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
                                                             local:TextBoxExtensions.IsIntegerOnly="True"
+                                                            local:TextBoxExtensions.MinValue="-180"
+                                                            local:TextBoxExtensions.MaxValue="180"
                                                             Text="{Binding GateDataOpposite.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
