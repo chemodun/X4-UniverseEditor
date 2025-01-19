@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.1.0...X4DataLoader@v0.1.1) (2025-01-19)
+
+
+### Code Refactoring
+
+* rename Class1 to X4Galaxy and update LoadData method to return Galaxy object ([97eda19](https://github.com/chemodun/X4-UniverseEditor/commit/97eda1922194f98ca09979e5698c6607d4843c4b))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.0.1...X4DataLoader@v0.1.0) (2025-01-18)
 
 
