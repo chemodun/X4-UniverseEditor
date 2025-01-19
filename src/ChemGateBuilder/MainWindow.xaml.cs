@@ -27,7 +27,7 @@ namespace ChemGateBuilder
 
     public class LoggingConfig
     {
-        public string LogLevel { get; set; } = "WARNING";
+        public string LogLevel { get; set; } = "Warning";
         public bool LogToFile { get; set; } = false;
     }
 
@@ -61,15 +61,13 @@ namespace ChemGateBuilder
             {
                 if (Directory.Exists(X4DataFolder))
                 {
-                    string subfolderPath = System.IO.Path.Combine(X4DataFolder, "t");
-                    string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
-                    if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
+                    if (ValidateX4DataFolder(X4DataFolder, out string errorMessage))
                     {
                         return System.IO.Path.GetFullPath(X4DataFolder);
                     }
                     else
                     {
-                        return $"Error: Folder does not contain X4 data ({X4DataFolder})";
+                        return errorMessage;
                     }
                 }
                 else
@@ -129,6 +127,14 @@ namespace ChemGateBuilder
             DataContext = this;
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             LoadConfiguration();
+
+            // Validate the loaded X4DataFolder
+            if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
+            {
+                MessageBox.Show(errorMessage, "Invalid X4 Data Folder", MessageBoxButton.OK, MessageBoxImage.Warning);
+                // Prompt the user to select a valid folder
+                SelectX4DataFolder();
+            }
         }
 
         private void LoadConfiguration()
@@ -179,16 +185,53 @@ namespace ChemGateBuilder
             File.WriteAllText(_configFileName, jsonString);
         }
 
-        private void SelectX4DataFolder_Click(object sender, RoutedEventArgs e)
+        private bool ValidateX4DataFolder(string folderPath, out string errorMessage)
         {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            string subfolderPath = System.IO.Path.Combine(folderPath, "t");
+            string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
+
+            if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
             {
-                X4DataFolder = dialog.SelectedPath;
+                errorMessage = string.Empty;
+                return true;
+            }
+            else
+            {
+                errorMessage = $"Error: Folder does not contain required X4 data ({folderPath})";
+                return false;
             }
         }
 
-        // Removed the SelectionChanged event handler as it's no longer needed
+        private void SelectX4DataFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+            {
+                string selectedPath = dialog.SelectedPath;
+                if (ValidateX4DataFolder(selectedPath, out string errorMessage))
+                {
+                    X4DataFolder = selectedPath;
+                    MessageBox.Show("X4 Data folder set successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Optionally, you can prompt the user again or handle as needed
+                }
+            }
+            else
+            {
+                MessageBox.Show("Folder selection was canceled or invalid.", "Canceled", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        // Method to programmatically invoke folder selection
+        private void SelectX4DataFolder()
+        {
+            SelectX4DataFolder_Click(null, null);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
