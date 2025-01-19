@@ -90,7 +90,7 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Content="Sector:" Grid.Column="0" VerticalAlignment="Center"/>
-                                        <ComboBox Margin="5" Grid.Column="1"/>
+                                        <ComboBox Margin="5" Grid.Column="1" ItemsSource="{Binding SectorsDirect}" DisplayMemberPath="Name" SelectedValuePath="Macro"/>
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
@@ -192,7 +192,7 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Content="Sector:" Grid.Column="0" VerticalAlignment="Center"/>
-                                        <ComboBox Margin="5" Grid.Column="1"/>
+                                        <ComboBox Margin="5" Grid.Column="1" ItemsSource="{Binding SectorsOpposite}" DisplayMemberPath="Name" SelectedValuePath="Macro"/>
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>

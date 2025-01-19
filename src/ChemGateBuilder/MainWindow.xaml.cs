@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using X4DataLoader;
-
 
 namespace ChemGateBuilder
 {
@@ -33,6 +34,13 @@ namespace ChemGateBuilder
         public bool LogToFile { get; set; } = false;
     }
 
+    public class SectorItem
+    {
+        public string Name { get; set; }
+        public string Source { get; set; }
+        public string Macro { get; set; }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -46,6 +54,8 @@ namespace ChemGateBuilder
         private bool _logToFile;
 
         public Galaxy Galaxy { get; private set; }
+        public List<SectorItem> SectorsDirect { get; private set; }
+        public List<SectorItem> SectorsOpposite { get; private set; }
 
         public string X4DataFolder
         {
@@ -141,7 +151,8 @@ namespace ChemGateBuilder
             }
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
-                Galaxy  = X4Galaxy.LoadData(X4DataFolder);
+                Galaxy = X4Galaxy.LoadData(X4DataFolder);
+                LoadSectors();
             }
         }
 
@@ -220,7 +231,9 @@ namespace ChemGateBuilder
                 string selectedPath = dialog.SelectedPath;
                 if (ValidateX4DataFolder(selectedPath, out string errorMessage))
                 {
-                    X4DataFolder = selectedPath;                }
+                    X4DataFolder = selectedPath;
+                    LoadSectors();
+                }
                 else
                 {
                     MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -231,6 +244,28 @@ namespace ChemGateBuilder
             {
                 MessageBox.Show("Folder selection was canceled or invalid.", "Canceled", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        private void LoadSectors()
+        {
+            SectorsDirect = new List<SectorItem>();
+            SectorsOpposite = new List<SectorItem>();
+            var sectors = Galaxy.GetSectors();
+            foreach (var sector in sectors.Values)
+            {
+                var sectorItem = new SectorItem
+                {
+                    Name = sector.Name,
+                    Source = sector.Source,
+                    Macro = sector.Macro
+                };
+                SectorsDirect.Add(sectorItem);
+                SectorsOpposite.Add(sectorItem);
+            }
+            SectorsDirect = SectorsDirect.OrderBy(s => s.Name).ToList();
+            SectorsOpposite = SectorsOpposite.OrderBy(s => s.Name).ToList();
+            OnPropertyChanged(nameof(SectorsDirect));
+            OnPropertyChanged(nameof(SectorsOpposite));
         }
 
         // Method to programmatically invoke folder selection
