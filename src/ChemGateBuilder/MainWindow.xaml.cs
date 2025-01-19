@@ -45,6 +45,8 @@ namespace ChemGateBuilder
         private string _logLevel;
         private bool _logToFile;
 
+        public Galaxy Galaxy { get; private set; }
+
         public string X4DataFolder
         {
             get => _x4DataFolder;
@@ -139,7 +141,7 @@ namespace ChemGateBuilder
             }
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
-                Galaxy galaxy = X4Galaxy.LoadData(X4DataFolder);
+                Galaxy  = X4Galaxy.LoadData(X4DataFolder);
             }
         }
 
