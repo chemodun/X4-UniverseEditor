@@ -15,6 +15,14 @@
                 <TextBlock Text="{Binding Source}" Margin="0" Foreground="Gray" />
             </StackPanel>
         </DataTemplate>
+        <Style TargetType="ComboBoxItem">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Selectable}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <DockPanel>
         <fluent:Ribbon DockPanel.Dock="Top">

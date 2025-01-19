@@ -39,6 +39,7 @@ namespace ChemGateBuilder
         public string Name { get; set; }
         public string Source { get; set; }
         public string Macro { get; set; }
+        public bool Selectable { get; set; }
     }
 
     /// <summary>
@@ -317,7 +318,8 @@ namespace ChemGateBuilder
                 {
                     Name = sector.Name,
                     Source = sector.Source,
-                    Macro = sector.Macro
+                    Macro = sector.Macro,
+                    Selectable = true
                 };
                 AllSectors.Add(sectorItem);
             }
@@ -333,12 +335,15 @@ namespace ChemGateBuilder
                 // Exclude the sector selected in Opposite ComboBox
                 if (SelectedSectorOpposite != null && sector.Macro == SelectedSectorOpposite.Macro)
                 {
-                    e.Accepted = false;
+
+                    sector.Selectable = false;
+                    // e.Accepted = false;
                 }
                 else
                 {
-                    e.Accepted = true;
+                    sector.Selectable = true;
                 }
+                e.Accepted = true;
             }
             else
             {
@@ -353,12 +358,14 @@ namespace ChemGateBuilder
                 // Exclude the sector selected in Direct ComboBox
                 if (SelectedSectorDirect != null && sector.Macro == SelectedSectorDirect.Macro)
                 {
-                    e.Accepted = false;
+                    sector.Selectable = false;
+                    // e.Accepted = false;
                 }
                 else
                 {
-                    e.Accepted = true;
+                    sector.Selectable = true;
                 }
+                e.Accepted = true;
             }
             else
             {
