@@ -15,6 +15,8 @@ namespace ChemGateBuilder
         public EditConfig Edit { get; set; } = new EditConfig();
         public DataConfig Data { get; set; } = new DataConfig();
         public LoggingConfig Logging { get; set; } = new LoggingConfig();
+
+        public GateData GateDataDirect { get; set; } = new GateData();
     }
 
     public class EditConfig
@@ -92,6 +94,34 @@ namespace ChemGateBuilder
             }
         }
 
+        // GateData Property
+        private GateData _gateDataDirect = new GateData();
+        public GateData GateDataDirect
+        {
+            get => _gateDataDirect;
+            set
+            {
+                if (_gateDataDirect != value)
+                {
+                    _gateDataDirect = value;
+                    OnPropertyChanged(nameof(GateDataDirect));
+                }
+            }
+        }
+
+        private GateData _gateDataOpposite = new GateData();
+        public GateData GateDataOpposite
+        {
+            get => _gateDataOpposite;
+            set
+            {
+                if (_gateDataOpposite != value)
+                {
+                    _gateDataOpposite = value;
+                    OnPropertyChanged(nameof(GateDataOpposite));
+                }
+            }
+        }
         // Other properties
         public string X4DataFolder
         {
