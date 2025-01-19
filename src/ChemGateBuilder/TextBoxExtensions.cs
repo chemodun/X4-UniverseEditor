@@ -107,6 +107,8 @@ namespace ChemGateBuilder
                     {
                         OnValidationError?.Invoke($"Value must be between {min} and {max}.");
                         e.Handled = true;
+                    } else {
+                        OnValidationError?.Invoke(string.Empty);
                     }
                 }
                 else
@@ -116,6 +118,7 @@ namespace ChemGateBuilder
                     if (fullText == "-")
                     {
                         e.Handled = false;
+                        OnValidationError?.Invoke(string.Empty);
                     }
                     else
                     {
