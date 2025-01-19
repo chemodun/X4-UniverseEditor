@@ -55,7 +55,19 @@ namespace ChemGateBuilder
         private int _gatesMinimalDistanceBetween;
         private string _logLevel;
         private bool _logToFile;
-
+        private string _statusMessage;
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set
+            {
+                if (_statusMessage != value)
+                {
+                    _statusMessage = value;
+                    OnPropertyChanged(nameof(StatusMessage));
+                }
+            }
+        }
         // Master sector list
         public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
 
@@ -201,6 +213,14 @@ namespace ChemGateBuilder
             }
         }
 
+        private void HandleValidationError(string message)
+        {
+            // Optional: Log the validation message for debugging
+            System.Diagnostics.Debug.WriteLine($"Validation Error: {message}");
+
+            StatusMessage = message;
+        }
+
         // Galaxy and Sectors
         public Galaxy Galaxy { get; private set; }
 
@@ -219,10 +239,13 @@ namespace ChemGateBuilder
             SectorsDirectViewSource.Source = AllSectors;
             SectorsOppositeViewSource.Source = AllSectors;
 
+            // Subscribe to Validation Errors
+            TextBoxExtensions.OnValidationError += HandleValidationError;
+
             // Validate the loaded X4DataFolder
             if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
             {
-                MessageBox.Show(errorMessage, "Invalid X4 Data Folder", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StatusMessage = errorMessage;
                 // Prompt the user to select a valid folder
                 SelectX4DataFolder();
             }
@@ -230,6 +253,7 @@ namespace ChemGateBuilder
             // Load sectors if the folder is valid
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
+                StatusMessage = "X4 Data folder validated successfully.";
                 LoadSectors();
             }
 
@@ -321,17 +345,18 @@ namespace ChemGateBuilder
                 {
                     X4DataFolder = selectedPath;
                     LoadSectors();
-                    MessageBox.Show("X4 Data folder set successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    StatusMessage = "X4 Data folder set successfully.";
                 }
                 else
                 {
+                    StatusMessage = errorMessage;
                     MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
                     // Optionally, prompt again
                 }
             }
             else
             {
-                MessageBox.Show("Folder selection was canceled or invalid.", "Canceled", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StatusMessage = "Folder selection was canceled or invalid.";
             }
         }
 
@@ -355,6 +380,8 @@ namespace ChemGateBuilder
             }
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
+
+            StatusMessage = "Sectors loaded successfully.";
         }
 
         // Filter methods

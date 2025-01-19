@@ -86,7 +86,13 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <DockPanel>
+        <DockPanel LastChildFill="True">
+            <!-- StatusBar Docked to Bottom -->
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusMessage}" />
+                </StatusBarItem>
+            </StatusBar>
             <GroupBox Header="Chem Gate Builder" DockPanel.Dock="Top" Margin="5">
                 <StackPanel>
                     <GroupBox Header="Gate Connections" DockPanel.Dock="Top" Margin="5">

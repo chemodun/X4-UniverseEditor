@@ -80,6 +80,8 @@ namespace ChemGateBuilder
             }
         }
 
+        // Event to communicate validation messages
+        public static event Action<string> OnValidationError;
         // Updated regex to allow optional leading minus sign for negative integers
         private static readonly Regex _regex = new Regex(@"^-?[0-9]+$");
 
@@ -90,6 +92,7 @@ namespace ChemGateBuilder
                 string fullText = GetFullTextAfterInput(textBox, e.Text);
                 if (!_regex.IsMatch(fullText))
                 {
+                    OnValidationError?.Invoke("Only integer values are allowed.");
                     e.Handled = true;
                     return;
                 }
@@ -102,6 +105,7 @@ namespace ChemGateBuilder
 
                     if (value < min || value > max)
                     {
+                        OnValidationError?.Invoke($"Value must be between {min} and {max}.");
                         e.Handled = true;
                     }
                 }
@@ -115,6 +119,7 @@ namespace ChemGateBuilder
                     }
                     else
                     {
+                        OnValidationError?.Invoke("Invalid input.");
                         e.Handled = true;
                     }
                 }
@@ -132,6 +137,7 @@ namespace ChemGateBuilder
 
                     if (!_regex.IsMatch(fullText))
                     {
+                        OnValidationError?.Invoke("Only integer values are allowed.");
                         e.CancelCommand();
                         return;
                     }
@@ -143,17 +149,24 @@ namespace ChemGateBuilder
 
                         if (value < min || value > max)
                         {
+                            OnValidationError?.Invoke($"Value must be between {min} and {max}.");
                             e.CancelCommand();
+                        }
+                        else
+                        {
+                            OnValidationError?.Invoke(string.Empty);
                         }
                     }
                     else
                     {
                         // If parsing fails, cancel paste
+                        OnValidationError?.Invoke("Invalid input.");
                         e.CancelCommand();
                     }
                 }
                 else
                 {
+                    OnValidationError?.Invoke("Pasting is not allowed.");
                     e.CancelCommand();
                 }
             }
