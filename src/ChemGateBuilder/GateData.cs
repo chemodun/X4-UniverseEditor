@@ -1,12 +1,16 @@
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Windows;
+using X4DataLoader;
 
 namespace ChemGateBuilder
 {
     public class GatesConnectionData : INotifyPropertyChanged
     {
         private SectorItem _sectorDirect = new SectorItem();
-        private DataTable _SectorDirectConnections = new DataTable();
+        private ObservableCollection<SectorConnectionData> _sectorDirectConnections = new ObservableCollection<SectorConnectionData>();
+
         private GateData _gateDirect = new GateData();
         private SectorItem _sectorOpposite = new SectorItem();
         private DataTable _SectorOppositeConnections = new DataTable();
@@ -24,14 +28,14 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public DataTable SectorDirectConnections
+        public ObservableCollection<SectorConnectionData> SectorDirectConnections
         {
-            get => _SectorDirectConnections;
+            get => _sectorDirectConnections;
             set
             {
-                if (_SectorDirectConnections != value)
+                if (_sectorDirectConnections != value)
                 {
-                    _SectorDirectConnections = value;
+                    _sectorDirectConnections = value;
                     OnPropertyChanged(nameof(SectorDirectConnections));
                 }
             }
@@ -94,8 +98,141 @@ namespace ChemGateBuilder
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (propertyName == nameof(SectorDirect))
+            {
+                SectorDirectConnections.Clear();
+                if (SectorDirect == null) return;
+
+                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow == null) return;
+
+                // Access the Galaxy property
+                Galaxy galaxy = mainWindow.Galaxy;
+                Sector sector = galaxy.GetSectorByMacro(SectorDirect.Macro);
+                if (sector == null || sector.Zones == null || sector.Zones.Count == 0) return;
+
+                foreach (var zone in sector.Zones)
+                {
+                    if (zone.Connections == null || zone.Connections.Count == 0) continue;
+                    foreach (var connection in zone.Connections.Values)
+                    {
+                        if (connection is GateConnection gateConnection)
+                        {
+                            bool active = gateConnection.IsActive;
+                            string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
+
+                            SectorDirectConnections.Add(new SectorConnectionData
+                            {
+                                ToSector = sectorTo,
+                                X = 0, // Update as needed
+                                Y = 0, // Update as needed
+                                Z = 0, // Update as needed
+                                Type = "Gate",
+                                Id = gateConnection.Name
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public class SectorConnectionData : INotifyPropertyChanged
+    {
+        private string _toSector;
+        private int _x;
+        private int _y;
+        private int _z;
+        private string _type;
+        private string _id;
+
+        public string ToSector
+        {
+            get => _toSector;
+            set
+            {
+                if (_toSector != value)
+                {
+                    _toSector = value;
+                    OnPropertyChanged(nameof(ToSector));
+                }
+            }
+        }
+
+        public int X
+        {
+            get => _x;
+            set
+            {
+                if (_x != value)
+                {
+                    _x = value;
+                    OnPropertyChanged(nameof(X));
+                }
+            }
+        }
+
+        public int Y
+        {
+            get => _y;
+            set
+            {
+                if (_y != value)
+                {
+                    _y = value;
+                    OnPropertyChanged(nameof(Y));
+                }
+            }
+        }
+
+        public int Z
+        {
+            get => _z;
+            set
+            {
+                if (_z != value)
+                {
+                    _z = value;
+                    OnPropertyChanged(nameof(Z));
+                }
+            }
+        }
+
+        public string Type
+        {
+            get => _type;
+            set
+            {
+                if (_type != value)
+                {
+                    _type = value;
+                    OnPropertyChanged(nameof(Type));
+                }
+            }
+        }
+
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
     public class GateData : INotifyPropertyChanged
     {
         private Coordinates _coordinates = new Coordinates();
