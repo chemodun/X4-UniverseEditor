@@ -13,7 +13,7 @@ namespace ChemGateBuilder
 
         private GateData _gateDirect = new GateData();
         private SectorItem _sectorOpposite = new SectorItem();
-        private DataTable _SectorOppositeConnections = new DataTable();
+        private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = new ObservableCollection<SectorConnectionData>();
         private GateData _gateOpposite = new GateData();
 
         public SectorItem SectorDirect
@@ -66,7 +66,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public DataTable SectorOppositeConnections
+        public ObservableCollection<SectorConnectionData> SectorOppositeConnections
         {
             get => _SectorOppositeConnections;
             set
@@ -98,17 +98,24 @@ namespace ChemGateBuilder
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            if (propertyName == nameof(SectorDirect))
+            if (propertyName == nameof(SectorDirect) || propertyName == nameof(SectorOpposite))
             {
-                SectorDirectConnections.Clear();
-                if (SectorDirect == null) return;
+                SectorItem sectorCurrent = propertyName == nameof(SectorDirect) ? SectorDirect : SectorOpposite;
+                var sectorConnections = propertyName == nameof(SectorDirect) ? SectorDirectConnections : SectorOppositeConnections;
+                sectorConnections.Clear();
+                if (sectorCurrent == null) return;
 
                 MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow == null) return;
+                var sectorsViewSource = propertyName == nameof(SectorDirect) ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
+                if (sectorsViewSource != null)
+                {
+                    sectorsViewSource.View.Refresh();
+                }
 
                 // Access the Galaxy property
                 Galaxy galaxy = mainWindow.Galaxy;
-                Sector sector = galaxy.GetSectorByMacro(SectorDirect.Macro);
+                Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
                 if (sector == null || sector.Zones == null || sector.Zones.Count == 0) return;
 
                 foreach (var zone in sector.Zones)
@@ -121,8 +128,9 @@ namespace ChemGateBuilder
                             bool active = gateConnection.IsActive;
                             string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
 
-                            SectorDirectConnections.Add(new SectorConnectionData
+                            sectorConnections.Add(new SectorConnectionData
                             {
+                                Active = active && !string.IsNullOrEmpty(sectorTo),
                                 ToSector = sectorTo,
                                 X = 0, // Update as needed
                                 Y = 0, // Update as needed
@@ -146,6 +154,7 @@ namespace ChemGateBuilder
         private int _z;
         private string _type;
         private string _id;
+        private bool _active;
 
         public string ToSector
         {
@@ -221,6 +230,19 @@ namespace ChemGateBuilder
                 {
                     _id = value;
                     OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
+
+        public bool Active
+        {
+            get => _active;
+            set
+            {
+                if (_active != value)
+                {
+                    _active = value;
+                    OnPropertyChanged(nameof(Active));
                 }
             }
         }

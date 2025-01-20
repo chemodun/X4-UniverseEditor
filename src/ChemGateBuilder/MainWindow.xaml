@@ -117,7 +117,7 @@
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
                                             <Image DockPanel.Dock="Left" Width="100" Height="100" Margin="5"/>
-                                            <DataGrid ItemsSource="{Binding GateConnections.SectorDirectConnections}"
+                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
                                                       AutoGenerateColumns="False"
                                                       Margin="5"
                                                       CanUserAddRows="False">
@@ -277,14 +277,17 @@
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
                                             <Image DockPanel.Dock="Left" Width="100" Height="100" Margin="5"/>
-                                            <DataGrid ItemsSource="{Binding GateConnections.SectorOppositeConnections}" AutoGenerateColumns="False" Margin="5">
+                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeConnections}"
+                                                      AutoGenerateColumns="False"
+                                                      Margin="5"
+                                                      CanUserAddRows="False">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="To Sector" Width="*"/>
-                                                    <DataGridTextColumn Header="X,km" Width="*"/>
-                                                    <DataGridTextColumn Header="Y,km" Width="*"/>
-                                                    <DataGridTextColumn Header="Z,km" Width="*"/>
-                                                    <DataGridTextColumn Header="Type" Width="*"/>
-                                                    <DataGridTextColumn Header="Connection ID" Width="*"/>
+                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="*"/>
+                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="*"/>
+                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="*"/>
+                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="*"/>
+                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                         </DockPanel>
