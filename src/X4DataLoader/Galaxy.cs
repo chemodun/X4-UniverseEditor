@@ -17,6 +17,7 @@ namespace X4DataLoader
             Name = "";
             Reference = "";
             Clusters = new List<Cluster>();
+            Sectors = new List<Sector>();
             Connections = new List<GalaxyConnection>();
         }
 
@@ -82,6 +83,7 @@ namespace X4DataLoader
                 }
             }
         }
+
         public Dictionary<string, Cluster> GetClusters()
         {
             var clusters = new Dictionary<string, Cluster>();
@@ -91,6 +93,7 @@ namespace X4DataLoader
             }
             return clusters;
         }
+
         public Dictionary<string, Sector> GetSectors()
         {
             var sectors = new Dictionary<string, Sector>();
@@ -104,6 +107,23 @@ namespace X4DataLoader
         public Sector? GetSectorByMacro(string macro)
         {
             return Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macro));
+        }
+
+        public Sector? GetOppositeSectorForGateConnection(GateConnection gateConnection)
+        {
+            var connection = Connections.FirstOrDefault(c => c.PathDirect.Gate == gateConnection);
+            if (connection != null)
+            {
+                return connection.PathOpposite.Sector;
+            }
+            else {
+                connection = Connections.FirstOrDefault(c => c.PathOpposite.Gate == gateConnection);
+                if (connection != null)
+                {
+                    return connection.PathDirect.Sector;
+                }
+            }
+            return null;
         }
     }
 
