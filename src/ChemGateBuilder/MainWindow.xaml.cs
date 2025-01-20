@@ -335,7 +335,7 @@ namespace ChemGateBuilder
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
 
-            StatusMessage = "Sectors loaded successfully.";
+            StatusMessage = "X4 data loaded successfully.";
         }
 
         // Filter methods
