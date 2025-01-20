@@ -96,5 +96,14 @@ namespace X4DataLoader
             }
             throw new ArgumentException($"Invalid macro format: {macro}");
         }
+
+        public Connection? GetConnection(string connectionId)
+        {
+            if (Connections.TryGetValue(connectionId, out var connection))
+            {
+                return connection;
+            }
+            return null;
+        }
     }
 }
