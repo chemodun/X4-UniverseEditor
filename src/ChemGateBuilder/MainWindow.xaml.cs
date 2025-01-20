@@ -6,7 +6,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Shapes;
 using X4DataLoader;
+using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace ChemGateBuilder
 {
@@ -67,6 +70,10 @@ namespace ChemGateBuilder
                 }
             }
         }
+        private bool _isDragging = false;
+        private SectorMapItem _selectedGate = null;
+        private Point _mouseOffset;
+
         // Master sector list
         public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
 
@@ -272,8 +279,8 @@ namespace ChemGateBuilder
 
         private bool ValidateX4DataFolder(string folderPath, out string errorMessage)
         {
-            string subfolderPath = Path.Combine(folderPath, "t");
-            string filePath = Path.Combine(subfolderPath, "0001-l044.xml");
+            string subfolderPath = System.IO.Path.Combine(folderPath, "t");
+            string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
 
             if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
             {
@@ -398,6 +405,73 @@ namespace ChemGateBuilder
             {
                 GatesConnectionCurrent.SectorDirectMap.VisualSizePx = newSize;
             }
+        }
+
+        private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
+            {
+                if (item.IsNew) // Only allow dragging for "new" gates
+                {
+                    _isDragging = true;
+                    _selectedGate = item;
+
+                    // Get the mouse position relative to the gate
+                    _mouseOffset = e.GetPosition(ellipse);
+
+                    // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
+                    ellipse.CaptureMouse();
+                }
+            }
+        }
+
+        private void SectorMapItem_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging && _selectedGate != null)
+            {
+                if (sender is Ellipse ellipse && ellipse.Parent is Canvas itemCanvas)
+                {
+                    // Get the current mouse position relative to the SectorCanvas
+                    Point mousePosition = e.GetPosition(SectorDirectCanvas);
+
+                    // Calculate new position by subtracting the offset
+                    double newX = mousePosition.X - _mouseOffset.X;
+                    double newY = mousePosition.Y - _mouseOffset.Y;
+
+                    // Optional: Constrain within sector boundaries (hexagon)
+                    // Implement boundary checks here if necessary
+
+                    // Update the SectorMapItem's coordinates
+                    _selectedGate.X = newX;
+                    _selectedGate.Y = newY;
+                }
+            }
+        }
+
+        private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_isDragging && _selectedGate != null)
+            {
+                _isDragging = false;
+
+                if (sender is Ellipse ellipse)
+                {
+                    ellipse.ReleaseMouseCapture();
+                }
+
+                // Optionally, persist the updated coordinates
+                SaveSectorMapItemCoordinates(_selectedGate);
+
+                _selectedGate = null;
+            }
+        }
+
+        private void SaveSectorMapItemCoordinates(SectorMapItem item)
+        {
+            // Implement your persistence logic here
+            // Example: Update the data source or notify a service
+            // Currently, since the Gate object is bound, updates are already reflected in the UI
+            // Add additional code here if you need to save the changes externally
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

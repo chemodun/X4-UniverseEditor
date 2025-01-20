@@ -38,7 +38,95 @@ namespace ChemGateBuilder
             set { _visualY = value; OnPropertyChanged(); }
         }
 
-        // public ObservableCollection<Gate> Gates { get; set; } = new ObservableCollection<Gate>();
+        public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public void ClearItems()
+        {
+            Items.Clear();
+        }
+        public void AddItem(int x, int y, int z, string type, string status, bool isNew = false)
+        {
+            Items.Add(new SectorMapItem
+            {
+                ExternalX = x,
+                ExternalZ = z,
+                X = (x * VisualSizePx / InternalSizeKm + VisualSizePx) / 2,
+                Y = (z * VisualSizePx / InternalSizeKm + VisualSizePx) / 2,
+                Type = type,
+                Status = status,
+                IsNew = isNew
+            });
+        }
+    }
+
+    public class SectorMapItem : INotifyPropertyChanged
+    {
+        private double _x;
+        private double _y;
+        private bool _isNew;
+
+        public int ExternalX {get; set;}
+        public int ExternalY {get; set;}
+        public int ExternalZ {get; set;}
+        public string Type { get; set; } // e.g., "empty", "gate", "highway", etc.
+        public string Status { get; set; } // e.g., "active", "inactive", "unknown"
+        public string ToolTip => $"{Type} ({ExternalX} km, {ExternalY} km, {ExternalZ} km) - {Status}";
+
+        public double X
+        {
+            get => _x;
+            set { _x = value; OnPropertyChanged(); }
+        }
+
+        public double Y
+        {
+            get => _y;
+            set { _y = value; OnPropertyChanged(); }
+        }
+
+        public bool IsNew
+        {
+            get => _isNew;
+            set { _isNew = value; OnPropertyChanged(); }
+        }
+
+        // Colors based on gate type and status
+        public Brush BorderColor
+        {
+            get
+            {
+                return Status switch
+                {
+                    "active" => Brushes.LimeGreen,
+                    "inactive" => Brushes.Red,
+                    _ => Brushes.DarkGray
+                };
+            }
+        }
+
+        public Brush FillColor
+        {
+            get
+            {
+                if (IsNew)
+                    return Brushes.Yellow;
+
+                return Type switch
+                {
+                    "empty" => Brushes.DarkGray,
+                    "gate" => Brushes.Blue,
+                    "highway" => Brushes.Olive,
+                    "mod" => Brushes.DarkGreen,
+                    _ => Brushes.LightGray
+                };
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
