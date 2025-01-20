@@ -71,6 +71,14 @@ namespace X4DataLoader
             FileName = fileName;
         }
 
+        public float[]? GetCoordinates()
+        {
+            if (Position != null)
+            {
+                return new float[] { (float)Position.Value.x, (float)Position.Value.y, (float)Position.Value.z };
+            }
+            return null;
+        }
         public static void LoadConnections(XElement element, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
         {
             string name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
