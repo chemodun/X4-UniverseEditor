@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChemGateBuilder"
+        xmlns:converters="clr-namespace:ChemGateBuilder.Core.Converters"
         xmlns:fluent="urn:fluent-ribbon"
         mc:Ignorable="d"
         Title="Chem Gate Builder" MinWidth="1200" MinHeight="860">
@@ -14,6 +15,7 @@
                 <TextBlock Text="{Binding Source}" Margin="0" Foreground="Gray" />
             </StackPanel>
         </DataTemplate>
+        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter" />
         <Style TargetType="ComboBoxItem">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Selectable}" Value="False">
@@ -148,8 +150,17 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Image DockPanel.Dock="Left" Width="140" Height="140" Margin="5"/>
-                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
+                                            <Canvas x:Name="SectorDirectCanvas" Background="Black" DockPanel.Dock="Left" Width="140" Height="140" Margin="5"
+                                                SizeChanged="SectorDirectCanvas_SizeChanged">
+                                                <!-- Hexagonal Sector Representation -->
+                                                <Polygon Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                        Stroke="White"
+                                                        StrokeThickness="2"
+                                                        Fill="Gray"
+                                                        Canvas.Left="{Binding GatesConnectionCurrent.SectorDirectMap.VisualX}"
+                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}" />
+                                            </Canvas>
+                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections.GatesConnectionCurrent.SectorDirectConnections}"
                                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                     AutoGenerateColumns="False"
                                                     Margin="5"

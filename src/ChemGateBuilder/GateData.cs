@@ -9,8 +9,8 @@ namespace ChemGateBuilder
     public class GatesConnectionData : INotifyPropertyChanged
     {
         private SectorItem _sectorDirect = new SectorItem();
+        private SectorMap _sectorDirectMap = new SectorMap();
         private ObservableCollection<SectorConnectionData> _sectorDirectConnections = new ObservableCollection<SectorConnectionData>();
-
         private GateData _gateDirect = new GateData();
         private SectorItem _sectorOpposite = new SectorItem();
         private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = new ObservableCollection<SectorConnectionData>();
@@ -28,6 +28,20 @@ namespace ChemGateBuilder
                 }
             }
         }
+
+        public SectorMap SectorDirectMap
+        {
+            get => _sectorDirectMap;
+            set
+            {
+                if (_sectorDirectMap != value)
+                {
+                    _sectorDirectMap = value;
+                    OnPropertyChanged(nameof(SectorDirectMap));
+                }
+            }
+        }
+
         public ObservableCollection<SectorConnectionData> SectorDirectConnections
         {
             get => _sectorDirectConnections;
@@ -141,7 +155,7 @@ namespace ChemGateBuilder
                                 Y = 0, // Update as needed
                                 Z = 0, // Update as needed
                                 Type = "Gate",
-                                Id = gateConnection.Name    
+                                Id = gateConnection.Name
                             };
                             for (int i = 0; i < 3; i++)
                             {

@@ -390,6 +390,16 @@ namespace ChemGateBuilder
             SelectX4DataFolder_Click(null, null);
         }
 
+        // Handle Canvas Size Changed to adjust Hexagon Size
+        private void SectorDirectCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
+            if (GatesConnectionCurrent != null)
+            {
+                GatesConnectionCurrent.SectorDirectMap.VisualSizePx = newSize;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
