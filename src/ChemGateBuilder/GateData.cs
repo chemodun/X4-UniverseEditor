@@ -127,8 +127,13 @@ namespace ChemGateBuilder
                         {
                             bool active = gateConnection.IsActive;
                             string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
-
-                            sectorConnections.Add(new SectorConnectionData
+                            Connection? zoneConnection = sector.GetConnection(zone.ConnectionId);
+                            if (zoneConnection == null) continue;
+                            float[] zoneCoordinates = zoneConnection.GetCoordinates();
+                            if (zoneCoordinates == null) continue;
+                            float[] gateCoordinates = gateConnection.GetCoordinates();
+                            if (gateCoordinates == null) continue;
+                            SectorConnectionData newConnection = new SectorConnectionData
                             {
                                 Active = active && !string.IsNullOrEmpty(sectorTo),
                                 ToSector = sectorTo,
@@ -136,8 +141,25 @@ namespace ChemGateBuilder
                                 Y = 0, // Update as needed
                                 Z = 0, // Update as needed
                                 Type = "Gate",
-                                Id = gateConnection.Name
-                            });
+                                Id = gateConnection.Name    
+                            };
+                            for (int i = 0; i < 3; i++)
+                            {
+                                int value = (int)((zoneCoordinates[i] + gateCoordinates[i]) / 1000);
+                                switch (i)
+                                {
+                                    case 0:
+                                        newConnection.X = value;
+                                        break;
+                                    case 1:
+                                        newConnection.Y = value;
+                                        break;
+                                    case 2:
+                                        newConnection.Z = value;
+                                        break;
+                                }
+                            }
+                            sectorConnections.Add(newConnection);
                         }
                     }
                 }
