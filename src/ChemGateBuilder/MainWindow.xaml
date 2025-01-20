@@ -95,8 +95,18 @@
             </StatusBar>
             <GroupBox Header="Chem Gate Builder" DockPanel.Dock="Top" Margin="5">
                 <StackPanel>
-                    <GroupBox Header="Gate Connections" DockPanel.Dock="Top" Margin="5">
-                        <DataGrid AutoGenerateColumns="True" Height="120" Margin="5"/>
+                    <GroupBox Header="Gate Connections" DockPanel.Dock="Top" Margin="5" Height="120">
+                        <Grid Margin="5" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <DataGrid AutoGenerateColumns="True" Grid.Column="0" Margin="5" HorizontalAlignment="Stretch" />
+                            <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5">
+                                <Button Content="New Gate" Margin="0,0,0,5" Width="100" />
+                                <Button Content="Delete Gate" Width="100" />
+                            </StackPanel>
+                        </Grid>
                     </GroupBox>
                     <GroupBox Header="Gates" DockPanel.Dock="Top" Margin="5">
                         <Grid>
