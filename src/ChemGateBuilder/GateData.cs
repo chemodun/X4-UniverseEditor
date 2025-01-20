@@ -1,13 +1,15 @@
 using System.ComponentModel;
+using System.Data;
 
 namespace ChemGateBuilder
 {
     public class GatesConnectionData : INotifyPropertyChanged
     {
         private SectorItem _sectorDirect = new SectorItem();
-        private SectorItem _sectorOpposite = new SectorItem();
-
+        private DataTable _SectorDirectConnections = new DataTable();
         private GateData _gateDirect = new GateData();
+        private SectorItem _sectorOpposite = new SectorItem();
+        private DataTable _SectorOppositeConnections = new DataTable();
         private GateData _gateOpposite = new GateData();
 
         public SectorItem SectorDirect
@@ -22,15 +24,15 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public SectorItem SectorOpposite
+        public DataTable SectorDirectConnections
         {
-            get => _sectorOpposite;
+            get => _SectorDirectConnections;
             set
             {
-                if (_sectorOpposite != value)
+                if (_SectorDirectConnections != value)
                 {
-                    _sectorOpposite = value;
-                    OnPropertyChanged(nameof(SectorOpposite));
+                    _SectorDirectConnections = value;
+                    OnPropertyChanged(nameof(SectorDirectConnections));
                 }
             }
         }
@@ -46,6 +48,33 @@ namespace ChemGateBuilder
                 }
             }
         }
+
+        public SectorItem SectorOpposite
+        {
+            get => _sectorOpposite;
+            set
+            {
+                if (_sectorOpposite != value)
+                {
+                    _sectorOpposite = value;
+                    OnPropertyChanged(nameof(SectorOpposite));
+                }
+            }
+        }
+
+        public DataTable SectorOppositeConnections
+        {
+            get => _SectorOppositeConnections;
+            set
+            {
+                if (_SectorOppositeConnections != value)
+                {
+                    _SectorOppositeConnections = value;
+                    OnPropertyChanged(nameof(SectorOppositeConnections));
+                }
+            }
+        }
+
 
         public GateData GateOpposite
         {
@@ -147,6 +176,8 @@ namespace ChemGateBuilder
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
+
 
     public class Coordinates : INotifyPropertyChanged
     {

@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:fluent="urn:fluent-ribbon"
         mc:Ignorable="d"
-        Title="Chem Gate Builder" Height="820" Width="900"
-        MinWidth="900" MinHeight="820">
+        Title="Chem Gate Builder" Height="820" Width="1120"
+        MinWidth="1120" MinHeight="820">
     <Window.Resources>
         <DataTemplate x:Key="SectorTemplate">
             <StackPanel Orientation="Horizontal" Margin="0">
@@ -117,7 +117,16 @@
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
                                             <Image DockPanel.Dock="Left" Width="100" Height="100" Margin="5"/>
-                                            <DataGrid AutoGenerateColumns="True" Margin="5"/>
+                                            <DataGrid ItemsSource="{Binding GateConnections.SectorDirectConnections}" AutoGenerateColumns="False" Margin="5">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="To Sector" Width="*"/>
+                                                    <DataGridTextColumn Header="X,km" Width="*"/>
+                                                    <DataGridTextColumn Header="Y,km" Width="*"/>
+                                                    <DataGridTextColumn Header="Z,km" Width="*"/>
+                                                    <DataGridTextColumn Header="Type" Width="*"/>
+                                                    <DataGridTextColumn Header="Connection ID" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
                                         </DockPanel>
                                     </GroupBox>
                                     <GroupBox Header="Gate Parameters" Margin="5">
@@ -265,7 +274,16 @@
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
                                             <Image DockPanel.Dock="Left" Width="100" Height="100" Margin="5"/>
-                                            <DataGrid AutoGenerateColumns="True" Margin="5"/>
+                                            <DataGrid ItemsSource="{Binding GateConnections.SectorOppositeConnections}" AutoGenerateColumns="False" Margin="5">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="To Sector" Width="*"/>
+                                                    <DataGridTextColumn Header="X,km" Width="*"/>
+                                                    <DataGridTextColumn Header="Y,km" Width="*"/>
+                                                    <DataGridTextColumn Header="Z,km" Width="*"/>
+                                                    <DataGridTextColumn Header="Type" Width="*"/>
+                                                    <DataGridTextColumn Header="Connection ID" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
                                         </DockPanel>
                                     </GroupBox>
                                     <GroupBox Header="Gate Parameters" Margin="5">
@@ -405,7 +423,20 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
-                            <DataGrid AutoGenerateColumns="True" Grid.Column="0" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <DataGrid Grid.Column="0" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="From Sector" Width="*"/>
+                                    <DataGridTextColumn Header="X,km" Width="*"/>
+                                    <DataGridTextColumn Header="Y,km" Width="*"/>
+                                    <DataGridTextColumn Header="Z,km" Width="*"/>
+                                    <DataGridTextColumn Header="Active" Width="*"/>
+                                    <DataGridTextColumn Header="To Sector" Width="*"/>
+                                    <DataGridTextColumn Header="X,km" Width="*"/>
+                                    <DataGridTextColumn Header="Y,km" Width="*"/>
+                                    <DataGridTextColumn Header="Z,km" Width="*"/>
+                                    <DataGridTextColumn Header="Active" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
                             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5">
                                 <Button Content="New Gate" Margin="0,0,0,5" Width="100" />
                                 <Button Content="Delete Gate" Margin="0,5,0,0" Width="100" />
