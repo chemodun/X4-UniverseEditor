@@ -9,6 +9,7 @@ namespace X4DataLoader
         public string Name { get; private set; }
         public string Reference { get; private set; }
         public List<Cluster> Clusters { get; private set; }
+        public List<Sector> Sectors { get; private set; }
         public List<GalaxyConnection> Connections { get; private set; }
 
         public Galaxy()
@@ -69,6 +70,7 @@ namespace X4DataLoader
                             {
                                 cluster.SetPosition(position, name, connectionElement);
                                 Clusters.Add(cluster);
+                                cluster.Sectors.ForEach(s => Sectors.Add(s));
                             }
                         }
                     }
@@ -92,14 +94,16 @@ namespace X4DataLoader
         public Dictionary<string, Sector> GetSectors()
         {
             var sectors = new Dictionary<string, Sector>();
-            foreach (var cluster in Clusters)
+            foreach (var sector in Sectors)
             {
-                foreach (var sector in cluster.Sectors)
-                {
-                    sectors[sector.PositionId] = sector;
-                }
+                sectors[sector.PositionId] = sector;
             }
             return sectors;
+        }
+
+        public Sector? GetSectorByMacro(string macro)
+        {
+            return Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macro));
         }
     }
 
