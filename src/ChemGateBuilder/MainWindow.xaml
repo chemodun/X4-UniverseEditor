@@ -127,7 +127,7 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Coordinates:" Grid.Column="0" VerticalAlignment="Center"/>
+                                                <Label Content="Gate Coordinates (km):" Grid.Column="0" VerticalAlignment="Center"/>
                                                 <Grid Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
@@ -162,7 +162,7 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Position:" Grid.Column="0" VerticalAlignment="Center"/>
+                                                <Label Content="Gate Position (m):" Grid.Column="0" VerticalAlignment="Center"/>
                                                 <Grid Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
@@ -197,7 +197,7 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Rotation:" Grid.Column="0" VerticalAlignment="Center"/>
+                                                <Label Content="Gate Rotation (°):" Grid.Column="0" VerticalAlignment="Center"/>
                                                 <Grid Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
@@ -275,7 +275,7 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Coordinates:" Grid.Column="0" VerticalAlignment="Center"/>
+                                                <Label Content="Gate Coordinates (km):" Grid.Column="0" VerticalAlignment="Center"/>
                                                 <Grid Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
@@ -310,7 +310,7 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Position:" Grid.Column="0" VerticalAlignment="Center"/>
+                                                <Label Content="Gate Position (m):" Grid.Column="0" VerticalAlignment="Center"/>
                                                 <Grid Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
@@ -345,7 +345,7 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Rotation:" Grid.Column="0" VerticalAlignment="Center"/>
+                                                <Label Content="Gate Rotation (°):" Grid.Column="0" VerticalAlignment="Center"/>
                                                 <Grid Grid.Column="1">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
