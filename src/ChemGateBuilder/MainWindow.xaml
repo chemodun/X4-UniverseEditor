@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:fluent="urn:fluent-ribbon"
         mc:Ignorable="d"
-        Title="Chem Gate Builder" Height="820" Width="1120"
-        MinWidth="1120" MinHeight="820">
+        Title="Chem Gate Builder" MinWidth="1200" MinHeight="860">
     <Window.Resources>
         <DataTemplate x:Key="SectorTemplate">
             <StackPanel Orientation="Horizontal" Margin="0">
@@ -22,6 +21,39 @@
                     <Setter Property="IsEnabled" Value="False"/>
                 </DataTrigger>
             </Style.Triggers>
+        </Style>
+        <Style x:Key="RightAlignedTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="DataGridCenterColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="CoordinatesTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
+            <Setter Property="local:TextBoxExtensions.MinValue" Value="-499"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue" Value="499"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="PositionTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
+            <Setter Property="local:TextBoxExtensions.MinValue" Value="-999"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue" Value="999"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="RotationTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
+            <Setter Property="local:TextBoxExtensions.MinValue" Value="-180"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue" Value="180"/>
+            <Setter Property="TextAlignment" Value="Right"/>
         </Style>
     </Window.Resources>
     <DockPanel>
@@ -116,18 +148,20 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Image DockPanel.Dock="Left" Width="100" Height="100" Margin="5"/>
+                                            <Image DockPanel.Dock="Left" Width="140" Height="140" Margin="5"/>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
-                                                      AutoGenerateColumns="False"
-                                                      Margin="5"
-                                                      CanUserAddRows="False">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                    AutoGenerateColumns="False"
+                                                    Margin="5"
+                                                    CanUserAddRows="False"
+                                                    Height="140">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="*"/>
-                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="*"/>
-                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="*"/>
-                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="*"/>
-                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
-                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*"/>
+                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
+                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
+                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="200"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                         </DockPanel>
@@ -150,22 +184,16 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-400"
-                                                            local:TextBoxExtensions.MaxValue="400"
+                                                    <TextBox Grid.Column="1"
+                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-400"
-                                                            local:TextBoxExtensions.MaxValue="400"
+                                                    <TextBox Grid.Column="3"
+                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-400"
-                                                            local:TextBoxExtensions.MaxValue="400"
+                                                    <TextBox Grid.Column="5"
+                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -185,22 +213,16 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-999"
-                                                            local:TextBoxExtensions.MaxValue="999"
+                                                    <TextBox Grid.Column="1"
+                                                            Style="{StaticResource PositionTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-999"
-                                                            local:TextBoxExtensions.MaxValue="999"
+                                                    <TextBox Grid.Column="3"
+                                                            Style="{StaticResource PositionTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-999"
-
+                                                    <TextBox Grid.Column="5"
+                                                            Style="{StaticResource PositionTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -220,22 +242,16 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="Roll:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-180"
-                                                            local:TextBoxExtensions.MaxValue="180"
+                                                    <TextBox Grid.Column="1"
+                                                            Style="{StaticResource RotationTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Pitch:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-180"
-                                                            local:TextBoxExtensions.MaxValue="180"
+                                                    <TextBox Grid.Column="3"
+                                                            Style="{StaticResource RotationTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Yaw:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-180"
-                                                            local:TextBoxExtensions.MaxValue="180"
+                                                    <TextBox Grid.Column="5"
+                                                            Style="{StaticResource RotationTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -276,18 +292,20 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Image DockPanel.Dock="Left" Width="100" Height="100" Margin="5"/>
+                                            <Image DockPanel.Dock="Left" Width="140" Height="140" Margin="5"/>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeConnections}"
-                                                      AutoGenerateColumns="False"
-                                                      Margin="5"
-                                                      CanUserAddRows="False">
+                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                    AutoGenerateColumns="False"
+                                                    Margin="5"
+                                                    CanUserAddRows="False"
+                                                    Height="140">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="*"/>
-                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="*"/>
-                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="*"/>
-                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="*"/>
-                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
-                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*"/>
+                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
+                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
+                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="200"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                         </DockPanel>
@@ -310,22 +328,16 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-400"
-                                                            local:TextBoxExtensions.MaxValue="400"
+                                                    <TextBox Grid.Column="1"
+                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-400"
-                                                            local:TextBoxExtensions.MaxValue="400"
+                                                    <TextBox Grid.Column="3"
+                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-400"
-                                                            local:TextBoxExtensions.MaxValue="400"
+                                                    <TextBox Grid.Column="5"
+                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -345,22 +357,16 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-999"
-                                                            local:TextBoxExtensions.MaxValue="999"
+                                                    <TextBox Grid.Column="1"
+                                                            Style="{StaticResource PositionTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-999"
-                                                            local:TextBoxExtensions.MaxValue="999"
+                                                    <TextBox Grid.Column="3"
+                                                            Style="{StaticResource PositionTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-999"
-                                                            local:TextBoxExtensions.MaxValue="999"
+                                                    <TextBox Grid.Column="5"
+                                                            Style="{StaticResource PositionTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
@@ -380,22 +386,16 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="Roll:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-180"
-                                                            local:TextBoxExtensions.MaxValue="180"
+                                                    <TextBox Grid.Column="1"
+                                                            Style="{StaticResource RotationTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Pitch:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-180"
-                                                            local:TextBoxExtensions.MaxValue="180"
+                                                    <TextBox Grid.Column="3"
+                                                            Style="{StaticResource RotationTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                     <Label Content="Yaw:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5" Margin="5" HorizontalAlignment="Stretch" MinWidth="40"
-                                                            local:TextBoxExtensions.IsIntegerOnly="True"
-                                                            local:TextBoxExtensions.MinValue="-180"
-                                                            local:TextBoxExtensions.MaxValue="180"
+                                                    <TextBox Grid.Column="5"
+                                                            Style="{StaticResource RotationTextBoxStyle}"
                                                             Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </Grid>
