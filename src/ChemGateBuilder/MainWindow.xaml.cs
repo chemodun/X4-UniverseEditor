@@ -16,7 +16,6 @@ namespace ChemGateBuilder
         public DataConfig Data { get; set; } = new DataConfig();
         public LoggingConfig Logging { get; set; } = new LoggingConfig();
 
-        public GateData GateDataDirect { get; set; } = new GateData();
     }
 
     public class EditConfig
@@ -75,62 +74,17 @@ namespace ChemGateBuilder
         public CollectionViewSource SectorsDirectViewSource { get; } = new CollectionViewSource();
         public CollectionViewSource SectorsOppositeViewSource { get; } = new CollectionViewSource();
 
-        // Selected sectors
-        private SectorItem _selectedSectorDirect;
-        public SectorItem SelectedSectorDirect
+        // GatesConnectionCurrent Property
+        private GatesConnectionData _gatesConnectionCurrent = new GatesConnectionData();
+        public GatesConnectionData GatesConnectionCurrent
         {
-            get => _selectedSectorDirect;
+            get => _gatesConnectionCurrent;
             set
             {
-                if (_selectedSectorDirect != value)
+                if (_gatesConnectionCurrent != value)
                 {
-                    _selectedSectorDirect = value;
-                    OnPropertyChanged(nameof(SelectedSectorDirect));
-                    SectorsOppositeViewSource.View.Refresh();
-                }
-            }
-        }
-
-        private SectorItem _selectedSectorOpposite;
-        public SectorItem SelectedSectorOpposite
-        {
-            get => _selectedSectorOpposite;
-            set
-            {
-                if (_selectedSectorOpposite != value)
-                {
-                    _selectedSectorOpposite = value;
-                    OnPropertyChanged(nameof(SelectedSectorOpposite));
-                    SectorsDirectViewSource.View.Refresh();
-                }
-            }
-        }
-
-        // GateData Property
-        private GateData _gateDataDirect = new GateData();
-        public GateData GateDataDirect
-        {
-            get => _gateDataDirect;
-            set
-            {
-                if (_gateDataDirect != value)
-                {
-                    _gateDataDirect = value;
-                    OnPropertyChanged(nameof(GateDataDirect));
-                }
-            }
-        }
-
-        private GateData _gateDataOpposite = new GateData();
-        public GateData GateDataOpposite
-        {
-            get => _gateDataOpposite;
-            set
-            {
-                if (_gateDataOpposite != value)
-                {
-                    _gateDataOpposite = value;
-                    OnPropertyChanged(nameof(GateDataOpposite));
+                    _gatesConnectionCurrent = value;
+                    OnPropertyChanged(nameof(GatesConnectionCurrent));
                 }
             }
         }
@@ -260,11 +214,11 @@ namespace ChemGateBuilder
             // Optionally, set default selections
             if (AllSectors.Count > 0)
             {
-                SelectedSectorDirect = null;
+                GatesConnectionCurrent.SectorDirect = null;
             }
             if (AllSectors.Count > 1)
             {
-                SelectedSectorOpposite = null;
+                GatesConnectionCurrent.SectorOpposite = null;
             }
         }
 
@@ -390,7 +344,7 @@ namespace ChemGateBuilder
             if (e.Item is SectorItem sector)
             {
                 // Exclude the sector selected in Opposite ComboBox
-                if (SelectedSectorOpposite != null && sector.Macro == SelectedSectorOpposite.Macro)
+                if (GatesConnectionCurrent.SectorOpposite != null && sector.Macro == GatesConnectionCurrent.SectorOpposite.Macro)
                 {
 
                     sector.Selectable = false;
@@ -413,7 +367,7 @@ namespace ChemGateBuilder
             if (e.Item is SectorItem sector)
             {
                 // Exclude the sector selected in Direct ComboBox
-                if (SelectedSectorDirect != null && sector.Macro == SelectedSectorDirect.Macro)
+                if (GatesConnectionCurrent.SectorDirect != null && sector.Macro == GatesConnectionCurrent.SectorDirect.Macro)
                 {
                     sector.Selectable = false;
                     // e.Accepted = false;

@@ -2,6 +2,71 @@ using System.ComponentModel;
 
 namespace ChemGateBuilder
 {
+    public class GatesConnectionData : INotifyPropertyChanged
+    {
+        private SectorItem _sectorDirect = new SectorItem();
+        private SectorItem _sectorOpposite = new SectorItem();
+
+        private GateData _gateDirect = new GateData();
+        private GateData _gateOpposite = new GateData();
+
+        public SectorItem SectorDirect
+        {
+            get => _sectorDirect;
+            set
+            {
+                if (_sectorDirect != value)
+                {
+                    _sectorDirect = value;
+                    OnPropertyChanged(nameof(SectorDirect));
+                }
+            }
+        }
+        public SectorItem SectorOpposite
+        {
+            get => _sectorOpposite;
+            set
+            {
+                if (_sectorOpposite != value)
+                {
+                    _sectorOpposite = value;
+                    OnPropertyChanged(nameof(SectorOpposite));
+                }
+            }
+        }
+        public GateData GateDirect
+        {
+            get => _gateDirect;
+            set
+            {
+                if (_gateDirect != value)
+                {
+                    _gateDirect = value;
+                    OnPropertyChanged(nameof(GateDirect));
+                }
+            }
+        }
+
+        public GateData GateOpposite
+        {
+            get => _gateOpposite;
+            set
+            {
+                if (_gateOpposite != value)
+                {
+                    _gateOpposite = value;
+                    OnPropertyChanged(nameof(GateOpposite));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
     public class GateData : INotifyPropertyChanged
     {
         private Coordinates _coordinates = new Coordinates();
