@@ -153,7 +153,7 @@
                                             <Canvas x:Name="SectorDirectCanvas" Background="Black" DockPanel.Dock="Left" Width="140" Height="140" Margin="5"
                                                 SizeChanged="SectorDirectCanvas_SizeChanged">
                                                 <!-- Hexagonal Sector Representation -->
-                                                <Polygon Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                <Polygon x:Name="SectorDirectHexagon" Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
                                                         Stroke="White"
                                                         StrokeThickness="2"
                                                         Fill="Gray"
@@ -339,7 +339,7 @@
                                             <Canvas x:Name="SectorOppositeCanvas" Background="Black" DockPanel.Dock="Left" Width="140" Height="140" Margin="5"
                                                 SizeChanged="SectorOppositeCanvas_SizeChanged">
                                                 <!-- Hexagonal Sector Representation -->
-                                                <Polygon Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                <Polygon x:Name="SectorOppositeHexagon" Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
                                                         Stroke="White"
                                                         StrokeThickness="2"
                                                         Fill="Gray"

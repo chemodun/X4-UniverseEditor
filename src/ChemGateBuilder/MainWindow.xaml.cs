@@ -82,6 +82,7 @@ namespace ChemGateBuilder
         public bool Selectable { get; set; }
     }
 
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -94,8 +95,7 @@ namespace ChemGateBuilder
         private string _logLevel;
         private bool _logToFile;
         private string _statusMessage;
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-
+        public static Logger _logger = LogManager.GetCurrentClassLogger();
         public string StatusMessage
         {
             get => _statusMessage;
@@ -505,24 +505,34 @@ namespace ChemGateBuilder
                     // Calculate new position by subtracting the offset
                     double newX = mousePosition.X - sectorMap.MouseOffset.X;
                     double newY = mousePosition.Y - sectorMap.MouseOffset.Y;
-
-                    // Optional: Constrain within sector boundaries (hexagon)
-                    // Implement boundary checks here if necessary
-                    _logger.Debug($"[MouseMove] Mouse Position: {mousePosition}, New X: {newX}, New Y: {newY}, Selected.X: {sectorMap.SelectedItem.X}, Selected.Y: {sectorMap.SelectedItem.Y}");
-
-                    // Update the SectorMapItem's coordinates
-                    sectorMap.SelectedItem.X = newX;
-                    sectorMap.SelectedItem.Y = newY;
-                    // var newCoordinates = sectorMap.SelectedItem.GetCoordinates();
+                    // Account the size of the item
+                    Point newPoint = new Point(newX + sectorMap.SelectedItem.ItemSizePx / 2 , newY + sectorMap.SelectedItem.ItemSizePx / 2);
+                    // Check if the new position is inside the hexagon
+                    bool isInside = false;
                     if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
                     {
-                        sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
+                        isInside = SectorDirectHexagon.RenderedGeometry.FillContains(newPoint);
                     }
                     else
                     {
-                        sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
+                        isInside = SectorOppositeHexagon.RenderedGeometry.FillContains(newPoint);
                     }
-                    _logger.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
+                    _logger.Debug($"[MouseMove] IsInside: {isInside}");
+                    if (isInside)
+                    {
+                        // Update the SectorMapItem's coordinates
+                        sectorMap.SelectedItem.X = newX;
+                        sectorMap.SelectedItem.Y = newY;
+                        if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
+                        {
+                            sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
+                        }
+                        else
+                        {
+                            sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
+                        }
+                        _logger.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
+                    }
                 }
             }
         }
