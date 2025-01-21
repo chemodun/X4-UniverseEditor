@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text.Json;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 using NLog;
 
 namespace ChemGateBuilder
