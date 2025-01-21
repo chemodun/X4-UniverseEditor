@@ -50,18 +50,26 @@ namespace ChemGateBuilder
         {
             Items.Clear();
         }
-        public void AddItem(int x, int y, int z, string type, string status, bool isNew = false)
+        public void AddItem(SectorConnectionData connectionData, bool isNew = false)
         {
             Items.Add(new SectorMapItem
             {
-                ExternalX = x,
-                ExternalZ = z,
-                X = (x * VisualSizePx / InternalSizeKm + VisualSizePx) / 2,
-                Y = (z * VisualSizePx / InternalSizeKm + VisualSizePx) / 2,
-                Type = type,
-                Status = status,
+                SectorMap = this,
+                ConnectionData = connectionData,
                 IsNew = isNew
             });
+        }
+        public bool UpdateItem(SectorConnectionData connectionData)
+        {
+            foreach (var item in Items)
+            {
+                if (item.Id == connectionData.Id)
+                {
+                    item.ConnectionData = connectionData;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -70,13 +78,46 @@ namespace ChemGateBuilder
         private double _x;
         private double _y;
         private bool _isNew;
-
-        public int ExternalX {get; set;}
-        public int ExternalY {get; set;}
-        public int ExternalZ {get; set;}
-        public string Type { get; set; } // e.g., "empty", "gate", "highway", etc.
-        public string Status { get; set; } // e.g., "active", "inactive", "unknown"
-        public string ToolTip => $"{Type} ({ExternalX} km, {ExternalY} km, {ExternalZ} km) - {Status}";
+        private SectorConnectionData _connectionData;
+        private SectorMap _sectorMap;
+        public SectorMap SectorMap {
+            get => _sectorMap;
+            set {
+                _sectorMap = value;
+                UpdatePosition();
+            }
+        }
+        public SectorConnectionData ConnectionData {
+            get => _connectionData;
+            set {
+                _connectionData = value;
+                UpdatePosition();
+            }
+        }
+        public string Type { get {
+            if (_connectionData == null || _connectionData.Type == null)
+                return "empty";
+            return _connectionData.Type;
+        } } // e.g., "empty", "gate", "highway", etc.
+        public string Status { get {
+            if (_connectionData == null || _connectionData.Active == null)
+                return "unknown";
+            return _connectionData.Active ? "active" : "inactive";
+        } } // e.g., "active", "inactive", "unknown"
+        public string Id { get {
+            if (_connectionData == null)
+                return "unknown";
+            return _connectionData.Id;
+        } }
+        public string ToolTip { get {
+            if (_connectionData == null)
+                return "No connection data";
+            string result = $"Type: {Type}, Status: {Status}\n";
+            if (Type == "gate" || Type == "highway")
+                result += $"To: {_connectionData.ToSector ?? ""}\n";
+            result += $" X: {_connectionData.X}, Y: {_connectionData.Y}, Z: {_connectionData.Z}";
+            return result;
+        } }
 
         public double X
         {
@@ -96,6 +137,15 @@ namespace ChemGateBuilder
             set { _isNew = value; OnPropertyChanged(); }
         }
 
+        private void UpdatePosition()
+        {
+            if (SectorMap == null || ConnectionData == null)
+                return;
+            X = (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx) / 2;
+            Y = (ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx) / 2;
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+        }
         // Colors based on gate type and status
         public Brush BorderColor
         {

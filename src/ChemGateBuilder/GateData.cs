@@ -191,7 +191,7 @@ namespace ChemGateBuilder
                                 }
                             }
                             sectorConnections.Add(newConnection);
-                            sectorMap.AddItem(newConnection.X, newConnection.Y, newConnection.Z, newConnection.Type, newConnection.Active ? "active" : "inactive");
+                            sectorMap.AddItem(newConnection);
                         }
                     }
                 }
