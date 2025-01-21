@@ -399,7 +399,7 @@ namespace ChemGateBuilder
             double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
             if (GatesConnectionCurrent != null)
             {
-                GatesConnectionCurrent.SectorDirectMap.VisualSizePx = newSize;
+                GatesConnectionCurrent.SectorDirectMap.OnSizeChanged(newSize);
             }
         }
 
@@ -408,7 +408,7 @@ namespace ChemGateBuilder
             double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
             if (GatesConnectionCurrent != null)
             {
-                GatesConnectionCurrent.SectorOppositeMap.VisualSizePx = newSize;
+                GatesConnectionCurrent.SectorOppositeMap.OnSizeChanged(newSize);
             }
         }
 

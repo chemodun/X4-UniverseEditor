@@ -86,8 +86,16 @@ namespace ChemGateBuilder
             {
                 if (_gateDirect != value)
                 {
+                    if (_gateDirect != null)
+                    {
+                        _gateDirect.PropertyChanged -= ChildPropertyChanged;
+                    }
                     _gateDirect = value;
                     OnPropertyChanged(nameof(GateDirect));
+                    if (_gateDirect != null)
+                    {
+                        _gateDirect.PropertyChanged += ChildPropertyChanged;
+                    }
                 }
             }
         }
@@ -161,14 +169,68 @@ namespace ChemGateBuilder
             {
                 if (_gateOpposite != value)
                 {
+                    if (_gateOpposite != null)
+                    {
+                        _gateOpposite.PropertyChanged -= ChildPropertyChanged;
+                    }
                     _gateOpposite = value;
                     OnPropertyChanged(nameof(GateOpposite));
+                    if (_gateOpposite != null)
+                    {
+                        _gateOpposite.PropertyChanged += ChildPropertyChanged;
+                    }
                 }
             }
         }
 
+        public GatesConnectionData()
+        {
+            // Subscribe to child PropertyChanged events
+            if (_gateDirect != null)
+            {
+                _gateDirect.PropertyChanged += ChildPropertyChanged;
+                // UpdateCurrentGateOnMap(nameof(GateDirect));
+            }
+            if (_gateOpposite != null)
+            {
+                _gateOpposite.PropertyChanged += ChildPropertyChanged;
+                // UpdateCurrentGateOnMap(nameof(GateOpposite));
+            }
+        }
+
+        private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // Propagate the change
+            if (sender == GateDirect)
+            {
+                OnPropertyChanged(nameof(GateDirect));
+            }
+            else if (sender == GateOpposite)
+            {
+                OnPropertyChanged(nameof(GateOpposite));
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private void UpdateCurrentGateOnMap(string propertyName)
+        {
+            GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
+            if (gateCurrent == null) return;
+            SectorItem sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
+            SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
+            if (sectorMap == null) return;
+            SectorConnectionData newConnection = new SectorConnectionData
+            {
+                Active = gateCurrent.Active && sectorTo != null,
+                ToSector = sectorTo != null ? sectorTo.Name : "",
+                X = gateCurrent.Coordinates.X,
+                Y = gateCurrent.Coordinates.Y,
+                Z = gateCurrent.Coordinates.Z,
+                Type = "gate",
+                Id = "New"
+            };
+            sectorMap.UpdateItem(newConnection);
+        }
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -179,6 +241,7 @@ namespace ChemGateBuilder
                 sectorConnections.Clear();
                 SectorMap sectorMap = propertyName == nameof(SectorDirect) ? SectorDirectMap : SectorOppositeMap;
                 sectorMap.ClearItems();
+                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateDirect) : nameof(GateOpposite));
                 if (sectorCurrent == null) return;
 
 
@@ -194,7 +257,8 @@ namespace ChemGateBuilder
                 Galaxy galaxy = mainWindow.Galaxy;
                 Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
                 if (sector == null || sector.Zones == null || sector.Zones.Count == 0) return;
-
+                // Update opposite Gate details
+                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateOpposite) : nameof(GateDirect));
                 foreach (var zone in sector.Zones)
                 {
                     if (zone.Connections == null || zone.Connections.Count == 0) continue;
@@ -241,6 +305,10 @@ namespace ChemGateBuilder
                         }
                     }
                 }
+            }
+            else if (propertyName == nameof(GateDirect) || propertyName == nameof(GateOpposite))
+            {
+                UpdateCurrentGateOnMap(propertyName);
             }
         }
 
@@ -368,10 +436,19 @@ namespace ChemGateBuilder
             get => _coordinates;
             set
             {
-                if (_coordinates != value)
+                if (_coordinates != null)
                 {
-                    _coordinates = value;
-                    OnPropertyChanged(nameof(Coordinates));
+                    // Unsubscribe from previous Coordinates PropertyChanged
+                    _coordinates.PropertyChanged -= ChildPropertyChanged;
+                }
+
+                _coordinates = value;
+                OnPropertyChanged(nameof(Coordinates));
+
+                if (_coordinates != null)
+                {
+                    // Subscribe to new Coordinates PropertyChanged
+                    _coordinates.PropertyChanged += ChildPropertyChanged;
                 }
             }
         }
@@ -384,7 +461,7 @@ namespace ChemGateBuilder
                 if (_position != value)
                 {
                     _position = value;
-                    OnPropertyChanged(nameof(_position));
+                    OnPropertyChanged(nameof(Position));
                 }
             }
         }
@@ -427,7 +504,36 @@ namespace ChemGateBuilder
                 }
             }
         }
+        public GateData()
+        {
+            // Subscribe to initial child PropertyChanged events
+            if (_coordinates != null)
+                _coordinates.PropertyChanged += ChildPropertyChanged;
 
+            if (_position != null)
+                _position.PropertyChanged += ChildPropertyChanged;
+
+            if (_rotation != null)
+                _rotation.PropertyChanged += ChildPropertyChanged;
+        }
+        private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // Determine which child sent the event and handle accordingly
+            if (sender == Coordinates)
+            {
+                // Optionally, you can specify which property changed
+                // For simplicity, notify that Coordinates has changed
+                OnPropertyChanged(nameof(Coordinates));
+            }
+            else if (sender == Position)
+            {
+                OnPropertyChanged(nameof(Position));
+            }
+            else if (sender == Rotation)
+            {
+                OnPropertyChanged(nameof(Rotation));
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)

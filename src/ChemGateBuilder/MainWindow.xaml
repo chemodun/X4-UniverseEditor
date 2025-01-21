@@ -168,7 +168,7 @@
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Ellipse Width="14" Height="14"
+                                                            <Ellipse Width="{Binding ItemSizePx}" Height="{Binding ItemSizePx}"
                                                                     Fill="{Binding FillColor}"
                                                                     Stroke="{Binding BorderColor}"
                                                                     StrokeThickness="2"
@@ -354,7 +354,7 @@
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Ellipse Width="14" Height="14"
+                                                            <Ellipse Width="{Binding ItemSizePx}" Height="{Binding ItemSizePx}"
                                                                     Fill="{Binding FillColor}"
                                                                     Stroke="{Binding BorderColor}"
                                                                     StrokeThickness="2"

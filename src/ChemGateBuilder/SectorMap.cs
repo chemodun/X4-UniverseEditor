@@ -59,13 +59,13 @@ namespace ChemGateBuilder
         {
             Items.Clear();
         }
-        public void AddItem(SectorConnectionData connectionData, bool isNew = false)
+        public void AddItem(SectorConnectionData connectionData)
         {
             Items.Add(new SectorMapItem
             {
                 SectorMap = this,
                 ConnectionData = connectionData,
-                IsNew = isNew
+                IsNew = connectionData.Id == "New"
             });
         }
 
@@ -99,24 +99,25 @@ namespace ChemGateBuilder
             }
             return false;
         }
-        public bool UpdateItem(SectorConnectionData connectionData)
+        public void UpdateItem(SectorConnectionData connectionData)
         {
             for (int i = 0; i < Items.Count; i++)
             {
                 if (Items[i].Id == connectionData.Id)
                 {
-                    bool isNew = Items[i].IsNew;
                     Items.RemoveAt(i);
-                    Items.Add(new SectorMapItem
-                    {
-                        SectorMap = this,
-                        ConnectionData = connectionData,
-                        IsNew = isNew
-                    });
-                    return true;
                 }
             }
-            return false;
+            AddItem(connectionData);
+
+        }
+        public void OnSizeChanged(double newSize)
+        {
+            VisualSizePx = Math.Min(Math.Max(newSize, MinVisualSectorSize), MaxVisualSectorSize);
+            foreach (var item in Items.ToArray())
+            {
+                UpdateItem(item.ConnectionData);
+            }
         }
     }
 
@@ -124,6 +125,7 @@ namespace ChemGateBuilder
     {
         private double _x;
         private double _y;
+        private double _itemSizePx = 14;
         private bool _isNew;
         private SectorConnectionData _connectionData;
         private SectorMap _sectorMap;
@@ -165,7 +167,10 @@ namespace ChemGateBuilder
             result += $" X: {_connectionData.X}, Y: {_connectionData.Y}, Z: {_connectionData.Z}";
             return result;
         } }
-
+        public double ItemSizePx {
+            get => _itemSizePx;
+            set { _itemSizePx = value; OnPropertyChanged(); }
+        }
         public double X
         {
             get => _x;
@@ -188,8 +193,8 @@ namespace ChemGateBuilder
         {
             if (SectorMap == null || ConnectionData == null)
                 return;
-            X = (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx) / 2;
-            Y = (ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx) / 2;
+            X = (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            Y = (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
         }
@@ -214,7 +219,7 @@ namespace ChemGateBuilder
             get
             {
                 if (IsNew)
-                    return Brushes.Orange;
+                    return Brushes.LightGreen;
 
                 return Type switch
                 {
