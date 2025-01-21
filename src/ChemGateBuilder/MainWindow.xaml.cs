@@ -411,6 +411,7 @@ namespace ChemGateBuilder
         {
             if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
             {
+                _selectedGate = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
                 {
                     _isDragging = true;
@@ -450,13 +451,19 @@ namespace ChemGateBuilder
 
         private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_isDragging && _selectedGate != null)
+            if (_selectedGate != null)
             {
-                _isDragging = false;
+                if (_isDragging ) {
+                    _isDragging = false;
+                }
 
-                if (sender is Ellipse ellipse)
+                if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
                 {
                     ellipse.ReleaseMouseCapture();
+                    if (item.ConnectionData != null)
+                    {
+                        GatesConnectionCurrent.SectorDirectSelectedConnection = item.ConnectionData;
+                    }
                 }
 
                 // Optionally, persist the updated coordinates

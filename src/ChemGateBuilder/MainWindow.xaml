@@ -191,7 +191,7 @@
                                                 </ItemsControl>
                                             </Canvas>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
-                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedConnection}"
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedConnection, Mode=TwoWay}"
                                                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                       AutoGenerateColumns="False"
                                                       Margin="5"
