@@ -10,6 +10,7 @@ using System.Windows.Shapes;
 using X4DataLoader;
 using System.Windows.Input;
 using System.Windows.Controls;
+using NLog;
 
 namespace ChemGateBuilder
 {
@@ -32,10 +33,45 @@ namespace ChemGateBuilder
         public string X4DataExtractedPath { get; set; } = ".";
     }
 
-    public class LoggingConfig
+    public class LoggingConfig : INotifyPropertyChanged
     {
-        public string LogLevel { get; set; } = "Warning";
-        public bool LogToFile { get; set; } = false;
+        private string _logLevel = "Warning";
+        private bool _logToFile = false;
+
+        public string LogLevel
+        {
+            get => _logLevel;
+            set
+            {
+                if (_logLevel != value)
+                {
+                    _logLevel = value;
+                    OnPropertyChanged(nameof(LogLevel));
+                    App.ConfigureNLog(this);
+                }
+            }
+        }
+
+        public bool LogToFile
+        {
+            get => _logToFile;
+            set
+            {
+                if (_logToFile != value)
+                {
+                    _logToFile = value;
+                    OnPropertyChanged(nameof(LogToFile));
+                    App.ConfigureNLog(this);
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     public class SectorItem
@@ -58,6 +94,8 @@ namespace ChemGateBuilder
         private string _logLevel;
         private bool _logToFile;
         private string _statusMessage;
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         public string StatusMessage
         {
             get => _statusMessage;
@@ -173,7 +211,7 @@ namespace ChemGateBuilder
         private void HandleValidationError(string message)
         {
             // Optional: Log the validation message for debugging
-            System.Diagnostics.Debug.WriteLine($"Validation Error: {message}");
+            // _logger.LogError($"Validation Error: {message}");
 
             StatusMessage = message;
         }
@@ -184,6 +222,7 @@ namespace ChemGateBuilder
         // Constructor
         public MainWindow()
         {
+            _logger = LogManager.GetCurrentClassLogger();
             InitializeComponent();
             DataContext = this;
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
@@ -424,6 +463,7 @@ namespace ChemGateBuilder
         {
             if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
             {
+                _logger.Info($"Selected Sector: {item.ConnectionData.Id}");
                 sectorMap.selectedItem = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
                 {
