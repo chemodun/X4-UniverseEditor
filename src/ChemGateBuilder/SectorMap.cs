@@ -14,7 +14,7 @@ namespace ChemGateBuilder
         private double _visualX;
         private double _visualY;
         private double _visualSizePx = 100; // Default size
-
+        private string  _selectedItemId = "";
         public double InternalSizeKm { get; set; } = 400;
 
         public double VisualSizePx
@@ -38,6 +38,11 @@ namespace ChemGateBuilder
             set { _visualY = value; OnPropertyChanged(); }
         }
 
+        public string SelectedItemId
+        {
+            get => _selectedItemId;
+            set { _selectedItemId = value; OnPropertyChanged(); }
+        }
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -59,13 +64,51 @@ namespace ChemGateBuilder
                 IsNew = isNew
             });
         }
+
+        public void SelectItem(string ItemId)
+        {
+            string selectedItemId = SelectedItemId;
+            SelectedItemId = ItemId;
+            if (selectedItemId != ItemId)
+            {
+                if (selectedItemId != null && selectedItemId != "")
+                {
+                    RefreshItem(selectedItemId);
+                }
+                if (ItemId != null && ItemId != "")
+                {
+                    RefreshItem(ItemId);
+                }
+            }
+        }
+        public bool RefreshItem(string ItemId)
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].Id == ItemId)
+                {
+                    var Item = Items[i];
+                    Items.RemoveAt(i);
+                    Items.Add(Item);
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool UpdateItem(SectorConnectionData connectionData)
         {
-            foreach (var item in Items)
+            for (int i = 0; i < Items.Count; i++)
             {
-                if (item.Id == connectionData.Id)
+                if (Items[i].Id == connectionData.Id)
                 {
-                    item.ConnectionData = connectionData;
+                    bool isNew = Items[i].IsNew;
+                    Items.RemoveAt(i);
+                    Items.Add(new SectorMapItem
+                    {
+                        SectorMap = this,
+                        ConnectionData = connectionData,
+                        IsNew = isNew
+                    });
                     return true;
                 }
             }
@@ -151,10 +194,12 @@ namespace ChemGateBuilder
         {
             get
             {
+                if (ConnectionData != null && SectorMap != null && ConnectionData.Id == SectorMap.SelectedItemId)
+                    return Brushes.Yellow;
                 return Status switch
                 {
                     "active" => Brushes.LimeGreen,
-                    "inactive" => Brushes.Red,
+                    "inactive" => Brushes.Brown,
                     _ => Brushes.DarkGray
                 };
             }
@@ -165,12 +210,12 @@ namespace ChemGateBuilder
             get
             {
                 if (IsNew)
-                    return Brushes.Yellow;
+                    return Brushes.Orange;
 
                 return Type switch
                 {
                     "empty" => Brushes.DarkGray,
-                    "gate" => Brushes.Blue,
+                    "gate" => Brushes.DarkOrange,
                     "highway" => Brushes.Olive,
                     "mod" => Brushes.DarkGreen,
                     _ => Brushes.LightGray

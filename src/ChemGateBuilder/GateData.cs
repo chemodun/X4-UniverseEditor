@@ -9,10 +9,12 @@ namespace ChemGateBuilder
     public class GatesConnectionData : INotifyPropertyChanged
     {
         private SectorItem _sectorDirect = new SectorItem();
+        private SectorConnectionData _sectorDirectSelectedConnection = new SectorConnectionData();
         private SectorMap _sectorDirectMap = new SectorMap();
         private ObservableCollection<SectorConnectionData> _sectorDirectConnections = new ObservableCollection<SectorConnectionData>();
         private GateData _gateDirect = new GateData();
         private SectorItem _sectorOpposite = new SectorItem();
+        private SectorConnectionData _sectorOppositeSelectedConnection = new SectorConnectionData();
         private SectorMap _sectorOppositeMap = new SectorMap();
         private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = new ObservableCollection<SectorConnectionData>();
         private GateData _gateOpposite = new GateData();
@@ -29,7 +31,22 @@ namespace ChemGateBuilder
                 }
             }
         }
-
+        public SectorConnectionData SectorDirectSelectedConnection
+        {
+            get => _sectorDirectSelectedConnection;
+            set
+            {
+                if (_sectorDirectSelectedConnection != value)
+                {
+                    _sectorDirectSelectedConnection = value;
+                    if (_sectorDirectMap != null)
+                    {
+                        _sectorDirectMap.SelectItem(value.Id);
+                    }
+                    OnPropertyChanged(nameof(SectorDirectSelectedConnection));
+                }
+            }
+        }
         public SectorMap SectorDirectMap
         {
             get => _sectorDirectMap;
@@ -80,7 +97,18 @@ namespace ChemGateBuilder
                 }
             }
         }
-
+        public SectorConnectionData SectorOppositeSelectedConnection
+        {
+            get => _sectorOppositeSelectedConnection;
+            set
+            {
+                if (_sectorOppositeSelectedConnection != value)
+                {
+                    _sectorOppositeSelectedConnection = value;
+                    OnPropertyChanged(nameof(SectorOppositeSelectedConnection));
+                }
+            }
+        }
         public SectorMap SectorOppositeMap
         {
             get => _sectorOppositeMap;

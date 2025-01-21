@@ -191,11 +191,14 @@
                                                 </ItemsControl>
                                             </Canvas>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                    AutoGenerateColumns="False"
-                                                    Margin="5"
-                                                    CanUserAddRows="False"
-                                                    Height="140">
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedConnection}"
+                                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                      AutoGenerateColumns="False"
+                                                      Margin="5"
+                                                      CanUserAddRows="False"
+                                                      IsReadOnly="True"
+                                                      SelectionMode="Single"
+                                                      Height="140">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
                                                     <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
