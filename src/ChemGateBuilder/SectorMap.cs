@@ -45,6 +45,10 @@ namespace ChemGateBuilder
         }
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 
+        public bool isDragging = false;
+        public SectorMapItem selectedItem = null;
+        public Point mouseOffset;
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {

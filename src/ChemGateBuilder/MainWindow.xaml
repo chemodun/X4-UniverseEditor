@@ -172,9 +172,9 @@
                                                                     Fill="{Binding FillColor}"
                                                                     Stroke="{Binding BorderColor}"
                                                                     StrokeThickness="2"
-                                                                    PreviewMouseLeftButtonDown="SectorMapItem_MouseLeftButtonDown"
-                                                                    MouseMove="SectorMapItem_MouseMove"
-                                                                    MouseLeftButtonUp="SectorMapItem_MouseLeftButtonUp">
+                                                                    PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
+                                                                    MouseMove="SectorDirectMapItem_MouseMove"
+                                                                    MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
                                                                     <!-- by some reason this binding doesn't work
                                                                     Canvas.Left="{Binding X}"
                                                                     Canvas.Top="{Binding Y}"
@@ -336,13 +336,55 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Image DockPanel.Dock="Left" Width="140" Height="140" Margin="5"/>
+                                            <Canvas x:Name="SectorOppositeCanvas" Background="Black" DockPanel.Dock="Left" Width="140" Height="140" Margin="5"
+                                                SizeChanged="SectorOppositeCanvas_SizeChanged">
+                                                <!-- Hexagonal Sector Representation -->
+                                                <Polygon Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                        Stroke="White"
+                                                        StrokeThickness="2"
+                                                        Fill="Gray"
+                                                        Canvas.Left="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualX}"
+                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}" />
+                                                <!-- Gates Representation -->
+                                                <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeMap.Items}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <Canvas />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Ellipse Width="14" Height="14"
+                                                                    Fill="{Binding FillColor}"
+                                                                    Stroke="{Binding BorderColor}"
+                                                                    StrokeThickness="2"
+                                                                    PreviewMouseLeftButtonDown="SectorOppositeMapItem_MouseLeftButtonDown"
+                                                                    MouseMove="SectorOppositeMapItem_MouseMove"
+                                                                    MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp">
+                                                                    <!-- by some reason this binding doesn't work
+                                                                    Canvas.Left="{Binding X}"
+                                                                    Canvas.Top="{Binding Y}"
+                                                                    -->
+                                                                <Ellipse.RenderTransform>
+                                                                    <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                                                                </Ellipse.RenderTransform>
+                                                                <Ellipse.ToolTip>
+                                                                    <ToolTip Content="{Binding ToolTip}" />
+                                                                </Ellipse.ToolTip>
+                                                            </Ellipse>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Canvas>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeConnections}"
-                                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                    AutoGenerateColumns="False"
-                                                    Margin="5"
-                                                    CanUserAddRows="False"
-                                                    Height="140">
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedConnection, Mode=TwoWay}"
+                                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                      AutoGenerateColumns="False"
+                                                      Margin="5"
+                                                      CanUserAddRows="False"
+                                                      IsReadOnly="True"
+                                                      SelectionMode="Single"
+                                                      Height="140">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
                                                     <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>

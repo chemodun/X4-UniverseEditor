@@ -70,10 +70,6 @@ namespace ChemGateBuilder
                 }
             }
         }
-        private bool _isDragging = false;
-        private SectorMapItem _selectedGate = null;
-        private Point _mouseOffset;
-
         // Master sector list
         public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
 
@@ -407,18 +403,34 @@ namespace ChemGateBuilder
             }
         }
 
-        private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SectorOppositeCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
+            if (GatesConnectionCurrent != null)
+            {
+                GatesConnectionCurrent.SectorOppositeMap.VisualSizePx = newSize;
+            }
+        }
+
+        private void SectorDirectMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent.SectorDirectMap);
+        }
+        private void SectorOppositeMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent.SectorOppositeMap);
+        }
+        private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, SectorMap sectorMap)
         {
             if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
             {
-                _selectedGate = item;
+                sectorMap.selectedItem = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
                 {
-                    _isDragging = true;
-                    _selectedGate = item;
+                    sectorMap.isDragging = true;
 
                     // Get the mouse position relative to the gate
-                    _mouseOffset = e.GetPosition(ellipse);
+                    sectorMap.mouseOffset = e.GetPosition(ellipse);
 
                     // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
                     ellipse.CaptureMouse();
@@ -426,59 +438,81 @@ namespace ChemGateBuilder
             }
         }
 
-        private void SectorMapItem_MouseMove(object sender, MouseEventArgs e)
+        private void SectorDirectMapItem_MouseMove(object sender, MouseEventArgs e){
+            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent.SectorDirectMap);
+        }
+        private void SectorOppositeMapItem_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDragging && _selectedGate != null)
+            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent.SectorOppositeMap);
+        }
+        private void SectorMapItem_MouseMove(object sender, MouseEventArgs e, SectorMap sectorMap)
+        {
+            if (sectorMap.isDragging && sectorMap.selectedItem != null)
             {
                 if (sender is Ellipse ellipse && ellipse.Parent is Canvas itemCanvas)
                 {
                     // Get the current mouse position relative to the SectorCanvas
-                    Point mousePosition = e.GetPosition(SectorDirectCanvas);
+                    Point mousePosition = e.GetPosition(itemCanvas);
 
                     // Calculate new position by subtracting the offset
-                    double newX = mousePosition.X - _mouseOffset.X;
-                    double newY = mousePosition.Y - _mouseOffset.Y;
+                    double newX = mousePosition.X - sectorMap.mouseOffset.X;
+                    double newY = mousePosition.Y - sectorMap.mouseOffset.Y;
 
                     // Optional: Constrain within sector boundaries (hexagon)
                     // Implement boundary checks here if necessary
 
                     // Update the SectorMapItem's coordinates
-                    _selectedGate.X = newX;
-                    _selectedGate.Y = newY;
+                    sectorMap.selectedItem.X = newX;
+                    sectorMap.selectedItem.Y = newY;
                 }
             }
         }
 
-        private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void SectorDirectMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_selectedGate != null)
+            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent.SectorDirectMap, GatesConnectionCurrent, true);
+        }
+        private void SectorOppositeMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent.SectorOppositeMap, GatesConnectionCurrent, false);
+        }
+        private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e, SectorMap sectorMap, GatesConnectionData connectionData, bool isDirect)
+        {
+            if (sectorMap.selectedItem != null)
             {
-                if (_isDragging ) {
-                    _isDragging = false;
-                }
+                sectorMap.isDragging = false;
+                sectorMap.selectedItem = null;
 
                 if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
                 {
                     ellipse.ReleaseMouseCapture();
-                    if (item.ConnectionData != null)
+                    if (connectionData != null)
                     {
-                        GatesConnectionCurrent.SectorDirectSelectedConnection = item.ConnectionData;
+                        if (isDirect)
+                        {
+                            if (connectionData.SectorDirectSelectedConnection == item.ConnectionData)
+                            {
+                                connectionData.SectorDirectSelectedConnection = null;
+                            }
+                            else
+                            {
+                                connectionData.SectorDirectSelectedConnection = item.ConnectionData;
+                            }
+                        }
+                        else
+                        {
+                            if (connectionData.SectorOppositeSelectedConnection == item.ConnectionData)
+                            {
+                                connectionData.SectorOppositeSelectedConnection = null;
+                            }
+                            else
+                            {
+                                connectionData.SectorOppositeSelectedConnection = item.ConnectionData;
+                            }
+                        }
                     }
                 }
-
-                // Optionally, persist the updated coordinates
-                SaveSectorMapItemCoordinates(_selectedGate);
-
-                _selectedGate = null;
             }
-        }
-
-        private void SaveSectorMapItemCoordinates(SectorMapItem item)
-        {
-            // Implement your persistence logic here
-            // Example: Update the data source or notify a service
-            // Currently, since the Gate object is bound, updates are already reflected in the UI
-            // Add additional code here if you need to save the changes externally
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

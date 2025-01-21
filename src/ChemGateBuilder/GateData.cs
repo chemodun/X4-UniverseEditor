@@ -41,7 +41,14 @@ namespace ChemGateBuilder
                     _sectorDirectSelectedConnection = value;
                     if (_sectorDirectMap != null)
                     {
-                        _sectorDirectMap.SelectItem(value.Id);
+                        if (value != null)
+                        {
+                            _sectorDirectMap.SelectItem(value.Id);
+                        }
+                        else
+                        {
+                            _sectorDirectMap.SelectItem("");
+                        }
                     }
                     OnPropertyChanged(nameof(SectorDirectSelectedConnection));
                 }
@@ -105,6 +112,17 @@ namespace ChemGateBuilder
                 if (_sectorOppositeSelectedConnection != value)
                 {
                     _sectorOppositeSelectedConnection = value;
+                    if (_sectorOppositeMap != null)
+                    {
+                        if (value != null)
+                        {
+                            _sectorOppositeMap.SelectItem(value.Id);
+                        }
+                        else
+                        {
+                            _sectorOppositeMap.SelectItem("");
+                        }
+                    }
                     OnPropertyChanged(nameof(SectorOppositeSelectedConnection));
                 }
             }
