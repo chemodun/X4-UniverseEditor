@@ -218,7 +218,7 @@ namespace ChemGateBuilder
             if (gateCurrent == null) return;
             SectorItem sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
             SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
-            if (sectorMap == null) return;
+            if (sectorMap == null || sectorMap.IsDragging) return;
             SectorConnectionData newConnection = new SectorConnectionData
             {
                 Active = gateCurrent.Active && sectorTo != null,
@@ -230,6 +230,13 @@ namespace ChemGateBuilder
                 Id = "New"
             };
             sectorMap.UpdateItem(newConnection);
+        }
+
+        public void UpdateCurrentGateCoordinates(int X, int Y, int Z, string propertyName)
+        {
+            GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
+            if (gateCurrent == null) return;
+            gateCurrent.Coordinates = new Coordinates(X, Y ,Z);
         }
         protected void OnPropertyChanged(string propertyName)
         {
@@ -589,6 +596,12 @@ namespace ChemGateBuilder
             }
         }
 
+        public Coordinates(int x = 0, int y = 0, int z = 0)
+        {
+            _x = x;
+            _y = y;
+            _z = z;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)

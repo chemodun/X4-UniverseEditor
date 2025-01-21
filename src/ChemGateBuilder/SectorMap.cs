@@ -45,9 +45,9 @@ namespace ChemGateBuilder
         }
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 
-        public bool isDragging = false;
-        public SectorMapItem selectedItem = null;
-        public Point mouseOffset;
+        public bool IsDragging = false;
+        public SectorMapItem SelectedItem = null;
+        public Point MouseOffset;
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -197,6 +197,14 @@ namespace ChemGateBuilder
             Y = (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
+        }
+
+        public void UpdateInternalCoordinates(Coordinates coordinates)
+        {
+            if (SectorMap == null)
+                return;
+            coordinates.X = (int)((X * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            coordinates.Z = (int)((SectorMap.VisualSizePx - Y * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
         }
         // Colors based on gate type and status
         public Brush BorderColor

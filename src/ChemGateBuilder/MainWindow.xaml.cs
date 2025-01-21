@@ -463,18 +463,18 @@ namespace ChemGateBuilder
         {
             if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
             {
-                _logger.Info($"Selected Sector: {item.ConnectionData.Id}");
-                sectorMap.selectedItem = item;
+                sectorMap.SelectedItem = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
                 {
-                    sectorMap.isDragging = true;
+                    sectorMap.IsDragging = true;
 
                     // Get the mouse position relative to the gate
-                    sectorMap.mouseOffset = e.GetPosition(ellipse);
+                    sectorMap.MouseOffset = e.GetPosition(ellipse);
 
                     // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
                     ellipse.CaptureMouse();
                 }
+                _logger.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
             }
         }
 
@@ -487,23 +487,42 @@ namespace ChemGateBuilder
         }
         private void SectorMapItem_MouseMove(object sender, MouseEventArgs e, SectorMap sectorMap)
         {
-            if (sectorMap.isDragging && sectorMap.selectedItem != null)
+            if (sectorMap.IsDragging && sectorMap.SelectedItem != null)
             {
-                if (sender is Ellipse ellipse && ellipse.Parent is Canvas itemCanvas)
+                _logger.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
+                if (sender is Ellipse ellipse)
                 {
                     // Get the current mouse position relative to the SectorCanvas
-                    Point mousePosition = e.GetPosition(itemCanvas);
-
+                    Point mousePosition = e.GetPosition(ellipse);
+                    if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
+                    {
+                        mousePosition = e.GetPosition(SectorDirectCanvas);
+                    }
+                    else
+                    {
+                        mousePosition = e.GetPosition(SectorOppositeCanvas);
+                    }
                     // Calculate new position by subtracting the offset
-                    double newX = mousePosition.X - sectorMap.mouseOffset.X;
-                    double newY = mousePosition.Y - sectorMap.mouseOffset.Y;
+                    double newX = mousePosition.X - sectorMap.MouseOffset.X;
+                    double newY = mousePosition.Y - sectorMap.MouseOffset.Y;
 
                     // Optional: Constrain within sector boundaries (hexagon)
                     // Implement boundary checks here if necessary
+                    _logger.Debug($"[MouseMove] Mouse Position: {mousePosition}, New X: {newX}, New Y: {newY}, Selected.X: {sectorMap.SelectedItem.X}, Selected.Y: {sectorMap.SelectedItem.Y}");
 
                     // Update the SectorMapItem's coordinates
-                    sectorMap.selectedItem.X = newX;
-                    sectorMap.selectedItem.Y = newY;
+                    sectorMap.SelectedItem.X = newX;
+                    sectorMap.SelectedItem.Y = newY;
+                    // var newCoordinates = sectorMap.SelectedItem.GetCoordinates();
+                    if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
+                    {
+                        sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
+                    }
+                    else
+                    {
+                        sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
+                    }
+                    _logger.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
                 }
             }
         }
@@ -518,10 +537,10 @@ namespace ChemGateBuilder
         }
         private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e, SectorMap sectorMap, GatesConnectionData connectionData, bool isDirect)
         {
-            if (sectorMap.selectedItem != null)
+            if (sectorMap.SelectedItem != null)
             {
-                sectorMap.isDragging = false;
-                sectorMap.selectedItem = null;
+                sectorMap.IsDragging = false;
+                sectorMap.SelectedItem = null;
 
                 if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
                 {
