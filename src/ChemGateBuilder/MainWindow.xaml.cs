@@ -553,7 +553,7 @@ namespace ChemGateBuilder
                             {
                                 connectionData.SectorDirectSelectedConnection = null;
                             }
-                            else
+                            else if (!item.IsNew)
                             {
                                 connectionData.SectorDirectSelectedConnection = item.ConnectionData;
                             }
@@ -564,7 +564,7 @@ namespace ChemGateBuilder
                             {
                                 connectionData.SectorOppositeSelectedConnection = null;
                             }
-                            else
+                            else if (!item.IsNew)
                             {
                                 connectionData.SectorOppositeSelectedConnection = item.ConnectionData;
                             }
