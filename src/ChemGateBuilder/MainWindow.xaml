@@ -66,7 +66,7 @@
             <fluent:RibbonTabItem Header="Mod">
                 <fluent:RibbonGroupBox Header="Mod Actions">
                     <fluent:Button Header="New" IsEnabled="{Binding IsModCanBeCreated}"/>
-                    <fluent:Button Header="Load" />
+                    <fluent:Button Header="Load" IsEnabled="{Binding IsDataLoaded}"/>
                     <fluent:Button Header="Save" IsEnabled="{Binding IsModCanBeSaved}"/>
                     <fluent:Button Header="Exit" Click="ExitButton_Click" />
                 </fluent:RibbonGroupBox>
@@ -141,7 +141,7 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <DockPanel LastChildFill="True">
+        <DockPanel LastChildFill="True" IsEnabled="{Binding IsDataLoaded}">
             <!-- StatusBar Docked to Bottom -->
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>

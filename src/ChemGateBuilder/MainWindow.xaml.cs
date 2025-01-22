@@ -271,10 +271,11 @@ namespace ChemGateBuilder
         // Galaxy and Sectors
         public Galaxy Galaxy { get; private set; }
 
-        public bool IsGateCanBeDeleted => GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
-        public bool IsGateCanBeCreated => GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
-        public bool IsModCanBeSaved => GalaxyConnections.Count > 0;
-        public bool IsModCanBeCreated => GalaxyConnections.Count > 0;
+        public bool IsDataLoaded => AllSectors.Count > 0;
+        public bool IsGateCanBeDeleted => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsGateCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsModCanBeSaved => IsDataLoaded & GalaxyConnections.Count > 0;
+        public bool IsModCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0;
         // Constructor
         public MainWindow()
         {
