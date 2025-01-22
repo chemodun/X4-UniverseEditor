@@ -26,6 +26,7 @@ namespace ChemGateBuilder
     {
         public bool GatesActiveByDefault { get; set; } = true;
         public int GatesMinimalDistanceBetween { get; set; } = 10;
+        public int SectorRadius { get; set; } = 400;
     }
 
     public class DataConfig
@@ -92,6 +93,7 @@ namespace ChemGateBuilder
         private string _x4DataFolder;
         private bool _gatesActiveByDefault;
         private int _gatesMinimalDistanceBetween;
+        private int _sectorRadius = 400;
         private string _logLevel;
         private bool _logToFile;
         private string _statusMessage;
@@ -135,10 +137,13 @@ namespace ChemGateBuilder
             get => _x4DataFolder;
             set
             {
-                _x4DataFolder = value;
-                OnPropertyChanged(nameof(X4DataFolder));
-                OnPropertyChanged(nameof(X4DataFolderStatus));
-                SaveConfiguration();
+                if (_x4DataFolder != value && value != null)
+                {
+                    _x4DataFolder = value;
+                    OnPropertyChanged(nameof(X4DataFolder));
+                    OnPropertyChanged(nameof(X4DataFolderStatus));
+                    SaveConfiguration();
+                }
             }
         }
 
@@ -169,9 +174,12 @@ namespace ChemGateBuilder
             get => _gatesActiveByDefault;
             set
             {
-                _gatesActiveByDefault = value;
-                OnPropertyChanged(nameof(GatesActiveByDefault));
-                SaveConfiguration();
+                if (_gatesActiveByDefault != value && value != null)
+                {
+                    _gatesActiveByDefault = value;
+                    OnPropertyChanged(nameof(GatesActiveByDefault));
+                    SaveConfiguration();
+                }
             }
         }
 
@@ -180,20 +188,45 @@ namespace ChemGateBuilder
             get => _gatesMinimalDistanceBetween;
             set
             {
-                _gatesMinimalDistanceBetween = value;
-                OnPropertyChanged(nameof(GatesMinimalDistanceBetween));
-                SaveConfiguration();
+                if (_gatesMinimalDistanceBetween != value && value != null)
+                {
+                    _gatesMinimalDistanceBetween = value;
+                    OnPropertyChanged(nameof(GatesMinimalDistanceBetween));
+                    SaveConfiguration();
+                }
             }
         }
 
+        public int SectorRadius
+        {
+            get => _sectorRadius;
+            set
+            {
+                if (_sectorRadius != value && value != null)
+                {
+                    _sectorRadius = value;
+                    OnPropertyChanged(nameof(SectorRadius));
+                    SaveConfiguration();
+                    if (value != null && value > 0 && GatesConnectionCurrent != null)
+                    {
+                        GatesConnectionCurrent.SectorDirectMap.SetInternalSize(value);
+                        GatesConnectionCurrent.SectorOppositeMap.SetInternalSize(value);
+                    }
+                }
+            }
+        }
+        public int SectorRadiusNegative => -SectorRadius;
         public string LogLevel
         {
             get => _logLevel;
             set
             {
-                _logLevel = value;
-                OnPropertyChanged(nameof(LogLevel));
-                SaveConfiguration();
+                if (_logLevel != value && value != null)
+                {
+                    _logLevel = value;
+                    OnPropertyChanged(nameof(LogLevel));
+                    SaveConfiguration();
+                }
             }
         }
 
@@ -202,9 +235,12 @@ namespace ChemGateBuilder
             get => _logToFile;
             set
             {
-                _logToFile = value;
-                OnPropertyChanged(nameof(LogToFile));
-                SaveConfiguration();
+                if (_logToFile != value && value != null)
+                {
+                    _logToFile = value;
+                    OnPropertyChanged(nameof(LogToFile));
+                    SaveConfiguration();
+                }
             }
         }
 
@@ -276,6 +312,7 @@ namespace ChemGateBuilder
                     X4DataFolder = config.Data.X4DataExtractedPath;
                     GatesActiveByDefault = config.Edit.GatesActiveByDefault;
                     GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
+                    SectorRadius = config.Edit.SectorRadius;
                     LogLevel = config.Logging.LogLevel;
                     LogToFile = config.Logging.LogToFile;
                 }
@@ -299,7 +336,8 @@ namespace ChemGateBuilder
                 Edit = new EditConfig
                 {
                     GatesActiveByDefault = GatesActiveByDefault,
-                    GatesMinimalDistanceBetween = GatesMinimalDistanceBetween
+                    GatesMinimalDistanceBetween = GatesMinimalDistanceBetween,
+                    SectorRadius = SectorRadius
                 },
                 Logging = new LoggingConfig
                 {

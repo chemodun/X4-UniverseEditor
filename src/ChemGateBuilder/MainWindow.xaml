@@ -27,6 +27,9 @@
         <Style x:Key="RightAlignedTextBlockStyle" TargetType="TextBlock">
             <Setter Property="TextAlignment" Value="Right"/>
         </Style>
+        <Style x:Key="RightAlignedTextBoxStyle" TargetType="TextBox">
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
         <Style x:Key="DataGridCenterColumnHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
@@ -35,8 +38,8 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="MinWidth" Value="40"/>
             <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
-            <Setter Property="local:TextBoxExtensions.MinValue" Value="-499"/>
-            <Setter Property="local:TextBoxExtensions.MaxValue" Value="499"/>
+            <Setter Property="local:TextBoxExtensions.MinValue" Value="{Binding SectorRadiusNegative}"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue" Value="{Binding SectorRadius}"/>
             <Setter Property="TextAlignment" Value="Right"/>
         </Style>
         <Style x:Key="PositionTextBoxStyle" TargetType="TextBox">
@@ -75,13 +78,37 @@
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Options">
                 <fluent:RibbonGroupBox Header="Edit Options">
-                    <StackPanel>
-                        <CheckBox Content="Default Gate Active" Margin="5" IsChecked="{Binding GatesActiveByDefault}"/>
-                        <StackPanel Orientation="Horizontal" Margin="5">
-                            <Label Content="Minimal Distance Between Gates:" VerticalAlignment="Center"/>
-                            <TextBox Width="100" Margin="5" Text="{Binding GatesMinimalDistanceBetween}"/>
-                        </StackPanel>
-                    </StackPanel>
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Content="Gates Active by Default:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Margin="1" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" IsChecked="{Binding GatesActiveByDefault}"/>
+                        <Label Content="Minimal Distance Between Gates, km:" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Center"/>
+                        <TextBox Width="100" Margin="2"
+                                Grid.Row="1" Grid.Column="1"
+                                Text="{Binding GatesMinimalDistanceBetween}"
+                                local:TextBoxExtensions.IsIntegerOnly="True"
+                                local:TextBoxExtensions.MinValue="0"
+                                local:TextBoxExtensions.MaxValue="99"
+                                Style="{StaticResource RightAlignedTextBoxStyle}"
+                                VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <Label Content='Sector "Radius", km:' Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center"/>
+                        <TextBox Width="100" Margin="2"
+                                Grid.Row="2" Grid.Column="1"
+                                local:TextBoxExtensions.IsIntegerOnly="True"
+                                local:TextBoxExtensions.MinValue="0"
+                                local:TextBoxExtensions.MaxValue="999"
+                                Style="{StaticResource RightAlignedTextBoxStyle}"
+                                Text="{Binding SectorRadius}"
+                                VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="X4 Data Options">
                     <StackPanel Orientation="Vertical" Margin="0">

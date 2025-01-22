@@ -48,7 +48,6 @@ namespace ChemGateBuilder
         public bool IsDragging = false;
         public SectorMapItem SelectedItem = null;
         public Point MouseOffset;
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
@@ -111,13 +110,23 @@ namespace ChemGateBuilder
             AddItem(connectionData);
 
         }
-        public void OnSizeChanged(double newSize)
+
+        private void UpdateItems()
         {
-            VisualSizePx = Math.Min(Math.Max(newSize, MinVisualSectorSize), MaxVisualSectorSize);
             foreach (var item in Items.ToArray())
             {
                 UpdateItem(item.ConnectionData);
             }
+        }
+        public void OnSizeChanged(double newSize)
+        {
+            VisualSizePx = Math.Min(Math.Max(newSize, MinVisualSectorSize), MaxVisualSectorSize);
+            UpdateItems();
+        }
+        public void SetInternalSize (int sizeKm)
+        {
+            InternalSizeKm = sizeKm;
+            UpdateItems();
         }
     }
 
