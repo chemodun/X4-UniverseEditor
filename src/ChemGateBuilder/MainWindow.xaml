@@ -68,7 +68,7 @@
                     <fluent:Button Header="New" IsEnabled="{Binding IsModCanBeCreated}"/>
                     <fluent:Button Header="Load" IsEnabled="{Binding IsDataLoaded}"/>
                     <fluent:Button Header="Save" IsEnabled="{Binding IsModCanBeSaved}"/>
-                    <fluent:Button Header="Exit" Click="ExitButton_Click" />
+                    <fluent:Button Header="Exit" Click="ButtonExit_Click" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="X4 Data">
@@ -298,7 +298,8 @@
                                                     IsChecked="{Binding GatesConnectionCurrent.GateDirect.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <Label Content="Gate Macro:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
                                             <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
-                                                Text="{Binding GatesConnectionCurrent.GateDirect.GateMacro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                SelectedItem="{Binding GatesConnectionCurrent.GateDirect.GateMacro, Mode=TwoWay}"
+                                                ItemsSource="{Binding GateMacros}" />
                                         </Grid>
                                     </GroupBox>
                                 </StackPanel>
@@ -444,15 +445,26 @@
                                                     IsChecked="{Binding GatesConnectionCurrent.GateOpposite.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <Label Content="Gate Macro:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
                                             <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
-                                                Text="{Binding GatesConnectionCurrent.GateOpposite.GateMacro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                SelectedItem="{Binding GatesConnectionCurrent.GateOpposite.GateMacro, Mode=TwoWay}"
+                                            ItemsSource="{Binding GateMacros}" />
                                         </Grid>
                                     </GroupBox>
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
                         <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Right">
-                            <Button Content="Reset" Margin="0,0,5,0" Width="100"/>
-                            <Button Content="Add" Margin="5,0,0,0" Width="100"/>
+                            <Button x:Name="ButtonReset"
+                                    Content="Reset"
+                                    Margin="0,0,5,0"
+                                    Width="100"
+                                    IsEnabled="{Binding GatesConnectionCurrent.IsChanged}"
+                                    Click="ButtonReset_Click"/>
+                            <Button x:Name="ButtonSave"
+                                    Content="Add"
+                                    Margin="5,0,0,0"
+                                    Width="100"
+                                    IsEnabled="{Binding GatesConnectionCurrent.IsReadyToSave}"
+                                    Click="ButtonSave_Click"/>
                         </StackPanel>
                         </StackPanel>
                     </GroupBox>

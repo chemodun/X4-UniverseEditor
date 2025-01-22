@@ -75,15 +75,6 @@ namespace ChemGateBuilder
         }
     }
 
-    public class SectorItem
-    {
-        public string Name { get; set; }
-        public string Source { get; set; }
-        public string Macro { get; set; }
-        public bool Selectable { get; set; }
-    }
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -97,6 +88,7 @@ namespace ChemGateBuilder
         private string _logLevel;
         private bool _logToFile;
         private string _statusMessage;
+        private string _gateMacroDefault = "props_gates_anc_gate_macro";
         public static Logger _logger = LogManager.GetCurrentClassLogger();
         public static string GalaxyConnectionPrefix = "Chem_Gate";
         public string StatusMessage
@@ -133,6 +125,7 @@ namespace ChemGateBuilder
         public CollectionViewSource SectorsDirectViewSource { get; } = new CollectionViewSource();
         public CollectionViewSource SectorsOppositeViewSource { get; } = new CollectionViewSource();
 
+        public ObservableCollection<string> GateMacros { get; } = new ObservableCollection<string>();
         // GatesConnectionCurrent Property
         private GatesConnectionData _gatesConnectionCurrent;
         public GatesConnectionData GatesConnectionCurrent
@@ -194,6 +187,7 @@ namespace ChemGateBuilder
                 {
                     _gatesActiveByDefault = value;
                     OnPropertyChanged(nameof(GatesActiveByDefault));
+                    if (GatesConnectionCurrent != null) GatesConnectionCurrent.SetDefaults(value);
                     SaveConfiguration();
                 }
             }
@@ -280,10 +274,12 @@ namespace ChemGateBuilder
         public MainWindow()
         {
             _logger = LogManager.GetCurrentClassLogger();
-            InitializeComponent();
-            DataContext = this;
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             LoadConfiguration();
+            GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
+            InitializeComponent();
+            DataContext = this;
+            GatesConnectionCurrent.Reset();
 
             // Initialize CollectionViewSource filters
             SectorsDirectViewSource.Filter += SectorsDirect_Filter;
@@ -307,8 +303,8 @@ namespace ChemGateBuilder
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
                 StatusMessage = "X4 Data folder validated successfully.";
-                GatesConnectionCurrent = new GatesConnectionData(Galaxy, GalaxyConnectionPrefix);
                 LoadSectors();
+                GateMacros.Add(_gateMacroDefault);
             }
 
             // Optionally, set default selections
@@ -644,10 +640,30 @@ namespace ChemGateBuilder
             }
         }
 
-        public void ExitButton_Click(object sender, RoutedEventArgs e)
+        public void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
+
+        public void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (GatesConnectionCurrent != null)
+            {
+                // GatesConnectionCurrent.Save();
+                _logger.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
+            }
+        }
+
+        public void ButtonReset_Click(object sender, RoutedEventArgs e)
+        {
+            if (GatesConnectionCurrent != null)
+            {
+                GatesConnectionCurrent.Reset();
+                SectorsDirectViewSource.View.Refresh();
+                SectorsOppositeViewSource.View.Refresh();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

@@ -9,23 +9,16 @@ namespace ChemGateBuilder
     public class GalaxyConnectionData : INotifyPropertyChanged
 
     {
-        private string _sectorDirectName;
         private int _gateDirectX;
         private int _gateDirectY;
         private int _gateDirectZ;
-        private bool _gateDirectActive;
-        private string _sectorOppositeName;
         private int _gateOppositeX;
         private int _gateOppositeY;
         private int _gateOppositeZ;
-        private bool _gateOppositeActive;
         private GalaxyConnection _connection;
 
-        public string SectorDirectName
-        {
-            get => _sectorDirectName;
-            set { _sectorDirectName = value; OnPropertyChanged(nameof(SectorDirectName)); }
-        }
+        public string SectorDirectName => _connection.PathDirect.Sector.Name;
+
         public int GateDirectX
         {
             get => _gateDirectX;
@@ -41,16 +34,8 @@ namespace ChemGateBuilder
             get => _gateDirectZ;
             set { _gateDirectZ = value; OnPropertyChanged(nameof(GateDirectZ)); }
         }
-        public bool GateDirectActive
-        {
-            get => _gateDirectActive;
-            set { _gateDirectActive = value; OnPropertyChanged(nameof(GateDirectActive)); }
-        }
-        public string SectorOppositeName
-        {
-            get => _sectorOppositeName;
-            set { _sectorOppositeName = value; OnPropertyChanged(nameof(SectorOppositeName)); }
-        }
+        public bool GateDirectActive => _connection.PathDirect.Gate != null && _connection.PathDirect.Gate.IsActive;
+        public string SectorOppositeName => _connection.PathOpposite.Sector.Name;
         public int GateOppositeX
         {
             get => _gateOppositeX;
@@ -66,19 +51,7 @@ namespace ChemGateBuilder
             get => _gateOppositeZ;
             set { _gateOppositeZ = value; OnPropertyChanged(nameof(GateOppositeZ)); }
         }
-        public bool GateOppositeActive
-        {
-            get => _gateOppositeActive;
-            set { _gateOppositeActive = value; OnPropertyChanged(nameof(GateOppositeActive)); }
-        }
-
-        public string ConnectionId {
-            get {
-                if (_connection == null || _connection.Name == null)
-                    return "";
-                return _connection.Name;
-            }
-        }
+        public bool GateOppositeActive => _connection.PathOpposite.Gate != null && _connection.PathOpposite.Gate.IsActive;
 
         public GalaxyConnection Connection
         {
