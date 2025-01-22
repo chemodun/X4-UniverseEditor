@@ -8,6 +8,8 @@ namespace ChemGateBuilder
 {
     public class GatesConnectionData : INotifyPropertyChanged
     {
+        private Galaxy _galaxy;
+        private string _prefix;
         private SectorItem _sectorDirect = new SectorItem();
         private SectorConnectionData _sectorDirectSelectedConnection = new SectorConnectionData();
         private SectorMap _sectorDirectMap = new SectorMap();
@@ -19,6 +21,29 @@ namespace ChemGateBuilder
         private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = new ObservableCollection<SectorConnectionData>();
         private GateData _gateOpposite = new GateData();
 
+        public string ConnectionId {
+            get {
+                string directId = "cl_00_sect_000";
+                if (_sectorDirect != null)
+                {
+                    Sector sector = _galaxy.GetSectorByMacro(_sectorDirect.Macro);
+                    if (sector != null)
+                    {
+                        directId = $"cl_{sector.ClusterId:D2}_sect_{sector.Id:D3}";
+                    }
+                }
+                string oppositeId = "cl_00_sect_000";
+                if (_sectorOpposite != null)
+                {
+                    Sector sector = _galaxy.GetSectorByMacro(_sectorOpposite.Macro);
+                    if (sector != null)
+                    {
+                        oppositeId = $"cl_{sector.ClusterId:D2}_sect_{sector.Id:D3}";
+                    }
+                }
+                return $"{_prefix}_{directId}_to_{oppositeId}";
+            }
+        }
         public SectorItem SectorDirect
         {
             get => _sectorDirect;
@@ -183,8 +208,10 @@ namespace ChemGateBuilder
             }
         }
 
-        public GatesConnectionData()
+        public GatesConnectionData(Galaxy galaxy, string prefix)
         {
+            _galaxy = galaxy;
+            _prefix = prefix;
             // Subscribe to child PropertyChanged events
             if (_gateDirect != null)
             {

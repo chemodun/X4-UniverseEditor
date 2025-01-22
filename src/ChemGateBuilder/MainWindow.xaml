@@ -65,10 +65,10 @@
         <fluent:Ribbon DockPanel.Dock="Top">
             <fluent:RibbonTabItem Header="Mod">
                 <fluent:RibbonGroupBox Header="Mod Actions">
-                    <fluent:Button Header="New" />
+                    <fluent:Button Header="New" IsEnabled="{Binding IsModCanBeCreated}"/>
                     <fluent:Button Header="Load" />
-                    <fluent:Button Header="Save" />
-                    <fluent:Button Header="Exit" />
+                    <fluent:Button Header="Save" IsEnabled="{Binding IsModCanBeSaved}"/>
+                    <fluent:Button Header="Exit" Click="ExitButton_Click" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="X4 Data">
@@ -462,23 +462,32 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
-                            <DataGrid Grid.Column="0" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGenerateColumns="False">
+                            <DataGrid ItemsSource="{Binding GalaxyConnections}"
+                                    SelectedItem="{Binding CurrentGalaxyConnection, Mode=TwoWay}"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                    AutoGenerateColumns="False"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5"
+                                    CanUserAddRows="False"
+                                    IsReadOnly="True"
+                                    SelectionMode="Single"
+                                    MinHeight="80">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="From Sector" Width="*"/>
-                                    <DataGridTextColumn Header="X,km" Width="*"/>
-                                    <DataGridTextColumn Header="Y,km" Width="*"/>
-                                    <DataGridTextColumn Header="Z,km" Width="*"/>
-                                    <DataGridTextColumn Header="Active" Width="*"/>
-                                    <DataGridTextColumn Header="To Sector" Width="*"/>
-                                    <DataGridTextColumn Header="X,km" Width="*"/>
-                                    <DataGridTextColumn Header="Y,km" Width="*"/>
-                                    <DataGridTextColumn Header="Z,km" Width="*"/>
-                                    <DataGridTextColumn Header="Active" Width="*"/>
+                                    <DataGridTextColumn Header="From Sector" Binding="{Binding SectorDirectName}" Width="*"/>
+                                    <DataGridTextColumn Header="X,km" Binding="{Binding GateDirectX}" Width="*"/>
+                                    <DataGridTextColumn Header="Y,km" Binding="{Binding GateDirectY}" Width="*"/>
+                                    <DataGridTextColumn Header="Z,km" Binding="{Binding GateDirectZ}" Width="*"/>
+                                    <DataGridTextColumn Header="Active" Binding="{Binding GateDirectActive}" Width="*"/>
+                                    <DataGridTextColumn Header="To Sector" Binding="{Binding SectorOppositeName}" Width="*"/>
+                                    <DataGridTextColumn Header="X,km" Binding="{Binding GateOppositeX}" Width="*"/>
+                                    <DataGridTextColumn Header="Y,km" Binding="{Binding GateOppositeY}" Width="*"/>
+                                    <DataGridTextColumn Header="Z,km" Binding="{Binding GateOppositeZ}" Width="*"/>
+                                    <DataGridTextColumn Header="Active" Binding="{Binding GateOppositeActive}" Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5">
-                                <Button Content="New Gate" Margin="0,0,0,5" Width="100" />
-                                <Button Content="Delete Gate" Margin="0,5,0,0" Width="100" />
+                                <Button x:Name="GateNew" Content="New Gate" Margin="0,0,0,5" Width="100" IsEnabled="{Binding IsGateCanBeCreated}"/>
+                                <Button x:Name="GateDelete" Content="Delete Gate" Margin="0,5,0,0" Width="100" IsEnabled="{Binding IsGateCanBeDeleted}"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>

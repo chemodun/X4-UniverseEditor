@@ -98,6 +98,7 @@ namespace ChemGateBuilder
         private bool _logToFile;
         private string _statusMessage;
         public static Logger _logger = LogManager.GetCurrentClassLogger();
+        public static string GalaxyConnectionPrefix = "Chem_Gate";
         public string StatusMessage
         {
             get => _statusMessage;
@@ -110,6 +111,21 @@ namespace ChemGateBuilder
                 }
             }
         }
+        private GalaxyConnectionData _currentGalaxyConnection;
+        public GalaxyConnectionData CurrentGalaxyConnection
+        {
+            get => _currentGalaxyConnection;
+            set
+            {
+                if (_currentGalaxyConnection != value)
+                {
+                    _currentGalaxyConnection = value;
+                    OnPropertyChanged(nameof(CurrentGalaxyConnection));
+                }
+            }
+        }
+        public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = new ObservableCollection<GalaxyConnectionData>();
+
         // Master sector list
         public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
 
@@ -118,7 +134,7 @@ namespace ChemGateBuilder
         public CollectionViewSource SectorsOppositeViewSource { get; } = new CollectionViewSource();
 
         // GatesConnectionCurrent Property
-        private GatesConnectionData _gatesConnectionCurrent = new GatesConnectionData();
+        private GatesConnectionData _gatesConnectionCurrent;
         public GatesConnectionData GatesConnectionCurrent
         {
             get => _gatesConnectionCurrent;
@@ -255,6 +271,10 @@ namespace ChemGateBuilder
         // Galaxy and Sectors
         public Galaxy Galaxy { get; private set; }
 
+        public bool IsGateCanBeDeleted => GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsGateCanBeCreated => GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsModCanBeSaved => GalaxyConnections.Count > 0;
+        public bool IsModCanBeCreated => GalaxyConnections.Count > 0;
         // Constructor
         public MainWindow()
         {
@@ -286,6 +306,7 @@ namespace ChemGateBuilder
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
                 StatusMessage = "X4 Data folder validated successfully.";
+                GatesConnectionCurrent = new GatesConnectionData(Galaxy, GalaxyConnectionPrefix);
                 LoadSectors();
             }
 
@@ -622,6 +643,10 @@ namespace ChemGateBuilder
             }
         }
 
+        public void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
