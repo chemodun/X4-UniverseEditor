@@ -177,7 +177,7 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Canvas x:Name="SectorDirectCanvas" Background="Black" DockPanel.Dock="Left" Width="140" Height="140" Margin="5"
+                                            <Canvas x:Name="SectorDirectCanvas" Background="Black" DockPanel.Dock="Left" Width="160" Height="160" Margin="5"
                                                 SizeChanged="SectorDirectCanvas_SizeChanged">
                                                 <!-- Hexagonal Sector Representation -->
                                                 <Polygon x:Name="SectorDirectHexagon" Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
@@ -225,7 +225,7 @@
                                                       CanUserAddRows="False"
                                                       IsReadOnly="True"
                                                       SelectionMode="Single"
-                                                      Height="140">
+                                                      MinHeight="160">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
                                                     <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
@@ -238,108 +238,68 @@
                                         </DockPanel>
                                     </GroupBox>
                                     <GroupBox Header="Gate Parameters" Margin="5">
-                                        <StackPanel>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Coordinates (km):" Grid.Column="0" VerticalAlignment="Center"/>
-                                                <Grid Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1"
-                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3"
-                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5"
-                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Position (m):" Grid.Column="0" VerticalAlignment="Center"/>
-                                                <Grid Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1"
-                                                            Style="{StaticResource PositionTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3"
-                                                            Style="{StaticResource PositionTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5"
-                                                            Style="{StaticResource PositionTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Rotation (°):" Grid.Column="0" VerticalAlignment="Center"/>
-                                                <Grid Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Content="Roll:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1"
-                                                            Style="{StaticResource RotationTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Pitch:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3"
-                                                            Style="{StaticResource RotationTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Yaw:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5"
-                                                            Style="{StaticResource RotationTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="10"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <CheckBox Content="Active" Grid.Column="0" VerticalAlignment="Center"
-                                                        IsChecked="{Binding GatesConnectionCurrent.GateDirect.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                <Label Content="Gate Macro:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Column="3"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.GateMacro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </Grid>
-                                        </StackPanel>
+                                        <Grid Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Content="Gate Coordinates (km):" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <Label Content="X:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="2"
+                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Y:" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="4"
+                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Z:" Grid.Row="0" Grid.Column="5" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="6"
+                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Position (m):" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <Label Content="X:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Grid.Column="2"
+                                                    Style="{StaticResource PositionTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Y:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Grid.Column="4"
+                                                    Style="{StaticResource PositionTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Z:" Grid.Row="1" Grid.Column="5" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Grid.Column="6"
+                                                    Style="{StaticResource PositionTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Rotation (°):" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <Label Content="Roll:" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="2" Grid.Column="2"
+                                                    Style="{StaticResource RotationTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Pitch:" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="2" Grid.Column="4"
+                                                    Style="{StaticResource RotationTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Yaw:" Grid.Row="2" Grid.Column="5" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="2" Grid.Column="6"
+                                                    Style="{StaticResource RotationTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Active:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
+                                                    IsChecked="{Binding GatesConnectionCurrent.GateDirect.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Macro:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
+                                            <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
+                                                Text="{Binding GatesConnectionCurrent.GateDirect.GateMacro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
                                     </GroupBox>
                                 </StackPanel>
                             </GroupBox>
@@ -363,7 +323,7 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Canvas x:Name="SectorOppositeCanvas" Background="Black" DockPanel.Dock="Left" Width="140" Height="140" Margin="5"
+                                            <Canvas x:Name="SectorOppositeCanvas" Background="Black" DockPanel.Dock="Left" Width="160" Height="160" Margin="5"
                                                 SizeChanged="SectorOppositeCanvas_SizeChanged">
                                                 <!-- Hexagonal Sector Representation -->
                                                 <Polygon x:Name="SectorOppositeHexagon" Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
@@ -411,7 +371,7 @@
                                                       CanUserAddRows="False"
                                                       IsReadOnly="True"
                                                       SelectionMode="Single"
-                                                      Height="140">
+                                                      MinHeight="160">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
                                                     <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
@@ -424,108 +384,68 @@
                                         </DockPanel>
                                     </GroupBox>
                                     <GroupBox Header="Gate Parameters" Margin="5">
-                                        <StackPanel>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Coordinates (km):" Grid.Column="0" VerticalAlignment="Center"/>
-                                                <Grid Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1"
-                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3"
-                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5"
-                                                            Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Position (m):" Grid.Column="0" VerticalAlignment="Center"/>
-                                                <Grid Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Content="X:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1"
-                                                            Style="{StaticResource PositionTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Y:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3"
-                                                            Style="{StaticResource PositionTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Z:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5"
-                                                            Style="{StaticResource PositionTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="Gate Rotation (°):" Grid.Column="0" VerticalAlignment="Center"/>
-                                                <Grid Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Label Content="Roll:" Grid.Column="0" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="1"
-                                                            Style="{StaticResource RotationTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Pitch:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="3"
-                                                            Style="{StaticResource RotationTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <Label Content="Yaw:" Grid.Column="4" VerticalAlignment="Center"/>
-                                                    <TextBox Grid.Column="5"
-                                                            Style="{StaticResource RotationTextBoxStyle}"
-                                                            Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid Margin="5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="10"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <CheckBox Content="Active" Grid.Column="0" VerticalAlignment="Center"
-                                                        IsChecked="{Binding GatesConnectionCurrent.GateOpposite.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                <Label Content="Gate Macro:" Grid.Column="2" VerticalAlignment="Center"/>
-                                                <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Column="3"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.GateMacro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </Grid>
-                                        </StackPanel>
+                                        <Grid Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Content="Gate Coordinates (km):" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <Label Content="X:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="2"
+                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Y:" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="4"
+                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Z:" Grid.Row="0" Grid.Column="5" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="6"
+                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Position (m):" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <Label Content="X:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Grid.Column="2"
+                                                    Style="{StaticResource PositionTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Y:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Grid.Column="4"
+                                                    Style="{StaticResource PositionTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Z:" Grid.Row="1" Grid.Column="5" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Grid.Column="6"
+                                                    Style="{StaticResource PositionTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Rotation (°):" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <Label Content="Roll:" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="2" Grid.Column="2"
+                                                    Style="{StaticResource RotationTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Pitch:" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="2" Grid.Column="4"
+                                                    Style="{StaticResource RotationTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Yaw:" Grid.Row="2" Grid.Column="5" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="2" Grid.Column="6"
+                                                    Style="{StaticResource RotationTextBoxStyle}"
+                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Active:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
+                                                    IsChecked="{Binding GatesConnectionCurrent.GateOpposite.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Label Content="Gate Macro:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
+                                            <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
+                                                Text="{Binding GatesConnectionCurrent.GateOpposite.GateMacro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
                                     </GroupBox>
                                 </StackPanel>
                             </GroupBox>
