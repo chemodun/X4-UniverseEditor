@@ -441,16 +441,19 @@ namespace ChemGateBuilder
         {
             if (e.Item is SectorItem sector)
             {
+                sector.Selectable = true;
                 // Exclude the sector selected in Opposite ComboBox
-                if (GatesConnectionCurrent.SectorOpposite != null && sector.Macro == GatesConnectionCurrent.SectorOpposite.Macro)
+                if (GatesConnectionCurrent.SectorOpposite != null)
                 {
-
-                    sector.Selectable = false;
+                    if (sector.Macro == GatesConnectionCurrent.SectorOpposite.Macro)
+                    {
+                        sector.Selectable = false;
+                    }
+                    else if (GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros != null && GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros.Contains(sector.Macro))
+                    {
+                        sector.Selectable = false;
+                    }
                     // e.Accepted = false;
-                }
-                else
-                {
-                    sector.Selectable = true;
                 }
                 e.Accepted = true;
             }
@@ -464,15 +467,18 @@ namespace ChemGateBuilder
         {
             if (e.Item is SectorItem sector)
             {
+                sector.Selectable = true;
                 // Exclude the sector selected in Direct ComboBox
-                if (GatesConnectionCurrent.SectorDirect != null && sector.Macro == GatesConnectionCurrent.SectorDirect.Macro)
+                if (GatesConnectionCurrent.SectorDirect != null)
                 {
-                    sector.Selectable = false;
-                    // e.Accepted = false;
-                }
-                else
-                {
-                    sector.Selectable = true;
+                    if (sector.Macro == GatesConnectionCurrent.SectorDirect.Macro)
+                    {
+                        sector.Selectable = false;
+                    }
+                    else if (GatesConnectionCurrent.SectorDirectExistingConnectionsMacros != null && GatesConnectionCurrent.SectorDirectExistingConnectionsMacros.Contains(sector.Macro))
+                    {
+                        sector.Selectable = false;
+                    }
                 }
                 e.Accepted = true;
             }

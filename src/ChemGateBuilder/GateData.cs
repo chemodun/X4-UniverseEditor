@@ -39,6 +39,7 @@ namespace ChemGateBuilder
                 }
             }
         }
+        public List<string> SectorDirectExistingConnectionsMacros;
         public SectorConnectionData SectorDirectSelectedConnection
         {
             get => _sectorDirectSelectedConnection;
@@ -120,6 +121,7 @@ namespace ChemGateBuilder
                 }
             }
         }
+        public List<string> SectorOppositeExistingConnectionsMacros;
         public SectorConnectionData SectorOppositeSelectedConnection
         {
             get => _sectorOppositeSelectedConnection;
@@ -309,15 +311,31 @@ namespace ChemGateBuilder
 
                 MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
                 if (mainWindow == null) return;
+                Galaxy galaxy = mainWindow.Galaxy;
+                Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
                 var sectorsViewSource = propertyName == nameof(SectorDirect) ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
                 if (sectorsViewSource != null)
                 {
+                    if (sector != null)
+                    {
+                        List<string> sectorMacros = galaxy.GetOppositeSectorsFromConnections(sector)
+                            .Select(s => s.Macro)
+                            .ToList();
+                        if (propertyName == nameof(SectorDirect))
+                        {
+                            SectorDirectExistingConnectionsMacros = sectorMacros;
+                        }
+                        else
+                        {
+                            SectorOppositeExistingConnectionsMacros = sectorMacros;
+                        }
+                    }
                     sectorsViewSource.View.Refresh();
                 }
 
                 // Access the Galaxy property
-                Galaxy galaxy = mainWindow.Galaxy;
-                Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
+
+
                 if (sector == null || sector.Zones == null || sector.Zones.Count == 0) return;
                 // Update opposite Gate details
                 UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateOpposite) : nameof(GateDirect));
