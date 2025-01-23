@@ -18,39 +18,14 @@ namespace ChemGateBuilder
         private GalaxyConnection _connection;
 
         public string SectorDirectName => _connection.PathDirect.Sector.Name;
-
-        public int GateDirectX
-        {
-            get => _gateDirectX;
-            set { _gateDirectX = value; OnPropertyChanged(nameof(GateDirectX)); }
-        }
-        public int GateDirectY
-        {
-            get => _gateDirectY;
-            set { _gateDirectY = value; OnPropertyChanged(nameof(GateDirectY)); }
-        }
-        public int GateDirectZ
-        {
-            get => _gateDirectZ;
-            set { _gateDirectZ = value; OnPropertyChanged(nameof(GateDirectZ)); }
-        }
+        public int GateDirectX => int(_connection.PathDirect.Zone.Position.x);
+        public int GateDirectY => int(_connection.PathDirect.Zone.Position.y);
+        public int GateDirectZ => int(_connection.PathDirect.Zone.Position.z);
         public bool GateDirectActive => _connection.PathDirect.Gate != null && _connection.PathDirect.Gate.IsActive;
         public string SectorOppositeName => _connection.PathOpposite.Sector.Name;
-        public int GateOppositeX
-        {
-            get => _gateOppositeX;
-            set { _gateOppositeX = value; OnPropertyChanged(nameof(GateOppositeX)); }
-        }
-        public int GateOppositeY
-        {
-            get => _gateOppositeY;
-            set { _gateOppositeY = value; OnPropertyChanged(nameof(GateOppositeY)); }
-        }
-        public int GateOppositeZ
-        {
-            get => _gateOppositeZ;
-            set { _gateOppositeZ = value; OnPropertyChanged(nameof(GateOppositeZ)); }
-        }
+        public int GateOppositeX => int(_connection.PathOpposite.Zone.Position.x);
+        public int GateOppositeY => int(_connection.PathOpposite.Zone.Position.y);
+        public int GateOppositeZ => int(_connection.PathOpposite.Zone.Position.z);
         public bool GateOppositeActive => _connection.PathOpposite.Gate != null && _connection.PathOpposite.Gate.IsActive;
 
         public GalaxyConnection Connection
