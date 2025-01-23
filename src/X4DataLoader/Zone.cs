@@ -8,9 +8,11 @@ namespace X4DataLoader
     {
         public string Name { get; private set; }
         public string Reference { get; private set; }
-        public string ConnectionId { get; private set; }
+        public string PositionId { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
+        public (double x, double y, double z)? Position { get; private set; }
+        XElement? PositionXML { get; set; }
         public Dictionary<string, Connection> Connections { get; private set; }
 
         public Zone(XElement element, string source, string fileName)
@@ -41,14 +43,27 @@ namespace X4DataLoader
                     Connections[connection.Name] = connection;
                 }
             }
-            ConnectionId = "";
+            PositionId = "";
             Source = source;
             FileName = fileName;
         }
-
-        public void SetConnectionId(string connectionId)
+        public void SetPosition((double x, double y, double z)? position, string positionId, XElement positionXML)
         {
-            ConnectionId = connectionId;
+            if (position != null)
+            {
+                Position = position;
+            }
+            PositionId = positionId;
+            PositionXML = positionXML;
+        }
+
+        public float[]? GetCoordinates()
+        {
+            if (Position != null)
+            {
+                return new float[] { (float)Position.Value.x, (float)Position.Value.y, (float)Position.Value.z };
+            }
+            return null;
         }
     }
 }

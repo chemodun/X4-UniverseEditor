@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {
@@ -104,6 +105,15 @@ namespace X4DataLoader
                 return connection;
             }
             return null;
+        }
+
+        public void AddZone(Zone zone)
+        {
+            Zones.Add(zone);
+            Connection? zoneConnection  = Connections.Values
+                .FirstOrDefault(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name));
+            if (zoneConnection == null || zoneConnection.Position == null) return;
+            zone.SetPosition(zoneConnection.Position, zoneConnection.Name, zoneConnection.XML);
         }
     }
 }

@@ -167,13 +167,7 @@ namespace X4DataLoader
                             .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name)));
                         if (sector != null)
                         {
-                            sector.Zones.Add(zone);
-                            var connection = sector.Connections.Values
-                                .FirstOrDefault(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name));
-                            if (connection != null)
-                            {
-                                zone.SetConnectionId(connection.Name);
-                            }
+                            sector.AddZone(zone);
                             Console.WriteLine($"Zone loaded for Sector: {sector.Name}");
                         }
                         else

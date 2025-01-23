@@ -185,7 +185,7 @@ namespace X4DataLoader
             Sector = Cluster.Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.PositionId, pathParts[1]))
                 ?? throw new ArgumentException($"Sector with PositionId {pathParts[1]} not found in Cluster {Cluster.Name}");
 
-            Zone = Sector.Zones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.ConnectionId, pathParts[2]))
+            Zone = Sector.Zones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.PositionId, pathParts[2]))
                 ?? throw new ArgumentException($"Zone with Name {pathParts[2]} not found in Sector {Sector.Name}");
 
             Gate = Zone.Connections.Values.OfType<GateConnection>().FirstOrDefault(g => StringHelper.EqualsIgnoreCase(g.Name, pathParts[3]))
