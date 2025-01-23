@@ -219,8 +219,7 @@ namespace ChemGateBuilder
                     SaveConfiguration();
                     if (value != null && value > 0 && GatesConnectionCurrent != null)
                     {
-                        GatesConnectionCurrent.SectorDirectMap.SetInternalSize(value);
-                        GatesConnectionCurrent.SectorOppositeMap.SetInternalSize(value);
+                        GatesConnectionCurrent.SetSectorMapInternalSize(value);
                     }
                 }
             }
@@ -275,8 +274,8 @@ namespace ChemGateBuilder
         {
             _logger = LogManager.GetCurrentClassLogger();
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
-            LoadConfiguration();
             GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
+            LoadConfiguration();
             InitializeComponent();
             DataContext = this;
             GatesConnectionCurrent.Reset();

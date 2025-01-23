@@ -289,6 +289,12 @@ namespace ChemGateBuilder
             sectorMap.UpdateItem(newConnection);
         }
 
+        public void SetSectorMapInternalSize(int sizeKm)
+        {
+            SectorDirectMap.SetInternalSize(sizeKm);
+            SectorOppositeMap.SetInternalSize(sizeKm);
+        }
+
         public void UpdateCurrentGateCoordinates(int X, int Y, int Z, string propertyName)
         {
             GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;

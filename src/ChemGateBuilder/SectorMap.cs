@@ -214,6 +214,8 @@ namespace ChemGateBuilder
                 return;
             coordinates.X = (int)((X * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
             coordinates.Z = (int)((SectorMap.VisualSizePx - Y * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            _connectionData.X = coordinates.X;
+            _connectionData.Z = coordinates.Z;
         }
         // Colors based on gate type and status
         public Brush BorderColor
