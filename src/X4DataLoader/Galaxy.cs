@@ -132,6 +132,24 @@ namespace X4DataLoader
             }
             return null;
         }
+
+        public List<Sector> GetOppositeSectorsFromConnections(Sector sector)
+        {
+            var connections = Connections.Where(c => c.PathDirect.Sector == sector || c.PathOpposite.Sector == sector);
+            List<Sector> result = new List<Sector>();
+            foreach (var connection in connections)
+            {
+                if (connection.PathDirect.Sector == sector)
+                {
+                    result.Add(connection.PathOpposite.Sector);
+                }
+                else
+                {
+                    result.Add(connection.PathDirect.Sector);
+                }
+            }
+            return result;
+        }
     }
 
 
