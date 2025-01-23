@@ -786,6 +786,51 @@ namespace ChemGateBuilder
             return new Quaternion(qx, qy, qz, qw);
         }
 
+        /// <summary>
+        /// Converts a Quaternion to a Rotation (Roll, Pitch, Yaw) in degrees.
+        /// </summary>
+        /// <param name="q">The Quaternion to convert.</param>
+        /// <returns>A Rotation instance representing the equivalent Roll, Pitch, and Yaw.</returns>
+        public static Rotation FromQuaternion(Quaternion q)
+        {
+            // Normalize the quaternion to ensure accurate calculations
+            double norm = Math.Sqrt(q.qx * q.qx + q.qy * q.qy + q.qz * q.qz + q.qw * q.qw);
+            double x = q.qx / norm;
+            double y = q.qy / norm;
+            double z = q.qz / norm;
+            double w = q.qw / norm;
+
+            // Calculate Roll (x-axis rotation)
+            double sinr_cosp = 2 * (w * x + y * z);
+            double cosr_cosp = 1 - 2 * (x * x + y * y);
+            double rollRad = Math.Atan2(sinr_cosp, cosr_cosp);
+
+            // Calculate Pitch (y-axis rotation)
+            double sinp = 2 * (w * y - z * x);
+            double pitchRad;
+            if (Math.Abs(sinp) >= 1)
+                pitchRad = Math.CopySign(Math.PI / 2, sinp); // Use 90 degrees if out of range
+            else
+                pitchRad = Math.Asin(sinp);
+
+            // Calculate Yaw (z-axis rotation)
+            double siny_cosp = 2 * (w * z + x * y);
+            double cosy_cosp = 1 - 2 * (y * y + z * z);
+            double yawRad = Math.Atan2(siny_cosp, cosy_cosp);
+
+            // Convert radians to degrees
+            double rollDeg = rollRad * 180.0 / Math.PI;
+            double pitchDeg = pitchRad * 180.0 / Math.PI;
+            double yawDeg = yawRad * 180.0 / Math.PI;
+
+            return new Rotation
+            {
+                Roll = (int)Math.Round(rollDeg),
+                Pitch = (int)Math.Round(pitchDeg),
+                Yaw = (int)Math.Round(yawDeg)
+            };
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
