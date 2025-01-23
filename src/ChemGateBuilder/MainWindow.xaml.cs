@@ -69,7 +69,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -83,16 +83,16 @@ namespace ChemGateBuilder
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private string _configFileName;
-        private string _x4DataFolder;
-        private bool _gatesActiveByDefault;
-        private int _gatesMinimalDistanceBetween;
+        private string _x4DataFolder = ".";
+        private bool _gatesActiveByDefault = true;
+        private int _gatesMinimalDistanceBetween = 10;
         private int _sectorRadius = 400;
-        private string _logLevel;
-        private bool _logToFile;
-        private string _statusMessage;
+        private string _logLevel = "Warning";
+        private bool _logToFile = false;
+        private string _statusMessage = "Ready";
         private string _gateMacroDefault = "props_gates_anc_gate_macro";
         public static Logger _logger = LogManager.GetCurrentClassLogger();
-        public static string GalaxyConnectionPrefix = "Chem_Gate";
+        private static string GalaxyConnectionPrefix = "Chem_Gate";
         public string StatusMessage
         {
             get => _statusMessage;
@@ -105,8 +105,8 @@ namespace ChemGateBuilder
                 }
             }
         }
-        private GalaxyConnectionData _currentGalaxyConnection;
-        public GalaxyConnectionData CurrentGalaxyConnection
+        private GalaxyConnectionData? _currentGalaxyConnection;
+        public GalaxyConnectionData? CurrentGalaxyConnection
         {
             get => _currentGalaxyConnection;
             set
@@ -115,6 +115,9 @@ namespace ChemGateBuilder
                 {
                     _currentGalaxyConnection = value;
                     OnPropertyChanged(nameof(CurrentGalaxyConnection));
+                    IsGateCanBeCreated = IsNowGateCanBeCreated;
+                    IsGateCanBeDeleted = IsNowGateCanBeDeleted;
+                    ButtonSaveContent = IsNowGateCanBeCreated ? "Update" : "Add";
                 }
             }
         }
@@ -129,8 +132,8 @@ namespace ChemGateBuilder
 
         public ObservableCollection<string> GateMacros { get; } = new ObservableCollection<string>();
         // GatesConnectionCurrent Property
-        private GatesConnectionData _gatesConnectionCurrent;
-        public GatesConnectionData GatesConnectionCurrent
+        private GatesConnectionData? _gatesConnectionCurrent;
+        public GatesConnectionData? GatesConnectionCurrent
         {
             get => _gatesConnectionCurrent;
             set
@@ -264,13 +267,56 @@ namespace ChemGateBuilder
         }
 
         // Galaxy and Sectors
-        public Galaxy Galaxy { get; private set; }
+        public Galaxy? Galaxy { get; private set; }
 
         public bool IsDataLoaded => AllSectors.Count > 0;
-        public bool IsGateCanBeDeleted => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
-        public bool IsGateCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+
+        private bool _isGateCanBeDeleted = false;
+        public bool IsGateCanBeDeleted
+        {
+            get => _isGateCanBeDeleted;
+            set
+            {
+                if (_isGateCanBeDeleted != value)
+                {
+                    _isGateCanBeDeleted = value;
+                    OnPropertyChanged(nameof(IsGateCanBeDeleted));
+                }
+            }
+        }
+        private bool _isGateCanBeCreated = false;
+        public bool IsGateCanBeCreated
+        {
+            get => _isGateCanBeCreated;
+            set
+            {
+                if (_isGateCanBeCreated != value)
+                {
+                    _isGateCanBeCreated = value;
+                    OnPropertyChanged(nameof(IsGateCanBeCreated));
+                }
+            }
+        }
+        public bool IsNowGateCanBeDeleted => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsNowGateCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
         public bool IsModCanBeSaved => IsDataLoaded & GalaxyConnections.Count > 0;
         public bool IsModCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0;
+
+        private string _buttonSaveContent = "Add";
+        public string ButtonSaveContent
+        {
+            get => _buttonSaveContent;
+            set
+            {
+                if (_buttonSaveContent != value)
+                {
+                    _buttonSaveContent = value;
+                    OnPropertyChanged(nameof(ButtonSaveContent));
+                }
+            }
+        }
+
+
         // Constructor
         public MainWindow()
         {
@@ -278,7 +324,7 @@ namespace ChemGateBuilder
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
             LoadConfiguration();
-            ((IComponentConnector)this).InitializeComponent();
+            InitializeComponent();
             DataContext = this;
             GatesConnectionCurrent.Reset();
 
@@ -386,7 +432,7 @@ namespace ChemGateBuilder
             }
         }
 
-        private void SelectX4DataFolder_Click(object sender, RoutedEventArgs e)
+        private void SelectX4DataFolder_Click(object? sender, RoutedEventArgs? e)
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
@@ -440,17 +486,17 @@ namespace ChemGateBuilder
         // Filter methods
         private void SectorsDirect_Filter(object sender, FilterEventArgs e)
         {
-            if (e.Item is SectorItem sector)
+            if (e.Item is SectorItem sector && sector != null)
             {
                 sector.Selectable = true;
                 // Exclude the sector selected in Opposite ComboBox
-                if (GatesConnectionCurrent.SectorOpposite != null)
+                if (GatesConnectionCurrent?.SectorOpposite != null)
                 {
                     if (sector.Macro == GatesConnectionCurrent.SectorOpposite.Macro)
                     {
                         sector.Selectable = false;
                     }
-                    else if (GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros != null && GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros.Contains(sector.Macro))
+                    else if (GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros != null && GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros.Contains(sector?.Macro ?? ""))
                     {
                         sector.Selectable = false;
                     }
@@ -466,17 +512,17 @@ namespace ChemGateBuilder
 
         private void SectorsOpposite_Filter(object sender, FilterEventArgs e)
         {
-            if (e.Item is SectorItem sector)
+            if (e.Item is SectorItem sector && sector != null)
             {
                 sector.Selectable = true;
                 // Exclude the sector selected in Direct ComboBox
-                if (GatesConnectionCurrent.SectorDirect != null)
+                if (GatesConnectionCurrent?.SectorDirect != null)
                 {
                     if (sector.Macro == GatesConnectionCurrent.SectorDirect.Macro)
                     {
                         sector.Selectable = false;
                     }
-                    else if (GatesConnectionCurrent.SectorDirectExistingConnectionsMacros != null && GatesConnectionCurrent.SectorDirectExistingConnectionsMacros.Contains(sector.Macro))
+                    else if (GatesConnectionCurrent.SectorDirectExistingConnectionsMacros != null && GatesConnectionCurrent.SectorDirectExistingConnectionsMacros.Contains(sector?.Macro ?? ""))
                     {
                         sector.Selectable = false;
                     }
@@ -516,15 +562,15 @@ namespace ChemGateBuilder
 
         private void SectorDirectMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent.SectorDirectMap);
+            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent?.SectorDirectMap);
         }
         private void SectorOppositeMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent.SectorOppositeMap);
+            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent?.SectorOppositeMap);
         }
-        private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, SectorMap sectorMap)
+        private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, SectorMap? sectorMap)
         {
-            if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
+            if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item && sectorMap != null)
             {
                 sectorMap.SelectedItem = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
@@ -537,27 +583,27 @@ namespace ChemGateBuilder
                     // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
                     ellipse.CaptureMouse();
                 }
-                _logger.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
+                _logger.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
             }
         }
 
         private void SectorDirectMapItem_MouseMove(object sender, MouseEventArgs e){
-            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent.SectorDirectMap);
+            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent?.SectorDirectMap);
         }
         private void SectorOppositeMapItem_MouseMove(object sender, MouseEventArgs e)
         {
-            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent.SectorOppositeMap);
+            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent?.SectorOppositeMap);
         }
-        private void SectorMapItem_MouseMove(object sender, MouseEventArgs e, SectorMap sectorMap)
+        private void SectorMapItem_MouseMove(object sender, MouseEventArgs e, SectorMap? sectorMap)
         {
-            if (sectorMap.IsDragging && sectorMap.SelectedItem != null)
+            if (sectorMap != null && sectorMap.SelectedItem != null && sectorMap.IsDragging)
             {
-                _logger.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
+                _logger.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
                 if (sender is Ellipse ellipse)
                 {
                     // Get the current mouse position relative to the SectorCanvas
                     Point mousePosition = e.GetPosition(ellipse);
-                    if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
+                    if (sectorMap == GatesConnectionCurrent?.SectorDirectMap)
                     {
                         mousePosition = e.GetPosition(SectorDirectCanvas);
                     }
@@ -572,7 +618,7 @@ namespace ChemGateBuilder
                     Point newPoint = new Point(newX + sectorMap.SelectedItem.ItemSizePx / 2 , newY + sectorMap.SelectedItem.ItemSizePx / 2);
                     // Check if the new position is inside the hexagon
                     bool isInside = false;
-                    if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
+                    if (sectorMap == GatesConnectionCurrent?.SectorDirectMap)
                     {
                         isInside = SectorDirectHexagon.RenderedGeometry.FillContains(newPoint);
                     }
@@ -586,13 +632,15 @@ namespace ChemGateBuilder
                         // Update the SectorMapItem's coordinates
                         sectorMap.SelectedItem.X = newX;
                         sectorMap.SelectedItem.Y = newY;
-                        if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
-                        {
-                            sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
-                        }
-                        else
-                        {
-                            sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
+                        if (GatesConnectionCurrent != null) {
+                            if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
+                            {
+                                sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
+                            }
+                            else
+                            {
+                                sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
+                            }
                         }
                         _logger.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
                     }
@@ -602,20 +650,20 @@ namespace ChemGateBuilder
 
         private void SectorDirectMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent.SectorDirectMap, GatesConnectionCurrent, true);
+            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent?.SectorDirectMap, GatesConnectionCurrent, true);
         }
         private void SectorOppositeMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent.SectorOppositeMap, GatesConnectionCurrent, false);
+            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent?.SectorOppositeMap, GatesConnectionCurrent, false);
         }
-        private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e, SectorMap sectorMap, GatesConnectionData connectionData, bool isDirect)
+        private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e, SectorMap? sectorMap, GatesConnectionData? connectionData, bool isDirect)
         {
-            if (sectorMap.SelectedItem != null)
+            if (sectorMap != null && sectorMap.SelectedItem != null)
             {
                 sectorMap.IsDragging = false;
                 sectorMap.SelectedItem = null;
 
-                if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item)
+                if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item && item != null)
                 {
                     ellipse.ReleaseMouseCapture();
                     if (connectionData != null)
@@ -658,8 +706,23 @@ namespace ChemGateBuilder
             {
                 // GatesConnectionCurrent.Save();
                 _logger.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
-                Sector sectorDirect = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorDirect.Macro);
-                Sector sectorOpposite = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorOpposite.Macro);
+                if (Galaxy == null)
+                {
+                    StatusMessage = "Error: Galaxy data is not loaded.";
+                    return;
+                }
+                if (GatesConnectionCurrent.SectorDirect == null || GatesConnectionCurrent.SectorOpposite == null)
+                {
+                    StatusMessage = "Error: Both sectors must be selected.";
+                    return;
+                }
+                Sector? sectorDirect = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorDirect.Macro);
+                Sector? sectorOpposite = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorOpposite.Macro);
+                if (sectorDirect == null || sectorOpposite == null)
+                {
+                    StatusMessage = "Error: Sectors not found.";
+                    return;
+                }
                 string uniqueId = $"{sectorDirect.ClusterId:D3}{sectorDirect.Id:D3}{sectorOpposite.ClusterId:D3}{sectorOpposite.Id:D3}";
                 string sectorDirectId = $"cl_{sectorDirect.ClusterId:D3}_sect_{sectorDirect.Id:D3}";
                 string sectorOppositeId = $"cl_{sectorOpposite.ClusterId:D3}_sect_{sectorOpposite.Id:D3}";
@@ -700,8 +763,13 @@ namespace ChemGateBuilder
                 {
                     [gateOppositeId] = gateOpposite
                 }, zonePosition, $"{zoneOppositeId}_connection");
-                Cluster clusterDirect = Galaxy.GetClusterById(sectorDirect.ClusterId);
-                Cluster clusterOpposite = Galaxy.GetClusterById(sectorOpposite.ClusterId);
+                Cluster? clusterDirect = Galaxy.GetClusterById(sectorDirect.ClusterId);
+                Cluster? clusterOpposite = Galaxy.GetClusterById(sectorOpposite.ClusterId);
+                if (clusterDirect == null || clusterOpposite == null)
+                {
+                    StatusMessage = "Error: Clusters not found.";
+                    return;
+                }
                 GalaxyConnection galaxyConnection = new GalaxyConnection();
                 galaxyConnection.Create(galaxyConnectionId, clusterDirect, sectorDirect, zoneDirect, gateDirect, clusterOpposite, sectorOpposite, zoneOpposite, gateOpposite);
                 if (CurrentGalaxyConnection != null)
@@ -729,7 +797,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

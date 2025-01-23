@@ -81,7 +81,7 @@ namespace ChemGateBuilder
         }
 
         // Event to communicate validation messages
-        public static event Action<string> OnValidationError;
+        public static event Action<string>? OnValidationError;
         // Updated regex to allow optional leading minus sign for negative integers
         private static readonly Regex _regex = new Regex(@"^-?[0-9]+$");
 

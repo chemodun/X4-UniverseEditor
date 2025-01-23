@@ -460,7 +460,7 @@
                                     IsEnabled="{Binding GatesConnectionCurrent.IsChanged}"
                                     Click="ButtonReset_Click"/>
                             <Button x:Name="ButtonSave"
-                                    Content="Add"
+                                    Content="{Binding ButtonSaveContent}"
                                     Margin="5,0,0,0"
                                     Width="100"
                                     IsEnabled="{Binding GatesConnectionCurrent.IsReadyToSave}"
@@ -498,8 +498,8 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5">
-                                <Button x:Name="GateNew" Content="New Gate" Margin="0,0,0,5" Width="100" IsEnabled="{Binding IsGateCanBeCreated}"/>
-                                <Button x:Name="GateDelete" Content="Delete Gate" Margin="0,5,0,0" Width="100" IsEnabled="{Binding IsGateCanBeDeleted}"/>
+                                <Button x:Name="ButtonGateNew" Content="New Gate" Margin="0,0,0,5" Width="100" IsEnabled="{Binding IsGateCanBeCreated}"/>
+                                <Button x:Name="ButtonGateDelete" Content="Delete Gate" Margin="0,5,0,0" Width="100" IsEnabled="{Binding IsGateCanBeDeleted}"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>

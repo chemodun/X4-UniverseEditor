@@ -14,7 +14,7 @@ namespace ChemGateBuilder
         private double _visualX;
         private double _visualY;
         private double _visualSizePx = 100; // Default size
-        private string  _selectedItemId = "";
+        private string?  _selectedItemId = "";
         public double InternalSizeKm { get; set; } = 400;
 
         public double VisualSizePx
@@ -38,7 +38,7 @@ namespace ChemGateBuilder
             set { _visualY = value; OnPropertyChanged(); }
         }
 
-        public string SelectedItemId
+        public string? SelectedItemId
         {
             get => _selectedItemId;
             set { _selectedItemId = value; OnPropertyChanged(); }
@@ -46,10 +46,10 @@ namespace ChemGateBuilder
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 
         public bool IsDragging = false;
-        public SectorMapItem SelectedItem = null;
+        public SectorMapItem? SelectedItem = null;
         public Point MouseOffset;
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -68,9 +68,9 @@ namespace ChemGateBuilder
             });
         }
 
-        public void SelectItem(string ItemId)
+        public void SelectItem(string? ItemId)
         {
-            string selectedItemId = SelectedItemId;
+            string? selectedItemId = SelectedItemId;
             SelectedItemId = ItemId;
             if (selectedItemId != ItemId)
             {
@@ -98,17 +98,16 @@ namespace ChemGateBuilder
             }
             return false;
         }
-        public void UpdateItem(SectorConnectionData connectionData)
+        public void UpdateItem(SectorConnectionData? connectionData)
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].Id == connectionData.Id)
+                if (Items[i].Id == connectionData?.Id)
                 {
                     Items.RemoveAt(i);
                 }
             }
-            AddItem(connectionData);
-
+            if (connectionData != null) AddItem(connectionData);
         }
 
         private void UpdateItems()
@@ -136,16 +135,16 @@ namespace ChemGateBuilder
         private double _y;
         private double _itemSizePx = 12;
         private bool _isNew;
-        private SectorConnectionData _connectionData;
-        private SectorMap _sectorMap;
-        public SectorMap SectorMap {
+        private SectorConnectionData? _connectionData;
+        private SectorMap? _sectorMap;
+        public SectorMap? SectorMap {
             get => _sectorMap;
             set {
                 _sectorMap = value;
                 UpdatePosition();
             }
         }
-        public SectorConnectionData ConnectionData {
+        public SectorConnectionData? ConnectionData {
             get => _connectionData;
             set {
                 _connectionData = value;
@@ -153,16 +152,16 @@ namespace ChemGateBuilder
             }
         }
         public string Type { get {
-            if (_connectionData == null || _connectionData.Type == null)
+            if (_connectionData == null || _connectionData?.Type == null)
                 return "empty";
             return _connectionData.Type;
         } } // e.g., "empty", "gate", "highway", etc.
         public string Status { get {
-            if (_connectionData == null || _connectionData.Active == null)
+            if (_connectionData == null || _connectionData?.Active == null)
                 return "unknown";
             return _connectionData.Active ? "active" : "inactive";
         } } // e.g., "active", "inactive", "unknown"
-        public string Id { get {
+        public string? Id { get {
             if (_connectionData == null)
                 return "unknown";
             return _connectionData.Id;
@@ -214,6 +213,8 @@ namespace ChemGateBuilder
                 return;
             coordinates.X = (int)((X * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
             coordinates.Z = (int)((SectorMap.VisualSizePx - Y * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            if (_connectionData == null)
+                return;
             _connectionData.X = coordinates.X;
             _connectionData.Z = coordinates.Z;
         }
@@ -251,8 +252,8 @@ namespace ChemGateBuilder
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

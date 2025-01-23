@@ -8,25 +8,25 @@ namespace ChemGateBuilder
 {
     public class GatesConnectionData : INotifyPropertyChanged
     {
-        private SectorItem _sectorDirect;
-        private SectorItem _sectorDirectDefault;
-        private SectorConnectionData _sectorDirectSelectedConnection = new SectorConnectionData();
+        private SectorItem? _sectorDirect;
+        private SectorItem? _sectorDirectDefault;
+        private SectorConnectionData? _sectorDirectSelectedConnection = new SectorConnectionData();
         private SectorMap _sectorDirectMap = new SectorMap();
         private ObservableCollection<SectorConnectionData> _sectorDirectConnections = new ObservableCollection<SectorConnectionData>();
         private GateData _gateDirect ;
-        private SectorItem _sectorOpposite;
-        private SectorItem _sectorOppositeDefault;
-        private SectorConnectionData _sectorOppositeSelectedConnection = new SectorConnectionData();
+        private SectorItem? _sectorOpposite;
+        private SectorItem? _sectorOppositeDefault;
+        private SectorConnectionData? _sectorOppositeSelectedConnection = new SectorConnectionData();
         private SectorMap _sectorOppositeMap = new SectorMap() ;
         private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = new ObservableCollection<SectorConnectionData>();
         private GateData _gateOpposite;
         private bool _isChanged = false;
         private bool _isReadyToSave = false;
 
-        private bool _isDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
-        private bool _isDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && _isDataChanged;
+        private bool IsDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
+        private bool IsDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && IsDataChanged;
 
-        public SectorItem SectorDirect
+        public SectorItem? SectorDirect
         {
             get => _sectorDirect;
             set
@@ -38,8 +38,8 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public List<string> SectorDirectExistingConnectionsMacros;
-        public SectorConnectionData SectorDirectSelectedConnection
+        public List<string> SectorDirectExistingConnectionsMacros = new List<string>();
+        public SectorConnectionData? SectorDirectSelectedConnection
         {
             get => _sectorDirectSelectedConnection;
             set
@@ -51,7 +51,7 @@ namespace ChemGateBuilder
                     {
                         if (value != null)
                         {
-                            _sectorDirectMap.SelectItem(value.Id);
+                            _sectorDirectMap.SelectItem(value?.Id);
                         }
                         else
                         {
@@ -108,7 +108,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public SectorItem SectorOpposite
+        public SectorItem? SectorOpposite
         {
             get => _sectorOpposite;
             set
@@ -120,8 +120,8 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public List<string> SectorOppositeExistingConnectionsMacros;
-        public SectorConnectionData SectorOppositeSelectedConnection
+        public List<string> SectorOppositeExistingConnectionsMacros = new List<string>();
+        public SectorConnectionData? SectorOppositeSelectedConnection
         {
             get => _sectorOppositeSelectedConnection;
             set
@@ -194,7 +194,7 @@ namespace ChemGateBuilder
 
         public bool IsChanged { get => _isChanged; set { _isChanged = value; OnPropertyChanged(nameof(IsChanged)); }}
         public bool IsReadyToSave { get => _isReadyToSave; set { _isReadyToSave = value; OnPropertyChanged(nameof(IsReadyToSave)); }}
-        public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault, SectorItem sectorDirectDefault = null, SectorItem sectorOppositeDefault = null)
+        public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault, SectorItem? sectorDirectDefault = null, SectorItem? sectorOppositeDefault = null)
         {
             // Subscribe to child PropertyChanged events
             _gateDirect = new GateData(gateActiveDefault, gateMacroDefault);
@@ -212,8 +212,8 @@ namespace ChemGateBuilder
             _sectorOpposite = _sectorOppositeDefault;
             _gateDirect.Reset();
             _gateOpposite.Reset();
-            IsChanged = _isDataChanged;
-            IsReadyToSave = _isDataReadyToSave;
+            IsChanged = IsDataChanged;
+            IsReadyToSave = IsDataReadyToSave;
             OnPropertyChanged(nameof(SectorDirect));
             OnPropertyChanged(nameof(SectorOpposite));
             OnPropertyChanged(nameof(GateDirect));
@@ -235,27 +235,27 @@ namespace ChemGateBuilder
             _sectorDirectDefault = new SectorItem
             {
                 Name = reference.SectorDirectName,
-                Source = connection.PathDirect.Sector.Source,
-                Macro = connection.PathDirect.Sector.Macro,
+                Source = connection.PathDirect?.Sector?.Source ?? "",
+                Macro = connection.PathDirect?.Sector?.Macro ?? "",
                 Selectable = true
             };
             _sectorOppositeDefault = new SectorItem
             {
                 Name = reference.SectorOppositeName,
-                Source = connection.PathOpposite.Sector.Source,
-                Macro = connection.PathOpposite.Sector.Macro,
+                Source = connection.PathOpposite?.Sector?.Source ?? "",
+                Macro = connection.PathOpposite?.Sector?.Macro ?? "",
                 Selectable = true
             };
-            _gateDirect.SetDefaults(reference.GateDirectActive, connection.PathDirect.Gate.GateMacro,
+            _gateDirect.SetDefaults(reference.GateDirectActive, connection.PathDirect?.Gate?.GateMacro ?? "",
                 new Coordinates(reference.GateDirectX, reference.GateDirectY, reference.GateDirectZ),
                 reference.DirectPosition,
                 reference.DirectRotation);
-            _gateOpposite.SetDefaults(reference.GateOppositeActive, connection.PathOpposite.Gate.GateMacro,
+            _gateOpposite.SetDefaults(reference.GateOppositeActive, connection.PathOpposite?.Gate?.GateMacro ?? "",
                 new Coordinates(reference.GateOppositeX, reference.GateOppositeY, reference.GateOppositeZ),
                 reference.OppositePosition,
                 reference.OppositeRotation);
         }
-        private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ChildPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             // Propagate the change
             if (sender == GateDirect)
@@ -267,13 +267,13 @@ namespace ChemGateBuilder
                 OnPropertyChanged(nameof(GateOpposite));
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void UpdateCurrentGateOnMap(string propertyName)
         {
             GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
             if (gateCurrent == null) return;
-            SectorItem sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
+            SectorItem? sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
             SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
             if (sectorMap == null || sectorMap.IsDragging) return;
             SectorConnectionData newConnection = new SectorConnectionData
@@ -303,22 +303,22 @@ namespace ChemGateBuilder
         }
         protected void OnPropertyChanged(string propertyName)
         {
-            if (_isChanged != _isDataChanged) IsChanged = _isDataChanged;
-            if (_isReadyToSave != _isDataReadyToSave) IsReadyToSave = _isDataReadyToSave;
+            if (_isChanged != IsDataChanged) IsChanged = IsDataChanged;
+            if (_isReadyToSave != IsDataReadyToSave) IsReadyToSave = IsDataReadyToSave;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (propertyName == nameof(SectorDirect) || propertyName == nameof(SectorOpposite))
             {
-                SectorItem sectorCurrent = propertyName == nameof(SectorDirect) ? SectorDirect : SectorOpposite;
+                SectorItem? sectorCurrent = propertyName == nameof(SectorDirect) ? SectorDirect : SectorOpposite;
                 var sectorConnections = propertyName == nameof(SectorDirect) ? SectorDirectConnections : SectorOppositeConnections;
                 sectorConnections.Clear();
                 SectorMap sectorMap = propertyName == nameof(SectorDirect) ? SectorDirectMap : SectorOppositeMap;
                 sectorMap.ClearItems();
                 if (sectorCurrent != null) {
-                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.Galaxy != null)
+                    MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
                     {
                         Galaxy galaxy = mainWindow.Galaxy;
-                        Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
+                        Sector? sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
                         var sectorsViewSource = propertyName == nameof(SectorDirect) ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
                         if (sectorsViewSource != null)
                         {
@@ -348,15 +348,15 @@ namespace ChemGateBuilder
                                     if (connection is GateConnection gateConnection)
                                     {
                                         bool active = gateConnection.IsActive;
-                                        string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
+                                        string? sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
                                         Position zoneCoordinates = zone.Position;
                                         if (zoneCoordinates == null) continue;
-                                        Position gateCoordinates = gateConnection.Position;
+                                        Position? gateCoordinates = gateConnection.Position;
                                         if (gateCoordinates == null) continue;
                                         SectorConnectionData newConnection = new SectorConnectionData
                                         {
                                             Active = active && !string.IsNullOrEmpty(sectorTo),
-                                            ToSector = sectorTo,
+                                            ToSector = sectorTo ?? "",
                                             X =  (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
                                             Y = (int)((zoneCoordinates.y + gateCoordinates.y) / 1000),
                                             Z = (int)((zoneCoordinates.z + gateCoordinates.z) / 1000),
@@ -384,23 +384,23 @@ namespace ChemGateBuilder
 
     public class SectorItem
     {
-        public string Name { get; set; }
-        public string Source { get; set; }
-        public string Macro { get; set; }
+        public string? Name { get; set; }
+        public string? Source { get; set; }
+        public string? Macro { get; set; }
         public bool Selectable { get; set; }
     }
 
     public class SectorConnectionData : INotifyPropertyChanged
     {
-        private string _toSector;
+        private string? _toSector;
         private int _x;
         private int _y;
         private int _z;
-        private string _type;
-        private string _id;
+        private string? _type;
+        private string? _id;
         private bool _active;
 
-        public string ToSector
+        public string? ToSector
         {
             get => _toSector;
             set
@@ -452,7 +452,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public string Type
+        public string? Type
         {
             get => _type;
             set
@@ -465,7 +465,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public string Id
+        public string? Id
         {
             get => _id;
             set
@@ -491,7 +491,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -613,7 +613,7 @@ namespace ChemGateBuilder
             OnPropertyChanged(nameof(Rotation));
         }
 
-        public void SetDefaults(bool activeDefault, string gateMacroDefault = "", Coordinates coordinatesDefault = null, Coordinates positionDefault = null, Rotation rotationDefault = null)
+        public void SetDefaults(bool activeDefault, string gateMacroDefault = "", Coordinates? coordinatesDefault = null, Coordinates? positionDefault = null, Rotation? rotationDefault = null)
         {
             _activeDefault = activeDefault;
             if (!string.IsNullOrEmpty(gateMacroDefault)) _gateMacroDefault = gateMacroDefault;
@@ -621,7 +621,7 @@ namespace ChemGateBuilder
             if (positionDefault != null) Position.SetDefaults(positionDefault.X, positionDefault.Y, positionDefault.Z);
             if (rotationDefault != null) Rotation.SetDefaults(rotationDefault.Roll, rotationDefault.Pitch, rotationDefault.Yaw);
         }
-        private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ChildPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             // Determine which child sent the event and handle accordingly
             if (sender == Coordinates)
@@ -639,7 +639,7 @@ namespace ChemGateBuilder
                 OnPropertyChanged(nameof(Rotation));
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -724,7 +724,7 @@ namespace ChemGateBuilder
             _zDefault = zDefault;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -873,7 +873,7 @@ namespace ChemGateBuilder
             };
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
