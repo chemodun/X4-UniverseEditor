@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
 using X4DataLoader.Helpers;
 
@@ -78,7 +79,8 @@ namespace X4DataLoader
                 }
                 else if (reference == "destination")
                 {
-                    var galaxyConnection = new GalaxyConnection(connectionElement, Clusters, source, fileName);
+                    var galaxyConnection = new GalaxyConnection();
+                    galaxyConnection.Load(connectionElement, Clusters, source, fileName);
                     Connections.Add(galaxyConnection);
                 }
             }
@@ -102,6 +104,11 @@ namespace X4DataLoader
                 sectors[sector.PositionId] = sector;
             }
             return sectors;
+        }
+
+        public Cluster? GetClusterById(int id)
+        {
+            return Clusters.FirstOrDefault(c => c.Id == id);
         }
 
         public Sector? GetSectorByMacro(string macro)
@@ -133,21 +140,32 @@ namespace X4DataLoader
         public string Name { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
-        public GalaxyConnectionPath PathDirect { get; private set; }
-        public GalaxyConnectionPath PathOpposite { get; private set; }
+        public GalaxyConnectionPath? PathDirect { get; private set; }
+        public GalaxyConnectionPath? PathOpposite { get; private set; }
         public XElement XML { get; private set; }
 
-        public GalaxyConnection(XElement element, List<Cluster> allClusters, string source, string fileName)
+        public GalaxyConnection()
+        {
+            Name = "";
+            Source = "";
+            FileName = "";
+            PathDirect = null;
+            PathOpposite = null;
+        }
+
+        public void Load(XElement element, List<Cluster> allClusters, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             var pathDirect = XmlHelper.GetAttribute(element, "path") ?? "";
-            PathDirect = new GalaxyConnectionPath(pathDirect, allClusters);
+            PathDirect = new GalaxyConnectionPath();
+            PathDirect.Load(pathDirect, allClusters);
 
             var macroElement = element.Element("macro");
             if (macroElement != null)
             {
                 var pathOpposite = XmlHelper.GetAttribute(macroElement, "path") ?? "";
-                PathOpposite = new GalaxyConnectionPath(pathOpposite, allClusters);
+                PathOpposite = new GalaxyConnectionPath();
+                PathOpposite.Load(pathOpposite, allClusters);
             }
             else
             {
@@ -159,21 +177,49 @@ namespace X4DataLoader
 
             XML = element;
         }
+
+        public void Create(string name, Cluster clusterDirect, Sector sectorDirect, Zone zoneDirect, GateConnection gateDirect, Cluster clusterOpposite, Sector sectorOpposite, Zone zoneOpposite, GateConnection gateOpposite)
+        {
+            Name = name;
+            PathDirect = new GalaxyConnectionPath();
+            PathDirect.Create(clusterDirect, sectorDirect, zoneDirect, gateDirect);
+            PathOpposite = new GalaxyConnectionPath();
+            PathOpposite.Create(clusterOpposite, sectorOpposite, zoneOpposite, gateOpposite);
+            XML = new XElement("connection");
+            XML.SetAttributeValue("name", name);
+            XML.SetAttributeValue("ref", "destination");
+            List<string> path = new List<string> { "..", PathDirect.Path };
+            XML.SetAttributeValue("path", $"{string.Join("/", path)}");
+            XElement macroElement = new XElement("macro");
+            macroElement.SetAttributeValue("connection", "destination");
+            path.Clear();
+            for (int i=0; i<5; i++)
+            {
+                path.Add("..");
+            }
+            path.Add(PathOpposite.Path);
+            macroElement.SetAttributeValue("path", $"{string.Join("/", path)}");
+            XML.Add(macroElement);
+        }
     }
 
     public class GalaxyConnectionPath
     {
         public string Path { get; private set; }
-        public Cluster Cluster { get; private set; }
-        public Sector Sector { get; private set; }
-        public Zone Zone { get; private set; }
-        public GateConnection Gate { get; private set; }
+        public Cluster? Cluster { get; private set; }
+        public Sector? Sector { get; private set; }
+        public Zone? Zone { get; private set; }
+        public GateConnection? Gate { get; private set; }
 
-        public GalaxyConnectionPath(string path, List<Cluster> allClusters)
+        public GalaxyConnectionPath()
         {
-            Path = path;
-            var pathParts = path.Split('/').Where(p => p != "..").ToArray();
+            Path = "";
+        }
 
+        public void Load(string path, List<Cluster> allClusters)
+        {
+            var pathParts = path.Split('/').Where(p => p != "..").ToArray();
+            Path = string.Join("/", pathParts);
             if (pathParts.Length < 4)
             {
                 throw new ArgumentException("GalaxyConnectionPath must have at least 4 parts");
@@ -190,6 +236,15 @@ namespace X4DataLoader
 
             Gate = Zone.Connections.Values.OfType<GateConnection>().FirstOrDefault(g => StringHelper.EqualsIgnoreCase(g.Name, pathParts[3]))
                 ?? throw new ArgumentException($"GateConnection with Name {pathParts[3]} not found in Zone {Zone.Name}");
+        }
+
+        public void Create(Cluster cluster, Sector sector, Zone zone, GateConnection gate)
+        {
+            Path = $"{cluster.PositionId}/{sector.PositionId}/{zone.PositionId}/{gate.Name}";
+            Cluster = cluster;
+            Sector = sector;
+            Zone = zone;
+            Gate = gate;
         }
     }
 }
