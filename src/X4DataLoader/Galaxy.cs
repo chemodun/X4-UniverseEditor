@@ -106,13 +106,21 @@ namespace X4DataLoader
             return sectors;
         }
 
-        public Cluster? GetClusterById(int id)
+        public Cluster? GetClusterById(int? id)
         {
+            if (id == null)
+            {
+                return null;
+            }
             return Clusters.FirstOrDefault(c => c.Id == id);
         }
 
-        public Sector? GetSectorByMacro(string macro)
+        public Sector? GetSectorByMacro(string? macro)
         {
+            if (macro == null)
+            {
+                return null;
+            }
             return Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macro));
         }
 

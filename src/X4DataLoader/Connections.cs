@@ -18,7 +18,7 @@ namespace X4DataLoader
         public string MacroConnection { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
-        public XElement XML { get; private set; }
+        public XElement? XML { get; private set; }
 
         public Connection() {
             Name = "";
