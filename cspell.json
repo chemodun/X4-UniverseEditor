@@ -10,6 +10,7 @@
         "mapdefaults",
         "sechighways",
         "standardsechighway",
+        "standardzone",
         "standardzonehighway",
         "zonehighways"
     ],
