@@ -330,9 +330,7 @@ namespace ChemGateBuilder
                         {
                             bool active = gateConnection.IsActive;
                             string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
-                            Connection? zoneConnection = sector.GetConnection(zone.ConnectionId);
-                            if (zoneConnection == null) continue;
-                            float[] zoneCoordinates = zoneConnection.GetCoordinates();
+                            float[] zoneCoordinates = zone.GetCoordinates();
                             if (zoneCoordinates == null) continue;
                             float[] gateCoordinates = gateConnection.GetCoordinates();
                             if (gateCoordinates == null) continue;
