@@ -19,7 +19,7 @@ namespace X4DataLoader
         public string FullId => $"Cluster_{ClusterId:D2}_Sector{Id:D3}";
         public string Macro => $"Cluster_{ClusterId:D2}_Sector{Id:D3}_macro";
         public string Reference { get; set; }
-        public (double x, double y, double z)? Position { get; private set; }
+        public Position Position { get; private set; }
         public string PositionId { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
@@ -42,7 +42,7 @@ namespace X4DataLoader
             Connections = new Dictionary<string, Connection>();
             Highways = new List<Highway>();
             Reference = "";
-            Position = null;
+            Position = new Position();
             PositionId = "";
             Source = "vanilla";
             FileName = "";
@@ -79,7 +79,7 @@ namespace X4DataLoader
             }
         }
 
-        public void SetPosition((double x, double y, double z) position, string positionId, XElement positionXML)
+        public void SetPosition(Position position, string positionId, XElement positionXML)
         {
             Position = position;
             PositionId = positionId;

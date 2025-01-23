@@ -11,11 +11,22 @@ namespace X4DataLoader
         public string PositionId { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
-        public (double x, double y, double z)? Position { get; private set; }
+        public Position Position { get; private set; }
         XElement? PositionXML { get; set; }
         public Dictionary<string, Connection> Connections { get; private set; }
 
-        public Zone(XElement element, string source, string fileName)
+        public Zone()
+        {
+            Name = "";
+            Reference = "";
+            PositionId = "";
+            Source = "";
+            FileName = "";
+            Position = new Position();
+            PositionXML = null;
+            Connections = new Dictionary<string, Connection>();
+        }
+        public void Load(XElement element, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -37,9 +48,10 @@ namespace X4DataLoader
                     var reference = connectionElement.Attribute("ref")?.Value;
                     Connection connection = reference switch
                     {
-                        "gates" => new GateConnection(connectionElement, source, fileName),
-                        _ => new Connection(connectionElement, source, fileName),
+                        "gates" => new GateConnection(),
+                        _ => new Connection(),
                     };
+                    connection.Load(connectionElement, source, fileName);
                     Connections[connection.Name] = connection;
                 }
             }
@@ -47,7 +59,7 @@ namespace X4DataLoader
             Source = source;
             FileName = fileName;
         }
-        public void SetPosition((double x, double y, double z)? position, string positionId, XElement positionXML)
+        public void SetPosition(Position? position, string positionId, XElement positionXML)
         {
             if (position != null)
             {
@@ -57,13 +69,5 @@ namespace X4DataLoader
             PositionXML = positionXML;
         }
 
-        public float[]? GetCoordinates()
-        {
-            if (Position != null)
-            {
-                return new float[] { (float)Position.Value.x, (float)Position.Value.y, (float)Position.Value.z };
-            }
-            return null;
-        }
     }
 }

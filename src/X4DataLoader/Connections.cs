@@ -11,15 +11,26 @@ namespace X4DataLoader
         public string Name { get; private set; }
         public string Reference { get; private set; }
         public bool Offset { get; private set; }
-        public (double x, double y, double z)? Position { get; private set; }
-        public (double qx, double qy, double qz, double qw)? Quaternion { get; private set; }
+        public Position? Position { get; private set; }
+        public Quaternion? Quaternion { get; private set; }
         public string MacroReference { get; private set; }
         public string MacroConnection { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
         public XElement XML { get; private set; }
 
-        public Connection(XElement element, string source, string fileName)
+        public Connection() {
+            Name = "";
+            Reference = "";
+            Offset = false;
+            Position = null;
+            Quaternion = null;
+            MacroReference = "";
+            MacroConnection = "";
+            Source = "";
+            FileName = "";
+        }
+        public void Load(XElement element, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -34,7 +45,7 @@ namespace X4DataLoader
                 var positionElement = offsetElement.Element("position");
                 if (positionElement != null)
                 {
-                    Position = (
+                    Position = new Position(
                         double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
                         double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
                         double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
@@ -43,7 +54,7 @@ namespace X4DataLoader
                 var quaternionElement = offsetElement.Element("quaternion");
                 if (quaternionElement != null)
                 {
-                    Quaternion = (
+                    Quaternion = new Quaternion(
                         double.Parse(quaternionElement.Attribute("qx")?.Value ?? "0", CultureInfo.InvariantCulture),
                         double.Parse(quaternionElement.Attribute("qy")?.Value ?? "0", CultureInfo.InvariantCulture),
                         double.Parse(quaternionElement.Attribute("qz")?.Value ?? "0", CultureInfo.InvariantCulture),
@@ -71,14 +82,6 @@ namespace X4DataLoader
             FileName = fileName;
         }
 
-        public float[]? GetCoordinates()
-        {
-            if (Position != null)
-            {
-                return new float[] { (float)Position.Value.x, (float)Position.Value.y, (float)Position.Value.z };
-            }
-            return null;
-        }
         public static void LoadConnections(XElement element, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
         {
             string name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
@@ -124,13 +127,13 @@ namespace X4DataLoader
                         if (connectionName != null && connectionReference == "sectors")
                         {
                             var positionElement = connectionElement.Element("offset")?.Element("position");
-                            var position = positionElement != null
-                                ? (
+                            Position position = positionElement != null
+                                ? new Position(
                                     double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
                                     double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
                                     double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
                                   )
-                                : (0.0, 0.0, 0.0);
+                                : new Position();
 
                             var macroElement = connectionElement.Element("macro");
                             if (macroElement != null)
@@ -149,16 +152,17 @@ namespace X4DataLoader
                         } else {
                             Connection connection = connectionReference switch
                                 {
-                                    "entrypoint" => new EntryPointConnection(connectionElement, source, fileName),
-                                    "exitpoint" => new ExitPointConnection(connectionElement, source, fileName),
-                                    "zonehighways" => new ZoneHighwayConnection(connectionElement, source, fileName),
-                                    "zones" => new ZoneConnection(connectionElement, source, fileName),
-                                    "content" => new ContentConnection(connectionElement, source, fileName),
-                                    "regions" => new RegionConnection(connectionElement, source, fileName),
-                                    "sechighways" => new SecHighwayConnection(connectionElement, source, fileName),
-                                    "gate" => new GateConnection(connectionElement, source, fileName),
-                                    _ => new Connection(connectionElement, source, fileName)
+                                    "entrypoint" => new EntryPointConnection(),
+                                    "exitpoint" => new ExitPointConnection(),
+                                    "zonehighways" => new ZoneHighwayConnection(),
+                                    "zones" => new ZoneConnection(),
+                                    "content" => new ContentConnection(),
+                                    "regions" => new RegionConnection(),
+                                    "sechighways" => new SecHighwayConnection(),
+                                    "gate" => new GateConnection(),
+                                    _ => new Connection()
                                 };
+                                connection.Load(connectionElement, source, fileName);
                                 connections.Add(connection);
                         }
                     }
@@ -204,37 +208,37 @@ namespace X4DataLoader
 
     public class EntryPointConnection : Connection
     {
-        public EntryPointConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public EntryPointConnection() : base() { }
     }
 
     public class ExitPointConnection : Connection
     {
-        public ExitPointConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public ExitPointConnection() : base() { }
     }
 
     public class ZoneHighwayConnection : Connection
     {
-        public ZoneHighwayConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public ZoneHighwayConnection() : base() { }
     }
 
     public class ZoneConnection : Connection
     {
-        public ZoneConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public ZoneConnection() : base() { }
     }
 
     public class ContentConnection : Connection
     {
-        public ContentConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public ContentConnection() : base() { }
     }
 
     public class RegionConnection : Connection
     {
-        public RegionConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public RegionConnection() : base() { }
     }
 
     public class SecHighwayConnection : Connection
     {
-        public SecHighwayConnection(XElement element, string source, string fileName) : base(element, source, fileName) { }
+        public SecHighwayConnection() : base() { }
     }
 
     public class GateConnection : Connection
@@ -242,7 +246,9 @@ namespace X4DataLoader
         public string GateMacro { get; private set; }
         public bool IsActive { get; private set; }
 
-        public GateConnection(XElement element, string source, string fileName) : base(element, source, fileName) {
+        public GateConnection() : base() { }
+        public void Load(XElement element, string source, string fileName) {
+            base.Load(element, source, fileName);
             var macroElement = element.Element("macro") ?? throw new ArgumentException("Gate connection must have a macro element");
             GateMacro = XmlHelper.GetAttribute(macroElement, "ref") ?? throw new ArgumentException("Gate connection must have a macro ref attribute");
             IsActive = true;
@@ -256,5 +262,33 @@ namespace X4DataLoader
                 }
             }
          }
+    }
+
+    public class Position
+    {
+        public double x { get; private set; }
+        public double y { get; private set; }
+        public double z { get; private set; }
+        public Position(double x = 0.0, double y = 0.0, double z = 0.0)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    public class Quaternion
+    {
+        public double qx { get; private set; }
+        public double qy { get; private set; }
+        public double qz { get; private set; }
+        public double qw { get; private set; }
+        public Quaternion(double qx = 0.0, double qy = 0.0, double qz = 0.0, double qw = 0.0)
+        {
+            this.qx = qx;
+            this.qy = qy;
+            this.qz = qz;
+            this.qw = qw;
+        }
     }
 }

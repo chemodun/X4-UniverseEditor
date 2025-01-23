@@ -162,7 +162,8 @@ namespace X4DataLoader
                     var zonesDoc = XDocument.Load(zonesFile.fullPath);
                     foreach (var macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
                     {
-                        var zone = new Zone(macroElement, source, zonesFile.fileName);
+                        var zone = new Zone();
+                        zone.Load(macroElement, source, zonesFile.fileName);
                         var sector = sectors
                             .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name)));
                         if (sector != null)
