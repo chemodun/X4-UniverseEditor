@@ -667,7 +667,7 @@ namespace ChemGateBuilder
                 Position gatePosition = new Position(position.X, position.Y, position.Z);
                 Coordinates coordinates = gateData.Coordinates;
                 Position zonePosition = new Position(coordinates.X, coordinates.Y, coordinates.Z);
-                gateDirect.Create(gateDirectId, gatePosition, null, new Dictionary<string, string>
+                gateDirect.Create(gateDirectId, gatePosition, gateData.Rotation.ToQuaternion(), new Dictionary<string, string>
                 {
                     ["gateMacro"] = gateData.GateMacro,
                     ["isActive"] = gateData.Active ? "true" : "false"
@@ -683,7 +683,7 @@ namespace ChemGateBuilder
                 gatePosition = new Position(position.X, position.Y, position.Z);
                 coordinates = gateData.Coordinates;
                 zonePosition = new Position(coordinates.X, coordinates.Y, coordinates.Z);
-                gateOpposite.Create(gateOppositeId, gatePosition, null, new Dictionary<string, string>
+                gateOpposite.Create(gateOppositeId, gatePosition, gateData.Rotation.ToQuaternion(), new Dictionary<string, string>
                 {
                     ["gateMacro"] = gateData.GateMacro,
                     ["isActive"] = gateData.Active ? "true" : "false"
