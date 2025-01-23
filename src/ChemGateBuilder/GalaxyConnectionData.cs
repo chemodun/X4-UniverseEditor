@@ -9,14 +9,17 @@ namespace ChemGateBuilder
     public class GalaxyConnectionData : INotifyPropertyChanged
 
     {
+        private GalaxyConnection _connection;
         private int _gateDirectX;
         private int _gateDirectY;
         private int _gateDirectZ;
         private int _gateOppositeX;
         private int _gateOppositeY;
         private int _gateOppositeZ;
-        private GalaxyConnection _connection;
-
+        public Coordinates DirectPosition;
+        public Rotation DirectRotation;
+        public Coordinates OppositePosition;
+        public Rotation OppositeRotation;
         public string SectorDirectName => _connection.PathDirect.Sector.Name;
         public int GateDirectX => (int)_connection.PathDirect.Zone.Position.x;
         public int GateDirectY => (int)_connection.PathDirect.Zone.Position.y;
@@ -31,7 +34,34 @@ namespace ChemGateBuilder
         public GalaxyConnection Connection
         {
             get => _connection;
-            set { _connection = value; OnPropertyChanged(nameof(Connection)); }
+            set
+            {
+                _connection = value;
+                OnPropertyChanged(nameof(SectorDirectName));
+                OnPropertyChanged(nameof(GateDirectX));
+                OnPropertyChanged(nameof(GateDirectY));
+                OnPropertyChanged(nameof(GateDirectZ));
+                OnPropertyChanged(nameof(GateDirectActive));
+                OnPropertyChanged(nameof(SectorOppositeName));
+                OnPropertyChanged(nameof(GateOppositeX));
+                OnPropertyChanged(nameof(GateOppositeY));
+                OnPropertyChanged(nameof(GateOppositeZ));
+                OnPropertyChanged(nameof(GateOppositeActive));
+            }
+        }
+
+        public GalaxyConnectionData(GalaxyConnection connection, GatesConnectionData connectionData)
+        {
+            Update(connection, connectionData);
+        }
+
+        public void Update(GalaxyConnection connection, GatesConnectionData connectionData)
+        {
+            Connection = connection;
+            DirectPosition = connectionData.GateDirect.Position;
+            DirectRotation = connectionData.GateDirect.Rotation;
+            OppositePosition = connectionData.GateOpposite.Position;
+            OppositeRotation = connectionData.GateOpposite.Rotation;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

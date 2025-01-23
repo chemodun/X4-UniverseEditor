@@ -703,6 +703,18 @@ namespace ChemGateBuilder
                 Cluster clusterOpposite = Galaxy.GetClusterById(sectorOpposite.ClusterId);
                 GalaxyConnection galaxyConnection = new GalaxyConnection();
                 galaxyConnection.Create(galaxyConnectionId, clusterDirect, sectorDirect, zoneDirect, gateDirect, clusterOpposite, sectorOpposite, zoneOpposite, gateOpposite);
+                if (CurrentGalaxyConnection != null)
+                {
+                    CurrentGalaxyConnection.Update(galaxyConnection, GatesConnectionCurrent);
+                }
+                else
+                {
+                    GalaxyConnectionData newConnection = new GalaxyConnectionData(galaxyConnection, GatesConnectionCurrent);
+                    GalaxyConnections.Add(newConnection);
+                    CurrentGalaxyConnection = newConnection;
+                }
+                GatesConnectionCurrent.SetDefaultsFromReference(CurrentGalaxyConnection);
+                GatesConnectionCurrent.Reset();
             }
         }
 

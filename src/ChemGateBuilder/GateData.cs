@@ -8,7 +8,6 @@ namespace ChemGateBuilder
 {
     public class GatesConnectionData : INotifyPropertyChanged
     {
-        private GalaxyConnectionData? _reference;
         private SectorItem _sectorDirect;
         private SectorItem _sectorDirectDefault;
         private SectorConnectionData _sectorDirectSelectedConnection = new SectorConnectionData();
@@ -197,7 +196,6 @@ namespace ChemGateBuilder
         public bool IsReadyToSave { get => _isReadyToSave; set { _isReadyToSave = value; OnPropertyChanged(nameof(IsReadyToSave)); }}
         public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault, SectorItem sectorDirectDefault = null, SectorItem sectorOppositeDefault = null)
         {
-            _reference = null;
             // Subscribe to child PropertyChanged events
             _gateDirect = new GateData(gateActiveDefault, gateMacroDefault);
             _gateOpposite = new GateData(gateActiveDefault, gateMacroDefault);
@@ -230,28 +228,32 @@ namespace ChemGateBuilder
             _gateOpposite.SetDefaults(gateActiveDefault, "");
             OnPropertyChanged("");
         }
-        public void SetReference(GalaxyConnectionData reference)
+        public void SetDefaultsFromReference(GalaxyConnectionData reference)
         {
-            _reference = reference;
             if (reference == null) return;
+            GalaxyConnection connection = reference.Connection;
             _sectorDirectDefault = new SectorItem
             {
-                Name = _reference.SectorDirectName,
-                Source = _reference.Connection.PathDirect.Sector.Source,
-                Macro = _reference.Connection.PathDirect.Sector.Macro,
+                Name = reference.SectorDirectName,
+                Source = connection.PathDirect.Sector.Source,
+                Macro = connection.PathDirect.Sector.Macro,
                 Selectable = true
             };
             _sectorOppositeDefault = new SectorItem
             {
-                Name = _reference.SectorOppositeName,
-                Source = _reference.Connection.PathOpposite.Sector.Source,
-                Macro = _reference.Connection.PathOpposite.Sector.Macro,
+                Name = reference.SectorOppositeName,
+                Source = connection.PathOpposite.Sector.Source,
+                Macro = connection.PathOpposite.Sector.Macro,
                 Selectable = true
             };
-            GateDirect = new GateData(_reference.GateDirectActive, _reference.Connection.PathDirect.Gate.GateMacro);
-            GateOpposite = new GateData(_reference.GateOppositeActive, _reference.Connection.PathOpposite.Gate.GateMacro);
-            UpdateCurrentGateOnMap(nameof(GateDirect));
-            UpdateCurrentGateOnMap(nameof(GateOpposite));
+            _gateDirect.SetDefaults(reference.GateDirectActive, connection.PathDirect.Gate.GateMacro,
+                new Coordinates(reference.GateDirectX, reference.GateDirectY, reference.GateDirectZ),
+                reference.DirectPosition,
+                reference.DirectRotation);
+            _gateOpposite.SetDefaults(reference.GateOppositeActive, connection.PathOpposite.Gate.GateMacro,
+                new Coordinates(reference.GateOppositeX, reference.GateOppositeY, reference.GateOppositeZ),
+                reference.OppositePosition,
+                reference.OppositeRotation);
         }
         private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -305,68 +307,66 @@ namespace ChemGateBuilder
                 sectorConnections.Clear();
                 SectorMap sectorMap = propertyName == nameof(SectorDirect) ? SectorDirectMap : SectorOppositeMap;
                 sectorMap.ClearItems();
-                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateDirect) : nameof(GateOpposite));
-                if (sectorCurrent == null) return;
-
-
-                MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow == null) return;
-                Galaxy galaxy = mainWindow.Galaxy;
-                Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
-                var sectorsViewSource = propertyName == nameof(SectorDirect) ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
-                if (sectorsViewSource != null)
-                {
-                    if (sector != null)
+                if (sectorCurrent != null) {
+                    MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+                    if (mainWindow != null && mainWindow.Galaxy != null)
                     {
-                        List<string> sectorMacros = galaxy.GetOppositeSectorsFromConnections(sector)
-                            .Select(s => s.Macro)
-                            .ToList();
-                        if (propertyName == nameof(SectorDirect))
+                        Galaxy galaxy = mainWindow.Galaxy;
+                        Sector sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
+                        var sectorsViewSource = propertyName == nameof(SectorDirect) ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
+                        if (sectorsViewSource != null)
                         {
-                            SectorDirectExistingConnectionsMacros = sectorMacros;
-                        }
-                        else
-                        {
-                            SectorOppositeExistingConnectionsMacros = sectorMacros;
-                        }
-                    }
-                    sectorsViewSource.View.Refresh();
-                }
-
-                // Access the Galaxy property
-
-
-                if (sector == null || sector.Zones == null || sector.Zones.Count == 0) return;
-                // Update opposite Gate details
-                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateOpposite) : nameof(GateDirect));
-                foreach (var zone in sector.Zones)
-                {
-                    if (zone.Connections == null || zone.Connections.Count == 0) continue;
-                    foreach (var connection in zone.Connections.Values)
-                    {
-                        if (connection is GateConnection gateConnection)
-                        {
-                            bool active = gateConnection.IsActive;
-                            string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
-                            Position zoneCoordinates = zone.Position;
-                            if (zoneCoordinates == null) continue;
-                            Position gateCoordinates = gateConnection.Position;
-                            if (gateCoordinates == null) continue;
-                            SectorConnectionData newConnection = new SectorConnectionData
+                            if (sector != null)
                             {
-                                Active = active && !string.IsNullOrEmpty(sectorTo),
-                                ToSector = sectorTo,
-                                X =  (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
-                                Y = (int)((zoneCoordinates.y + gateCoordinates.y) / 1000),
-                                Z = (int)((zoneCoordinates.z + gateCoordinates.z) / 1000),
-                                Type = "gate",
-                                Id = gateConnection.Name
-                            };
-                            sectorConnections.Add(newConnection);
-                            sectorMap.AddItem(newConnection);
+                                List<string> sectorMacros = galaxy.GetOppositeSectorsFromConnections(sector)
+                                    .Select(s => s.Macro)
+                                    .ToList();
+                                if (propertyName == nameof(SectorDirect))
+                                {
+                                    SectorDirectExistingConnectionsMacros = sectorMacros;
+                                }
+                                else
+                                {
+                                    SectorOppositeExistingConnectionsMacros = sectorMacros;
+                                }
+                            }
+                            sectorsViewSource.View.Refresh();
+                        }
+                        if (sector != null && sector.Zones != null && sector.Zones.Count != 0)
+                        {
+                            foreach (var zone in sector.Zones)
+                            {
+                                if (zone.Connections == null || zone.Connections.Count == 0) continue;
+                                foreach (var connection in zone.Connections.Values)
+                                {
+                                    if (connection is GateConnection gateConnection)
+                                    {
+                                        bool active = gateConnection.IsActive;
+                                        string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
+                                        Position zoneCoordinates = zone.Position;
+                                        if (zoneCoordinates == null) continue;
+                                        Position gateCoordinates = gateConnection.Position;
+                                        if (gateCoordinates == null) continue;
+                                        SectorConnectionData newConnection = new SectorConnectionData
+                                        {
+                                            Active = active && !string.IsNullOrEmpty(sectorTo),
+                                            ToSector = sectorTo,
+                                            X =  (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
+                                            Y = (int)((zoneCoordinates.y + gateCoordinates.y) / 1000),
+                                            Z = (int)((zoneCoordinates.z + gateCoordinates.z) / 1000),
+                                            Type = "gate",
+                                            Id = gateConnection.Name
+                                        };
+                                        sectorConnections.Add(newConnection);
+                                        sectorMap.AddItem(newConnection);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateOpposite) : nameof(GateDirect));
+                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateDirect) : nameof(GateOpposite));
             }
             else if (propertyName == nameof(GateDirect) || propertyName == nameof(GateOpposite))
             {
@@ -607,10 +607,13 @@ namespace ChemGateBuilder
             OnPropertyChanged(nameof(Rotation));
         }
 
-        public void SetDefaults(bool activeDefault, string gateMacroDefault = "")
+        public void SetDefaults(bool activeDefault, string gateMacroDefault = "", Coordinates coordinatesDefault = null, Coordinates positionDefault = null, Rotation rotationDefault = null)
         {
             _activeDefault = activeDefault;
             if (!string.IsNullOrEmpty(gateMacroDefault)) _gateMacroDefault = gateMacroDefault;
+            if (coordinatesDefault != null) Coordinates.SetDefaults(coordinatesDefault.X, coordinatesDefault.Y, coordinatesDefault.Z);
+            if (positionDefault != null) Position.SetDefaults(positionDefault.X, positionDefault.Y, positionDefault.Z);
+            if (rotationDefault != null) Rotation.SetDefaults(rotationDefault.Roll, rotationDefault.Pitch, rotationDefault.Yaw);
         }
         private void ChildPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -707,6 +710,14 @@ namespace ChemGateBuilder
             OnPropertyChanged(nameof(Y));
             OnPropertyChanged(nameof(Z));
         }
+
+        public void SetDefaults(int xDefault = 0, int yDefault = 0, int zDefault = 0)
+        {
+            _xDefault = xDefault;
+            _yDefault = yDefault;
+            _zDefault = zDefault;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
@@ -781,6 +792,13 @@ namespace ChemGateBuilder
             OnPropertyChanged(nameof(Roll));
             OnPropertyChanged(nameof(Pitch));
             OnPropertyChanged(nameof(Yaw));
+        }
+
+        public void SetDefaults(int rollDefault = 0, int pitchDefault = 0, int yawDefault = 0)
+        {
+            _rollDefault = rollDefault;
+            _pitchDefault = pitchDefault;
+            _yawDefault = yawDefault;
         }
 
         public Quaternion ToQuaternion()
