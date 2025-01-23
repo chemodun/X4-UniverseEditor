@@ -653,17 +653,19 @@ namespace ChemGateBuilder
                 _logger.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
                 Sector sectorDirect = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorDirect.Macro);
                 Sector sectorOpposite = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorOpposite.Macro);
-                string galaxyId = $"{sectorDirect.ClusterId:D3}{sectorDirect.Id:D3}{sectorOpposite.ClusterId:D3}{sectorOpposite.Id:D3}";
+                string uniqueId = $"{sectorDirect.ClusterId:D3}{sectorDirect.Id:D3}{sectorOpposite.ClusterId:D3}{sectorOpposite.Id:D3}";
                 string sectorDirectId = $"cl_{sectorDirect.ClusterId:D3}_sect_{sectorDirect.Id:D3}";
                 string sectorOppositeId = $"cl_{sectorOpposite.ClusterId:D3}_sect_{sectorOpposite.Id:D3}";
+                string galaxyConnectionId = $"{GalaxyConnectionPrefix}_{sectorDirectId}_to_{sectorOppositeId}";
                 string gateDirectId = $"connection_{GalaxyConnectionPrefix}_{sectorDirectId}_to_{sectorOppositeId}";
                 string gateOppositeId = $"connection_{GalaxyConnectionPrefix}_{sectorOppositeId}_to_{sectorDirectId}";
-                string zoneDirectId = $"Zone_{GalaxyConnectionPrefix}_{galaxyId}_Cluster_{sectorDirect.ClusterId:D2}_Sector_{sectorDirect.Id:D3}";
+                string zoneDirectId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_Cluster_{sectorDirect.ClusterId:D2}_Sector_{sectorDirect.Id:D3}";
+                string zoneOppositeId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_Cluster_{sectorOpposite.ClusterId:D2}_Sector_{sectorOpposite.Id:D3}";
                 GateConnection gateDirect = new GateConnection();
                 GateData gateData = GatesConnectionCurrent.GateDirect;
                 Coordinates position = gateData.Position;
                 Position gatePosition = new Position(position.X, position.Y, position.Z);
-                Coordinates coordinates = gateData.Coordinates; 
+                Coordinates coordinates = gateData.Coordinates;
                 Position zonePosition = new Position(coordinates.X, coordinates.Y, coordinates.Z);
                 gateDirect.Create(gateDirectId, gatePosition, null, new Dictionary<string, string>
                 {
@@ -675,6 +677,26 @@ namespace ChemGateBuilder
                 {
                     [gateDirectId] = gateDirect
                 }, zonePosition, $"{zoneDirectId}_connection");
+                GateConnection gateOpposite = new GateConnection();
+                gateData = GatesConnectionCurrent.GateOpposite;
+                position = gateData.Position;
+                gatePosition = new Position(position.X, position.Y, position.Z);
+                coordinates = gateData.Coordinates;
+                zonePosition = new Position(coordinates.X, coordinates.Y, coordinates.Z);
+                gateOpposite.Create(gateOppositeId, gatePosition, null, new Dictionary<string, string>
+                {
+                    ["gateMacro"] = gateData.GateMacro,
+                    ["isActive"] = gateData.Active ? "true" : "false"
+                });
+                Zone zoneOpposite = new Zone();
+                zoneOpposite.Create($"{zoneOppositeId}_macro", new Dictionary<string, Connection>
+                {
+                    [gateOppositeId] = gateOpposite
+                }, zonePosition, $"{zoneOppositeId}_connection");
+                Cluster clusterDirect = Galaxy.GetClusterById(sectorDirect.ClusterId);
+                Cluster clusterOpposite = Galaxy.GetClusterById(sectorOpposite.ClusterId);
+                GalaxyConnection galaxyConnection = new GalaxyConnection();
+                galaxyConnection.Create(galaxyConnectionId, clusterDirect, sectorDirect, zoneDirect, gateDirect, clusterOpposite, sectorOpposite, zoneOpposite, gateOpposite);
             }
         }
 
