@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DB648324-179
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X4DataLoader", "src\X4DataLoader\X4DataLoader.csproj", "{2914354A-6510-41D0-A9AC-D4F282E06D3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X4DataTestConsole", "src\X4DataTestConsole\X4DataTestConsole.csproj", "{C3949B30-EFC9-4E87-9566-726A549EF07E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChemGateBuilder", "src\ChemGateBuilder\ChemGateBuilder.csproj", "{C9754A35-2C31-45A8-8D50-8A7ED0E9EAF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,18 @@ Global
 		{2914354A-6510-41D0-A9AC-D4F282E06D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2914354A-6510-41D0-A9AC-D4F282E06D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2914354A-6510-41D0-A9AC-D4F282E06D3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3949B30-EFC9-4E87-9566-726A549EF07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3949B30-EFC9-4E87-9566-726A549EF07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3949B30-EFC9-4E87-9566-726A549EF07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3949B30-EFC9-4E87-9566-726A549EF07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9754A35-2C31-45A8-8D50-8A7ED0E9EAF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9754A35-2C31-45A8-8D50-8A7ED0E9EAF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9754A35-2C31-45A8-8D50-8A7ED0E9EAF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9754A35-2C31-45A8-8D50-8A7ED0E9EAF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2914354A-6510-41D0-A9AC-D4F282E06D3E} = {DB648324-1795-45B4-8690-40E133369449}
+		{C3949B30-EFC9-4E87-9566-726A549EF07E} = {DB648324-1795-45B4-8690-40E133369449}
+		{C9754A35-2C31-45A8-8D50-8A7ED0E9EAF9} = {DB648324-1795-45B4-8690-40E133369449}
 	EndGlobalSection
 EndGlobal

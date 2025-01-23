@@ -12,6 +12,8 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using NLog;
 
+using System.Windows.Markup;
+
 namespace ChemGateBuilder
 {
     public class AppConfig
@@ -276,7 +278,7 @@ namespace ChemGateBuilder
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
             LoadConfiguration();
-            InitializeComponent();
+            ((IComponentConnector)this).InitializeComponent();
             DataContext = this;
             GatesConnectionCurrent.Reset();
 
