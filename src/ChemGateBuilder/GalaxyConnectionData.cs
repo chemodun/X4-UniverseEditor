@@ -18,14 +18,14 @@ namespace ChemGateBuilder
         private GalaxyConnection _connection;
 
         public string SectorDirectName => _connection.PathDirect.Sector.Name;
-        public int GateDirectX => int(_connection.PathDirect.Zone.Position.x);
-        public int GateDirectY => int(_connection.PathDirect.Zone.Position.y);
-        public int GateDirectZ => int(_connection.PathDirect.Zone.Position.z);
+        public int GateDirectX => (int)_connection.PathDirect.Zone.Position.x;
+        public int GateDirectY => (int)_connection.PathDirect.Zone.Position.y;
+        public int GateDirectZ => (int)_connection.PathDirect.Zone.Position.z;
         public bool GateDirectActive => _connection.PathDirect.Gate != null && _connection.PathDirect.Gate.IsActive;
         public string SectorOppositeName => _connection.PathOpposite.Sector.Name;
-        public int GateOppositeX => int(_connection.PathOpposite.Zone.Position.x);
-        public int GateOppositeY => int(_connection.PathOpposite.Zone.Position.y);
-        public int GateOppositeZ => int(_connection.PathOpposite.Zone.Position.z);
+        public int GateOppositeX => (int)_connection.PathOpposite.Zone.Position.x;
+        public int GateOppositeY => (int)_connection.PathOpposite.Zone.Position.y;
+        public int GateOppositeZ => (int)_connection.PathOpposite.Zone.Position.z;
         public bool GateOppositeActive => _connection.PathOpposite.Gate != null && _connection.PathOpposite.Gate.IsActive;
 
         public GalaxyConnection Connection

@@ -330,36 +330,20 @@ namespace ChemGateBuilder
                         {
                             bool active = gateConnection.IsActive;
                             string sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
-                            float[] zoneCoordinates = zone.GetCoordinates();
+                            Position zoneCoordinates = zone.Position;
                             if (zoneCoordinates == null) continue;
-                            float[] gateCoordinates = gateConnection.GetCoordinates();
+                            Position gateCoordinates = gateConnection.Position;
                             if (gateCoordinates == null) continue;
                             SectorConnectionData newConnection = new SectorConnectionData
                             {
                                 Active = active && !string.IsNullOrEmpty(sectorTo),
                                 ToSector = sectorTo,
-                                X = 0, // Update as needed
-                                Y = 0, // Update as needed
-                                Z = 0, // Update as needed
+                                X =  (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
+                                Y = (int)((zoneCoordinates.y + gateCoordinates.y) / 1000),
+                                Z = (int)((zoneCoordinates.z + gateCoordinates.z) / 1000),
                                 Type = "gate",
                                 Id = gateConnection.Name
                             };
-                            for (int i = 0; i < 3; i++)
-                            {
-                                int value = (int)((zoneCoordinates[i] + gateCoordinates[i]) / 1000);
-                                switch (i)
-                                {
-                                    case 0:
-                                        newConnection.X = value;
-                                        break;
-                                    case 1:
-                                        newConnection.Y = value;
-                                        break;
-                                    case 2:
-                                        newConnection.Z = value;
-                                        break;
-                                }
-                            }
                             sectorConnections.Add(newConnection);
                             sectorMap.AddItem(newConnection);
                         }
