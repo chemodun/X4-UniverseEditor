@@ -764,6 +764,28 @@ namespace ChemGateBuilder
             OnPropertyChanged(nameof(Pitch));
             OnPropertyChanged(nameof(Yaw));
         }
+
+        public Quaternion ToQuaternion()
+        {
+            double rollRad = Roll * Math.PI / 180.0;
+            double pitchRad = Pitch * Math.PI / 180.0;
+            double yawRad = Yaw * Math.PI / 180.0;
+
+            double cy = Math.Cos(yawRad * 0.5);
+            double sy = Math.Sin(yawRad * 0.5);
+            double cp = Math.Cos(pitchRad * 0.5);
+            double sp = Math.Sin(pitchRad * 0.5);
+            double cr = Math.Cos(rollRad * 0.5);
+            double sr = Math.Sin(rollRad * 0.5);
+
+            double qw = cr * cp * cy + sr * sp * sy;
+            double qx = sr * cp * cy - cr * sp * sy;
+            double qy = cr * sp * cy + sr * cp * sy;
+            double qz = cr * cp * sy - sr * sp * cy;
+
+            return new Quaternion(qx, qy, qz, qw);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
