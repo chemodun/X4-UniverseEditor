@@ -25,7 +25,7 @@ namespace ChemGateBuilder
         private bool _isReadyToSave = false;
 
         private bool _isDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
-        private bool _isDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && _gateDirect.Active && _gateOpposite.Active && _isDataChanged;
+        private bool _isDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && _isDataChanged;
 
         public SectorItem SectorDirect
         {
