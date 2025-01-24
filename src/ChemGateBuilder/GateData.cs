@@ -192,7 +192,18 @@ namespace ChemGateBuilder
             }
         }
 
-        public bool IsChanged { get => _isChanged; set { _isChanged = value; OnPropertyChanged(nameof(IsChanged)); }}
+        public bool IsChanged {
+            get => _isChanged;
+            set {
+                _isChanged = value;
+                OnPropertyChanged(nameof(IsChanged));
+                MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
+                if (mainWindow != null)
+                {
+                    mainWindow.ChangingGalaxyConnectionIsPossible = !value;
+                }
+            }
+        }
         public bool IsReadyToSave { get => _isReadyToSave; set { _isReadyToSave = value; OnPropertyChanged(nameof(IsReadyToSave)); }}
         public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault, SectorItem? sectorDirectDefault = null, SectorItem? sectorOppositeDefault = null)
         {
@@ -236,6 +247,8 @@ namespace ChemGateBuilder
             _sectorDirectDefault = null;
             _sectorOppositeDefault = null;
             Reset();
+            _gateOpposite.PropertyChanged += ChildPropertyChanged;
+            _gateDirect.PropertyChanged += ChildPropertyChanged;
         }
 
         public void SetDefaultsFromReference(GalaxyConnectionData reference)

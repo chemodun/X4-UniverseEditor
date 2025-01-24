@@ -310,6 +310,24 @@ namespace ChemGateBuilder
         }
         public bool IsNowGateCanBeDeleted => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
         public bool IsNowGateCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+
+        bool _changingGalaxyConnectionIsPossible = false;
+        public bool ChangingGalaxyConnectionIsPossible
+        {
+            get => _changingGalaxyConnectionIsPossible;
+            set
+            {
+                if (_changingGalaxyConnectionIsPossible != value)
+                {
+                    _changingGalaxyConnectionIsPossible = value;
+                    IsGateCanBeCreated = IsNowGateCanBeCreated && value;
+                    IsGateCanBeDeleted = IsNowGateCanBeDeleted && value;
+                    OnPropertyChanged(nameof(ChangingGalaxyConnectionIsPossible));
+                }
+            }
+        }
+
+
         public bool IsModCanBeSaved => IsDataLoaded & GalaxyConnections.Count > 0;
         public bool IsModCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0;
 

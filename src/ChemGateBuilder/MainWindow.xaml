@@ -484,7 +484,8 @@
                                     CanUserAddRows="False"
                                     IsReadOnly="True"
                                     SelectionMode="Single"
-                                    MinHeight="80">
+                                    MinHeight="80"
+                                    IsEnabled="{Binding ChangingGalaxyConnectionIsPossible}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="From Sector" Binding="{Binding SectorDirectName}" Width="*"/>
                                     <DataGridTextColumn Header="X,km" Binding="{Binding GateDirectX}" Width="*"/>
