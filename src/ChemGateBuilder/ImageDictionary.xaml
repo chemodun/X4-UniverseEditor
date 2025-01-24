@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:tradeware.Resources">
-    <BitmapImage x:Key="Icon" UriSource="Assets/gate.ico"/>
+    <BitmapImage x:Key="BuilderIcon" UriSource="Assets/builder.ico"/>
+    <BitmapImage x:Key="XIcon" UriSource="Assets/x4.ico"/>
 </ResourceDictionary>
