@@ -10,15 +10,15 @@ namespace ChemGateBuilder
     {
         private SectorItem? _sectorDirect;
         private SectorItem? _sectorDirectDefault;
-        private SectorConnectionData? _sectorDirectSelectedConnection = new SectorConnectionData();
-        private SectorMap _sectorDirectMap = new SectorMap();
-        private ObservableCollection<SectorConnectionData> _sectorDirectConnections = new ObservableCollection<SectorConnectionData>();
+        private SectorConnectionData? _sectorDirectSelectedConnection = new();
+        private SectorMap _sectorDirectMap = new();
+        private ObservableCollection<SectorConnectionData> _sectorDirectConnections = [];
         private GateData _gateDirect ;
         private SectorItem? _sectorOpposite;
         private SectorItem? _sectorOppositeDefault;
-        private SectorConnectionData? _sectorOppositeSelectedConnection = new SectorConnectionData();
-        private SectorMap _sectorOppositeMap = new SectorMap() ;
-        private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = new ObservableCollection<SectorConnectionData>();
+        private SectorConnectionData? _sectorOppositeSelectedConnection = new();
+        private SectorMap _sectorOppositeMap = new() ;
+        private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = [];
         private GateData _gateOpposite;
         private bool _isChanged = false;
         private bool _isReadyToSave = false;
@@ -38,7 +38,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public List<string> SectorDirectExistingConnectionsMacros = new List<string>();
+        public List<string> SectorDirectExistingConnectionsMacros = [];
         public SectorConnectionData? SectorDirectSelectedConnection
         {
             get => _sectorDirectSelectedConnection;
@@ -120,7 +120,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public List<string> SectorOppositeExistingConnectionsMacros = new List<string>();
+        public List<string> SectorOppositeExistingConnectionsMacros = [];
         public SectorConnectionData? SectorOppositeSelectedConnection
         {
             get => _sectorOppositeSelectedConnection;
@@ -299,7 +299,7 @@ namespace ChemGateBuilder
             SectorItem? sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
             SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
             if (sectorMap == null || sectorMap.IsDragging) return;
-            SectorConnectionData newConnection = new SectorConnectionData
+            SectorConnectionData newConnection = new()
             {
                 Active = gateCurrent.Active && sectorTo != null,
                 ToSector = sectorTo != null ? sectorTo.Name : "",
@@ -376,7 +376,7 @@ namespace ChemGateBuilder
                                         if (zoneCoordinates == null) continue;
                                         Position? gateCoordinates = gateConnection.Position;
                                         if (gateCoordinates == null) continue;
-                                        SectorConnectionData newConnection = new SectorConnectionData
+                                        SectorConnectionData newConnection = new()
                                         {
                                             Active = active && !string.IsNullOrEmpty(sectorTo),
                                             ToSector = sectorTo ?? "",
@@ -524,9 +524,9 @@ namespace ChemGateBuilder
 
     public class GateData : INotifyPropertyChanged
     {
-        private Coordinates _coordinates = new Coordinates();
-        private Coordinates _position = new Coordinates();
-        private Rotation _rotation = new Rotation();
+        private Coordinates _coordinates = new();
+        private Coordinates _position = new();
+        private Rotation _rotation = new();
         private bool _active;
         private string _gateMacro;
 
@@ -672,14 +672,14 @@ namespace ChemGateBuilder
 
 
 
-    public class Coordinates : INotifyPropertyChanged
+    public class Coordinates(int xDefault = 0, int yDefault = 0, int zDefault = 0) : INotifyPropertyChanged
     {
-        private int _x;
-        private int _xDefault = 0;
-        private int _y;
-        private int _yDefault = 0;
-        private int _z;
-        private int _zDefault = 0;
+        private int _x = xDefault;
+        private int _xDefault = xDefault;
+        private int _y = yDefault;
+        private int _yDefault = yDefault;
+        private int _z = zDefault;
+        private int _zDefault = zDefault;
 
         public int X
         {
@@ -721,15 +721,6 @@ namespace ChemGateBuilder
         }
         public bool IsChanged => _x != _xDefault || _y != _yDefault || _z != _zDefault;
 
-        public Coordinates(int xDefault = 0, int yDefault = 0, int zDefault = 0)
-        {
-            _x = xDefault;
-            _xDefault = xDefault;
-            _y = yDefault;
-            _yDefault = yDefault;
-            _z = zDefault;
-            _zDefault = zDefault;
-        }
         public void Reset()
         {
             _x = _xDefault;
@@ -755,14 +746,14 @@ namespace ChemGateBuilder
         }
     }
 
-    public class Rotation : INotifyPropertyChanged
+    public class Rotation(int rollDefault = 0, int pitchDefault = 0, int yawDefault = 0) : INotifyPropertyChanged
     {
-        private int _roll;
-        private int _rollDefault = 0;
-        private int _pitch;
-        private int _pitchDefault = 0;
-        private int _yaw;
-        private int _yawDefault = 0;
+        private int _roll = rollDefault;
+        private int _rollDefault = rollDefault;
+        private int _pitch = pitchDefault;
+        private int _pitchDefault = pitchDefault;
+        private int _yaw = yawDefault;
+        private int _yawDefault = yawDefault;
 
         public int Roll
         {
@@ -804,15 +795,6 @@ namespace ChemGateBuilder
         }
         public bool IsChanged => _roll != _rollDefault || _pitch != _pitchDefault || _yaw != _yawDefault;
 
-        public Rotation(int rollDefault = 0, int pitchDefault = 0, int yawDefault = 0)
-        {
-            _roll = rollDefault;
-            _rollDefault = rollDefault;
-            _pitch = pitchDefault;
-            _pitchDefault = pitchDefault;
-            _yaw = yawDefault;
-            _yawDefault = yawDefault;
-        }
         public void Reset()
         {
             _roll = _rollDefault;
