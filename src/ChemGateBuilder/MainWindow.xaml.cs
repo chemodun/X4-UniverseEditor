@@ -220,7 +220,24 @@ namespace ChemGateBuilder
                 }
             }
         }
+
         public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = new ObservableCollection<GalaxyConnectionData>();
+
+        private ChemGateKeeper _mod = new ChemGateKeeper();
+
+        private bool _isModCanBeSaved = false;
+        public bool IsModCanBeSaved
+        {
+            get => _isModCanBeSaved;
+            set
+            {
+                if (_isModCanBeSaved != value)
+                {
+                    _isModCanBeSaved = value;
+                    OnPropertyChanged(nameof(IsModCanBeSaved));
+                }
+            }
+        }
 
         // Master sector list
         public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
@@ -324,11 +341,16 @@ namespace ChemGateBuilder
                     IsGateCanBeDeleted = IsNowGateCanBeDeleted && value;
                     OnPropertyChanged(nameof(ChangingGalaxyConnectionIsPossible));
                 }
+                if (value && IsGateCanBeDeleted)
+                {
+                    IsModCanBeSaved = _mod.IsModChanged(GalaxyConnections);
+                } else
+                {
+                    IsModCanBeSaved = false;
+                }
             }
         }
 
-
-        public bool IsModCanBeSaved => IsDataLoaded & GalaxyConnections.Count > 0;
         public bool IsModCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0;
 
         private string _buttonSaveContent = "Add";
@@ -857,6 +879,15 @@ namespace ChemGateBuilder
                         GatesConnectionCurrent.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
                     }
                 }
+            }
+        }
+
+        public void ButtonSaveMod_Click(object sender, RoutedEventArgs e)
+        {
+            if (GalaxyConnections.Count > 0)
+            {
+                _mod.SaveData(GalaxyConnections);
+                IsModCanBeSaved = false;
             }
         }
 
