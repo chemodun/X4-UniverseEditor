@@ -537,7 +537,7 @@ namespace ChemGateBuilder
         // Filter methods
         private void SectorsDirect_Filter(object sender, FilterEventArgs e)
         {
-            if (e.Item is SectorItem sector && sector != null)
+            if (e.Item is SectorItem sector && sector != null && sector?.Macro != null)
             {
                 sector.Selectable = true;
                 // Exclude the sector selected in Opposite ComboBox
@@ -547,7 +547,14 @@ namespace ChemGateBuilder
                     {
                         sector.Selectable = false;
                     }
-                    else if (GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros != null && GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros.Contains(sector?.Macro ?? ""))
+                    else if (
+                        GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros != null &&
+                        GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros.Contains(sector.Macro) ||
+                        (
+                            GatesConnectionCurrent.SectorOpposite.Macro != null &&
+                            GetOppositeSectorsMacrosFromMod(sector.Macro).Contains(GatesConnectionCurrent.SectorOpposite.Macro)
+                        )
+                    )
                     {
                         sector.Selectable = false;
                     }
@@ -563,7 +570,7 @@ namespace ChemGateBuilder
 
         private void SectorsOpposite_Filter(object sender, FilterEventArgs e)
         {
-            if (e.Item is SectorItem sector && sector != null)
+            if (e.Item is SectorItem sector && sector != null && sector?.Macro != null)
             {
                 sector.Selectable = true;
                 // Exclude the sector selected in Direct ComboBox
@@ -573,7 +580,14 @@ namespace ChemGateBuilder
                     {
                         sector.Selectable = false;
                     }
-                    else if (GatesConnectionCurrent.SectorDirectExistingConnectionsMacros != null && GatesConnectionCurrent.SectorDirectExistingConnectionsMacros.Contains(sector?.Macro ?? ""))
+                    else if (
+                        GatesConnectionCurrent.SectorDirectExistingConnectionsMacros != null &&
+                        GatesConnectionCurrent.SectorDirectExistingConnectionsMacros.Contains(sector.Macro) ||
+                        (
+                            GatesConnectionCurrent.SectorDirect.Macro != null &&
+                            GetOppositeSectorsMacrosFromMod(sector.Macro).Contains(GatesConnectionCurrent.SectorDirect.Macro)
+                        )
+                    )
                     {
                         sector.Selectable = false;
                     }
@@ -590,6 +604,27 @@ namespace ChemGateBuilder
         private void SelectX4DataFolder()
         {
             SelectX4DataFolder_Click(null, null);
+        }
+
+        private List<string> GetOppositeSectorsMacrosFromMod(string sectorMacro)
+        {
+            List<string> oppositeSectorsMacros = new List<string>();
+            foreach (var connection in GalaxyConnections)
+            {
+                if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
+                {
+                    continue;
+                }
+                if (connection.Connection.PathDirect.Sector.Macro == sectorMacro)
+                {
+                    oppositeSectorsMacros.Add(connection.Connection.PathOpposite.Sector.Macro);
+                }
+                else if (connection.Connection.PathOpposite.Sector.Macro == sectorMacro)
+                {
+                    oppositeSectorsMacros.Add(connection.Connection.PathDirect.Sector.Macro);
+                }
+            }
+            return oppositeSectorsMacros;
         }
 
         // Handle Canvas Size Changed to adjust Hexagon Size

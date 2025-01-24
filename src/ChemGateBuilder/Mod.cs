@@ -16,7 +16,7 @@ namespace ChemGateBuilder
         private string _name = "Chem Gate Keeper";
         private string _description = "This extension adds new gate connections between sectors";
         private string _author = "Chem O`Dun";
-        private int _version = 100;
+        private int _version = 0;
         private int _versionInitial = 100;
         private string _date = "2021-09-01";
         private int _gameVersion = 710;
@@ -99,6 +99,7 @@ namespace ChemGateBuilder
             _modFolderPath = currentPath;
             Connections = GalaxyConnections.Select(gc => gc.Connection).Where(c => c != null).ToList();
             _date = DateTime.Now.ToString("yyyy-MM-dd");
+            _versionInitial = _version;
             SaveModXMLs();
             return true;
         }
@@ -172,7 +173,7 @@ namespace ChemGateBuilder
             XElement content = new XElement("content");
             content.SetAttributeValue("id", _id);
             content.SetAttributeValue("name", _name);
-            content.SetAttributeValue("version", $"{_version / 100:F2}");
+            content.SetAttributeValue("version", (_version / 100.0).ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
             content.SetAttributeValue("author", _author);
             content.SetAttributeValue("date", _date);
             content.SetAttributeValue("save", _save);
@@ -196,9 +197,9 @@ namespace ChemGateBuilder
                 }
                 content.Add(new XElement("dependency", new XAttribute("id", dlc), new XAttribute("optional", "false")));
             }
-            XDocument docContent = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), content);
+            XDocument docContent = new XDocument(new XDeclaration("1.0", "utf-8", null), content);
             docContent.Save(Path.Combine(_modFolderPath, "content.xml"));
-            XDocument docGalaxy = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), diff);
+            XDocument docGalaxy = new XDocument(new XDeclaration("1.0", "utf-8", null), diff);
             string galaxyPath = Path.Combine(_modFolderPath, "maps", "xu_ep2_universe");
             Directory.CreateDirectory(galaxyPath);
             docGalaxy.Save(Path.Combine(galaxyPath, "galaxy.xml"));
@@ -230,9 +231,9 @@ namespace ChemGateBuilder
                         zones.Add(zone);
                     }
                 }
-                XDocument docSectors = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), sectors);
+                XDocument docSectors = new XDocument(new XDeclaration("1.0", "utf-8", null), sectors);
                 docSectors.Save(Path.Combine(universePath, "sectors.xml"));
-                XDocument docZones = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), zones);
+                XDocument docZones = new XDocument(new XDeclaration("1.0", "utf-8", null), zones);
                 docZones.Save(Path.Combine(universePath, "zones.xml"));
             }
         }
