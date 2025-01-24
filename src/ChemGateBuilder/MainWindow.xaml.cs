@@ -83,16 +83,105 @@ namespace ChemGateBuilder
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private string _configFileName;
+
         private string _x4DataFolder = ".";
+        public string X4DataFolder
+        {
+            get => _x4DataFolder;
+            set
+            {
+                if (_x4DataFolder != value && value != null)
+                {
+                    _x4DataFolder = value;
+                    OnPropertyChanged(nameof(X4DataFolder));
+                    OnPropertyChanged(nameof(X4DataFolderStatus));
+                    SaveConfiguration();
+                }
+            }
+        }
+
         private bool _gatesActiveByDefault = true;
+                public bool GatesActiveByDefault
+        {
+            get => _gatesActiveByDefault;
+            set
+            {
+                if (_gatesActiveByDefault != value && value != null)
+                {
+                    _gatesActiveByDefault = value;
+                    OnPropertyChanged(nameof(GatesActiveByDefault));
+                    if (GatesConnectionCurrent != null) GatesConnectionCurrent.SetDefaults(value);
+                    SaveConfiguration();
+                }
+            }
+        }
+
         private int _gatesMinimalDistanceBetween = 10;
+        public int GatesMinimalDistanceBetween
+        {
+            get => _gatesMinimalDistanceBetween;
+            set
+            {
+                if (_gatesMinimalDistanceBetween != value && value != null)
+                {
+                    _gatesMinimalDistanceBetween = value;
+                    OnPropertyChanged(nameof(GatesMinimalDistanceBetween));
+                    SaveConfiguration();
+                }
+            }
+        }
+
         private int _sectorRadius = 400;
+        public int SectorRadius
+        {
+            get => _sectorRadius;
+            set
+            {
+                if (_sectorRadius != value && value != null)
+                {
+                    _sectorRadius = value;
+                    OnPropertyChanged(nameof(SectorRadius));
+                    SaveConfiguration();
+                    if (value != null && value > 0 && GatesConnectionCurrent != null)
+                    {
+                        GatesConnectionCurrent.SetSectorMapInternalSize(value);
+                    }
+                }
+            }
+        }
+        public int SectorRadiusNegative => -SectorRadius;
+
         private string _logLevel = "Warning";
+        public string LogLevel
+        {
+            get => _logLevel;
+            set
+            {
+                if (_logLevel != value && value != null)
+                {
+                    _logLevel = value;
+                    OnPropertyChanged(nameof(LogLevel));
+                    SaveConfiguration();
+                }
+            }
+        }
+
         private bool _logToFile = false;
+        public bool LogToFile
+        {
+            get => _logToFile;
+            set
+            {
+                if (_logToFile != value && value != null)
+                {
+                    _logToFile = value;
+                    OnPropertyChanged(nameof(LogToFile));
+                    SaveConfiguration();
+                }
+            }
+        }
+
         private string _statusMessage = "Ready";
-        private string _gateMacroDefault = "props_gates_anc_gate_macro";
-        public static Logger _logger = LogManager.GetCurrentClassLogger();
-        private static string GalaxyConnectionPrefix = "Chem_Gate";
         public string StatusMessage
         {
             get => _statusMessage;
@@ -105,6 +194,11 @@ namespace ChemGateBuilder
                 }
             }
         }
+
+        private string _gateMacroDefault = "props_gates_anc_gate_macro";
+        public static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static string GalaxyConnectionPrefix = "Chem_Gate";
+
         private GalaxyConnectionData? _currentGalaxyConnection;
         public GalaxyConnectionData? CurrentGalaxyConnection
         {
@@ -146,20 +240,6 @@ namespace ChemGateBuilder
             }
         }
         // Other properties
-        public string X4DataFolder
-        {
-            get => _x4DataFolder;
-            set
-            {
-                if (_x4DataFolder != value && value != null)
-                {
-                    _x4DataFolder = value;
-                    OnPropertyChanged(nameof(X4DataFolder));
-                    OnPropertyChanged(nameof(X4DataFolderStatus));
-                    SaveConfiguration();
-                }
-            }
-        }
 
         public string X4DataFolderStatus
         {
@@ -183,80 +263,6 @@ namespace ChemGateBuilder
             }
         }
 
-        public bool GatesActiveByDefault
-        {
-            get => _gatesActiveByDefault;
-            set
-            {
-                if (_gatesActiveByDefault != value && value != null)
-                {
-                    _gatesActiveByDefault = value;
-                    OnPropertyChanged(nameof(GatesActiveByDefault));
-                    if (GatesConnectionCurrent != null) GatesConnectionCurrent.SetDefaults(value);
-                    SaveConfiguration();
-                }
-            }
-        }
-
-        public int GatesMinimalDistanceBetween
-        {
-            get => _gatesMinimalDistanceBetween;
-            set
-            {
-                if (_gatesMinimalDistanceBetween != value && value != null)
-                {
-                    _gatesMinimalDistanceBetween = value;
-                    OnPropertyChanged(nameof(GatesMinimalDistanceBetween));
-                    SaveConfiguration();
-                }
-            }
-        }
-
-        public int SectorRadius
-        {
-            get => _sectorRadius;
-            set
-            {
-                if (_sectorRadius != value && value != null)
-                {
-                    _sectorRadius = value;
-                    OnPropertyChanged(nameof(SectorRadius));
-                    SaveConfiguration();
-                    if (value != null && value > 0 && GatesConnectionCurrent != null)
-                    {
-                        GatesConnectionCurrent.SetSectorMapInternalSize(value);
-                    }
-                }
-            }
-        }
-        public int SectorRadiusNegative => -SectorRadius;
-        public string LogLevel
-        {
-            get => _logLevel;
-            set
-            {
-                if (_logLevel != value && value != null)
-                {
-                    _logLevel = value;
-                    OnPropertyChanged(nameof(LogLevel));
-                    SaveConfiguration();
-                }
-            }
-        }
-
-        public bool LogToFile
-        {
-            get => _logToFile;
-            set
-            {
-                if (_logToFile != value && value != null)
-                {
-                    _logToFile = value;
-                    OnPropertyChanged(nameof(LogToFile));
-                    SaveConfiguration();
-                }
-            }
-        }
 
         private void HandleValidationError(string message)
         {
