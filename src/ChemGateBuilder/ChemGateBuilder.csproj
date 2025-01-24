@@ -6,12 +6,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets/gate.ico</ApplicationIcon> <!-- Set Application Icon -->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
     <PackageReference Include="NLog" Version="5.3.4" />
     <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
+    <Resource Include="Assets\gate.ico" />
   </ItemGroup>
 
 </Project>
