@@ -106,7 +106,7 @@ namespace ChemGateBuilder
             get => _gatesActiveByDefault;
             set
             {
-                if (_gatesActiveByDefault != value && value != null)
+                if (_gatesActiveByDefault != value)
                 {
                     _gatesActiveByDefault = value;
                     OnPropertyChanged(nameof(GatesActiveByDefault));
@@ -122,7 +122,7 @@ namespace ChemGateBuilder
             get => _gatesMinimalDistanceBetween;
             set
             {
-                if (_gatesMinimalDistanceBetween != value && value != null)
+                if (_gatesMinimalDistanceBetween != value)
                 {
                     _gatesMinimalDistanceBetween = value;
                     OnPropertyChanged(nameof(GatesMinimalDistanceBetween));
@@ -137,12 +137,12 @@ namespace ChemGateBuilder
             get => _sectorRadius;
             set
             {
-                if (_sectorRadius != value && value != null)
+                if (_sectorRadius != value)
                 {
                     _sectorRadius = value;
                     OnPropertyChanged(nameof(SectorRadius));
                     SaveConfiguration();
-                    if (value != null && value > 0 && GatesConnectionCurrent != null)
+                    if (value > 0 && GatesConnectionCurrent != null)
                     {
                         GatesConnectionCurrent.SetSectorMapInternalSize(value);
                     }
@@ -172,7 +172,7 @@ namespace ChemGateBuilder
             get => _logToFile;
             set
             {
-                if (_logToFile != value && value != null)
+                if (_logToFile != value)
                 {
                     _logToFile = value;
                     OnPropertyChanged(nameof(LogToFile));
@@ -669,7 +669,7 @@ namespace ChemGateBuilder
                     // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
                     ellipse.CaptureMouse();
                 }
-                _logger.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
+                _logger.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
             }
         }
 
@@ -684,6 +684,8 @@ namespace ChemGateBuilder
         {
             if (sectorMap != null && sectorMap.SelectedItem != null && sectorMap.IsDragging)
             {
+                double halfSize = sectorMap.SelectedItem.ItemSizePx / 2;
+                SectorMapItem selectedItem = sectorMap.SelectedItem;
                 _logger.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
                 if (sender is Ellipse ellipse)
                 {
@@ -701,7 +703,7 @@ namespace ChemGateBuilder
                     double newX = mousePosition.X - sectorMap.MouseOffset.X;
                     double newY = mousePosition.Y - sectorMap.MouseOffset.Y;
                     // Account the size of the item
-                    Point newPoint = new Point(newX + sectorMap.SelectedItem.ItemSizePx / 2 , newY + sectorMap.SelectedItem.ItemSizePx / 2);
+                    Point newPoint = new Point(newX + halfSize , newY + halfSize);
                     // Check if the new position is inside the hexagon
                     bool isInside = false;
                     if (sectorMap == GatesConnectionCurrent?.SectorDirectMap)
@@ -716,16 +718,16 @@ namespace ChemGateBuilder
                     if (isInside)
                     {
                         // Update the SectorMapItem's coordinates
-                        sectorMap.SelectedItem.X = newX;
-                        sectorMap.SelectedItem.Y = newY;
+                        selectedItem.X = newX;
+                        selectedItem.Y = newY;
                         if (GatesConnectionCurrent != null) {
                             if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
                             {
-                                sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
+                                selectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
                             }
                             else
                             {
-                                sectorMap.SelectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
+                                selectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
                             }
                         }
                         _logger.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
