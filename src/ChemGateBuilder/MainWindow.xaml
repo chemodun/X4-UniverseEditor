@@ -474,7 +474,8 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
-                            <DataGrid ItemsSource="{Binding GalaxyConnections}"
+                            <DataGrid x:Name="DataGridGalaxyConnections"
+                                    ItemsSource="{Binding GalaxyConnections}"
                                     SelectedItem="{Binding CurrentGalaxyConnection, Mode=TwoWay}"
                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                     AutoGenerateColumns="False"
@@ -498,8 +499,18 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5">
-                                <Button x:Name="ButtonGateNew" Content="New Gate" Margin="0,0,0,5" Width="100" IsEnabled="{Binding IsGateCanBeCreated}"/>
-                                <Button x:Name="ButtonGateDelete" Content="Delete Gate" Margin="0,5,0,0" Width="100" IsEnabled="{Binding IsGateCanBeDeleted}"/>
+                                <Button x:Name="ButtonGateNew"
+                                        Content="New Gate"
+                                        Margin="0,0,0,5"
+                                        Width="100"
+                                        IsEnabled="{Binding IsGateCanBeCreated}"
+                                        Click="ButtonGateNew_Click"/>
+                                <Button x:Name="ButtonGateDelete"
+                                        Content="Delete Gate"
+                                        Margin="0,5,0,0"
+                                        Width="100"
+                                        IsEnabled="{Binding IsGateCanBeDeleted}"
+                                        Click="ButtonGateDelete_Click"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>

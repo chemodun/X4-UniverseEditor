@@ -222,12 +222,22 @@ namespace ChemGateBuilder
             UpdateCurrentGateOnMap(nameof(GateOpposite));
         }
 
-        public void SetDefaults(bool gateActiveDefault)
+        public void SetGateStatusDefaults(bool gateActiveDefault)
         {
             _gateDirect.SetDefaults(gateActiveDefault, "");
             _gateOpposite.SetDefaults(gateActiveDefault, "");
             OnPropertyChanged("");
         }
+
+        public void ResetToInitial(bool gateActiveDefault, string gateMacroDefault)
+        {
+            _gateDirect = new GateData(gateActiveDefault, gateMacroDefault);
+            _gateOpposite = new GateData(gateActiveDefault, gateMacroDefault);
+            _sectorDirectDefault = null;
+            _sectorOppositeDefault = null;
+            Reset();
+        }
+
         public void SetDefaultsFromReference(GalaxyConnectionData reference)
         {
             if (reference == null) return;

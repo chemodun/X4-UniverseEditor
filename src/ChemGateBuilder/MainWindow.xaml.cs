@@ -101,7 +101,7 @@ namespace ChemGateBuilder
         }
 
         private bool _gatesActiveByDefault = true;
-                public bool GatesActiveByDefault
+        public bool GatesActiveByDefault
         {
             get => _gatesActiveByDefault;
             set
@@ -110,7 +110,7 @@ namespace ChemGateBuilder
                 {
                     _gatesActiveByDefault = value;
                     OnPropertyChanged(nameof(GatesActiveByDefault));
-                    if (GatesConnectionCurrent != null) GatesConnectionCurrent.SetDefaults(value);
+                    if (GatesConnectionCurrent != null) GatesConnectionCurrent.SetGateStatusDefaults(value);
                     SaveConfiguration();
                 }
             }
@@ -212,6 +212,11 @@ namespace ChemGateBuilder
                     IsGateCanBeCreated = IsNowGateCanBeCreated;
                     IsGateCanBeDeleted = IsNowGateCanBeDeleted;
                     ButtonSaveContent = IsNowGateCanBeCreated ? "Update" : "Add";
+                    if (value != null && GatesConnectionCurrent != null)
+                    {
+                        GatesConnectionCurrent.SetDefaultsFromReference(value);
+                        GatesConnectionCurrent.Reset();
+                    }
                 }
             }
         }
@@ -781,6 +786,8 @@ namespace ChemGateBuilder
                 if (CurrentGalaxyConnection != null)
                 {
                     CurrentGalaxyConnection.Update(galaxyConnection, GatesConnectionCurrent);
+                    GatesConnectionCurrent.SetDefaultsFromReference(CurrentGalaxyConnection);
+                    GatesConnectionCurrent.Reset();
                 }
                 else
                 {
@@ -788,8 +795,6 @@ namespace ChemGateBuilder
                     GalaxyConnections.Add(newConnection);
                     CurrentGalaxyConnection = newConnection;
                 }
-                GatesConnectionCurrent.SetDefaultsFromReference(CurrentGalaxyConnection);
-                GatesConnectionCurrent.Reset();
             }
         }
 
@@ -800,6 +805,40 @@ namespace ChemGateBuilder
                 GatesConnectionCurrent.Reset();
                 SectorsDirectViewSource.View.Refresh();
                 SectorsOppositeViewSource.View.Refresh();
+            }
+        }
+
+        public void ButtonGateNew_Click(object sender, RoutedEventArgs e)
+        {
+            if (GatesConnectionCurrent != null)
+            {
+                GatesConnectionCurrent.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
+                CurrentGalaxyConnection = null;
+            }
+        }
+
+        public void ButtonGateDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (GatesConnectionCurrent != null)
+            {
+                if (CurrentGalaxyConnection != null)
+                {
+                    int index = GalaxyConnections.IndexOf(CurrentGalaxyConnection);
+                    GalaxyConnections.Remove(CurrentGalaxyConnection);
+                    if (GalaxyConnections.Count > 0)
+                    {
+                        if (index >= GalaxyConnections.Count)
+                        {
+                            index = GalaxyConnections.Count - 1;
+                        }
+                        CurrentGalaxyConnection = GalaxyConnections[index];
+                    }
+                    else
+                    {
+                        CurrentGalaxyConnection = null;
+                        GatesConnectionCurrent.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
+                    }
+                }
             }
         }
 
