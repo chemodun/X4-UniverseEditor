@@ -14,7 +14,7 @@ namespace X4DataLoader
     {
         public static Galaxy LoadAllData(string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
         {
-            var fileSets = new Dictionary<string, Dictionary<string, (string fullPath, string fileName)>>();
+            Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> fileSets = GatherFiles(coreFolderPath, relativePaths);
 
             Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
             // Scan for vanilla files
@@ -259,6 +259,61 @@ namespace X4DataLoader
             // and populate the respective properties in clusters, sectors, and zones.
 
             return galaxy;
+        }
+
+        public static Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> GatherFiles(string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
+        {
+            Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> result  = [];
+
+            Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
+            // Scan for vanilla files
+            var vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
+            foreach (var item in relativePaths)
+            {
+                var filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
+                if (File.Exists(filePath))
+                {
+                    vanillaFiles[item.Key] = (filePath, item.Value.fileName);
+                }
+                else
+                {
+                    throw new FileNotFoundException($"File not found: {filePath}");
+                }
+            }
+            result["vanilla"] = vanillaFiles;
+            Log.Debug($"Vanilla files identified.");
+
+            // Scan for extension files
+            var extensionsFolder = Path.Combine(coreFolderPath, "extensions");
+            Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
+            if (Directory.Exists(extensionsFolder))
+            {
+                foreach (var extensionFolder in Directory.GetDirectories(extensionsFolder))
+                {
+                    var extensionName = Path.GetFileName(extensionFolder);
+                    var extensionFiles = new Dictionary<string, (string fullPath, string fileName)>();
+
+                    foreach (var item in relativePaths)
+                    {
+                        var searchPath = Path.Combine(extensionFolder, item.Value.path);
+                        if (Directory.Exists(searchPath))
+                        {
+                            var files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
+                            if (files.Length > 0)
+                            {
+                                extensionFiles[item.Key] = (files[0], item.Value.fileName);
+                            }
+                        }
+                    }
+
+                    if (extensionFiles.Count > 0)
+                    {
+                        result[extensionName] = extensionFiles;
+                        Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extensionName}.");
+                    }
+                }
+            }
+            return result;
         }
     }
 }
