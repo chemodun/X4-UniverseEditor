@@ -378,9 +378,9 @@ namespace ChemGateBuilder
                                         {
                                             Active = active && !string.IsNullOrEmpty(sectorTo),
                                             ToSector = sectorTo ?? "",
-                                            X = (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
-                                            Y = (int)((zoneCoordinates.y + gateCoordinates.y) / 1000),
-                                            Z = (int)((zoneCoordinates.z + gateCoordinates.z) / 1000),
+                                            X = (int)((zoneCoordinates.X + gateCoordinates.X) / 1000),
+                                            Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
+                                            Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
                                             Type = "gate",
                                             Id = gateConnection.Name
                                         };
@@ -839,11 +839,11 @@ namespace ChemGateBuilder
         public static Rotation FromQuaternion(Quaternion q)
         {
             // Normalize the quaternion to ensure accurate calculations
-            double norm = Math.Sqrt(q.qx * q.qx + q.qy * q.qy + q.qz * q.qz + q.qw * q.qw);
-            double x = q.qx / norm;
-            double y = q.qy / norm;
-            double z = q.qz / norm;
-            double w = q.qw / norm;
+            double norm = Math.Sqrt(q.QX * q.QX + q.QY * q.QY + q.QZ * q.QZ + q.QW * q.QW);
+            double x = q.QX / norm;
+            double y = q.QY / norm;
+            double z = q.QZ / norm;
+            double w = q.QW / norm;
 
             // Calculate Roll (x-axis rotation)
             double sinr_cosp = 2 * (w * x + y * z);

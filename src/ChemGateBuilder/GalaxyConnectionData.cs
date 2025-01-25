@@ -15,14 +15,14 @@ namespace ChemGateBuilder
         public Coordinates OppositePosition;
         public Rotation OppositeRotation;
         public string SectorDirectName => _connection?.PathDirect?.Sector?.Name ?? string.Empty;
-        public int GateDirectX => (int)(_connection?.PathDirect?.Zone?.Position?.x ?? 0);
-        public int GateDirectY => (int)(_connection?.PathDirect?.Zone?.Position?.y ?? 0);
-        public int GateDirectZ => (int)(_connection?.PathDirect?.Zone?.Position?.z ?? 0);
+        public int GateDirectX => (int)(_connection?.PathDirect?.Zone?.Position?.X ?? 0);
+        public int GateDirectY => (int)(_connection?.PathDirect?.Zone?.Position?.Y ?? 0);
+        public int GateDirectZ => (int)(_connection?.PathDirect?.Zone?.Position?.Z ?? 0);
         public bool GateDirectActive => _connection?.PathDirect?.Gate?.IsActive ?? false;
         public string SectorOppositeName => _connection?.PathOpposite?.Sector?.Name ?? string.Empty;
-        public int GateOppositeX => (int)(_connection?.PathOpposite?.Zone?.Position?.x ?? 0);
-        public int GateOppositeY => (int)(_connection?.PathOpposite?.Zone?.Position?.y ?? 0);
-        public int GateOppositeZ => (int)(_connection?.PathOpposite?.Zone?.Position?.z ?? 0);
+        public int GateOppositeX => (int)(_connection?.PathOpposite?.Zone?.Position?.X ?? 0);
+        public int GateOppositeY => (int)(_connection?.PathOpposite?.Zone?.Position?.Y ?? 0);
+        public int GateOppositeZ => (int)(_connection?.PathOpposite?.Zone?.Position?.Z ?? 0);
         public bool GateOppositeActive => _connection?.PathOpposite?.Gate?.IsActive ?? false;
 
         public GalaxyConnection Connection
