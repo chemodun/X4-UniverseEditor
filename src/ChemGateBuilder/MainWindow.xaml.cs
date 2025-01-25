@@ -890,6 +890,8 @@ namespace ChemGateBuilder
             {
                 GatesConnectionCurrent.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
                 CurrentGalaxyConnection = null;
+                SectorsDirectViewSource.View.Refresh();
+                SectorsOppositeViewSource.View.Refresh();
             }
         }
 
