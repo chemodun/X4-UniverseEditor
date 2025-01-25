@@ -9,7 +9,9 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
         Title="Chem Gate Builder" MinWidth="1200" MinHeight="940"
-        Icon="{StaticResource BuilderIcon}">
+        Icon="{StaticResource BuilderIcon}"
+        Name="ChemGateBuilder">
+        <!-- DataContext="{Binding Main, Source={StaticResource Locator}}" -->
     <Window.Resources>
         <DataTemplate x:Key="SectorTemplate">
             <StackPanel Orientation="Horizontal" Margin="0">
@@ -18,7 +20,7 @@
             </StackPanel>
         </DataTemplate>
         <converters:HexagonPointsConverter x:Key="HexagonPointsConverter" />
-        <Style TargetType="ComboBoxItem">
+        <Style x:Key="SectorComboBoxItemStyle" TargetType="ComboBoxItem">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Selectable}" Value="False">
                     <Setter Property="Foreground" Value="Gray"/>
@@ -224,6 +226,7 @@
                                             Margin="5"
                                             ItemsSource="{Binding SectorsDirectViewSource.View}"
                                             SelectedItem="{Binding GatesConnectionCurrent.SectorDirect, Mode=TwoWay}"
+                                            ItemContainerStyle="{StaticResource SectorComboBoxItemStyle}"
                                             SelectedValuePath="Macro"
                                             ItemTemplate="{StaticResource SectorTemplate}" />
                                     </Grid>
@@ -369,6 +372,7 @@
                                             Grid.Column="1"
                                             ItemsSource="{Binding SectorsOppositeViewSource.View}"
                                             SelectedItem="{Binding GatesConnectionCurrent.SectorOpposite, Mode=TwoWay}"
+                                            ItemContainerStyle="{StaticResource SectorComboBoxItemStyle}"
                                             SelectedValuePath="Macro"
                                             ItemTemplate="{StaticResource SectorTemplate}" />
                                     </Grid>
