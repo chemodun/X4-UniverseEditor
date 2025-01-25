@@ -89,24 +89,34 @@
         <fluent:Ribbon DockPanel.Dock="Top">
             <fluent:RibbonTabItem Header="Mod">
                 <fluent:RibbonGroupBox Header="Mod Actions">
-                    <fluent:Button Header="New" IsEnabled="{Binding IsGateCanBeCreated}" Style="{StaticResource FluentButtonStyle}">
+                    <fluent:Button Header="New"
+                                    IsEnabled="{Binding IsGateCanBeCreated}"
+                                    Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="FileCirclePlus" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Load" IsEnabled="{Binding IsDataLoaded}" Style="{StaticResource FluentButtonStyle}">
+                    <fluent:Button Header="Load"
+                                    IsEnabled="{Binding IsDataLoaded}"
+                                    Click="ButtonLoadMod_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="FileArrowUp" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Save" IsEnabled="{Binding IsModCanBeSaved}" Click="ButtonSaveMod_Click" Style="{StaticResource FluentButtonStyle}">
+                    <fluent:Button Header="Save"
+                                    IsEnabled="{Binding IsModCanBeSaved}"
+                                    Click="ButtonSaveMod_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="FileArrowDown" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Program">
-                    <fluent:Button Header="Exit" Click="ButtonExit_Click" Style="{StaticResource FluentButtonStyle}">
+                    <fluent:Button Header="Exit"
+                                    Click="ButtonExit_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage  Icon="XMark" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>

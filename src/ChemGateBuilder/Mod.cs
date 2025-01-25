@@ -48,12 +48,21 @@ namespace ChemGateBuilder
             XML = null;
         }
 
-        public bool LoadData(string modFolderPath, Galaxy galaxy)
+        public bool LoadData(Galaxy galaxy, ObservableCollection<GalaxyConnectionData> GalaxyConnections)
         {
-            _modFolderPath = modFolderPath;
-            if (galaxy == null)
+            string currentPath = _modFolderPath;
+
+            System.Windows.Forms.OpenFileDialog dialog = new()
             {
-                return false;
+                InitialDirectory = string.IsNullOrEmpty(currentPath) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : currentPath,
+                Filter = "Mod Content File|content.xml",
+                Title = "Select a File"
+            };
+
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.FileName))
+            {
+                currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
             }
             _versionInitial = _version;
             return true;
@@ -64,7 +73,7 @@ namespace ChemGateBuilder
             string currentPath = _modFolderPath;
             if (string.IsNullOrEmpty(currentPath))
             {
-                var dialog = new System.Windows.Forms.FolderBrowserDialog();
+                System.Windows.Forms.FolderBrowserDialog dialog = new();
                 System.Windows.Forms.DialogResult folderSelect = dialog.ShowDialog();
 
                 if (folderSelect == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))

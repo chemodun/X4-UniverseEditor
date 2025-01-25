@@ -953,6 +953,21 @@ namespace ChemGateBuilder
             }
         }
 
+        public void ButtonLoadMod_Click(object sender, RoutedEventArgs e)
+        {
+            if (Galaxy == null)
+            {
+                StatusMessage = "Error: Galaxy data is not loaded.";
+                return;
+            }
+            GalaxyConnections.Clear();
+            _mod.LoadData(Galaxy, GalaxyConnections);
+            if (GalaxyConnections.Count > 0)
+            {
+                CurrentGalaxyConnection = GalaxyConnections[0];
+            }
+        }
+
         public void ButtonSaveMod_Click(object sender, RoutedEventArgs e)
         {
             if (GalaxyConnections.Count > 0)
