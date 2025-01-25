@@ -102,6 +102,8 @@
                             <fa:IconImage Icon="FileArrowDown" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Program">
                     <fluent:Button Header="Exit" Click="ButtonExit_Click" Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage  Icon="XMark" Style="{StaticResource FontAwesomeIconStyle}"/>
