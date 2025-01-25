@@ -626,6 +626,39 @@ namespace ChemGateBuilder
             return oppositeSectorsMacros;
         }
 
+        public List<SectorConnectionData> GetSectorConnectionsFromMod(string sectorMacro)
+        {
+            List<SectorConnectionData> sectorConnections = new List<SectorConnectionData>();
+            foreach (var connection in GalaxyConnections)
+            {
+                if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
+                {
+                    continue;
+                }
+                foreach (var modSectorMacro in new string[] { connection.Connection.PathDirect.Sector.Macro, connection.Connection.PathOpposite.Sector.Macro })
+                {
+                    if (modSectorMacro != sectorMacro)
+                    {
+                        continue;
+                    }
+                    bool isDirect = modSectorMacro == connection.Connection.PathDirect.Sector.Macro;
+                    SectorConnectionData newConnection = new()
+                    {
+                        Active = isDirect ? connection.GateDirectActive : connection.GateOppositeActive,
+                        ToSector = isDirect ? connection.SectorOppositeName : connection.SectorDirectName,
+                        X = isDirect ? connection.GateDirectX : connection.GateOppositeX,
+                        Y = isDirect ? connection.GateDirectY : connection.GateOppositeY,
+                        Z = isDirect ? connection.GateDirectZ : connection.GateOppositeZ,
+                        Id = connection.Connection.Name,
+                        From = "mod",
+                        Type = "gate"
+                    };
+                    sectorConnections.Add(newConnection);
+                }
+            }
+            return sectorConnections;
+        }
+
         // Handle Canvas Size Changed to adjust Hexagon Size
         private void SectorDirectCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {

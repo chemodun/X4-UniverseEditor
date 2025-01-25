@@ -306,6 +306,7 @@ namespace ChemGateBuilder
                 Y = gateCurrent.Coordinates.Y,
                 Z = gateCurrent.Coordinates.Z,
                 Type = "gate",
+                From = "new",
                 Id = "New"
             };
             sectorMap.UpdateItem(newConnection);
@@ -382,6 +383,7 @@ namespace ChemGateBuilder
                                             Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
                                             Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
                                             Type = "gate",
+                                            From = "map",
                                             Id = gateConnection.Name
                                         };
                                         sectorConnections.Add(newConnection);
@@ -389,6 +391,9 @@ namespace ChemGateBuilder
                                     }
                                 }
                             }
+                        }
+                        foreach(SectorConnectionData modConnection in mainWindow.GetSectorConnectionsFromMod(sectorCurrent.Macro)) {
+                            sectorMap.AddItem(modConnection);
                         }
                     }
                 }
@@ -498,7 +503,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-
+        public string From = "";
         public bool Active
         {
             get => _active;

@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Security.Cryptography;
 
 namespace ChemGateBuilder
 {
@@ -156,6 +157,11 @@ namespace ChemGateBuilder
                 return "empty";
             return _connectionData.Type;
         } } // e.g., "empty", "gate", "highway", etc.
+        public string From { get {
+            if (_connectionData == null || _connectionData?.From == null)
+                return "unknown";
+            return _connectionData.From;
+        } } // e.g., "new", "mod", "map", etc.
         public string Status { get {
             if (_connectionData == null || _connectionData?.Active == null)
                 return "unknown";
@@ -238,13 +244,15 @@ namespace ChemGateBuilder
         {
             get
             {
-                if (IsNew)
-                    return Brushes.LightGreen;
-
                 return Type switch
                 {
                     "empty" => Brushes.DarkGray,
-                    "gate" => Brushes.DarkOrange,
+                    "gate" => From switch
+                    {
+                        "new" => Brushes.LightGreen,
+                        "mod" => Brushes.DarkGreen,
+                        _ => Brushes.DarkOrange
+                    },
                     "highway" => Brushes.Olive,
                     "mod" => Brushes.DarkGreen,
                     _ => Brushes.LightGray
