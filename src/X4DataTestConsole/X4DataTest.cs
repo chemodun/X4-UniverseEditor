@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using X4DataLoader;
+using Utilities.Logging;
+using NLog;
 
 namespace X4DataTestConsole
 {
@@ -8,6 +10,10 @@ namespace X4DataTestConsole
     {
         static void Main(string[] args)
         {
+            ConfigureNLog();
+            var logger = LogManager.GetCurrentClassLogger();
+            Log.Initialize(logger);
+
             if (args.Length < 1)
             {
                 Console.WriteLine("Usage: X4DataTestConsole <coreFolderPath>");
@@ -15,6 +21,8 @@ namespace X4DataTestConsole
             }
 
             var coreFolderPath = args[0];
+
+            Log.Info("Starting to load galaxy data.");
 
             var galaxy = X4Galaxy.LoadData(coreFolderPath);
 
@@ -58,6 +66,18 @@ namespace X4DataTestConsole
                 Console.WriteLine($"    Zone: {connection.PathOpposite.Zone.Name}, Source: {connection.PathOpposite.Zone.Source}, FileName: {connection.PathOpposite.Zone.FileName}");
                 Console.WriteLine($"    Gate: {connection.PathOpposite.Gate.Name}, Source: {connection.PathOpposite.Gate.Source}, FileName: {connection.PathOpposite.Gate.FileName}");
             }
+        }
+        public static void ConfigureNLog()
+        {
+            var logLevel = LogLevel.Debug;
+            var config = new NLog.Config.LoggingConfiguration();
+            var logConsole = new NLog.Targets.ConsoleTarget("logConsole")
+            {
+                Layout = "  ${time} [${level:uppercase=true:fixedLength=true:padding=7}]: ${event-properties:FilePath}->${event-properties:ClassName}.${event-properties:MemberName}(): ${message} ${exception:format=toString}  "
+            };
+            //longdate
+            config.AddRule(logLevel, LogLevel.Fatal, logConsole);
+            LogManager.Configuration = config;
         }
     }
 }
