@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Utilities.Logging;
+
 namespace X4DataLoader
 {
     public class Cluster

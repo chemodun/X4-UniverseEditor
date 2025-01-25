@@ -4,6 +4,7 @@ using System.Globalization;
 using System.ComponentModel;
 using X4DataLoader.Helpers;
 using System.Data.SqlTypes;
+using Utilities.Logging;
 
 namespace X4DataLoader
 {

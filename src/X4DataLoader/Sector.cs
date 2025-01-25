@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using X4DataLoader.Helpers;
+using Utilities.Logging;
 
 namespace X4DataLoader
 {

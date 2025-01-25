@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Utilities.Logging;
 
 namespace X4DataLoader
 {

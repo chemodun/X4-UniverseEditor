@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
 using X4DataLoader.Helpers;
+using Utilities.Logging;
 
 namespace X4DataLoader
 {
