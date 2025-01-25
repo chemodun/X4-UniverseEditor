@@ -24,7 +24,8 @@
       "exclude-paths": [
         "src/X4DataLoader",
         "src/X4DataTestConsole",
-        "src/ChemGateBuilder"
+        "src/ChemGateBuilder",
+	"src/Logger"
       ]
     },
     "src/X4DataLoader": {
@@ -37,6 +38,10 @@
     },
     "src/ChemGateBuilder": {
       "package-name": "ChemGateBuilder",
+      "release-type": "simple"
+    },
+    "src/Logger": {
+      "package-name": "Logger",
       "release-type": "simple"
     }
   }
