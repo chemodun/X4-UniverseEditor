@@ -1,4 +1,5 @@
-﻿namespace X4DataLoader
+﻿using Utilities.Logging;
+namespace X4DataLoader
 {
     public class X4Galaxy
     {
@@ -15,6 +16,8 @@
                 { "sechighways", ("maps/xu_ep2_universe", "sechighways.xml") },
                 { "zonehighways", ("maps/xu_ep2_universe", "zonehighways.xml") }
             };
+
+            Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
 
             return DataLoader.LoadAllData(coreFolderPath, relativePaths);
         }

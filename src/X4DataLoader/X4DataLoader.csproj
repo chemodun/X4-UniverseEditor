@@ -10,6 +10,10 @@
     <Copyright>Developed by Chem O`Dun</Copyright>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Logger\Logger.csproj" />
+  </ItemGroup>
+
   <Target Name="ReadVersion" BeforeTargets="BeforeBuild">
     <ReadLinesFromFile File="version.txt">
       <Output TaskParameter="Lines" PropertyName="Version" />

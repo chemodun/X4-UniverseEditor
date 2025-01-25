@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using X4DataLoader.Helpers;
+using Utilities.Logging;
 
 namespace X4DataLoader
 {
@@ -15,6 +16,7 @@ namespace X4DataLoader
         {
             var fileSets = new Dictionary<string, Dictionary<string, (string fullPath, string fileName)>>();
 
+            Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
             // Scan for vanilla files
             var vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
             foreach (var item in relativePaths)
@@ -30,9 +32,11 @@ namespace X4DataLoader
                 }
             }
             fileSets["vanilla"] = vanillaFiles;
+            Log.Debug($"Vanilla files identified.");
 
             // Scan for extension files
             var extensionsFolder = Path.Combine(coreFolderPath, "extensions");
+            Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
             if (Directory.Exists(extensionsFolder))
             {
                 foreach (var extensionFolder in Directory.GetDirectories(extensionsFolder))
@@ -56,13 +60,14 @@ namespace X4DataLoader
                     if (extensionFiles.Count > 0)
                     {
                         fileSets[extensionName] = extensionFiles;
+                        Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extensionName}.");
                     }
                 }
             }
 
             var translation = new Translation();
             translation.Load(fileSets["vanilla"]["translation"].fullPath);
-            Console.WriteLine("Translations loaded.");
+            Log.Debug("Translation loaded.");
 
             var clusters = new List<Cluster>();
             var sectors = new List<Sector>();
@@ -88,11 +93,11 @@ namespace X4DataLoader
                                 {
                                     cluster.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
                                     clusters.Add(cluster);
-                                    Console.WriteLine($"Cluster loaded: {cluster.Name}");
+                                    Log.Debug($"Cluster loaded: {cluster.Name}");
                                 }
                                 catch (ArgumentException e)
                                 {
-                                    Console.WriteLine($"Error loading cluster: {e.Message}");
+                                    Log.Error($"Error loading cluster: {e.Message}");
                                 }
                             }
                             else if (Sector.IsSectorMacro(macro))
@@ -106,18 +111,18 @@ namespace X4DataLoader
                                     if (cluster != null)
                                     {
                                         cluster.Sectors.Add(sector);
-                                        Console.WriteLine($"Sector added: {sector.Name} to Cluster: {cluster.Name}");
+                                        Log.Debug($"Sector added: {sector.Name} to Cluster: {cluster.Name}");
                                     }
-                                    Console.WriteLine($"Sector loaded: {sector.Name}");
+                                    Log.Debug($"Sector loaded: {sector.Name}");
                                 }
                                 catch (ArgumentException e)
                                 {
-                                    Console.WriteLine($"Error loading sector: {e.Message}");
+                                    Log.Error($"Error loading sector: {e.Message}");
                                 }
                             }
                         }
                     }
-                    Console.WriteLine($"Map Defaults loaded from: {mapDefaultsFile.fileName} for {source}");
+                    Log.Debug($"Map Defaults loaded from: {mapDefaultsFile.fileName} for {source}");
                 }
 
                 // Process clusters
@@ -132,10 +137,10 @@ namespace X4DataLoader
                         }
                         catch (ArgumentException e)
                         {
-                            Console.WriteLine($"Error loading Cluster Connections: {e.Message}");
+                            Log.Error($"Error loading Cluster Connections: {e.Message}");
                         }
                     }
-                    Console.WriteLine($"Clusters loaded from: {clustersFile.fileName} for {source}");
+                    Log.Debug($"Clusters loaded from: {clustersFile.fileName} for {source}");
                 }
 
                 // Process sectors
@@ -150,10 +155,10 @@ namespace X4DataLoader
                         }
                         catch (ArgumentException e)
                         {
-                            Console.WriteLine($"Error loading Sector Connections: {e.Message}");
+                            Log.Error($"Error loading Sector Connections: {e.Message}");
                         }
                     }
-                    Console.WriteLine($"Sectors loaded from: {sectorsFile.fileName} for {source}");
+                    Log.Debug($"Sectors loaded from: {sectorsFile.fileName} for {source}");
                 }
 
                 // Process zones
@@ -169,14 +174,14 @@ namespace X4DataLoader
                         if (sector != null)
                         {
                             sector.AddZone(zone);
-                            Console.WriteLine($"Zone loaded for Sector: {sector.Name}");
+                            Log.Debug($"Zone loaded for Sector: {sector.Name}");
                         }
                         else
                         {
-                            Console.WriteLine($"No matching sector found for Zone: {zone.Name}");
+                            Log.Warn($"No matching sector found for Zone: {zone.Name}");
                         }
                     }
-                    Console.WriteLine($"Zones loaded from: {zonesFile.fileName} for {source}");
+                    Log.Debug($"Zones loaded from: {zonesFile.fileName} for {source}");
                 }
 
                 // Process sechighways
@@ -191,14 +196,14 @@ namespace X4DataLoader
                         if (cluster != null)
                         {
                             cluster.Highways.Add(highway);
-                            Console.WriteLine($"Sector Highway loaded for Cluster: {cluster.Name}");
+                            Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
                         }
                         else
                         {
-                            Console.WriteLine($"No matching cluster found for Sector Highway: {highway.Name}");
+                            Log.Warn($"No matching cluster found for Sector Highway: {highway.Name}");
                         }
                     }
-                    Console.WriteLine($"Sector Highways loaded from: {sechighwaysFile.fileName} for {source}");
+                    Log.Debug($"Sector Highways loaded from: {sechighwaysFile.fileName} for {source}");
                 }
 
                 // Process zonehighways
@@ -213,14 +218,14 @@ namespace X4DataLoader
                         if (sector != null)
                         {
                             sector.Highways.Add(highway);
-                            Console.WriteLine($"Zone Highway loaded for Sector: {sector.Name}");
+                            Log.Debug($"Zone Highway loaded for Sector: {sector.Name}");
                         }
                         else
                         {
-                            Console.WriteLine($"No matching sector found for Zone Highway: {highway.Name}");
+                            Log.Warn($"No matching sector found for Zone Highway: {highway.Name}");
                         }
                     }
-                    Console.WriteLine($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
+                    Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
                 }
 
                 // Process galaxy
@@ -230,7 +235,7 @@ namespace X4DataLoader
                     var galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
                     if (galaxyElement != null) {
                         galaxy.Load(galaxyElement, clusters, source, galaxyFile.fileName);
-                        Console.WriteLine($"Galaxy loaded: {galaxy.Name} from {galaxyFile.fileName} for {source}");
+                        Log.Debug($"Galaxy loaded from: {galaxyFile.fileName} for {source}");
                     }
                     else {
                         var galaxyDiffElement = galaxyDoc.XPathSelectElement("/diff");
@@ -239,10 +244,11 @@ namespace X4DataLoader
                             foreach (var galaxyElementDiff in galaxyDiffElements) {
                                 if (galaxyElementDiff.Name == "add" && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections") {
                                     galaxy.LoadConnections(galaxyElementDiff, clusters, source, galaxyFile.fileName);
-                                    Console.WriteLine($"Galaxy updated: {galaxy.Name} from {galaxyFile.fileName} for {source}");
+                                    Log.Debug($"Galaxy connections loaded from: {galaxyFile.fileName} for {source}");
                                 }
                             }
                         } else {
+                            Log.Error("Invalid galaxy file format");
                             throw new ArgumentException("Invalid galaxy file format");
                         }
                     }

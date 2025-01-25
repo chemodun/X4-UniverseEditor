@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-
+using Utilities.Logging;
 namespace X4DataLoader
 {
     public class Cluster
@@ -49,6 +49,7 @@ namespace X4DataLoader
 
         public void Load(XElement element, Translation translation, string source, string fileName)
         {
+            Log.Debug($"Loading cluster data for {source} from {fileName}");
             var macro = element.Attribute("macro")?.Value;
             var sectorIdMatch = ClusterRegex.Match(macro ?? "");
             if (sectorIdMatch.Success)
