@@ -11,6 +11,7 @@ using X4DataLoader;
 using System.Windows.Input;
 using System.Windows.Controls;
 using NLog;
+using Utilities.Logging;
 
 using System.Windows.Markup;
 
@@ -196,7 +197,6 @@ namespace ChemGateBuilder
         }
 
         private string _gateMacroDefault = "props_gates_anc_gate_macro";
-        public static Logger _logger = LogManager.GetCurrentClassLogger();
         private static string GalaxyConnectionPrefix = "Chem_Gate";
 
         private GalaxyConnectionData? _currentGalaxyConnection;
@@ -289,7 +289,7 @@ namespace ChemGateBuilder
         private void HandleValidationError(string message)
         {
             // Optional: Log the validation message for debugging
-            // _logger.LogError($"Validation Error: {message}");
+            Log.Error($"Validation Error: {message}");
 
             StatusMessage = message;
         }
@@ -371,7 +371,6 @@ namespace ChemGateBuilder
         // Constructor
         public MainWindow()
         {
-            _logger = LogManager.GetCurrentClassLogger();
             _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
             LoadConfiguration();
@@ -669,7 +668,7 @@ namespace ChemGateBuilder
                     // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
                     ellipse.CaptureMouse();
                 }
-                _logger.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
+                Log.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
             }
         }
 
@@ -686,7 +685,7 @@ namespace ChemGateBuilder
             {
                 double halfSize = sectorMap.SelectedItem.ItemSizePx / 2;
                 SectorMapItem selectedItem = sectorMap.SelectedItem;
-                _logger.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
+                Log.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
                 if (sender is Ellipse ellipse)
                 {
                     // Get the current mouse position relative to the SectorCanvas
@@ -714,7 +713,7 @@ namespace ChemGateBuilder
                     {
                         isInside = SectorOppositeHexagon.RenderedGeometry.FillContains(newPoint);
                     }
-                    _logger.Debug($"[MouseMove] IsInside: {isInside}");
+                    Log.Debug($"[MouseMove] IsInside: {isInside}");
                     if (isInside)
                     {
                         // Update the SectorMapItem's coordinates
@@ -730,7 +729,7 @@ namespace ChemGateBuilder
                                 selectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
                             }
                         }
-                        _logger.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
+                        Log.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
                     }
                 }
             }
@@ -793,7 +792,7 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent != null)
             {
                 // GatesConnectionCurrent.Save();
-                _logger.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
+                Log.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
                 if (Galaxy == null)
                 {
                     StatusMessage = "Error: Galaxy data is not loaded.";

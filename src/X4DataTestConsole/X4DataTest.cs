@@ -73,7 +73,7 @@ namespace X4DataTestConsole
             var config = new NLog.Config.LoggingConfiguration();
             var logConsole = new NLog.Targets.ConsoleTarget("logConsole")
             {
-                Layout = "  ${time} [${level:uppercase=true:fixedLength=true:padding=7}]: ${event-properties:FilePath}->${event-properties:ClassName}.${event-properties:MemberName}(): ${message} ${exception:format=toString}  "
+                Layout = "${time} [${level:uppercase=true}]: ${event-properties:FilePath}->${event-properties:ClassName}.${event-properties:MemberName}(): ${message} ${exception:format=toString}  "
             };
             //longdate
             config.AddRule(logLevel, LogLevel.Fatal, logConsole);

@@ -14,6 +14,7 @@
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="NLog" Version="5.3.4" />
     <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
+    <ProjectReference Include="..\Logger\Logger.csproj" />
     <Resource Include="Assets\builder.ico" />
     <Resource Include="Assets\x4.ico" />
   </ItemGroup>

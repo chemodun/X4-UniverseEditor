@@ -3,17 +3,18 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using NLog;
+using Utilities.Logging;
 
 namespace ChemGateBuilder
 {
     public partial class App : Application
     {
-        public readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             var configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
             AppConfig config = LoadConfiguration(configFileName);
+
             // var services = new ServiceCollection();
             // ConfigureServices(services);
 
@@ -49,7 +50,7 @@ namespace ChemGateBuilder
                 var logFile = new NLog.Targets.FileTarget("logFile")
                 {
                     FileName = logFileName,
-                    Layout = "${longdate} ${level} ${message} ${exception}",
+                    Layout = "${longdate} [${level:uppercase=true}]: ${event-properties:FilePath}->${event-properties:ClassName}.${event-properties:MemberName}(): ${message} ${exception:format=toString}",
                     KeepFileOpen = true,
                     DeleteOldFileOnStartup = true, // Overwrite the log file on each run
                     ArchiveAboveSize = 0,
@@ -57,13 +58,15 @@ namespace ChemGateBuilder
                 };
                 config.AddRule(logLevel, LogLevel.Fatal, logFile);
             }
-            logConsole.Layout = "${longdate} ${level} ${message} ${exception}";
+            logConsole.Layout = "${time} [${level:uppercase=true}]: ${event-properties:FilePath}->${event-properties:ClassName}.${event-properties:MemberName}(): ${message} ${exception:format=toString}";
 
             // Rules
             config.AddRule(logLevel, LogLevel.Fatal, logConsole);
 
             // Apply config
             LogManager.Configuration = config;
+            var logger = LogManager.GetCurrentClassLogger();
+            Log.Initialize(logger);
         }
 
     }
