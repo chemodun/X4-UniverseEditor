@@ -25,7 +25,7 @@ namespace X4DataLoader
             FileName = "";
             Position = new Position();
             PositionXML = null;
-            Connections = new Dictionary<string, Connection>();
+            Connections = [];
         }
         public void Load(XElement element, string source, string fileName)
         {
@@ -40,7 +40,7 @@ namespace X4DataLoader
             {
                 throw new ArgumentException("Zone must have a name or reference");
             }
-            Connections = new Dictionary<string, Connection>();
+            Connections = [];
             var connectionsElement = element.Element("connections");
             if (connectionsElement != null)
             {
@@ -61,7 +61,7 @@ namespace X4DataLoader
             FileName = fileName;
         }
 
-        public void SetPosition(Position? position, string positionId, XElement positionXML)
+        public void SetPosition(Position? position, string positionId, XElement? positionXML)
         {
             if (position != null)
             {
@@ -80,29 +80,32 @@ namespace X4DataLoader
             PositionXML = new XElement("connection");
             PositionXML.SetAttributeValue("name", PositionId);
             PositionXML.SetAttributeValue("ref", "zones");
-            if (!(Position.x == 0 && Position.y == 0 && Position.z == 0))
+            if (!(Position.X == 0 && Position.Y == 0 && Position.Z == 0))
             {
-                XElement offset = new XElement("offset");
-                XElement positionElement = new XElement("position");
-                positionElement.SetAttributeValue("x", Position.x);
-                positionElement.SetAttributeValue("y", Position.y);
-                positionElement.SetAttributeValue("z", Position.z);
+                XElement offset = new("offset");
+                XElement positionElement = new("position");
+                positionElement.SetAttributeValue("x", Position.X);
+                positionElement.SetAttributeValue("y", Position.Y);
+                positionElement.SetAttributeValue("z", Position.Z);
                 offset.Add(positionElement);
                 PositionXML.Add(offset);
             }
             XML = new XElement("macro");
             XML.SetAttributeValue("name", Name);
             XML.SetAttributeValue("class", "zone");
-            XElement component = new XElement("component");
+            XElement component = new("component");
             component.SetAttributeValue("ref", "standardzone");
             XML.Add(component);
             if (Connections.Count > 0)
             {
-                XElement connectionsElement = new XElement("connections");
+                XElement connectionsElement = new("connections");
                 foreach (var connection in Connections.Values)
                 {
-                    XElement connectionElement = connection.XML;
-                    connectionsElement.Add(connectionElement);
+                    if (connection.XML != null)
+                    {
+                        XElement connectionElement = connection.XML;
+                        connectionsElement.Add(connectionElement);
+                    }
                 }
                 XML.Add(connectionsElement);
             }

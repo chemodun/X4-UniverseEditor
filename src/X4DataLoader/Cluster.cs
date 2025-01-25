@@ -17,30 +17,30 @@ namespace X4DataLoader
         public string FullId => $"Cluster_{Id:D2}";
         public string Macro => $"Cluster_{Id:D2}_macro";
         public string Reference { get; set; }
-        public (double x, double y, double z)? Position { get; private set; }
+        public Position Position { get; private set; }
         public string PositionId { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
-        XElement? PositionXML { get; set; }
-        XElement? XML { get; set; }
+        public XElement? PositionXML { get; set; }
+        public XElement? XML { get; set; }
         public List<Sector> Sectors { get; private set; }
         public Dictionary<string, Connection> Connections { get; private set; }
         public List<Highway> Highways { get; private set; }
 
 
-        private static readonly Regex ClusterRegex = new Regex(@"^(Cluster)_(\d+)_macro", RegexOptions.IgnoreCase);
+        private static readonly Regex ClusterRegex = new(@"^(Cluster)_(\d+)_macro", RegexOptions.IgnoreCase);
 
         public Cluster()
         {
-            Sectors = new List<Sector>();
+            Sectors = [];
             Name = "";
             Description = "";
             Id = 0;
             IdPrefix = "Cluster";
             Reference = "";
-            Connections = new Dictionary<string, Connection>();
-            Highways = new List<Highway>();
-            Position = null;
+            Connections = [];
+            Highways = [];
+            Position = new Position();
             PositionId = "";
             PositionXML = null;
             Source = "vanilla";
@@ -78,7 +78,7 @@ namespace X4DataLoader
             }
         }
 
-        public void SetPosition((double x, double y, double z) position, string positionId, XElement positionXML)
+        public void SetPosition(Position position, string positionId, XElement positionXML)
         {
             Position = position;
             PositionId = positionId;

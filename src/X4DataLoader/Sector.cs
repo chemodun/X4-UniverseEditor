@@ -8,7 +8,7 @@ using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {
-    public class Sector
+    public partial class Sector
     {
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -23,13 +23,13 @@ namespace X4DataLoader
         public string PositionId { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
-        XElement? PositionXML { get; set; }
-        XElement? XML { get; set; }
+        public XElement? PositionXML { get; set; }
+        public XElement? XML { get; set; }
 
         public List<Zone> Zones { get; private set; }
         public Dictionary<string, Connection> Connections { get; private set; }
         public List<Highway> Highways { get; private set; }
-        private static readonly Regex SectorRegex = new Regex(@"^(Cluster)_(\d+)_(Sector)(\d+)_macro", RegexOptions.IgnoreCase);
+        private static readonly Regex SectorRegex = new(@"^(Cluster)_(\d+)_(Sector)(\d+)_macro", RegexOptions.IgnoreCase);
         public Sector()
         {
             Name = "";
@@ -38,9 +38,9 @@ namespace X4DataLoader
             ClusterId = 0;
             IdPrefix = "Sector";
             ClusterIdPrefix = "Cluster";
-            Zones = new List<Zone>();
-            Connections = new Dictionary<string, Connection>();
-            Highways = new List<Highway>();
+            Zones = [];
+            Connections = [];
+            Highways = [];
             Reference = "";
             Position = new Position();
             PositionId = "";
@@ -115,5 +115,6 @@ namespace X4DataLoader
             if (zoneConnection == null || zoneConnection.Position == null) return;
             zone.SetPosition(zoneConnection.Position, zoneConnection.Name, zoneConnection.XML);
         }
+
     }
 }

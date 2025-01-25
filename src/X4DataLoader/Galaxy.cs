@@ -17,9 +17,9 @@ namespace X4DataLoader
         {
             Name = "";
             Reference = "";
-            Clusters = new List<Cluster>();
-            Sectors = new List<Sector>();
-            Connections = new List<GalaxyConnection>();
+            Clusters = [];
+            Sectors = [];
+            Connections = [];
         }
 
         public void Load (XElement element, List<Cluster> allClusters, string source, string fileName)
@@ -52,20 +52,20 @@ namespace X4DataLoader
                     var name = XmlHelper.GetAttribute(connectionElement, "name") ?? "";
                     var offsetElement = connectionElement.Element("offset");
                     var positionElement = offsetElement?.Element("position");
-                    var position = positionElement != null
-                        ? (
+                    Position position = positionElement != null
+                        ? new Position (
                             double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
                             double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
                             double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
                             )
-                        : (0.0, 0.0, 0.0);
+                        : new Position(0, 0, 0);
 
                     var macroElement = connectionElement.Element("macro");
                     if (macroElement != null)
                     {
-                        var macroRef = XmlHelper.GetAttribute(macroElement, "ref");
-                        var macroConnection = XmlHelper.GetAttribute(macroElement, "connection");
-                        if (macroConnection == "galaxy")
+                        string macroRef = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
+                        string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
+                        if (macroConnection == "galaxy" && string.IsNullOrEmpty(macroRef) == false)
                         {
                             var cluster = allClusters.FirstOrDefault(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef));
                             if (cluster != null)
@@ -126,16 +126,16 @@ namespace X4DataLoader
 
         public Sector? GetOppositeSectorForGateConnection(GateConnection gateConnection)
         {
-            var connection = Connections.FirstOrDefault(c => c.PathDirect.Gate == gateConnection);
-            if (connection != null)
+            var connection = Connections.FirstOrDefault(c => c.PathDirect?.Gate == gateConnection);
+            if (connection != null && connection.PathOpposite != null)
             {
                 return connection.PathOpposite.Sector;
             }
             else {
-                connection = Connections.FirstOrDefault(c => c.PathOpposite.Gate == gateConnection);
-                if (connection != null)
+                connection = Connections.FirstOrDefault(c => c.PathOpposite?.Gate == gateConnection);
+                if (connection != null && connection.PathDirect != null)
                 {
-                    return connection.PathDirect.Sector;
+                    return connection.PathDirect?.Sector;
                 }
             }
             return null;
@@ -143,17 +143,23 @@ namespace X4DataLoader
 
         public List<Sector> GetOppositeSectorsFromConnections(Sector sector)
         {
-            var connections = Connections.Where(c => c.PathDirect.Sector == sector || c.PathOpposite.Sector == sector);
-            List<Sector> result = new List<Sector>();
+            var connections = Connections.Where(c => (c.PathDirect?.Sector == sector) || (c.PathOpposite?.Sector == sector));
+            List<Sector> result = [];
             foreach (var connection in connections)
             {
-                if (connection.PathDirect.Sector == sector)
+                if (connection.PathDirect != null && connection.PathDirect.Sector == sector)
                 {
-                    result.Add(connection.PathOpposite.Sector);
+                    if (connection.PathOpposite?.Sector != null)
+                    {
+                        result.Add(connection.PathOpposite.Sector);
+                    }
                 }
                 else
                 {
-                    result.Add(connection.PathDirect.Sector);
+                    if (connection.PathDirect?.Sector != null)
+                    {
+                        result.Add(connection.PathDirect.Sector);
+                    }
                 }
             }
             return result;
@@ -168,7 +174,7 @@ namespace X4DataLoader
         public string FileName { get; private set; }
         public GalaxyConnectionPath? PathDirect { get; private set; }
         public GalaxyConnectionPath? PathOpposite { get; private set; }
-        public XElement XML { get; private set; }
+        public XElement? XML { get; private set; }
 
         public GalaxyConnection()
         {
@@ -214,9 +220,9 @@ namespace X4DataLoader
             XML = new XElement("connection");
             XML.SetAttributeValue("name", name);
             XML.SetAttributeValue("ref", "destination");
-            List<string> path = new List<string> { "..", PathDirect.Path };
+            List<string> path = ["..", PathDirect.Path];
             XML.SetAttributeValue("path", $"{string.Join("/", path)}");
-            XElement macroElement = new XElement("macro");
+            XElement macroElement = new("macro");
             macroElement.SetAttributeValue("connection", "destination");
             path.Clear();
             for (int i=0; i<5; i++)

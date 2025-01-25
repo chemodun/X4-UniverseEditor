@@ -91,34 +91,34 @@ namespace X4DataLoader
             XML = new XElement("connection");
             XML.SetAttributeValue("name", Name);
             XML.SetAttributeValue("ref", Reference);
-            if (!(Position.x == 0 && Position.y == 0 && Position.z == 0))
+            if (!(Position.X == 0 && Position.Y == 0 && Position.Z == 0))
             {
                 var offsetElement = new XElement("offset");
                 var positionElement = new XElement("position");
-                positionElement.SetAttributeValue("x", Position.x);
-                positionElement.SetAttributeValue("y", Position.y);
-                positionElement.SetAttributeValue("z", Position.z);
+                positionElement.SetAttributeValue("x", Position.X);
+                positionElement.SetAttributeValue("y", Position.Y);
+                positionElement.SetAttributeValue("z", Position.Z);
                 offsetElement.Add(positionElement);
                 XML.Add(offsetElement);
             }
-            if (!(Quaternion.qx == 0 && Quaternion.qy == 0 && Quaternion.qz == 0 && Quaternion.qw == 0))
+            if (!(Quaternion.QX == 0 && Quaternion.QY == 0 && Quaternion.QZ == 0 && Quaternion.QW == 0))
             {
                 var offsetElement = XML.Element("offset") ?? new XElement("offset");
                 var quaternionElement = new XElement("quaternion");
-                quaternionElement.SetAttributeValue("qx", Quaternion.qx);
-                quaternionElement.SetAttributeValue("qy", Quaternion.qy);
-                quaternionElement.SetAttributeValue("qz", Quaternion.qz);
-                quaternionElement.SetAttributeValue("qw", Quaternion.qw);
+                quaternionElement.SetAttributeValue("qx", Quaternion.QX);
+                quaternionElement.SetAttributeValue("qy", Quaternion.QY);
+                quaternionElement.SetAttributeValue("qz", Quaternion.QZ);
+                quaternionElement.SetAttributeValue("qw", Quaternion.QW);
                 offsetElement.Add(quaternionElement);
                 if (XML.Element("offset") == null)
                 {
                     XML.Add(offsetElement);
                 }
             }
-            if (properties != null && properties.Count > 0 && properties.ContainsKey("macroReference") && properties.ContainsKey("macroConnection")) {
+            if (properties != null && properties.Count > 0 && properties.TryGetValue("macroReference", out string? macroReference) && properties.TryGetValue("macroConnection", out string? macroConnection)) {
                 var macroElement = new XElement("macro");
-                MacroConnection = properties["macroConnection"];
-                MacroReference = properties["macroReference"];
+                MacroConnection = macroConnection;
+                MacroReference = macroReference;
                 macroElement.SetAttributeValue("ref", MacroReference);
                 macroElement.SetAttributeValue("connection", MacroConnection);
                 XML.Add(macroElement);
@@ -177,19 +177,15 @@ namespace X4DataLoader
                                     double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
                                   )
                                 : new Position();
-
                             var macroElement = connectionElement.Element("macro");
                             if (macroElement != null)
                             {
-                                var macroRef = XmlHelper.GetAttribute(macroElement, "ref");
-                                var macroConnection = XmlHelper.GetAttribute(macroElement, "connection");
-                                if (macroConnection == "cluster")
+                                string macroRef = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
+                                string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
+                                if (macroConnection == "cluster" && string.IsNullOrEmpty(macroRef) == false)
                                 {
                                     var sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
-                                    if (sector != null)
-                                    {
-                                        sector.SetPosition(position, connectionName, connectionElement);
-                                    }
+                                    sector?.SetPosition(position, connectionName, connectionElement);
                                 }
                             }
                         } else {
@@ -241,12 +237,12 @@ namespace X4DataLoader
             }
         }
 
-        public static List<string> ConnectionOwnerClasses = new List<string>
-        {
+        public static List<string> ConnectionOwnerClasses =
+        [
             "cluster",
             "sector",
             "zone"
-        };
+        ];
     }
 
     public class EntryPointConnection : Connection
@@ -311,15 +307,15 @@ namespace X4DataLoader
 
         public override void Create(string name, Position? position, Quaternion? quaternion, Dictionary<string, string>? properties = null)
         {
-            if (properties != null && properties.Count > 0 && properties.ContainsKey("gateMacro"))
+            if (properties != null && properties.Count > 0 && properties.TryGetValue("gateMacro", out string? macroReference))
             {
-                properties["macroReference"] = properties["gateMacro"];
+                properties["macroReference"] = macroReference;
                 properties["macroConnection"] = "space";
             }
             base.Create(name, position, quaternion, properties);
-            if (properties != null && properties.Count > 0 && properties.ContainsKey("isActive"))
+            if (properties != null && properties.Count > 0 && properties.TryGetValue("isActive", out string? isActive))
             {
-                IsActive = properties["isActive"] == "true";
+                IsActive = isActive == "true";
                 XElement macroElement = XML.Element("macro") ?? new XElement("macro");
                 XElement propertiesElement = macroElement.Element("properties") ?? new XElement("properties");
                 XElement stateElement = propertiesElement.Element("state") ?? new XElement("state");
@@ -334,31 +330,18 @@ namespace X4DataLoader
         }
     }
 
-    public class Position
+    public class Position(double x = 0.0, double y = 0.0, double z = 0.0)
     {
-        public double x { get; private set; }
-        public double y { get; private set; }
-        public double z { get; private set; }
-        public Position(double x = 0.0, double y = 0.0, double z = 0.0)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
+        public double X { get; private set; } = x;
+        public double Y { get; private set; } = y;
+        public double Z { get; private set; } = z;
     }
 
-    public class Quaternion
+    public class Quaternion(double qx = 0.0, double qy = 0.0, double qz = 0.0, double qw = 0.0)
     {
-        public double qx { get; private set; }
-        public double qy { get; private set; }
-        public double qz { get; private set; }
-        public double qw { get; private set; }
-        public Quaternion(double qx = 0.0, double qy = 0.0, double qz = 0.0, double qw = 0.0)
-        {
-            this.qx = qx;
-            this.qy = qy;
-            this.qz = qz;
-            this.qw = qw;
-        }
+        public double QX { get; private set; } = qx;
+        public double QY { get; private set; } = qy;
+        public double QZ { get; private set; } = qz;
+        public double QW { get; private set; } = qw;
     }
 }
