@@ -20,10 +20,10 @@ namespace ChemGateBuilder
         private int _versionInitial = 100;
         private string _date = "2021-09-01";
         private int _gameVersion = 710;
-        private string _save = "false";
-        private string _sync = "false";
-        private List<string> _dlcRequired = new List<string>();
-        private Dictionary<string, List<GalaxyConnectionPath>> _paths = new Dictionary<string, List<GalaxyConnectionPath>>();
+        private readonly string _save = "false";
+        private readonly string _sync = "false";
+        private readonly List<string> _dlcRequired = [];
+        private readonly Dictionary<string, List<GalaxyConnectionPath>> _paths = [];
         public int Version
         {
             get => _version;
@@ -40,7 +40,7 @@ namespace ChemGateBuilder
             set { _gameVersion = value; OnPropertyChanged(nameof(GameVersion)); }
         }
 
-        public List<GalaxyConnection> Connections = new List<GalaxyConnection>();
+        public List<GalaxyConnection> Connections = [];
         public XElement? XML = null;
 
         public ChemGateKeeper()
@@ -82,6 +82,15 @@ namespace ChemGateBuilder
                     {
                         return false;
                     }
+                    // Clear the currentPath folder
+                    foreach (var directory in Directory.GetDirectories(currentPath))
+                    {
+                        Directory.Delete(directory, true);
+                    }
+                    foreach (var file in Directory.GetFiles(currentPath))
+                    {
+                        File.Delete(file);
+                    }
                 }
                 else
                 {
@@ -104,38 +113,12 @@ namespace ChemGateBuilder
             return true;
         }
 
-        private void GatherDLCs()
-        {
-            _dlcRequired.Clear();
-            foreach (GalaxyConnection connection in Connections)
-            {
-                if (connection == null)
-                {
-                    continue;
-                }
-                if (connection.PathDirect != null && connection.PathDirect.Sector != null)
-                {
-                    if (!_dlcRequired.Contains(connection.PathDirect.Sector.Source))
-                    {
-                        _dlcRequired.Add(connection.PathDirect.Sector.Source);
-                    }
-                }
-                if (connection.PathOpposite != null && connection.PathOpposite.Sector != null)
-                {
-                    if (!_dlcRequired.Contains(connection.PathOpposite.Sector.Source))
-                    {
-                        _dlcRequired.Add(connection.PathOpposite.Sector.Source);
-                    }
-                }
-            }
-        }
-
         private void SaveModXMLs()
         {
             _dlcRequired.Clear();
             _paths.Clear();
             string connectionsText = "";
-            XElement diff = new XElement("diff");
+            XElement diff = new("diff");
             foreach (GalaxyConnection connection in Connections)
             {
                 if (connection == null)
@@ -149,11 +132,13 @@ namespace ChemGateBuilder
                         _dlcRequired.Add(connection.PathDirect.Sector.Source);
                     }
                     connectionsText += $"\n - {connection.PathDirect.Sector.Name} and";
-                    if (!_paths.ContainsKey(connection.PathDirect.Sector.Source))
+                    if (!_paths.TryGetValue(connection.PathDirect.Sector.Source, out List<GalaxyConnectionPath>? pathItems))
                     {
-                        _paths.Add(connection.PathDirect.Sector.Source, new List<GalaxyConnectionPath>());
+                        pathItems = [];
+                        _paths.Add(connection.PathDirect.Sector.Source, pathItems);
                     }
-                    _paths[connection.PathDirect.Sector.Source].Add(connection.PathDirect);
+
+                    pathItems.Add(connection.PathDirect);
                 }
                 if (connection.PathOpposite != null && connection.PathOpposite.Sector != null)
                 {
@@ -162,15 +147,17 @@ namespace ChemGateBuilder
                         _dlcRequired.Add(connection.PathOpposite.Sector.Source);
                     }
                     connectionsText += $" {connection.PathOpposite.Sector.Name}";
-                    if (!_paths.ContainsKey(connection.PathOpposite.Sector.Source))
+                    if (!_paths.TryGetValue(connection.PathOpposite.Sector.Source, out List<GalaxyConnectionPath>? pathItems))
                     {
-                        _paths.Add(connection.PathOpposite.Sector.Source, new List<GalaxyConnectionPath>());
+                        pathItems = [];
+                        _paths.Add(connection.PathOpposite.Sector.Source, pathItems);
                     }
-                    _paths[connection.PathOpposite.Sector.Source].Add(connection.PathOpposite);
+
+                    pathItems.Add(connection.PathOpposite);
                 }
                 diff.Add(connection.XML);
             }
-            XElement content = new XElement("content");
+            XElement content = new("content");
             content.SetAttributeValue("id", _id);
             content.SetAttributeValue("name", _name);
             content.SetAttributeValue("version", (_version / 100.0).ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
@@ -179,11 +166,11 @@ namespace ChemGateBuilder
             content.SetAttributeValue("save", _save);
             content.SetAttributeValue("sync", _sync);
             content.SetAttributeValue("description", _description + connectionsText);
-            List<int> languages = new List<int> { 7, 33, 37, 39, 44, 49, 55, 81, 82, 86, 88, 380};
+            List<int> languages = [7, 33, 37, 39, 44, 49, 55, 81, 82, 86, 88, 380];
             foreach (int language in languages)
             {
-                XElement text = new XElement("text");
-                text.SetAttributeValue("language", $"{_id}");
+                XElement text = new("text");
+                text.SetAttributeValue("language", $"{language}");
                 text.SetAttributeValue("description", _description + connectionsText);
                 content.Add(text);
             }
@@ -197,9 +184,9 @@ namespace ChemGateBuilder
                 }
                 content.Add(new XElement("dependency", new XAttribute("id", dlc), new XAttribute("optional", "false")));
             }
-            XDocument docContent = new XDocument(new XDeclaration("1.0", "utf-8", null), content);
+            XDocument docContent = new(new XDeclaration("1.0", "utf-8", null), content);
             docContent.Save(Path.Combine(_modFolderPath, "content.xml"));
-            XDocument docGalaxy = new XDocument(new XDeclaration("1.0", "utf-8", null), diff);
+            XDocument docGalaxy = new(new XDeclaration("1.0", "utf-8", null), diff);
             string galaxyPath = Path.Combine(_modFolderPath, "maps", "xu_ep2_universe");
             Directory.CreateDirectory(galaxyPath);
             docGalaxy.Save(Path.Combine(galaxyPath, "galaxy.xml"));
@@ -217,23 +204,23 @@ namespace ChemGateBuilder
                 }
                 universePath = Path.Combine(universePath, "maps", "xu_ep2_universe");
                 Directory.CreateDirectory(universePath);
-                XElement sectors = new XElement("diff");
-                XElement zones = new XElement("diff");
+                XElement sectors = new("diff");
+                XElement zones = new("diff");
                 foreach (GalaxyConnectionPath connectionPath in path.Value)
                 {
                     if (connectionPath.Sector != null && connectionPath.Zone != null)
                     {
-                        XElement sector = new XElement("add", new XAttribute("sel", $"/macros/macro[@name='{connectionPath.Sector.Macro}']/connections"));
+                        XElement sector = new("add", new XAttribute("sel", $"/macros/macro[@name='{connectionPath.Sector.Macro}']/connections"));
                         sector.Add(connectionPath.Zone.PositionXML);
                         sectors.Add(sector);
-                        XElement zone = new XElement("add", new XAttribute("sel", $"/macros"));
+                        XElement zone = new("add", new XAttribute("sel", $"/macros"));
                         zone.Add(connectionPath.Zone.XML);
                         zones.Add(zone);
                     }
                 }
-                XDocument docSectors = new XDocument(new XDeclaration("1.0", "utf-8", null), sectors);
+                XDocument docSectors = new(new XDeclaration("1.0", "utf-8", null), sectors);
                 docSectors.Save(Path.Combine(universePath, "sectors.xml"));
-                XDocument docZones = new XDocument(new XDeclaration("1.0", "utf-8", null), zones);
+                XDocument docZones = new(new XDeclaration("1.0", "utf-8", null), zones);
                 docZones.Save(Path.Combine(universePath, "zones.xml"));
             }
         }
