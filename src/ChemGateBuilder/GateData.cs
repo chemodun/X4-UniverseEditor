@@ -197,8 +197,7 @@ namespace ChemGateBuilder
             set {
                 _isChanged = value;
                 OnPropertyChanged(nameof(IsChanged));
-                MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
-                if (mainWindow != null)
+                if (Application.Current.MainWindow is MainWindow mainWindow)
                 {
                     mainWindow.ChangingGalaxyConnectionIsPossible = !value;
                 }
@@ -337,8 +336,7 @@ namespace ChemGateBuilder
                 SectorMap sectorMap = propertyName == nameof(SectorDirect) ? SectorDirectMap : SectorOppositeMap;
                 sectorMap.ClearItems();
                 if (sectorCurrent != null) {
-                    MainWindow? mainWindow = Application.Current.MainWindow as MainWindow;
-                    if (mainWindow != null && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
+                    if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
                     {
                         Galaxy galaxy = mainWindow.Galaxy;
                         Sector? sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
@@ -380,7 +378,7 @@ namespace ChemGateBuilder
                                         {
                                             Active = active && !string.IsNullOrEmpty(sectorTo),
                                             ToSector = sectorTo ?? "",
-                                            X =  (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
+                                            X = (int)((zoneCoordinates.x + gateCoordinates.x) / 1000),
                                             Y = (int)((zoneCoordinates.y + gateCoordinates.y) / 1000),
                                             Z = (int)((zoneCoordinates.z + gateCoordinates.z) / 1000),
                                             Type = "gate",
