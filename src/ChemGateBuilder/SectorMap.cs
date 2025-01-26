@@ -134,7 +134,7 @@ namespace ChemGateBuilder
     {
         private double _x;
         private double _y;
-        private double _itemSizePx = 12;
+        private double _itemSizePx = 16;
         private bool _isNew;
         private SectorConnectionData? _connectionData;
         private SectorMap? _sectorMap;

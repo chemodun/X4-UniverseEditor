@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <Resource Include="Assets\builder.ico" />
     <Resource Include="Assets\x4.ico" />
+    <Resource Include="Assets\jumpgate_default.png" />
   </ItemGroup>
 
 </Project>

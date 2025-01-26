@@ -3,4 +3,5 @@
                     xmlns:local="clr-namespace:tradeware.Resources">
     <BitmapImage x:Key="BuilderIcon" UriSource="Assets/builder.ico"/>
     <BitmapImage x:Key="XIcon" UriSource="Assets/x4.ico"/>
+    <BitmapImage x:Key="GateDefault" UriSource="Assets/jumpgate_default.png"/>
 </ResourceDictionary>

@@ -688,7 +688,7 @@ namespace ChemGateBuilder
         }
         private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, SectorMap? sectorMap)
         {
-            if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item && sectorMap != null)
+            if (sender is Image ellipse && ellipse.DataContext is SectorMapItem item && sectorMap != null)
             {
                 sectorMap.SelectedItem = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
@@ -718,8 +718,8 @@ namespace ChemGateBuilder
             {
                 double halfSize = sectorMap.SelectedItem.ItemSizePx / 2;
                 SectorMapItem selectedItem = sectorMap.SelectedItem;
-                Log.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}, ellipse.Parent: {((Ellipse)sender).Parent}");
-                if (sender is Ellipse ellipse)
+                Log.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}");
+                if (sender is Image ellipse)
                 {
                     // Get the current mouse position relative to the SectorCanvas
                     Point mousePosition = e.GetPosition(ellipse);
@@ -783,7 +783,7 @@ namespace ChemGateBuilder
                 sectorMap.IsDragging = false;
                 sectorMap.SelectedItem = null;
 
-                if (sender is Ellipse ellipse && ellipse.DataContext is SectorMapItem item && item != null)
+                if (sender is Image ellipse && ellipse.DataContext is SectorMapItem item && item != null)
                 {
                     ellipse.ReleaseMouseCapture();
                     if (connectionData != null)

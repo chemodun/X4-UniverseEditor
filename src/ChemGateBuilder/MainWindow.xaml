@@ -258,24 +258,28 @@
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Ellipse Width="{Binding ItemSizePx}" Height="{Binding ItemSizePx}"
-                                                                    Fill="{Binding FillColor}"
-                                                                    Stroke="{Binding BorderColor}"
-                                                                    StrokeThickness="2"
-                                                                    PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
-                                                                    MouseMove="SectorDirectMapItem_MouseMove"
-                                                                    MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
-                                                                    <!-- by some reason this binding doesn't work
-                                                                    Canvas.Left="{Binding X}"
-                                                                    Canvas.Top="{Binding Y}"
-                                                                    -->
-                                                                <Ellipse.RenderTransform>
+
+                                                                <!-- Source="{Binding ImagePath}" -->                               <!-- Binding Tooltip -->
+                                                            <Image
+                                                                Width="{Binding ItemSizePx}"
+                                                                Height="{Binding ItemSizePx}"
+                                                                Stretch="Uniform"
+                                                                PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
+                                                                MouseMove="SectorDirectMapItem_MouseMove"
+                                                                MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
+                                                                <Image.Source>
+                                                                    <StaticResource ResourceKey="GateDefault"/>
+                                                                </Image.Source>
+                                                                <!-- Positioning the Image using RenderTransform -->
+                                                                <Image.RenderTransform>
                                                                     <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
-                                                                </Ellipse.RenderTransform>
-                                                                <Ellipse.ToolTip>
+                                                                </Image.RenderTransform>
+
+                                                                <!-- Binding Tooltip -->
+                                                                <Image.ToolTip>
                                                                     <ToolTip Content="{Binding ToolTip}" />
-                                                                </Ellipse.ToolTip>
-                                                            </Ellipse>
+                                                                </Image.ToolTip>
+                                                            </Image>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
