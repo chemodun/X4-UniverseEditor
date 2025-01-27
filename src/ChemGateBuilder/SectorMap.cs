@@ -14,7 +14,7 @@ namespace ChemGateBuilder
     {
         private double _visualX;
         private double _visualY;
-        private double _visualSizePx = 100; // Default size
+        private double _visualSizePx = 200; // Default size
         private string?  _selectedItemId = "";
         public double InternalSizeKm { get; set; } = 400;
 
@@ -134,7 +134,9 @@ namespace ChemGateBuilder
     {
         private double _x;
         private double _y;
-        private double _itemSizePx = 12;
+        private static double _sizeCoefficient = 0.005;
+        private static double _itemSizeMinPx = 10;
+        private double _itemSizePx = _itemSizeMinPx;
         private bool _isNew;
         private SectorConnectionData? _connectionData;
         private SectorMap? _sectorMap;
@@ -201,6 +203,14 @@ namespace ChemGateBuilder
         {
             get => _isNew;
             set { _isNew = value; OnPropertyChanged(); }
+        }
+
+        private void UpdateSize()
+        {
+            if (SectorMap == null)
+                return;
+            double newSizePx = SectorMap.VisualSizePx * _sizeCoefficient;
+            ItemSizePx = Math.Max(newSizePx, _itemSizeMinPx);
         }
 
         private void UpdatePosition()
