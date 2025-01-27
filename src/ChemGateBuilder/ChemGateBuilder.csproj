@@ -17,7 +17,14 @@
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <Resource Include="Assets\builder.ico" />
     <Resource Include="Assets\x4.ico" />
-    <Resource Include="Assets\jumpgate_default.png" />
+    <Resource Include="Assets\mapob_jumpgate_default.png" />
+    <Resource Include="Assets\mapob_jumpgate_map_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_map_inactive.png" />
+    <Resource Include="Assets\mapob_jumpgate_mod_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_mod_inactive.png" />
+    <Resource Include="Assets\mapob_jumpgate_new_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_new_inactive.png" />
+    <Resource Include="Assets\mapob_superhighway_default.png" />
   </ItemGroup>
 
 </Project>

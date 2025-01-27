@@ -688,7 +688,7 @@ namespace ChemGateBuilder
         }
         private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, SectorMap? sectorMap)
         {
-            if (sender is Image ellipse && ellipse.DataContext is SectorMapItem item && sectorMap != null)
+            if (sender is Image image && image.DataContext is SectorMapItem item && sectorMap != null)
             {
                 sectorMap.SelectedItem = item;
                 if (item.IsNew) // Only allow dragging for "new" gates
@@ -696,10 +696,10 @@ namespace ChemGateBuilder
                     sectorMap.IsDragging = true;
 
                     // Get the mouse position relative to the gate
-                    sectorMap.MouseOffset = e.GetPosition(ellipse);
+                    sectorMap.MouseOffset = e.GetPosition(image);
 
-                    // Capture the mouse to receive MouseMove events even if the cursor leaves the ellipse
-                    ellipse.CaptureMouse();
+                    // Capture the mouse to receive MouseMove events even if the cursor leaves the image
+                    image.CaptureMouse();
                 }
                 Log.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
             }
@@ -718,11 +718,11 @@ namespace ChemGateBuilder
             {
                 double halfSize = sectorMap.SelectedItem.ItemSizePx / 2;
                 SectorMapItem selectedItem = sectorMap.SelectedItem;
-                Log.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isEllipse: {sender is Ellipse}");
-                if (sender is Image ellipse)
+                Log.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isImage: {sender is Image}");
+                if (sender is Image image)
                 {
                     // Get the current mouse position relative to the SectorCanvas
-                    Point mousePosition = e.GetPosition(ellipse);
+                    Point mousePosition = e.GetPosition(image);
                     if (sectorMap == GatesConnectionCurrent?.SectorDirectMap)
                     {
                         mousePosition = e.GetPosition(SectorDirectCanvas);
@@ -783,9 +783,9 @@ namespace ChemGateBuilder
                 sectorMap.IsDragging = false;
                 sectorMap.SelectedItem = null;
 
-                if (sender is Image ellipse && ellipse.DataContext is SectorMapItem item && item != null)
+                if (sender is Image image && image.DataContext is SectorMapItem item && item != null)
                 {
-                    ellipse.ReleaseMouseCapture();
+                    image.ReleaseMouseCapture();
                     if (connectionData != null)
                     {
                         if (isDirect)

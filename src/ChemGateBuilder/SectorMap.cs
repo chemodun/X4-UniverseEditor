@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Security.Cryptography;
+using System.Windows.Media.Imaging;
 
 namespace ChemGateBuilder
 {
@@ -48,7 +48,7 @@ namespace ChemGateBuilder
 
         public bool IsDragging = false;
         public SectorMapItem? SelectedItem = null;
-        public Point MouseOffset;
+        public System.Windows.Point MouseOffset;
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
@@ -134,7 +134,7 @@ namespace ChemGateBuilder
     {
         private double _x;
         private double _y;
-        private double _itemSizePx = 16;
+        private double _itemSizePx = 12;
         private bool _isNew;
         private SectorConnectionData? _connectionData;
         private SectorMap? _sectorMap;
@@ -225,38 +225,55 @@ namespace ChemGateBuilder
             _connectionData.Z = coordinates.Z;
         }
         // Colors based on gate type and status
-        public Brush BorderColor
-        {
-            get
-            {
-                if (ConnectionData != null && SectorMap != null && ConnectionData.Id == SectorMap.SelectedItemId)
-                    return Brushes.Yellow;
-                return Status switch
-                {
-                    "active" => Brushes.LimeGreen,
-                    "inactive" => Brushes.Brown,
-                    _ => Brushes.DarkGray
-                };
-            }
-        }
 
-        public Brush FillColor
+        public BitmapImage ObjectImage
         {
             get
             {
-                return Type switch
+                string imagePath = "pack://application:,,,/Assets/mapob_";
+                switch (Type)
                 {
-                    "empty" => Brushes.DarkGray,
-                    "gate" => From switch
+                    case "empty":
+                        imagePath += "jumpgate_default";
+                        break;
+                    case "gate":
+                        imagePath += "jumpgate";
+                        switch (From)
+                        {
+                            case "new":
+                                imagePath += "_new";
+                                break;
+                            case "mod":
+                                imagePath += "_mod";
+                                break;
+                            default:
+                                imagePath += "_map";
+                                break;
+                        }
+                        switch (Status)
+                        {
+                            case "active":
+                                imagePath += "_active";
+                                break;
+                            case "inactive":
+                                imagePath += "_inactive";
+                                break;
+                            default:
+                                imagePath += "_unknown";
+                                break;
+                        }
+                        break;
+                    case "highway":
                     {
-                        "new" => Brushes.LightGreen,
-                        "mod" => Brushes.DarkGreen,
-                        _ => Brushes.DarkOrange
-                    },
-                    "highway" => Brushes.Olive,
-                    "mod" => Brushes.DarkGreen,
-                    _ => Brushes.LightGray
-                };
+                        imagePath += "superhighway_default";
+                        break;
+                    }
+                    default:
+                        imagePath += "unknown";
+                        break;
+                }
+                imagePath += ".png";
+                return new BitmapImage(new Uri(imagePath));
             }
         }
 
@@ -286,7 +303,7 @@ namespace ChemGateBuilder.Core.Converters
                     double angle_rad = Math.PI / 180 * angle_deg;
                     double x = radius + radius * Math.Cos(angle_rad);
                     double y = radius + radius * Math.Sin(angle_rad);
-                    points.Add(new Point(x, y));
+                    points.Add(new System.Windows.Point(x, y));
                 }
                 return points;
             }
