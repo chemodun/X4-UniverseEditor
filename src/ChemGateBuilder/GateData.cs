@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using X4DataLoader;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace ChemGateBuilder
 {
@@ -216,6 +218,13 @@ namespace ChemGateBuilder
             _gateDirect.PropertyChanged += ChildPropertyChanged;
         }
 
+        public void SetMapsCanvasAndHexagons(Canvas canvasDirect, Polygon hexagonDirect, Canvas canvasOpposite, Polygon hexagonOpposite)
+        {
+            SectorDirectMap.MapCanvas = canvasDirect;
+            SectorDirectMap.MapHexagon = hexagonDirect;
+            SectorOppositeMap.MapCanvas = canvasOpposite;
+            SectorOppositeMap.MapHexagon = hexagonOpposite;
+        }
         public void Reset()
         {
             _sectorDirect = _sectorDirectDefault;

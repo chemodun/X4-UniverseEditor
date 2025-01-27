@@ -376,6 +376,7 @@ namespace ChemGateBuilder
             LoadConfiguration();
             InitializeComponent();
             DataContext = this;
+            GatesConnectionCurrent.SetMapsCanvasAndHexagons(SectorDirectCanvas, SectorDirectHexagon, SectorOppositeCanvas, SectorOppositeHexagon);
             GatesConnectionCurrent.Reset();
 
             // Initialize CollectionViewSource filters
@@ -680,136 +681,66 @@ namespace ChemGateBuilder
 
         private void SectorDirectMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent?.SectorDirectMap);
+            if (GatesConnectionCurrent?.SectorDirectMap != null)
+            {
+                GatesConnectionCurrent.SectorDirectMap.MouseLeftButtonDown(sender, e);
+            }
         }
         private void SectorOppositeMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonDown(sender, e, GatesConnectionCurrent?.SectorOppositeMap);
-        }
-        private void SectorMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, SectorMap? sectorMap)
-        {
-            if (sender is Image image && image.DataContext is SectorMapItem item && sectorMap != null)
+            if (GatesConnectionCurrent?.SectorOppositeMap != null)
             {
-                sectorMap.SelectedItem = item;
-                if (item.IsNew) // Only allow dragging for "new" gates
-                {
-                    sectorMap.IsDragging = true;
-
-                    // Get the mouse position relative to the gate
-                    sectorMap.MouseOffset = e.GetPosition(image);
-
-                    // Capture the mouse to receive MouseMove events even if the cursor leaves the image
-                    image.CaptureMouse();
-                }
-                Log.Debug($"[MouseLeftButtonDown] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}");
+                GatesConnectionCurrent.SectorOppositeMap.MouseLeftButtonDown(sender, e);
             }
         }
 
         private void SectorDirectMapItem_MouseMove(object sender, MouseEventArgs e){
-            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent?.SectorDirectMap);
+            if (GatesConnectionCurrent?.SectorDirectMap != null)
+            {
+                GatesConnectionCurrent.SectorDirectMap.MouseMove(sender, e, GatesConnectionCurrent.GateDirect.Coordinates);
+            }
         }
+
         private void SectorOppositeMapItem_MouseMove(object sender, MouseEventArgs e)
         {
-            SectorMapItem_MouseMove(sender, e, GatesConnectionCurrent?.SectorOppositeMap);
-        }
-        private void SectorMapItem_MouseMove(object sender, MouseEventArgs e, SectorMap? sectorMap)
-        {
-            if (sectorMap != null && sectorMap.SelectedItem != null && sectorMap.IsDragging)
+            if (GatesConnectionCurrent?.SectorOppositeMap != null)
             {
-                double halfSize = sectorMap.SelectedItem.ItemSizePx / 2;
-                SectorMapItem selectedItem = sectorMap.SelectedItem;
-                Log.Debug($"[MouseMove] Direct: {sectorMap == GatesConnectionCurrent?.SectorDirectMap}, Selected Item: {sectorMap.SelectedItem?.ConnectionData?.Id}, IsDragging: {sectorMap.IsDragging}, MouseOffset: {sectorMap.MouseOffset}, sender: {sender}, isImage: {sender is Image}");
-                if (sender is Image image)
-                {
-                    // Get the current mouse position relative to the SectorCanvas
-                    Point mousePosition = e.GetPosition(image);
-                    if (sectorMap == GatesConnectionCurrent?.SectorDirectMap)
-                    {
-                        mousePosition = e.GetPosition(SectorDirectCanvas);
-                    }
-                    else
-                    {
-                        mousePosition = e.GetPosition(SectorOppositeCanvas);
-                    }
-                    // Calculate new position by subtracting the offset
-                    double newX = mousePosition.X - sectorMap.MouseOffset.X;
-                    double newY = mousePosition.Y - sectorMap.MouseOffset.Y;
-                    // Account the size of the item
-                    Point newPoint = new Point(newX + halfSize , newY + halfSize);
-                    // Check if the new position is inside the hexagon
-                    bool isInside = false;
-                    if (sectorMap == GatesConnectionCurrent?.SectorDirectMap)
-                    {
-                        isInside = SectorDirectHexagon.RenderedGeometry.FillContains(newPoint);
-                    }
-                    else
-                    {
-                        isInside = SectorOppositeHexagon.RenderedGeometry.FillContains(newPoint);
-                    }
-                    Log.Debug($"[MouseMove] IsInside: {isInside}");
-                    if (isInside)
-                    {
-                        // Update the SectorMapItem's coordinates
-                        selectedItem.X = newX;
-                        selectedItem.Y = newY;
-                        if (GatesConnectionCurrent != null) {
-                            if (sectorMap == GatesConnectionCurrent.SectorDirectMap)
-                            {
-                                selectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
-                            }
-                            else
-                            {
-                                selectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateOpposite.Coordinates);
-                            }
-                        }
-                        Log.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
-                    }
-                }
+                GatesConnectionCurrent.SectorOppositeMap.MouseMove(sender, e, GatesConnectionCurrent.GateOpposite.Coordinates);
             }
         }
 
         private void SectorDirectMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent?.SectorDirectMap, GatesConnectionCurrent, true);
+            if (GatesConnectionCurrent?.SectorDirectMap != null)
+            {
+                SectorConnectionData? connectionData = GatesConnectionCurrent.SectorDirectMap.MouseLeftButtonUp(sender, e);
+                if (connectionData != null)
+                {
+                    if (GatesConnectionCurrent.SectorDirectSelectedConnection == connectionData)
+                    {
+                        GatesConnectionCurrent.SectorDirectSelectedConnection = null;
+                    }
+                    else
+                    {
+                        GatesConnectionCurrent.SectorDirectSelectedConnection = connectionData;
+                    }
+                }
+            }
         }
         private void SectorOppositeMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            SectorMapItem_MouseLeftButtonUp(sender, e, GatesConnectionCurrent?.SectorOppositeMap, GatesConnectionCurrent, false);
-        }
-        private void SectorMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e, SectorMap? sectorMap, GatesConnectionData? connectionData, bool isDirect)
-        {
-            if (sectorMap != null && sectorMap.SelectedItem != null)
+            if (GatesConnectionCurrent?.SectorOppositeMap != null)
             {
-                sectorMap.IsDragging = false;
-                sectorMap.SelectedItem = null;
-
-                if (sender is Image image && image.DataContext is SectorMapItem item && item != null)
+                SectorConnectionData? connectionData = GatesConnectionCurrent.SectorOppositeMap.MouseLeftButtonUp(sender, e);
+                if (connectionData != null)
                 {
-                    image.ReleaseMouseCapture();
-                    if (connectionData != null)
+                    if (GatesConnectionCurrent.SectorOppositeSelectedConnection == connectionData)
                     {
-                        if (isDirect)
-                        {
-                            if (connectionData.SectorDirectSelectedConnection == item.ConnectionData)
-                            {
-                                connectionData.SectorDirectSelectedConnection = null;
-                            }
-                            else if (!item.IsNew)
-                            {
-                                connectionData.SectorDirectSelectedConnection = item.ConnectionData;
-                            }
-                        }
-                        else
-                        {
-                            if (connectionData.SectorOppositeSelectedConnection == item.ConnectionData)
-                            {
-                                connectionData.SectorOppositeSelectedConnection = null;
-                            }
-                            else if (!item.IsNew)
-                            {
-                                connectionData.SectorOppositeSelectedConnection = item.ConnectionData;
-                            }
-                        }
+                        GatesConnectionCurrent.SectorOppositeSelectedConnection = null;
+                    }
+                    else
+                    {
+                        GatesConnectionCurrent.SectorOppositeSelectedConnection = connectionData;
                     }
                 }
             }
@@ -830,7 +761,7 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent != null)
             {
                 Log.Debug($"[ButtonSectorDirectMapExpand_Click] Direct: ");
-                SectorMapExpandedWindow sectorMapExpandedWindow = new SectorMapExpandedWindow();
+                SectorMapExpandedWindow sectorMapExpandedWindow = new SectorMapExpandedWindow(SectorRadius);
 
                 // Set the owner to the main window for proper window behavior
                 sectorMapExpandedWindow.Owner = this;
@@ -848,12 +779,7 @@ namespace ChemGateBuilder
                 sectorMapExpandedWindow.Width = mainWindowWidth * 0.9;
                 sectorMapExpandedWindow.Height = mainWindowHeight * 0.9;
                 SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
-                foreach (SectorMapItem item in sectorMap.Items)
-                {
-                    if (item.ConnectionData != null) {
-                        sectorMapExpandedWindow.SectorMapExpanded.AddItem(item.ConnectionData);
-                    }
-                }
+                sectorMapExpandedWindow.SetMapItems(sectorMap.Items.ToList());
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
                 sectorMapExpandedWindow.Title = $"Map of {sectorName}";
                 sectorMapExpandedWindow.ShowDialog(); // Modal

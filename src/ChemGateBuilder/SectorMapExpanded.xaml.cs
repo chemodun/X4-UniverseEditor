@@ -31,10 +31,13 @@ namespace ChemGateBuilder
                 OnPropertyChanged(nameof(NewGateCoordinates));
             }
         }
-        public SectorMapExpandedWindow()
+        public SectorMapExpandedWindow(int sectorRadius)
         {
             InitializeComponent();
             DataContext = this;
+            _sectorMapExpanded.SetInternalSize(sectorRadius);
+            _sectorMapExpanded.MapCanvas = SectorMapExpandedCanvas;
+            _sectorMapExpanded.MapHexagon = SectorHexagon;
         }
 
         private void SectorMapExpandedCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -45,65 +48,32 @@ namespace ChemGateBuilder
 
         private void SectorMapExpandedItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Image image && image.DataContext is SectorMapItem item && SectorMapExpanded != null)
-            {
-                SectorMapExpanded.SelectedItem = item;
-                if (item.IsNew) // Only allow dragging for "new" gates
-                {
-                    SectorMapExpanded.IsDragging = true;
-
-                    // Get the mouse position relative to the gate
-                    SectorMapExpanded.MouseOffset = e.GetPosition(image);
-
-                    // Capture the mouse to receive MouseMove events even if the cursor leaves the image
-                    image.CaptureMouse();
-                }
-                Log.Debug($"[MouseLeftButtonDown] Selected Item: {SectorMapExpanded.SelectedItem?.ConnectionData?.Id}, IsDragging: {SectorMapExpanded.IsDragging}, MouseOffset: {SectorMapExpanded.MouseOffset}");
-            }
+            SectorMapExpanded.MouseLeftButtonDown(sender, e);
         }
 
         private void SectorMapExpandedItem_MouseMove(object sender, MouseEventArgs e)
         {
-            if (SectorMapExpanded != null && SectorMapExpanded.SelectedItem != null && SectorMapExpanded.IsDragging)
-            {
-                double halfSize = SectorMapExpanded.SelectedItem.ItemSizePx / 2;
-                SectorMapItem selectedItem = SectorMapExpanded.SelectedItem;
-                Log.Debug($"[MouseMove] Selected Item: {SectorMapExpanded.SelectedItem?.ConnectionData?.Id}, IsDragging: {SectorMapExpanded.IsDragging}, MouseOffset: {SectorMapExpanded.MouseOffset}, sender: {sender}, isImage: {sender is Image}");
-                if (sender is Image image)
-                {
-                    // Get the current mouse position relative to the SectorCanvas
-                    Point mousePosition = e.GetPosition(SectorMapExpandedCanvas);
-                    // Calculate new position by subtracting the offset
-                    double newX = mousePosition.X - SectorMapExpanded.MouseOffset.X;
-                    double newY = mousePosition.Y - SectorMapExpanded.MouseOffset.Y;
-                    // Account the size of the item
-                    Point newPoint = new(newX + halfSize , newY + halfSize);
-                    // Check if the new position is inside the hexagon
-                    bool isInside = SectorHexagon.RenderedGeometry.FillContains(newPoint);
-                    Log.Debug($"[MouseMove] IsInside: {isInside}");
-                    if (isInside)
-                    {
-                        // Update the SectorMapItem's coordinates
-                        selectedItem.X = newX;
-                        selectedItem.Y = newY;
-                        // selectedItem.UpdateInternalCoordinates(GatesConnectionCurrent.GateDirect.Coordinates);
-                        Log.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
-                        selectedItem.UpdateInternalCoordinates(NewGateCoordinates);
-                    }
-                }
-            }
+            SectorMapExpanded.MouseMove(sender, e, NewGateCoordinates);
         }
 
         private void SectorMapExpandedItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (SectorMapExpanded != null && SectorMapExpanded.SelectedItem != null)
-            {
-                SectorMapExpanded.IsDragging = false;
-                SectorMapExpanded.SelectedItem = null;
+           SectorMapExpanded.MouseLeftButtonUp(sender, e);
+        }
 
-                if (sender is Image image && image.DataContext is SectorMapItem item && item != null)
+        public void SetMapItems(List<SectorMapItem> mapItems)
+        {
+            foreach (SectorMapItem item in mapItems)
+            {
+                if (item.ConnectionData != null)
                 {
-                    image.ReleaseMouseCapture();
+                    SectorMapExpanded.AddItem(item.ConnectionData);
+                    if (item.IsNew)
+                    {
+                        NewGateCoordinates.X = item.ConnectionData.X;
+                        NewGateCoordinates.Y = item.ConnectionData.Y;
+                        NewGateCoordinates.Z = item.ConnectionData.Z;
+                    }
                 }
             }
         }

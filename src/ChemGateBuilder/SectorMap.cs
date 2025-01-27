@@ -7,6 +7,10 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Utilities.Logging;
+using System.Windows.Shapes;
 
 namespace ChemGateBuilder
 {
@@ -49,6 +53,8 @@ namespace ChemGateBuilder
         public bool IsDragging = false;
         public SectorMapItem? SelectedItem = null;
         public System.Windows.Point MouseOffset;
+        public Canvas? MapCanvas;
+        public Polygon? MapHexagon;
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
@@ -132,6 +138,76 @@ namespace ChemGateBuilder
         public SectorMapItem? GetItem(string id)
         {
             return Items.FirstOrDefault(i => i.ConnectionData != null && i.ConnectionData.Id == id);
+        }
+
+        public void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Image image && image.DataContext is SectorMapItem item && this != null)
+            {
+                SelectedItem = item;
+                if (item.IsNew) // Only allow dragging for "new" gates
+                {
+                    IsDragging = true;
+
+                    // Get the mouse position relative to the gate
+                    MouseOffset = e.GetPosition(image);
+
+                    // Capture the mouse to receive MouseMove events even if the cursor leaves the image
+                    image.CaptureMouse();
+                }
+                Log.Debug($"[MouseLeftButtonDown] Selected Item: {SelectedItem?.ConnectionData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}");
+            }
+        }
+
+        public void MouseMove(object sender, MouseEventArgs e, Coordinates coordinates)
+        {
+            if (SelectedItem != null && IsDragging)
+            {
+                double halfSize = SelectedItem.ItemSizePx / 2;
+                SectorMapItem selectedItem = SelectedItem;
+                Log.Debug($"[MouseMove] Selected Item: {SelectedItem?.ConnectionData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}, sender: {sender}, isImage: {sender is Image}");
+                if (sender is Image image && MapCanvas != null && MapHexagon != null)
+                {
+                    // Get the current mouse position relative to the SectorCanvas
+                    Point mousePosition = e.GetPosition(MapCanvas);
+                    // Calculate new position by subtracting the offset
+                    double newX = mousePosition.X - MouseOffset.X;
+                    double newY = mousePosition.Y - MouseOffset.Y;
+                    // Account the size of the item
+                    Point newPoint = new Point(newX + halfSize , newY + halfSize);
+                    // Check if the new position is inside the hexagon
+                    bool isInside = MapHexagon.RenderedGeometry.FillContains(newPoint);
+                    Log.Debug($"[MouseMove] IsInside: {isInside}");
+                    if (isInside)
+                    {
+                        // Update the SectorMapItem's coordinates
+                        selectedItem.X = newX;
+                        selectedItem.Y = newY;
+                        if (coordinates != null) {
+                            selectedItem.UpdateInternalCoordinates(coordinates);
+                        }
+                        Log.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
+                    }
+                }
+            }
+        }
+
+        public SectorConnectionData? MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectedItem != null)
+            {
+                IsDragging = false;
+                SelectedItem = null;
+
+                if (sender is Image image && image.DataContext is SectorMapItem item && item != null)
+                {
+                    image.ReleaseMouseCapture();
+                    if (!item.IsNew) {
+                        return item.ConnectionData;
+                    }
+                }
+            }
+            return null;
         }
     }
 
