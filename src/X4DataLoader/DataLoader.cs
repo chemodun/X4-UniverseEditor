@@ -284,33 +284,36 @@ namespace X4DataLoader
             Log.Debug($"Vanilla files identified.");
 
             // Scan for extension files
-            var extensionsFolder = Path.Combine(coreFolderPath, "extensions");
+            string extensionsFolder = Path.Combine(coreFolderPath, "extensions");
             Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
-            if (Directory.Exists(extensionsFolder))
+            if (!Directory.Exists(extensionsFolder))
             {
-                foreach (var extensionFolder in Directory.GetDirectories(extensionsFolder))
-                {
-                    var extensionName = Path.GetFileName(extensionFolder);
-                    var extensionFiles = new Dictionary<string, (string fullPath, string fileName)>();
+                extensionsFolder = coreFolderPath;
+                Log.Debug($"No extensions folder found. Will check if the dlc folders is in the {coreFolderPath}.");
+            }
 
-                    foreach (var item in relativePaths)
+            foreach (var dlcFolder in Directory.GetDirectories(extensionsFolder, "ego_dlc_*"))
+            {
+                var dlcName = Path.GetFileName(dlcFolder);
+                var dlcFiles = new Dictionary<string, (string fullPath, string fileName)>();
+
+                foreach (var item in relativePaths)
+                {
+                    var searchPath = Path.Combine(dlcFolder, item.Value.path);
+                    if (Directory.Exists(searchPath))
                     {
-                        var searchPath = Path.Combine(extensionFolder, item.Value.path);
-                        if (Directory.Exists(searchPath))
+                        var files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
+                        if (files.Length > 0)
                         {
-                            var files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
-                            if (files.Length > 0)
-                            {
-                                extensionFiles[item.Key] = (files[0], item.Value.fileName);
-                            }
+                            dlcFiles[item.Key] = (files[0], item.Value.fileName);
                         }
                     }
+                }
 
-                    if (extensionFiles.Count > 0)
-                    {
-                        result[extensionName] = extensionFiles;
-                        Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extensionName}.");
-                    }
+                if (dlcFiles.Count > 0)
+                {
+                    result[dlcName] = dlcFiles;
+                    Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {dlcName}.");
                 }
             }
             return result;
