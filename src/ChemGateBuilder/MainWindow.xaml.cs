@@ -815,6 +815,59 @@ namespace ChemGateBuilder
             }
         }
 
+        public void ButtonSectorDirectMapExpand_Click(object sender, RoutedEventArgs e)
+        {
+            ButtonSectorMapExpand_Click(sender, e, true);
+        }
+
+        public void ButtonSectorOppositeMapExpand_Click(object sender, RoutedEventArgs e)
+        {
+            ButtonSectorMapExpand_Click(sender, e, false);
+        }
+
+        public void ButtonSectorMapExpand_Click(object sender, RoutedEventArgs e, bool isDirect)
+        {
+            if (GatesConnectionCurrent != null)
+            {
+                Log.Debug($"[ButtonSectorDirectMapExpand_Click] Direct: ");
+                SectorMapExpandedWindow sectorMapExpandedWindow = new SectorMapExpandedWindow();
+
+                // Set the owner to the main window for proper window behavior
+                sectorMapExpandedWindow.Owner = this;
+
+
+
+                // Center the new window horizontally relative to the main window
+                double mainWindowLeft = this.Left;
+                double mainWindowTop = this.Top;
+                double mainWindowWidth = this.ActualWidth;
+                double mainWindowHeight = this.ActualHeight;
+
+                sectorMapExpandedWindow.Left = mainWindowLeft + mainWindowWidth * 0.05;
+                sectorMapExpandedWindow.Top = mainWindowTop + mainWindowHeight * 0.05;
+                sectorMapExpandedWindow.Width = mainWindowWidth * 0.9;
+                sectorMapExpandedWindow.Height = mainWindowHeight * 0.9;
+                SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
+                foreach (SectorMapItem item in sectorMap.Items)
+                {
+                    if (item.ConnectionData != null) {
+                        sectorMapExpandedWindow.SectorMapExpanded.AddItem(item.ConnectionData);
+                    }
+                }
+                string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
+                sectorMapExpandedWindow.Title = $"Map of {sectorName}";
+                sectorMapExpandedWindow.ShowDialog(); // Modal
+                if (isDirect)
+                {
+                    GatesConnectionCurrent.GateDirect.Coordinates = sectorMapExpandedWindow.NewGateCoordinates;
+                }
+                else
+                {
+                    GatesConnectionCurrent.GateOpposite.Coordinates = sectorMapExpandedWindow.NewGateCoordinates;
+                }
+            }
+        }
+
         public void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

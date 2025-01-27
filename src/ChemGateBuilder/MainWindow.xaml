@@ -205,7 +205,7 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <DockPanel LastChildFill="True" IsEnabled="{Binding IsDataLoaded}">
+        <DockPanel LastChildFill="True" IsEnabled="{Binding IsDataLoaded}" x:Name="MainDockPanel">
             <!-- StatusBar Docked to Bottom -->
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
@@ -282,6 +282,19 @@
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
+                                                <Button x:Name="ButtonSectorDirectMapExpand"
+                                                    Width="24" Height="24"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top"
+                                                    Margin="5"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Cursor="Hand"
+                                                    ToolTip="Expand"
+                                                    Click="ButtonSectorDirectMapExpand_Click">
+                                                    <fa:IconImage Icon="Expand"
+                                                                Style="{StaticResource FontAwesomeIconStyle}"/>
+                                                </Button>
                                             </Canvas>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
                                                       SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedConnection, Mode=TwoWay}"
@@ -303,7 +316,7 @@
                                             </DataGrid>
                                         </DockPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Gate Parameters" Margin="5">
+                                    <GroupBox Header="Gate Parameters" Margin="5" x:Name="GroupBoxGateDirect">
                                         <Grid Margin="5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -431,6 +444,19 @@
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
+                                                <Button x:Name="ButtonSectorOppositeMapExpand"
+                                                    Width="24" Height="24"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top"
+                                                    Margin="5"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Cursor="Hand"
+                                                    ToolTip="Expand"
+                                                    Click="ButtonSectorOppositeMapExpand_Click">
+                                                    <fa:IconImage Icon="Expand"
+                                                                Style="{StaticResource FontAwesomeIconStyle}"/>
+                                                </Button>
                                             </Canvas>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeConnections}"
                                                       SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedConnection, Mode=TwoWay}"
@@ -452,7 +478,7 @@
                                             </DataGrid>
                                         </DockPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Gate Parameters" Margin="5">
+                                    <GroupBox Header="Gate Parameters" Margin="5" x:Name="GroupBoxGateOpposite">
                                         <Grid Margin="5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>

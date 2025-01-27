@@ -1,0 +1,100 @@
+<!-- ExpandWindow.xaml -->
+<Window x:Class="ChemGateBuilder.SectorMapExpandedWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ChemGateBuilder"
+        xmlns:converters="clr-namespace:ChemGateBuilder.Core.Converters"
+        Title="Sector Map" Height="600" Width="600"
+        WindowStartupLocation="Manual"
+        Icon="{StaticResource BuilderIcon}"
+        ResizeMode="NoResize"
+        KeyDown="Window_KeyDown">
+    <Window.Resources>
+        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter" />
+        <Style x:Key="SectorCanvasStyle" TargetType="Canvas">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="DockPanel.Dock" Value="Left"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style x:Key="SectorHexagonStyle" TargetType="Polygon">
+            <Setter Property="Stroke" Value="DarkGray"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+            <Setter Property="Fill" Value="#F0F0F0"/>
+        </Style>
+        <Style x:Key="CoordinatesTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="MinWidth" Value="40"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="CoordinatesLine" TargetType="StackPanel">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Orientation" Value="Horizontal"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Canvas x:Name="SectorMapExpandedCanvas"
+            Grid.Row="0"
+            Grid.Column="0"
+            Style="{StaticResource SectorCanvasStyle}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            SizeChanged="SectorMapExpandedCanvas_SizeChanged">
+            <!-- Hexagonal Sector Representation -->
+            <Polygon x:Name="SectorHexagon" Points="{Binding SectorMapExpanded.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                    Style="{StaticResource SectorHexagonStyle}"
+                    Canvas.Left="{Binding SectorMapExpanded.VisualX}"
+                    Canvas.Top="{Binding SectorMapExpanded.VisualY}" />
+            <!-- Gates Representation -->
+            <ItemsControl ItemsSource="{Binding SectorMapExpanded.Items}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image
+                            Width="{Binding ItemSizePx}"
+                            Height="{Binding ItemSizePx}"
+                            Source="{Binding ObjectImage}"
+                            Stretch="Uniform"
+                            PreviewMouseLeftButtonDown="SectorMapExpandedItem_MouseLeftButtonDown"
+                            MouseMove="SectorMapExpandedItem_MouseMove"
+                            MouseLeftButtonUp="SectorMapExpandedItem_MouseLeftButtonUp">
+                            <Image.RenderTransform>
+                                <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                            </Image.RenderTransform>
+                            <Image.ToolTip>
+                                <ToolTip Content="{Binding ToolTip}" />
+                            </Image.ToolTip>
+                        </Image>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Canvas>
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+            <Label Content="New Gate Coordinates:" />
+            <StackPanel Style="{StaticResource CoordinatesLine}">
+                <Label Content="X, km:" />
+                <TextBlock Text="{Binding NewGateCoordinates.X}" Style="{StaticResource CoordinatesTextBlockStyle}"/>
+            </StackPanel>
+            <StackPanel Style="{StaticResource CoordinatesLine}">
+                <Label Content="Y, km:" />
+                <TextBlock Text="{Binding NewGateCoordinates.Y}" Style="{StaticResource CoordinatesTextBlockStyle}"/>
+            </StackPanel>
+            <StackPanel Style="{StaticResource CoordinatesLine}">
+                <Label Content="Z, km:" />
+                <TextBlock Text="{Binding NewGateCoordinates.Z}"  Style="{StaticResource CoordinatesTextBlockStyle}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

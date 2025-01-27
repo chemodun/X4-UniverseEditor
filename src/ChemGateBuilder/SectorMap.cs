@@ -25,7 +25,7 @@ namespace ChemGateBuilder
         }
 
         public double MinVisualSectorSize { get; set; } = 50;
-        public double MaxVisualSectorSize { get; set; } = 300;
+        public double MaxVisualSectorSize { get; set; } = 1200;
 
         public double VisualX
         {
@@ -128,13 +128,18 @@ namespace ChemGateBuilder
             InternalSizeKm = sizeKm;
             UpdateItems();
         }
+
+        public SectorMapItem? GetItem(string id)
+        {
+            return Items.FirstOrDefault(i => i.ConnectionData != null && i.ConnectionData.Id == id);
+        }
     }
 
     public class SectorMapItem : INotifyPropertyChanged
     {
         private double _x;
         private double _y;
-        private static double _sizeCoefficient = 0.005;
+        private static double _sizeCoefficient = 0.03;
         private static double _itemSizeMinPx = 10;
         private double _itemSizePx = _itemSizeMinPx;
         private bool _isNew;
@@ -144,6 +149,7 @@ namespace ChemGateBuilder
             get => _sectorMap;
             set {
                 _sectorMap = value;
+                UpdateSize();
                 UpdatePosition();
             }
         }
@@ -304,22 +310,27 @@ namespace ChemGateBuilder.Core.Converters
         {
             if (value is double size && size > 0)
             {
-                double radius = size / 2;
-                PointCollection points = new PointCollection();
 
-                for (int i = 0; i < 6; i++)
-                {
-                    double angle_deg = 60 * i; // Start at 0 degrees for flat-top
-                    double angle_rad = Math.PI / 180 * angle_deg;
-                    double x = radius + radius * Math.Cos(angle_rad);
-                    double y = radius + radius * Math.Sin(angle_rad);
-                    points.Add(new System.Windows.Point(x, y));
-                }
-                return points;
+                return Converter(size);
             }
             return DependencyProperty.UnsetValue;
         }
 
+        public static PointCollection Converter(double size)
+        {
+            double radius = size / 2;
+            PointCollection points = new PointCollection();
+
+            for (int i = 0; i < 6; i++)
+            {
+                double angle_deg = 60 * i; // Start at 0 degrees for flat-top
+                double angle_rad = Math.PI / 180 * angle_deg;
+                double x = radius + radius * Math.Cos(angle_rad);
+                double y = radius + radius * Math.Sin(angle_rad);
+                points.Add(new System.Windows.Point(x, y));
+            }
+            return points;
+        }
         // Not implemented as conversion back is not required
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
