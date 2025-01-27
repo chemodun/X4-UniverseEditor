@@ -768,16 +768,10 @@ namespace ChemGateBuilder
 
 
 
-                // Center the new window horizontally relative to the main window
-                double mainWindowLeft = this.Left;
-                double mainWindowTop = this.Top;
-                double mainWindowWidth = this.ActualWidth;
-                double mainWindowHeight = this.ActualHeight;
-
-                sectorMapExpandedWindow.Left = mainWindowLeft + mainWindowWidth * 0.05;
-                sectorMapExpandedWindow.Top = mainWindowTop + mainWindowHeight * 0.05;
-                sectorMapExpandedWindow.Width = mainWindowWidth * 0.9;
-                sectorMapExpandedWindow.Height = mainWindowHeight * 0.9;
+                sectorMapExpandedWindow.Left = GetWindowLeft() + this.ActualWidth * 0.05;
+                sectorMapExpandedWindow.Top = GetWindowTop() + this.ActualHeight * 0.05;
+                sectorMapExpandedWindow.Width = this.ActualWidth * 0.9;
+                sectorMapExpandedWindow.Height = this.ActualHeight * 0.9;
                 SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
                 sectorMapExpandedWindow.SetMapItems(sectorMap.Items.ToList());
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
@@ -954,6 +948,36 @@ namespace ChemGateBuilder
                 _mod.SaveData(GalaxyConnections);
                 IsModCanBeSaved = false;
             }
+        }
+
+        private double GetWindowLeft()
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                var leftField = typeof(Window).GetField("_actualLeft", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (leftField?.GetValue(this) is double value)
+                {
+                    return value;
+                }
+                throw new InvalidOperationException("_actualLeft field is null or not a double.");
+            }
+            else
+                return Left;
+        }
+
+        private double GetWindowTop()
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                var topField = typeof(Window).GetField("_actualTop", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (topField?.GetValue(this) is double value)
+                {
+                    return value;
+                }
+                throw new InvalidOperationException("_actualTop field is null or not a double.");
+            }
+            else
+                return Top;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
