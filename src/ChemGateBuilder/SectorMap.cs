@@ -183,10 +183,12 @@ namespace ChemGateBuilder
         public string ToolTip { get {
             if (_connectionData == null)
                 return "No connection data";
-            string result = $"Type: {Type}, Status: {Status}\n";
+            string result = $"{char.ToUpper(Type[0])}{Type.Substring(1)}";
+            if (Type == "gate")
+                result += $": {Status} ({From})\n";
             if (Type == "gate" || Type == "highway")
                 result += $"To: {_connectionData.ToSector ?? ""}\n";
-            result += $" X: {_connectionData.X}, Y: {_connectionData.Y}, Z: {_connectionData.Z}";
+            result += $"X: {_connectionData.X,4}, Y: {_connectionData.Y,4}, Z: {_connectionData.Z,4}";
             return result;
         } }
         public double ItemSizePx {
