@@ -143,6 +143,7 @@ namespace ChemGateBuilder
         private static double _itemSizeMinPx = 10;
         private double _itemSizePx = _itemSizeMinPx;
         private bool _isNew;
+        private string _toolTip = "";
         private SectorConnectionData? _connectionData;
         private SectorMap? _sectorMap;
         public SectorMap? SectorMap {
@@ -180,17 +181,9 @@ namespace ChemGateBuilder
                 return "unknown";
             return _connectionData.Id;
         } }
-        public string ToolTip { get {
-            if (_connectionData == null)
-                return "No connection data";
-            string result = $"{char.ToUpper(Type[0])}{Type.Substring(1)}";
-            if (Type == "gate")
-                result += $": {Status} ({From})\n";
-            if (Type == "gate" || Type == "highway")
-                result += $"To: {_connectionData.ToSector ?? ""}\n";
-            result += $"X: {_connectionData.X,4}, Y: {_connectionData.Y,4}, Z: {_connectionData.Z,4}";
-            return result;
-        } }
+        public string ToolTip { get => _toolTip;
+            set { _toolTip = value; OnPropertyChanged(); }
+        }
         public double ItemSizePx {
             get => _itemSizePx;
             set { _itemSizePx = value; OnPropertyChanged(); }
@@ -229,6 +222,7 @@ namespace ChemGateBuilder
             Y = (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
+            UpdateToolTip();
         }
 
         public void UpdateInternalCoordinates(Coordinates coordinates)
@@ -241,8 +235,22 @@ namespace ChemGateBuilder
                 return;
             _connectionData.X = coordinates.X;
             _connectionData.Z = coordinates.Z;
+            UpdateToolTip();
         }
         // Colors based on gate type and status
+
+        private void UpdateToolTip()
+        {
+            if (_connectionData == null)
+                ToolTip = "No connection data";
+            string result = $"{char.ToUpper(Type[0])}{Type.Substring(1)}";
+            if (Type == "gate")
+                result += $": {Status} ({From})\n";
+            if (Type == "gate" || Type == "highway")
+                result += $"To: {_connectionData?.ToSector ?? ""}\n";
+            result += $"X: {_connectionData?.X ?? 0, 4}, Y: {_connectionData?.Y ?? 0, 4}, Z: {_connectionData?.Z ?? 0, 4}";
+            ToolTip = result;
+        }
 
         public BitmapImage ObjectImage
         {
