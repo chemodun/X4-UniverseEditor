@@ -64,6 +64,19 @@ namespace ChemGateBuilder
             {
                 currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
             }
+            Dictionary<string, (string path, string fileName)> relativePaths = new()
+            {
+                { "galaxy", ("maps/xu_ep2_universe", "galaxy.xml") },
+                { "sectors", ("maps/xu_ep2_universe", "sectors.xml") },
+                { "zones", ("maps/xu_ep2_universe", "zones.xml") },
+            };
+            var files = DataLoader.GatherFiles(currentPath, relativePaths);
+            if (files.Count == 0)
+            {
+                MessageBox.Show("The selected folder does not contain a valid mod", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
             _versionInitial = _version;
             return true;
         }
