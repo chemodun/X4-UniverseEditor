@@ -206,13 +206,11 @@ namespace ChemGateBuilder
             }
         }
         public bool IsReadyToSave { get => _isReadyToSave; set { _isReadyToSave = value; OnPropertyChanged(nameof(IsReadyToSave)); }}
-        public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault, SectorItem? sectorDirectDefault = null, SectorItem? sectorOppositeDefault = null)
+        public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault)
         {
             // Subscribe to child PropertyChanged events
             _gateDirect = new GateData(gateActiveDefault, gateMacroDefault);
             _gateOpposite = new GateData(gateActiveDefault, gateMacroDefault);
-            _sectorDirectDefault = sectorDirectDefault;
-            _sectorOppositeDefault = sectorOppositeDefault;
             Reset();
             _gateOpposite.PropertyChanged += ChildPropertyChanged;
             _gateDirect.PropertyChanged += ChildPropertyChanged;
@@ -259,24 +257,14 @@ namespace ChemGateBuilder
             _gateDirect.PropertyChanged += ChildPropertyChanged;
         }
 
-        public void SetDefaultsFromReference(GalaxyConnectionData reference)
+        public void SetDefaultsFromReference(GalaxyConnectionData reference, ObservableCollection<SectorItem> AllSectors)
         {
             if (reference == null) return;
             GalaxyConnection connection = reference.Connection;
-            _sectorDirectDefault = new SectorItem
-            {
-                Name = reference.SectorDirectName,
-                Source = connection.PathDirect?.Sector?.Source ?? "",
-                Macro = connection.PathDirect?.Sector?.Macro ?? "",
-                Selectable = true
-            };
-            _sectorOppositeDefault = new SectorItem
-            {
-                Name = reference.SectorOppositeName,
-                Source = connection.PathOpposite?.Sector?.Source ?? "",
-                Macro = connection.PathOpposite?.Sector?.Macro ?? "",
-                Selectable = true
-            };
+            string sectorDirectMacro = connection.PathDirect?.Sector?.Macro ?? "";
+            _sectorDirectDefault = AllSectors.FirstOrDefault(s => s.Macro == sectorDirectMacro);
+            string sectorOppositeMacro = connection.PathOpposite?.Sector?.Macro ?? "";
+            _sectorOppositeDefault = AllSectors.FirstOrDefault(s => s.Macro == sectorOppositeMacro);
             _gateDirect.SetDefaults(reference.GateDirectActive, connection.PathDirect?.Gate?.GateMacro ?? "",
                 new Coordinates(reference.GateDirectX, reference.GateDirectY, reference.GateDirectZ),
                 reference.DirectPosition,
