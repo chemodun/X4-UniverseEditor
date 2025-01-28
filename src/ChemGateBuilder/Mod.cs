@@ -53,7 +53,7 @@ namespace ChemGateBuilder
             XML = null;
         }
 
-        public bool LoadData(Galaxy galaxy, ObservableCollection<GalaxyConnectionData> GalaxyConnections)
+        public bool LoadData(Galaxy galaxy)
         {
             string currentPath = _modFolderPath;
 
@@ -218,6 +218,29 @@ namespace ChemGateBuilder
                 Log.Error("No Galaxy Connections loaded");
                 return false;
             }
+            XDocument? docContent;
+            try {
+                docContent = XDocument.Load(Path.Combine(currentPath, "content.xml"));
+            }
+            catch (ArgumentException e)
+            {
+                Log.Error($"Error loading content file: {e.Message}");
+                return false;
+            }
+            XElement? contentElement = docContent.Element("content");
+            if (contentElement == null)
+            {
+                Log.Error("No content element found in content file");
+                return false;
+            }
+            _id = contentElement.Attribute("id")?.Value ?? _id;
+            _name = contentElement.Attribute("name")?.Value ?? _name;
+            _version = (int)(double.Parse(contentElement.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture) * 100);
+            _author = contentElement.Attribute("author")?.Value ?? _author;
+            _date = contentElement.Attribute("date")?.Value ?? _date;
+            _description = contentElement.Attribute("description")?.Value ?? _description;
+            _gameVersion = int.Parse(contentElement.Element("dependency")?.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture);
+            Connections = modGalaxy.Connections;
             _versionInitial = _version;
             return true;
         }
