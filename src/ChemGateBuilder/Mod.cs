@@ -256,7 +256,9 @@ namespace ChemGateBuilder
             _dlcRequired.Clear();
             _paths.Clear();
             string connectionsText = "";
-            XElement diff = new("diff");
+            XElement diffElement = new("diff");
+            XElement addElement = new("add", new XAttribute("sel", "/macros/macro[@name='XU_EP2_universe_macro']/connections"));
+            diffElement.Add(addElement);
             foreach (GalaxyConnection connection in Connections)
             {
                 if (connection == null)
@@ -293,7 +295,7 @@ namespace ChemGateBuilder
 
                     pathItems.Add(connection.PathOpposite);
                 }
-                diff.Add(connection.XML);
+                addElement.Add(connection.XML);
             }
             XElement content = new("content");
             content.SetAttributeValue("id", _id);
@@ -324,7 +326,7 @@ namespace ChemGateBuilder
             }
             XDocument docContent = new(new XDeclaration("1.0", "utf-8", null), content);
             docContent.Save(Path.Combine(_modFolderPath, "content.xml"));
-            XDocument docGalaxy = new(new XDeclaration("1.0", "utf-8", null), diff);
+            XDocument docGalaxy = new(new XDeclaration("1.0", "utf-8", null), diffElement);
             string galaxyPath = Path.Combine(_modFolderPath, "maps", "xu_ep2_universe");
             Directory.CreateDirectory(galaxyPath);
             docGalaxy.Save(Path.Combine(galaxyPath, "galaxy.xml"));
