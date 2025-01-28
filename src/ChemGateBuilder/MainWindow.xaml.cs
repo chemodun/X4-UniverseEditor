@@ -214,7 +214,7 @@ namespace ChemGateBuilder
                     ButtonSaveContent = IsNowGateCanBeCreated ? "Update" : "Add";
                     if (value != null && GatesConnectionCurrent != null)
                     {
-                        GatesConnectionCurrent.SetDefaultsFromReference(value);
+                        GatesConnectionCurrent.SetDefaultsFromReference(value, AllSectors);
                         GatesConnectionCurrent.Reset();
                     }
                 }
@@ -615,6 +615,10 @@ namespace ChemGateBuilder
                 {
                     continue;
                 }
+                if (_currentGalaxyConnection == connection)
+                {
+                    continue;
+                }
                 if (connection.Connection.PathDirect.Sector.Macro == sectorMacro)
                 {
                     oppositeSectorsMacros.Add(connection.Connection.PathOpposite.Sector.Macro);
@@ -868,7 +872,7 @@ namespace ChemGateBuilder
                 if (CurrentGalaxyConnection != null)
                 {
                     CurrentGalaxyConnection.Update(galaxyConnection, GatesConnectionCurrent);
-                    GatesConnectionCurrent.SetDefaultsFromReference(CurrentGalaxyConnection);
+                    GatesConnectionCurrent.SetDefaultsFromReference(CurrentGalaxyConnection, AllSectors);
                     GatesConnectionCurrent.Reset();
                 }
                 else
