@@ -152,6 +152,9 @@ namespace ChemGateBuilder
         }
         public int SectorRadiusNegative => -SectorRadius;
 
+        public int MinInternalSectorSizeKm = SectorMap.MinInternalSectorSizeKm;
+        public int MaxInternalSectorSizeKm = SectorMap.MaxInternalSectorSizeKm;
+
         private string _logLevel = "Warning";
         public string LogLevel
         {
@@ -779,14 +782,17 @@ namespace ChemGateBuilder
                 SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
                 sectorMapExpandedWindow.SetMapItems(sectorMap.Items.ToList());
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
+                sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm = isDirect ? GatesConnectionCurrent.SectorDirectMap.InternalSizeKm : GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm;
                 sectorMapExpandedWindow.Title = $"Map of {sectorName}";
                 sectorMapExpandedWindow.ShowDialog(); // Modal
                 if (isDirect)
                 {
+                    GatesConnectionCurrent.SectorDirectMap.InternalSizeKm = sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm;
                     GatesConnectionCurrent.GateDirect.Coordinates = sectorMapExpandedWindow.NewGateCoordinates;
                 }
                 else
                 {
+                    GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm = sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm;
                     GatesConnectionCurrent.GateOpposite.Coordinates = sectorMapExpandedWindow.NewGateCoordinates;
                 }
             }

@@ -311,8 +311,8 @@ namespace ChemGateBuilder
 
         public void SetSectorMapInternalSize(int sizeKm)
         {
-            SectorDirectMap.SetInternalSize(sizeKm);
-            SectorOppositeMap.SetInternalSize(sizeKm);
+            SectorDirectMap.InternalSizeKm = sizeKm;
+            SectorOppositeMap.InternalSizeKm = sizeKm;
         }
 
         public void UpdateCurrentGateCoordinates(int X, int Y, int Z, string propertyName)

@@ -37,32 +37,30 @@
         <Style x:Key="DataGridCenterColumnHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
-        <Style x:Key="CoordinatesTextBoxStyle" TargetType="TextBox">
+        <Style x:Key="IntegerTextBoxStyle" TargetType="TextBox">
+            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="MinWidth" Value="40"/>
-            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="CoordinatesTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
+            <Setter Property="Margin" Value="2"/>
             <Setter Property="local:TextBoxExtensions.MinValue" Value="{Binding SectorRadiusNegative}"/>
             <Setter Property="local:TextBoxExtensions.MaxValue" Value="{Binding SectorRadius}"/>
-            <Setter Property="TextAlignment" Value="Right"/>
         </Style>
-        <Style x:Key="PositionTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="MinWidth" Value="40"/>
-            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
+        <Style x:Key="PositionTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
             <Setter Property="local:TextBoxExtensions.MinValue" Value="-999"/>
             <Setter Property="local:TextBoxExtensions.MaxValue" Value="999"/>
-            <Setter Property="TextAlignment" Value="Right"/>
         </Style>
-        <Style x:Key="RotationTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="MinWidth" Value="40"/>
-            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
+        <Style x:Key="RotationTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
             <Setter Property="local:TextBoxExtensions.MinValue" Value="-180"/>
             <Setter Property="local:TextBoxExtensions.MaxValue" Value="180"/>
-            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+        <Style x:Key="InternalRadiusTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="local:TextBoxExtensions.MinValue" Value="{Binding MinInternalSectorSizeKm}"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue" Value="{Binding MaxInternalSectorSizeKm}"/>
         </Style>
         <Style x:Key="FluentButtonStyle" TargetType="fluent:Button">
             <Setter Property="Width" Value="60"/>
@@ -83,6 +81,17 @@
             <Setter Property="Stroke" Value="DarkGray"/>
             <Setter Property="StrokeThickness" Value="2"/>
             <Setter Property="Fill" Value="#F0F0F0"/>
+        </Style>
+        <Style x:Key="SectorInternalRadius" TargetType="Slider">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Minimum" Value="100"/>
+            <Setter Property="Maximum" Value="999"/>
+            <Setter Property="TickFrequency" Value="10"/>
+            <Setter Property="IsSnapToTickEnabled" Value="True"/>
+            <Setter Property="TickPlacement" Value="BottomRight"/>
         </Style>
     </Window.Resources>
     <DockPanel>
@@ -156,14 +165,10 @@
                                 Style="{StaticResource RightAlignedTextBoxStyle}"
                                 VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         <Label Content='Sector "Radius", km:' Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center"/>
-                        <TextBox Width="100" Margin="2"
-                                Grid.Row="2" Grid.Column="1"
-                                local:TextBoxExtensions.IsIntegerOnly="True"
-                                local:TextBoxExtensions.MinValue="0"
-                                local:TextBoxExtensions.MaxValue="999"
-                                Style="{StaticResource RightAlignedTextBoxStyle}"
-                                Text="{Binding SectorRadius}"
-                                VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <TextBox Grid.Row="2" Grid.Column="1"
+                                Style="{StaticResource InternalRadiusTextBoxStyle}"
+                                Text="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                />
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="X4 Data Options">
@@ -242,60 +247,70 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Canvas x:Name="SectorDirectCanvas" Style="{StaticResource SectorCanvasStyle}"
-                                                SizeChanged="SectorDirectCanvas_SizeChanged">
-                                                <!-- Hexagonal Sector Representation -->
-                                                <Polygon x:Name="SectorDirectHexagon" Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
-                                                        Style="{StaticResource SectorHexagonStyle}"
-                                                        Canvas.Left="{Binding GatesConnectionCurrent.SectorDirectMap.VisualX}"
-                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}" />
-                                                <!-- Gates Representation -->
-                                                <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorDirectMap.Items}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Canvas />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Image
-                                                                Width="{Binding ItemSizePx}"
-                                                                Height="{Binding ItemSizePx}"
-                                                                Source="{Binding ObjectImage}"
-                                                                Stretch="Uniform"
-                                                                PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
-                                                                MouseMove="SectorDirectMapItem_MouseMove"
-                                                                MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
-                                                                <!-- <Image.Source>
-                                                                    <StaticResource ResourceKey="{Binding ObjectImage}"/>
-                                                                </Image.Source> -->
-                                                                <!-- Positioning the Image using RenderTransform -->
-                                                                <Image.RenderTransform>
-                                                                    <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
-                                                                </Image.RenderTransform>
+                                            <StackPanel Orientation="Vertical">
+                                                <Canvas x:Name="SectorDirectCanvas" Style="{StaticResource SectorCanvasStyle}"
+                                                    SizeChanged="SectorDirectCanvas_SizeChanged">
+                                                    <!-- Hexagonal Sector Representation -->
+                                                    <Polygon x:Name="SectorDirectHexagon" Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                            Style="{StaticResource SectorHexagonStyle}"
+                                                            Canvas.Left="{Binding GatesConnectionCurrent.SectorDirectMap.VisualX}"
+                                                            Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}" />
+                                                    <!-- Gates Representation -->
+                                                    <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorDirectMap.Items}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <Canvas />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Image
+                                                                    Width="{Binding ItemSizePx}"
+                                                                    Height="{Binding ItemSizePx}"
+                                                                    Source="{Binding ObjectImage}"
+                                                                    Stretch="Uniform"
+                                                                    PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
+                                                                    MouseMove="SectorDirectMapItem_MouseMove"
+                                                                    MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
+                                                                    <!-- <Image.Source>
+                                                                        <StaticResource ResourceKey="{Binding ObjectImage}"/>
+                                                                    </Image.Source> -->
+                                                                    <!-- Positioning the Image using RenderTransform -->
+                                                                    <Image.RenderTransform>
+                                                                        <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                                                                    </Image.RenderTransform>
 
-                                                                <!-- Binding Tooltip -->
-                                                                <Image.ToolTip>
-                                                                    <ToolTip Content="{Binding ToolTip}" />
-                                                                </Image.ToolTip>
-                                                            </Image>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                                <Button x:Name="ButtonSectorDirectMapExpand"
-                                                    Width="24" Height="24"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Margin="5"
-                                                    Background="Transparent"
-                                                    BorderBrush="Transparent"
-                                                    Cursor="Hand"
-                                                    ToolTip="Expand"
-                                                    Click="ButtonSectorDirectMapExpand_Click">
-                                                    <fa:IconImage Icon="Expand"
-                                                                Style="{StaticResource FontAwesomeIconStyle}"/>
-                                                </Button>
-                                            </Canvas>
+                                                                    <!-- Binding Tooltip -->
+                                                                    <Image.ToolTip>
+                                                                        <ToolTip Content="{Binding ToolTip}" />
+                                                                    </Image.ToolTip>
+                                                                </Image>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                    <Button x:Name="ButtonSectorDirectMapExpand"
+                                                        Width="24" Height="24"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="5"
+                                                        Background="Transparent"
+                                                        BorderBrush="Transparent"
+                                                        Cursor="Hand"
+                                                        ToolTip="Expand"
+                                                        Click="ButtonSectorDirectMapExpand_Click">
+                                                        <fa:IconImage Icon="Expand"
+                                                                    Style="{StaticResource FontAwesomeIconStyle}"/>
+                                                    </Button>
+                                                </Canvas>
+                                                <StackPanel Orientation="Horizontal" Margin="5">
+                                                    <TextBlock Margin="0" VerticalAlignment="Center"
+                                                                Text="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
+                                                    <Slider x:Name="SectorDirectRadiusSlider"
+                                                            Style="{StaticResource SectorInternalRadius}"
+                                                            Value="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, Mode=TwoWay}"
+                                                    />
+                                                </StackPanel>
+                                            </StackPanel>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
                                                       SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedConnection, Mode=TwoWay}"
                                                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -404,60 +419,70 @@
                                     </Grid>
                                     <GroupBox Header="Sector Info" Margin="5">
                                         <DockPanel>
-                                            <Canvas x:Name="SectorOppositeCanvas" Style="{StaticResource SectorCanvasStyle}"
-                                                SizeChanged="SectorOppositeCanvas_SizeChanged">
-                                                <!-- Hexagonal Sector Representation -->
-                                                <Polygon x:Name="SectorOppositeHexagon" Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
-                                                        Style="{StaticResource SectorHexagonStyle}"
-                                                        Canvas.Left="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualX}"
-                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}" />
-                                                <!-- Gates Representation -->
-                                                <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeMap.Items}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Canvas />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Image
-                                                                Width="{Binding ItemSizePx}"
-                                                                Height="{Binding ItemSizePx}"
-                                                                Source="{Binding ObjectImage}"
-                                                                Stretch="Uniform"
-                                                                PreviewMouseLeftButtonDown="SectorOppositeMapItem_MouseLeftButtonDown"
-                                                                MouseMove="SectorOppositeMapItem_MouseMove"
-                                                                MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp">
-                                                                <!-- <Image.Source>
-                                                                    <StaticResource ResourceKey="{Binding ObjectImage}"/>
-                                                                </Image.Source> -->
-                                                                <!-- Positioning the Image using RenderTransform -->
-                                                                <Image.RenderTransform>
-                                                                    <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
-                                                                </Image.RenderTransform>
+                                            <StackPanel Orientation="Vertical">
+                                                <Canvas x:Name="SectorOppositeCanvas" Style="{StaticResource SectorCanvasStyle}"
+                                                    SizeChanged="SectorOppositeCanvas_SizeChanged">
+                                                    <!-- Hexagonal Sector Representation -->
+                                                    <Polygon x:Name="SectorOppositeHexagon" Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                            Style="{StaticResource SectorHexagonStyle}"
+                                                            Canvas.Left="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualX}"
+                                                            Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}" />
+                                                    <!-- Gates Representation -->
+                                                    <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeMap.Items}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <Canvas />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Image
+                                                                    Width="{Binding ItemSizePx}"
+                                                                    Height="{Binding ItemSizePx}"
+                                                                    Source="{Binding ObjectImage}"
+                                                                    Stretch="Uniform"
+                                                                    PreviewMouseLeftButtonDown="SectorOppositeMapItem_MouseLeftButtonDown"
+                                                                    MouseMove="SectorOppositeMapItem_MouseMove"
+                                                                    MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp">
+                                                                    <!-- <Image.Source>
+                                                                        <StaticResource ResourceKey="{Binding ObjectImage}"/>
+                                                                    </Image.Source> -->
+                                                                    <!-- Positioning the Image using RenderTransform -->
+                                                                    <Image.RenderTransform>
+                                                                        <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                                                                    </Image.RenderTransform>
 
-                                                                <!-- Binding Tooltip -->
-                                                                <Image.ToolTip>
-                                                                    <ToolTip Content="{Binding ToolTip}" />
-                                                                </Image.ToolTip>
-                                                            </Image>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                                <Button x:Name="ButtonSectorOppositeMapExpand"
-                                                    Width="24" Height="24"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Margin="5"
-                                                    Background="Transparent"
-                                                    BorderBrush="Transparent"
-                                                    Cursor="Hand"
-                                                    ToolTip="Expand"
-                                                    Click="ButtonSectorOppositeMapExpand_Click">
-                                                    <fa:IconImage Icon="Expand"
-                                                                Style="{StaticResource FontAwesomeIconStyle}"/>
-                                                </Button>
-                                            </Canvas>
+                                                                    <!-- Binding Tooltip -->
+                                                                    <Image.ToolTip>
+                                                                        <ToolTip Content="{Binding ToolTip}" />
+                                                                    </Image.ToolTip>
+                                                                </Image>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                    <Button x:Name="ButtonSectorOppositeMapExpand"
+                                                        Width="24" Height="24"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="5"
+                                                        Background="Transparent"
+                                                        BorderBrush="Transparent"
+                                                        Cursor="Hand"
+                                                        ToolTip="Expand"
+                                                        Click="ButtonSectorOppositeMapExpand_Click">
+                                                        <fa:IconImage Icon="Expand"
+                                                                    Style="{StaticResource FontAwesomeIconStyle}"/>
+                                                    </Button>
+                                                </Canvas>
+                                                <StackPanel Orientation="Horizontal" Margin="5">
+                                                    <TextBlock Margin="0" VerticalAlignment="Center"
+                                                                Text="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
+                                                    <Slider x:Name="SectorOppositeRadiusSlider"
+                                                            Style="{StaticResource SectorInternalRadius}"
+                                                            Value="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, Mode=TwoWay}"
+                                                    />
+                                                </StackPanel>
+                                            </StackPanel>
                                             <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeConnections}"
                                                       SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedConnection, Mode=TwoWay}"
                                                       ScrollViewer.HorizontalScrollBarVisibility="Auto"

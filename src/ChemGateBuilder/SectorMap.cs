@@ -19,17 +19,8 @@ namespace ChemGateBuilder
         private double _visualX;
         private double _visualY;
         private double _visualSizePx = 200; // Default size
+        private double _internalSizeKm = 400;
         private string?  _selectedItemId = "";
-        public double InternalSizeKm { get; set; } = 400;
-
-        public double VisualSizePx
-        {
-            get => _visualSizePx;
-            set { _visualSizePx = value; OnPropertyChanged(); }
-        }
-
-        public double MinVisualSectorSize { get; set; } = 50;
-        public double MaxVisualSectorSize { get; set; } = 1200;
 
         public double VisualX
         {
@@ -42,12 +33,32 @@ namespace ChemGateBuilder
             get => _visualY;
             set { _visualY = value; OnPropertyChanged(); }
         }
-
-        public string? SelectedItemId
+        public double VisualSizePx
+        {
+            get => _visualSizePx;
+            set { _visualSizePx = value; OnPropertyChanged(); }
+        }
+        public double InternalSizeKm {
+            get => _internalSizeKm;
+            set
+            {
+                _internalSizeKm = value;
+                OnPropertyChanged();
+                UpdateItems();
+            }
+        }
+                public string? SelectedItemId
         {
             get => _selectedItemId;
             set { _selectedItemId = value; OnPropertyChanged(); }
         }
+
+        public static double MinVisualSectorSize = 50;
+        public static double MaxVisualSectorSize = 1200;
+
+        public static int MinInternalSectorSizeKm = 100;
+        public static int MaxInternalSectorSizeKm = 999;
+
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 
         public bool IsDragging = false;

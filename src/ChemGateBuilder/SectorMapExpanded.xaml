@@ -32,10 +32,22 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Orientation" Value="Horizontal"/>
         </Style>
+        <Style x:Key="SectorInternalRadius" TargetType="Slider">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Minimum" Value="100"/>
+            <Setter Property="Maximum" Value="999"/>
+            <Setter Property="TickFrequency" Value="10"/>
+            <Setter Property="IsSnapToTickEnabled" Value="True"/>
+            <Setter Property="TickPlacement" Value="BottomRight"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -81,6 +93,14 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Canvas>
+        <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="1" Grid.Column="0">
+            <TextBlock Margin="0" VerticalAlignment="Center"
+                        Text="{Binding SectorMapExpanded.InternalSizeKm, StringFormat='Radius: {0} km'}" />
+            <Slider x:Name="SectorDirectRadiusSlider"
+                    Style="{StaticResource SectorInternalRadius}"
+                    Value="{Binding SectorMapExpanded.InternalSizeKm, Mode=TwoWay}"
+            />
+        </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
             <Label Content="New Gate Coordinates:" />
             <StackPanel Style="{StaticResource CoordinatesLine}">
