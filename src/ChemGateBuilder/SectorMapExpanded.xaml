@@ -35,7 +35,7 @@
         <Style x:Key="SectorInternalRadius" TargetType="Slider">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Width" Value="150"/>
+            <Setter Property="Width" Value="400"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TickFrequency" Value="10"/>
             <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -44,22 +44,41 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="New Gate Coordinates:" Grid.Column="0" />
+            <Label Content="X, km:" Grid.Column="1" />
+            <TextBlock Text="{Binding NewGateCoordinates.X}" Style="{StaticResource CoordinatesTextBlockStyle}" Grid.Column="2"/>
+            <Label Content="Y, km:" Grid.Column="3" />
+            <TextBlock Text="{Binding NewGateCoordinates.Y}" Style="{StaticResource CoordinatesTextBlockStyle}" Grid.Column="4"/>
+            <Label Content="Z, km:" Grid.Column="5" />
+            <TextBlock Text="{Binding NewGateCoordinates.Z}"  Style="{StaticResource CoordinatesTextBlockStyle}" Grid.Column="6"/>
+        </Grid>
         <Canvas x:Name="SectorMapExpandedCanvas"
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.Column="0"
             Style="{StaticResource SectorCanvasStyle}"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             SizeChanged="SectorMapExpandedCanvas_SizeChanged">
             <!-- Hexagonal Sector Representation -->
-            <Polygon x:Name="SectorHexagon" Points="{Binding SectorMapExpanded.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+            <Polygon x:Name="SectorHexagon"
+                    Points="{Binding SectorMapExpanded.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
                     Style="{StaticResource SectorHexagonStyle}"
                     Canvas.Left="{Binding SectorMapExpanded.VisualX}"
                     Canvas.Top="{Binding SectorMapExpanded.VisualY}" />
@@ -91,7 +110,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Canvas>
-        <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="1" Grid.Column="0">
+        <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">
             <TextBlock Margin="0" VerticalAlignment="Center"
                         Text="{Binding SectorMapExpanded.InternalSizeKm, StringFormat='Radius: {0} km'}" />
             <Slider x:Name="SectorDirectRadiusSlider"
@@ -100,21 +119,6 @@
                     Maximum="{Binding SectorMapExpanded.MaxInternalSizeKm}"
                     Value="{Binding SectorMapExpanded.InternalSizeKm, Mode=TwoWay}"
             />
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-            <Label Content="New Gate Coordinates:" />
-            <StackPanel Style="{StaticResource CoordinatesLine}">
-                <Label Content="X, km:" />
-                <TextBlock Text="{Binding NewGateCoordinates.X}" Style="{StaticResource CoordinatesTextBlockStyle}"/>
-            </StackPanel>
-            <StackPanel Style="{StaticResource CoordinatesLine}">
-                <Label Content="Y, km:" />
-                <TextBlock Text="{Binding NewGateCoordinates.Y}" Style="{StaticResource CoordinatesTextBlockStyle}"/>
-            </StackPanel>
-            <StackPanel Style="{StaticResource CoordinatesLine}">
-                <Label Content="Z, km:" />
-                <TextBlock Text="{Binding NewGateCoordinates.Z}"  Style="{StaticResource CoordinatesTextBlockStyle}"/>
-            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

@@ -764,10 +764,11 @@ namespace ChemGateBuilder
 
 
 
-                sectorMapExpandedWindow.Left = GetWindowLeft() + this.ActualWidth * 0.05;
-                sectorMapExpandedWindow.Top = GetWindowTop() + this.ActualHeight * 0.05;
-                sectorMapExpandedWindow.Width = this.ActualWidth * 0.9;
-                sectorMapExpandedWindow.Height = this.ActualHeight * 0.9;
+                var minSize = Math.Min(this.ActualWidth, this.ActualHeight) * 0.9;
+                sectorMapExpandedWindow.Width = minSize;
+                sectorMapExpandedWindow.Height = minSize;
+                sectorMapExpandedWindow.Left = GetWindowLeft() + (this.ActualWidth - minSize) / 2;
+                sectorMapExpandedWindow.Top = GetWindowTop() + (this.ActualHeight - minSize) / 2;
                 SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
                 sectorMapExpandedWindow.SetMapItems(sectorMap.Items.ToList());
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
