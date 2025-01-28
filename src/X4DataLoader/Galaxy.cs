@@ -43,7 +43,7 @@ namespace X4DataLoader
                 LoadConnections(connectionsElement, allClusters, source, fileName);
             }
         }
-        public void LoadConnections(XElement connectionsElement, List<Cluster> allClusters, string source, string fileName)
+        public void LoadConnections(XElement connectionsElement, List<Cluster> allClusters, string source, string fileName, List<Zone>? additionalZones = null)
         {
             foreach (var connectionElement in connectionsElement.Elements("connection"))
             {
@@ -81,7 +81,7 @@ namespace X4DataLoader
                 else if (reference == "destination")
                 {
                     var galaxyConnection = new GalaxyConnection();
-                    galaxyConnection.Load(connectionElement, Clusters, source, fileName);
+                    galaxyConnection.Load(connectionElement, allClusters, source, fileName, additionalZones);
                     Connections.Add(galaxyConnection);
                 }
             }
@@ -186,19 +186,19 @@ namespace X4DataLoader
             PathOpposite = null;
         }
 
-        public void Load(XElement element, List<Cluster> allClusters, string source, string fileName)
+        public void Load(XElement element, List<Cluster> allClusters, string source, string fileName, List<Zone>? additionalZones = null)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             var pathDirect = XmlHelper.GetAttribute(element, "path") ?? "";
             PathDirect = new GalaxyConnectionPath();
-            PathDirect.Load(pathDirect, allClusters);
+            PathDirect.Load(pathDirect, allClusters, additionalZones);
 
             var macroElement = element.Element("macro");
             if (macroElement != null)
             {
                 var pathOpposite = XmlHelper.GetAttribute(macroElement, "path") ?? "";
                 PathOpposite = new GalaxyConnectionPath();
-                PathOpposite.Load(pathOpposite, allClusters);
+                PathOpposite.Load(pathOpposite, allClusters, additionalZones);
             }
             else
             {
@@ -249,7 +249,7 @@ namespace X4DataLoader
             Path = "";
         }
 
-        public void Load(string path, List<Cluster> allClusters)
+        public void Load(string path, List<Cluster> allClusters, List<Zone>? additionalZones = null)
         {
             var pathParts = path.Split('/').Where(p => p != "..").ToArray();
             Path = string.Join("/", pathParts);
@@ -264,9 +264,16 @@ namespace X4DataLoader
             Sector = Cluster.Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.PositionId, pathParts[1]))
                 ?? throw new ArgumentException($"Sector with PositionId {pathParts[1]} not found in Cluster {Cluster.Name}");
 
-            Zone = Sector.Zones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.PositionId, pathParts[2]))
-                ?? throw new ArgumentException($"Zone with Name {pathParts[2]} not found in Sector {Sector.Name}");
-
+            if (additionalZones != null)
+            {
+                Zone = additionalZones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.PositionId, pathParts[2]))
+                    ?? throw new ArgumentException($"Zone with PositionId {pathParts[2]} not found in AdditionalZones");
+            }
+            else
+            {
+                Zone = Sector.Zones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.PositionId, pathParts[2]))
+                    ?? throw new ArgumentException($"Zone with PositionId {pathParts[2]} not found in Sector {Sector.Name}");
+            }
             Gate = Zone.Connections.Values.OfType<GateConnection>().FirstOrDefault(g => StringHelper.EqualsIgnoreCase(g.Name, pathParts[3]))
                 ?? throw new ArgumentException($"GateConnection with Name {pathParts[3]} not found in Zone {Zone.Name}");
         }
