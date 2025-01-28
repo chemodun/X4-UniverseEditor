@@ -933,11 +933,28 @@ namespace ChemGateBuilder
                 StatusMessage = "Error: Galaxy data is not loaded.";
                 return;
             }
-            GalaxyConnections.Clear();
-            _mod.LoadData(Galaxy, GalaxyConnections);
-            if (GalaxyConnections.Count > 0)
+            if (_mod.LoadData(Galaxy))
             {
-                CurrentGalaxyConnection = GalaxyConnections[0];
+                GalaxyConnections.Clear();
+                foreach (var connection in _mod.Connections)
+                {
+                    GalaxyConnectionData newConnection = new GalaxyConnectionData(connection);
+                    GalaxyConnections.Add(newConnection);
+                }
+                SectorsDirectViewSource.View.Refresh();
+                SectorsOppositeViewSource.View.Refresh();
+                if (GalaxyConnections.Count > 0)
+                {
+                    CurrentGalaxyConnection = GalaxyConnections[0];
+                } else
+                {
+                    CurrentGalaxyConnection = null;
+                }
+                StatusMessage = "Mod data loaded successfully.";
+            }
+            else {
+                StatusMessage = "Error: Mod data could not be loaded.";
+                Log.Warn("Mod data could not be loaded.");
             }
         }
 
