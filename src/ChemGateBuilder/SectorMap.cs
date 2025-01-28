@@ -157,9 +157,26 @@ namespace ChemGateBuilder
                 UpdateItem(item.ConnectionData);
             }
         }
-        public void OnSizeChanged(double newSize)
+        public void OnSizeChanged(double newWidth, double newHeight)
         {
+            double newSize = Math.Min(newWidth, newHeight);
             VisualSizePx = Math.Min(Math.Max(newSize, MinVisualSectorSize), MaxVisualSectorSize);
+            if (VisualSizePx < newWidth)
+            {
+                VisualX = (newWidth - VisualSizePx) / 2;
+            }
+            else
+            {
+                VisualX = 0;
+            }
+            if (VisualSizePx < newHeight)
+            {
+                VisualY = (newHeight - VisualSizePx) / 2;
+            }
+            else
+            {
+                VisualY = 0;
+            }
             UpdateItems();
         }
         public void SetInternalSize (int sizeKm)
@@ -207,7 +224,7 @@ namespace ChemGateBuilder
                     double newX = mousePosition.X - MouseOffset.X;
                     double newY = mousePosition.Y - MouseOffset.Y;
                     // Account the size of the item
-                    Point newPoint = new Point(newX + halfSize , newY + halfSize);
+                    Point newPoint = new Point(newX + halfSize - VisualX, newY + halfSize - VisualY);
                     // Check if the new position is inside the hexagon
                     bool isInside = MapHexagon.RenderedGeometry.FillContains(newPoint);
                     Log.Debug($"[MouseMove] IsInside: {isInside}");
@@ -327,8 +344,8 @@ namespace ChemGateBuilder
         {
             if (SectorMap == null || ConnectionData == null)
                 return;
-            X = (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
-            Y = (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            X = SectorMap.VisualX + (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            Y = SectorMap.VisualY + (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
             UpdateToolTip();
@@ -338,8 +355,8 @@ namespace ChemGateBuilder
         {
             if (SectorMap == null)
                 return;
-            coordinates.X = (int)((X * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
-            coordinates.Z = (int)((SectorMap.VisualSizePx - Y * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            coordinates.X = (int)(((X - SectorMap.VisualX) * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            coordinates.Z = (int)((SectorMap.VisualSizePx + (SectorMap.VisualY - Y ) * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
             if (_connectionData == null)
                 return;
             _connectionData.X = coordinates.X;

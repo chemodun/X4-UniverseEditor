@@ -667,20 +667,12 @@ namespace ChemGateBuilder
         // Handle Canvas Size Changed to adjust Hexagon Size
         private void SectorDirectCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
-            if (GatesConnectionCurrent != null)
-            {
-                GatesConnectionCurrent.SectorDirectMap.OnSizeChanged(newSize);
-            }
+            GatesConnectionCurrent?.SectorDirectMap.OnSizeChanged(e.NewSize.Width, e.NewSize.Height);
         }
 
         private void SectorOppositeCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
-            if (GatesConnectionCurrent != null)
-            {
-                GatesConnectionCurrent.SectorOppositeMap.OnSizeChanged(newSize);
-            }
+            GatesConnectionCurrent?.SectorOppositeMap.OnSizeChanged(e.NewSize.Width, e.NewSize.Height);
         }
 
         private void SectorDirectMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

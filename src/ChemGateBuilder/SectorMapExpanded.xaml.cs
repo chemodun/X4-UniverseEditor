@@ -42,8 +42,7 @@ namespace ChemGateBuilder
 
         private void SectorMapExpandedCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double newSize = Math.Min(e.NewSize.Width, e.NewSize.Height) ;//* 0.8; // 80% of smaller dimension
-            SectorMapExpanded?.OnSizeChanged(newSize);
+            SectorMapExpanded?.OnSizeChanged(e.NewSize.Width, e.NewSize.Height);
         }
 
         private void SectorMapExpandedItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
