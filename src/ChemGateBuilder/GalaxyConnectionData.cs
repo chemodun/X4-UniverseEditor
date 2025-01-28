@@ -35,14 +35,48 @@ namespace ChemGateBuilder
             }
         }
 
-        public GalaxyConnectionData(GalaxyConnection connection, GatesConnectionData connectionData)
+        public GalaxyConnectionData(GalaxyConnection connection, GatesConnectionData? connectionData = null)
         {
             _connection = connection;
             Connection = connection;
-            DirectPosition = connectionData.GateDirect.Position;
-            DirectRotation = connectionData.GateDirect.Rotation;
-            OppositePosition = connectionData.GateOpposite.Position;
-            OppositeRotation = connectionData.GateOpposite.Rotation;
+            if (connectionData == null)
+            {
+                if (connection?.PathDirect?.Gate?.Position != null)
+                {
+                    DirectPosition = new Coordinates((int)(connection?.PathDirect?.Gate?.Position.X ?? 0), (int)(connection?.PathDirect?.Gate?.Position.Y ?? 0), (int)(connection?.PathDirect?.Gate?.Position.Z ?? 0));
+                }
+                else {
+                    DirectPosition = new Coordinates(0, 0, 0);
+                }
+                if (connection?.PathDirect?.Gate?.Quaternion != null)
+                {
+                    DirectRotation = Rotation.FromQuaternion(connection.PathDirect.Gate.Quaternion);
+                }
+                else {
+                    DirectRotation = new Rotation(0, 0, 0);
+                }
+                if (connection?.PathOpposite?.Gate?.Position != null)
+                {
+                    OppositePosition = new Coordinates((int)(connection?.PathOpposite?.Gate?.Position.X ?? 0), (int)(connection?.PathOpposite?.Gate?.Position.Y ?? 0), (int)(connection?.PathOpposite?.Gate?.Position.Z ?? 0));
+                }
+                else {
+                    OppositePosition = new Coordinates(0, 0, 0);
+                }
+                if (connection?.PathOpposite?.Gate?.Quaternion != null)
+                {
+                    OppositeRotation = Rotation.FromQuaternion(connection.PathOpposite.Gate.Quaternion);
+                }
+                else {
+                    OppositeRotation = new Rotation(0, 0, 0);
+                }
+            }
+            else
+            {
+                DirectPosition = connectionData.GateDirect.Position;
+                DirectRotation = connectionData.GateDirect.Rotation;
+                OppositePosition = connectionData.GateOpposite.Position;
+                OppositeRotation = connectionData.GateOpposite.Rotation;
+            }
             PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == nameof(Connection))
