@@ -80,7 +80,13 @@ namespace X4DataLoader
                 // Process mapDefaults
                 if (fileSet.Value.TryGetValue("mapDefaults", out var mapDefaultsFile))
                 {
-                    var mapDefaultsDoc = XDocument.Load(mapDefaultsFile.fullPath);
+                    XDocument mapDefaultsDoc;
+                    try {
+                        mapDefaultsDoc = XDocument.Load(mapDefaultsFile.fullPath);
+                    } catch (ArgumentException e) {
+                        Log.Error($"Error loading map defaults {mapDefaultsFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var datasetElement in mapDefaultsDoc.XPathSelectElements("/defaults/dataset"))
                     {
                         var macro = datasetElement.Attribute("macro")?.Value;
@@ -128,7 +134,13 @@ namespace X4DataLoader
                 // Process clusters
                 if (fileSet.Value.TryGetValue("clusters", out var clustersFile))
                 {
-                    var clustersDoc = XDocument.Load(clustersFile.fullPath);
+                    XDocument clustersDoc;
+                    try {
+                        clustersDoc = XDocument.Load(clustersFile.fullPath);
+                    } catch (ArgumentException e) {
+                        Log.Error($"Error loading clusters {clustersFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var macroElement in clustersDoc.XPathSelectElements("/macros/macro"))
                     {
                         try
@@ -146,7 +158,13 @@ namespace X4DataLoader
                 // Process sectors
                 if (fileSet.Value.TryGetValue("sectors", out var sectorsFile))
                 {
-                    var sectorsDoc = XDocument.Load(sectorsFile.fullPath);
+                    XDocument sectorsDoc;
+                    try {
+                        sectorsDoc = XDocument.Load(sectorsFile.fullPath);
+                    } catch (ArgumentException e) {
+                        Log.Error($"Error loading sectors {sectorsFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var macroElement in sectorsDoc.XPathSelectElements("/macros/macro"))
                     {
                         try
@@ -164,7 +182,16 @@ namespace X4DataLoader
                 // Process zones
                 if (fileSet.Value.TryGetValue("zones", out var zonesFile))
                 {
-                    var zonesDoc = XDocument.Load(zonesFile.fullPath);
+                    XDocument zonesDoc;
+                    try
+                    {
+                        zonesDoc = XDocument.Load(zonesFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading zones {zonesFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
                     {
                         var zone = new Zone();
@@ -187,7 +214,16 @@ namespace X4DataLoader
                 // Process sechighways
                 if (fileSet.Value.TryGetValue("sechighways", out var sechighwaysFile))
                 {
-                    var sechighwaysDoc = XDocument.Load(sechighwaysFile.fullPath);
+                    XDocument sechighwaysDoc;
+                    try
+                    {
+                        sechighwaysDoc = XDocument.Load(sechighwaysFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading sechighways {sechighwaysFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
                     {
                         var highway = new HighwayClusterLevel(macroElement, source, sechighwaysFile.fileName);
@@ -209,7 +245,16 @@ namespace X4DataLoader
                 // Process zonehighways
                 if (fileSet.Value.TryGetValue("zonehighways", out var zonehighwaysFile))
                 {
-                    var zonehighwaysDoc = XDocument.Load(zonehighwaysFile.fullPath);
+                    XDocument zonehighwaysDoc;
+                    try
+                    {
+                        zonehighwaysDoc = XDocument.Load(zonehighwaysFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading zonehighways {zonehighwaysFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
                     {
                         var highway = new HighwaySectorLevel(macroElement, source, zonehighwaysFile.fileName);
@@ -231,7 +276,16 @@ namespace X4DataLoader
                 // Process galaxy
                 if (fileSet.Value.TryGetValue("galaxy", out var galaxyFile))
                 {
-                    var galaxyDoc = XDocument.Load(galaxyFile.fullPath);
+                    XDocument galaxyDoc;
+                    try
+                    {
+                        galaxyDoc = XDocument.Load(galaxyFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading galaxy {galaxyFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     var galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
                     if (galaxyElement != null) {
                         galaxy.Load(galaxyElement, clusters, source, galaxyFile.fileName);
