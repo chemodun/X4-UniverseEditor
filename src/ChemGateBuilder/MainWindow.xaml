@@ -144,6 +144,7 @@
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="30" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -152,20 +153,42 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Label Content="Gates Active by Default:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <CheckBox Margin="1" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" IsChecked="{Binding GatesActiveByDefault}"/>
-                        <Label Content="Minimal Distance Between Gates, km:" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Center"/>
-                        <TextBox Width="100" Margin="2"
-                                Grid.Row="1" Grid.Column="1"
-                                Text="{Binding GatesMinimalDistanceBetween}"
-                                local:TextBoxExtensions.IsIntegerOnly="True"
-                                local:TextBoxExtensions.MinValue="0"
-                                local:TextBoxExtensions.MaxValue="99"
-                                Style="{StaticResource RightAlignedTextBoxStyle}"
-                                VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                        <Label Content='Sector "Radius", km:' Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="2" Grid.Column="1"
-                                Style="{StaticResource InternalRadiusTextBoxStyle}"
-                                Text="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        <CheckBox Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="2" IsChecked="{Binding GatesActiveByDefault}"/>
+                        <Label Content="Gates Minimal Distance Between, km:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="1" Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding GatesMinimalDistanceBetween}" />
+                        <Slider x:Name="GatesMinimalDistanceSlider"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                MinWidth="80"
+                                VerticalAlignment="Center"
+                                TickFrequency="5"
+                                IsSnapToTickEnabled="True"
+                                Minimum="0"
+                                Maximum="100"
+                                Value="{Binding GatesMinimalDistanceBetween, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Grid.Row="1" Grid.Column="2"
+                                />
+                        <Label Content="Sector Radius, km:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SectorRadius}"/>
+                        <Slider x:Name="SectorRadiusSlider"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                MinWidth="80"
+                                VerticalAlignment="Center"
+                                TickFrequency="50"
+                                IsSnapToTickEnabled="True"
+                                Minimum="{Binding GatesConnectionCurrent.SectorDirectMap.MinInternalSizeKm}"
+                                Maximum="{Binding GatesConnectionCurrent.SectorDirectMap.MaxInternalSizeKm}"
+                                Value="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Grid.Row="2" Grid.Column="2"
                                 />
                     </Grid>
                 </fluent:RibbonGroupBox>
