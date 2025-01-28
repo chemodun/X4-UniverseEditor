@@ -89,7 +89,15 @@ namespace ChemGateBuilder
                 Log.Debug($"Loading {source} files");
                 if (filesGroup.Value.TryGetValue("sectors", out var sectorsFile))
                 {
-                    var sectorsDoc = XDocument.Load(sectorsFile.fullPath);
+                    XDocument sectorsDoc;
+                    try {
+                        sectorsDoc = XDocument.Load(sectorsFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Warn($"Error loading sectors file {sectorsFile.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (var macroElement in sectorsDoc.XPathSelectElements("/diff/add"))
                     {
                         string sel = macroElement.Attribute("sel")?.Value ?? "";
@@ -132,7 +140,15 @@ namespace ChemGateBuilder
                 }
                 if (filesGroup.Value.TryGetValue("zones", out var zoneFileInfo)) {
                     Log.Debug($"Loading zone file {zoneFileInfo.fileName} from {zoneFileInfo.fullPath}");
-                    XDocument docZones = XDocument.Load(zoneFileInfo.fullPath);
+                    XDocument docZones;
+                    try {
+                        docZones = XDocument.Load(zoneFileInfo.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Warn($"Error loading zone file {zoneFileInfo.fullPath}: {e.Message}");
+                        continue;
+                    }
                     foreach (XElement addElement in docZones.XPathSelectElements("/diff/add"))
                     {
                         var zoneElements = addElement.Elements("macro");
@@ -165,10 +181,6 @@ namespace ChemGateBuilder
                             }
                         }
                     }
-                    // foreach (var file in zonesFiles)
-                    // {
-                    //     Log.Debug($"Loading {file}");
-                    // }
                 }
             }
             if (zones.Count == 0)
@@ -183,7 +195,15 @@ namespace ChemGateBuilder
                 return false;
             }
             Galaxy modGalaxy = new();
-            XDocument docGalaxy = XDocument.Load(galaxyFile.fullPath);
+            XDocument? docGalaxy;
+            try {
+                docGalaxy = XDocument.Load(galaxyFile.fullPath);
+            }
+            catch (ArgumentException e)
+            {
+                Log.Error($"Error loading galaxy file {galaxyFile.fullPath}: {e.Message}");
+                return false;
+            }
             foreach(XElement addElement in docGalaxy.XPathSelectElements("/diff/add"))
             {
                 if (addElement.Attribute("sel")?.Value != "/macros/macro[@name='XU_EP2_universe_macro']/connections")
@@ -192,6 +212,11 @@ namespace ChemGateBuilder
                     continue;
                 }
                 modGalaxy.LoadConnections(addElement, galaxy.Clusters, "vanilla", galaxyFile.fileName, zones);
+            }
+            if (modGalaxy.Connections.Count == 0)
+            {
+                Log.Error("No Galaxy Connections loaded");
+                return false;
             }
             _versionInitial = _version;
             return true;
