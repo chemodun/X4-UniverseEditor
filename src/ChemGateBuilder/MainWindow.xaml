@@ -87,8 +87,6 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Width" Value="150"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Minimum" Value="100"/>
-            <Setter Property="Maximum" Value="999"/>
             <Setter Property="TickFrequency" Value="10"/>
             <Setter Property="IsSnapToTickEnabled" Value="True"/>
             <Setter Property="TickPlacement" Value="BottomRight"/>
@@ -307,6 +305,8 @@
                                                                 Text="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
                                                     <Slider x:Name="SectorDirectRadiusSlider"
                                                             Style="{StaticResource SectorInternalRadius}"
+                                                            Minimum="{Binding GatesConnectionCurrent.SectorDirectMap.MinInternalSizeKm}"
+                                                            Maximum="{Binding GatesConnectionCurrent.SectorDirectMap.MaxInternalSizeKm}"
                                                             Value="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, Mode=TwoWay}"
                                                     />
                                                 </StackPanel>
@@ -479,6 +479,8 @@
                                                                 Text="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
                                                     <Slider x:Name="SectorOppositeRadiusSlider"
                                                             Style="{StaticResource SectorInternalRadius}"
+                                                            Minimum="{Binding GatesConnectionCurrent.SectorOppositeMap.MinInternalSizeKm}"
+                                                            Maximum="{Binding GatesConnectionCurrent.SectorOppositeMap.MaxInternalSizeKm}"
                                                             Value="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, Mode=TwoWay}"
                                                     />
                                                 </StackPanel>

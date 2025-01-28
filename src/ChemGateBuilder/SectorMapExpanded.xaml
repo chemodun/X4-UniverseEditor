@@ -37,8 +37,6 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Width" Value="150"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Minimum" Value="100"/>
-            <Setter Property="Maximum" Value="999"/>
             <Setter Property="TickFrequency" Value="10"/>
             <Setter Property="IsSnapToTickEnabled" Value="True"/>
             <Setter Property="TickPlacement" Value="BottomRight"/>
@@ -98,6 +96,8 @@
                         Text="{Binding SectorMapExpanded.InternalSizeKm, StringFormat='Radius: {0} km'}" />
             <Slider x:Name="SectorDirectRadiusSlider"
                     Style="{StaticResource SectorInternalRadius}"
+                    Minimum="{Binding SectorMapExpanded.MinInternalSizeKm}"
+                    Maximum="{Binding SectorMapExpanded.MaxInternalSizeKm}"
                     Value="{Binding SectorMapExpanded.InternalSizeKm, Mode=TwoWay}"
             />
         </StackPanel>

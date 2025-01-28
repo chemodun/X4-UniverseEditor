@@ -16,18 +16,43 @@ namespace ChemGateBuilder
 {
     public class SectorMap : INotifyPropertyChanged
     {
+        private double _minInternalSizeKm = 100;
+        private double _maxInternalSizeKm = 999;
         private double _visualX;
         private double _visualY;
         private double _visualSizePx = 200; // Default size
         private double _internalSizeKm = 400;
         private string?  _selectedItemId = "";
 
+        public double MinInternalSizeKm
+        {
+            get => _minInternalSizeKm;
+            set
+            {
+                if (_minInternalSizeKm != value)
+                {
+                    _minInternalSizeKm = value;
+                    OnPropertyChanged(nameof(MinInternalSizeKm));
+                }
+            }
+        }
+        public double MaxInternalSizeKm
+        {
+            get => _maxInternalSizeKm;
+            set
+            {
+                if (_maxInternalSizeKm != value)
+                {
+                    _maxInternalSizeKm = value;
+                    OnPropertyChanged(nameof(MaxInternalSizeKm));
+                }
+            }
+        }
         public double VisualX
         {
             get => _visualX;
             set { _visualX = value; OnPropertyChanged(); }
         }
-
         public double VisualY
         {
             get => _visualY;
@@ -47,7 +72,7 @@ namespace ChemGateBuilder
                 UpdateItems();
             }
         }
-                public string? SelectedItemId
+        public string? SelectedItemId
         {
             get => _selectedItemId;
             set { _selectedItemId = value; OnPropertyChanged(); }
@@ -55,9 +80,6 @@ namespace ChemGateBuilder
 
         public static double MinVisualSectorSize = 50;
         public static double MaxVisualSectorSize = 1200;
-
-        public static int MinInternalSectorSizeKm = 100;
-        public static int MaxInternalSectorSizeKm = 999;
 
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 

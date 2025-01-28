@@ -152,9 +152,6 @@ namespace ChemGateBuilder
         }
         public int SectorRadiusNegative => -SectorRadius;
 
-        public int MinInternalSectorSizeKm = SectorMap.MinInternalSectorSizeKm;
-        public int MaxInternalSectorSizeKm = SectorMap.MaxInternalSectorSizeKm;
-
         private string _logLevel = "Warning";
         public string LogLevel
         {
