@@ -510,6 +510,12 @@ namespace ChemGateBuilder
             }
         }
 
+        // Method to programmatically invoke folder selection
+        private void SelectX4DataFolder()
+        {
+            SelectX4DataFolder_Click(null, null);
+        }
+
         private void LoadSectors()
         {
             AllSectors.Clear();
@@ -598,12 +604,6 @@ namespace ChemGateBuilder
             {
                 e.Accepted = false;
             }
-        }
-
-        // Method to programmatically invoke folder selection
-        private void SelectX4DataFolder()
-        {
-            SelectX4DataFolder_Click(null, null);
         }
 
         private List<string> GetOppositeSectorsMacrosFromMod(string sectorMacro)
@@ -788,11 +788,6 @@ namespace ChemGateBuilder
             }
         }
 
-        public void ButtonExit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
         public void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
             if (GatesConnectionCurrent != null)
@@ -967,6 +962,12 @@ namespace ChemGateBuilder
             }
         }
 
+
+        public void ButtonExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
         private double GetWindowLeft()
         {
             if (WindowState == WindowState.Maximized)
@@ -981,8 +982,7 @@ namespace ChemGateBuilder
             else
                 return Left;
         }
-
-        private double GetWindowTop()
+                private double GetWindowTop()
         {
             if (WindowState == WindowState.Maximized)
             {
