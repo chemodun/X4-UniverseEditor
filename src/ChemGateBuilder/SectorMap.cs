@@ -159,7 +159,7 @@ namespace ChemGateBuilder
         }
         public void OnSizeChanged(double newWidth, double newHeight)
         {
-            double newSize = Math.Min(newWidth, newHeight);
+            double newSize = Math.Min(newWidth, newHeight / 0.866);
             VisualSizePx = Math.Min(Math.Max(newSize, MinVisualSectorSize), MaxVisualSectorSize);
             if (VisualSizePx < newWidth)
             {
@@ -169,9 +169,9 @@ namespace ChemGateBuilder
             {
                 VisualX = 0;
             }
-            if (VisualSizePx < newHeight)
+            if (VisualSizePx < newHeight / 0.866)
             {
-                VisualY = (newHeight - VisualSizePx) / 2;
+                VisualY = (newHeight / 0.866 - VisualSizePx) / 2;
             }
             else
             {
@@ -345,7 +345,7 @@ namespace ChemGateBuilder
             if (SectorMap == null || ConnectionData == null)
                 return;
             X = SectorMap.VisualX + (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
-            Y = SectorMap.VisualY + (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            Y = SectorMap.VisualY  - SectorMap.VisualSizePx * 0.067 + (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
             UpdateToolTip();
@@ -356,7 +356,7 @@ namespace ChemGateBuilder
             if (SectorMap == null)
                 return;
             coordinates.X = (int)(((X - SectorMap.VisualX) * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
-            coordinates.Z = (int)((SectorMap.VisualSizePx + (SectorMap.VisualY - Y ) * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            coordinates.Z = (int)((SectorMap.VisualSizePx + (SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 - Y ) * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
             if (_connectionData == null)
                 return;
             _connectionData.X = coordinates.X;
@@ -463,7 +463,7 @@ namespace ChemGateBuilder.Core.Converters
                 double angle_rad = Math.PI / 180 * angle_deg;
                 double x = radius + radius * Math.Cos(angle_rad);
                 double y = radius + radius * Math.Sin(angle_rad);
-                points.Add(new System.Windows.Point(x, y));
+                points.Add(new System.Windows.Point(x, y - size * 0.067));
             }
             return points;
         }

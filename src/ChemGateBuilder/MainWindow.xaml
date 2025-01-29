@@ -72,9 +72,10 @@
         </Style>
         <Style x:Key="SectorCanvasStyle" TargetType="Canvas">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="DockPanel.Dock" Value="Left"/>
-            <Setter Property="Width" Value="200"/>
-            <Setter Property="Height" Value="200"/>
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="MinHeight" Value="200"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Margin" Value="5"/>
         </Style>
         <Style x:Key="SectorHexagonStyle" TargetType="Polygon">
