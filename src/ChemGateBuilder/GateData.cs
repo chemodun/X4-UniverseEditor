@@ -118,7 +118,6 @@ namespace ChemGateBuilder
                 if (_sectorOpposite != value)
                 {
                     _sectorOpposite = value;
-                    CheckGateDistance(false);
                     OnPropertyChanged(nameof(SectorOpposite));
                 }
             }
@@ -186,7 +185,6 @@ namespace ChemGateBuilder
                         _gateOpposite.PropertyChanged -= ChildPropertyChanged;
                     }
                     _gateOpposite = value;
-                    CheckGateDistance(false);
                     OnPropertyChanged(nameof(GateOpposite));
                     if (_gateOpposite != null)
                     {
