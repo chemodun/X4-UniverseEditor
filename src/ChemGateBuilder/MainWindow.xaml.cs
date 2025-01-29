@@ -727,6 +727,18 @@ namespace ChemGateBuilder
             return sectorConnections;
         }
 
+        private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
+        {
+            ClusterMapWindow clusterMapWindow = new ClusterMapWindow(this);
+            clusterMapWindow.ShowDialog();
+        }
+
+        private void ButtonSectorOppositeSelectFromMap_Click(object sender, RoutedEventArgs e)
+        {
+            ClusterMapWindow clusterMapWindow = new ClusterMapWindow(this);
+            clusterMapWindow.ShowDialog();
+        }
+
         // Handle Canvas Size Changed to adjust Hexagon Size
         private void SectorDirectCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -1031,7 +1043,7 @@ namespace ChemGateBuilder
             Application.Current.Shutdown();
         }
 
-        private double GetWindowLeft()
+        public double GetWindowLeft()
         {
             if (WindowState == WindowState.Maximized)
             {
@@ -1045,7 +1057,7 @@ namespace ChemGateBuilder
             else
                 return Left;
         }
-                private double GetWindowTop()
+        public double GetWindowTop()
         {
             if (WindowState == WindowState.Maximized)
             {
