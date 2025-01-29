@@ -429,17 +429,18 @@ namespace ChemGateBuilder
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (propertyName == nameof(SectorDirect) || propertyName == nameof(SectorOpposite))
             {
-                SectorItem? sectorCurrent = propertyName == nameof(SectorDirect) ? SectorDirect : SectorOpposite;
-                var sectorConnections = propertyName == nameof(SectorDirect) ? SectorDirectConnections : SectorOppositeConnections;
+                bool isDirect = propertyName == nameof(SectorDirect);
+                SectorItem? sectorCurrent = isDirect ? SectorDirect : SectorOpposite;
+                var sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
                 sectorConnections.Clear();
-                SectorMap sectorMap = propertyName == nameof(SectorDirect) ? SectorDirectMap : SectorOppositeMap;
+                SectorMap sectorMap = isDirect ? SectorDirectMap : SectorOppositeMap;
                 sectorMap.ClearItems();
                 if (sectorCurrent != null) {
                     if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
                     {
                         Galaxy galaxy = mainWindow.Galaxy;
                         Sector? sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
-                        var sectorsViewSource = propertyName == nameof(SectorDirect) ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
+                        var sectorsViewSource = isDirect ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
                         if (sectorsViewSource != null)
                         {
                             if (sector != null)
@@ -447,7 +448,7 @@ namespace ChemGateBuilder
                                 List<string> sectorMacros = galaxy.GetOppositeSectorsFromConnections(sector)
                                     .Select(s => s.Macro)
                                     .ToList();
-                                if (propertyName == nameof(SectorDirect))
+                                if (isDirect)
                                 {
                                     SectorDirectExistingConnectionsMacros = sectorMacros;
                                 }
@@ -494,9 +495,10 @@ namespace ChemGateBuilder
                             sectorMap.AddItem(modConnection);
                         }
                     }
+                    FillPositionByRandomValues(isDirect);
                 }
-                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateOpposite) : nameof(GateDirect));
-                UpdateCurrentGateOnMap(propertyName == nameof(SectorDirect) ? nameof(GateDirect) : nameof(GateOpposite));
+                UpdateCurrentGateOnMap(isDirect ? nameof(GateOpposite) : nameof(GateDirect));
+                UpdateCurrentGateOnMap(isDirect ? nameof(GateDirect) : nameof(GateOpposite));
             }
             else if (propertyName == nameof(GateDirect) || propertyName == nameof(GateOpposite))
             {
@@ -504,7 +506,30 @@ namespace ChemGateBuilder
             }
         }
 
+        private void FillPositionByRandomValues(bool isDirect = true)
+        {
+            var gate = isDirect ? GateDirect : GateOpposite;
+            if (gate == null) return;
+
+            var position = gate.Position;
+            if (position.X == 0 && position.Y == 0 && position.Z == 0)
+            {
+                var random = new Random();
+                int[] possibleValues = { -250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250 };
+
+                do
+                {
+                    position.X = possibleValues[random.Next(possibleValues.Length)];
+                    position.Y = possibleValues[random.Next(possibleValues.Length)];
+                    position.Z = possibleValues[random.Next(possibleValues.Length)];
+                }
+                while (position.X == 0 && position.Y == 0 && position.Z == 0);
+
+                OnPropertyChanged(isDirect ? nameof(GateDirect) : nameof(GateOpposite));
+            }
+        }
     }
+
 
     public class SectorItem
     {
