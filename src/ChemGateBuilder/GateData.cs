@@ -26,7 +26,7 @@ namespace ChemGateBuilder
         private bool _isReadyToSave = false;
 
         private bool IsDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
-        private bool IsDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && CheckGateDistance() && CheckGateDistance(false) && IsDataChanged;
+        private bool IsDataReadyToSave => CheckGateDistance() && CheckGateDistance(false) &&_sectorDirect != null && _sectorOpposite != null && IsDataChanged;
 
         public SectorItem? SectorDirect
         {
@@ -36,7 +36,6 @@ namespace ChemGateBuilder
                 if (_sectorDirect != value)
                 {
                     _sectorDirect = value;
-                    CheckGateDistance();
                     OnPropertyChanged(nameof(SectorDirect));
                 }
             }
@@ -351,7 +350,8 @@ namespace ChemGateBuilder
                     double distance = CalculateDistance(coordinates, coordinates2);
                     if (distance < mainWindow.GatesMinimalDistanceBetween)
                     {
-                        mainWindow.SetStatusMessage(message, StatusMessageType.Warning);
+                        string recommendation = AxisToChangeToMeetDistanceWithRecommendedValue(coordinates, coordinates2);
+                        mainWindow.SetStatusMessage($"{message}. {recommendation}", StatusMessageType.Warning);
                         return false;
                     }
                 }
@@ -381,7 +381,8 @@ namespace ChemGateBuilder
                         double distance = CalculateDistance(coordinates, coordinates2);
                         if (distance < mainWindow.GatesMinimalDistanceBetween)
                         {
-                            mainWindow.SetStatusMessage(message, StatusMessageType.Warning);
+                            string recommendation = AxisToChangeToMeetDistanceWithRecommendedValue(coordinates, coordinates2);
+                            mainWindow.SetStatusMessage($"{message}. {recommendation}", StatusMessageType.Warning);
                             return false;
                         }
                     }
@@ -394,6 +395,33 @@ namespace ChemGateBuilder
         private static double CalculateDistance(Coordinates coordinates1, Coordinates coordinates2)
         {
             return Math.Sqrt(Math.Pow(coordinates1.X - coordinates2.X, 2) + Math.Pow(coordinates1.Y - coordinates2.Y, 2) + Math.Pow(coordinates1.Z - coordinates2.Z, 2));
+        }
+
+        private static string AxisToChangeToMeetDistanceWithRecommendedValue(Coordinates coordinates1, Coordinates coordinates2)
+        {
+            double distance = CalculateDistance(coordinates1, coordinates2);
+            double recommendedDistance = Application.Current.MainWindow is MainWindow mainWindow ? mainWindow.GatesMinimalDistanceBetween : 0;
+            if (distance < recommendedDistance)
+            {
+                double xDiff = coordinates1.X - coordinates2.X;
+                double zDiff = coordinates1.Z - coordinates2.Z;
+
+                // Calculate the required increase to meet the recommended distance
+                double requiredIncrease = recommendedDistance - distance;
+
+                // Determine which axis has the smallest difference
+                if (Math.Abs(xDiff) <= Math.Abs(zDiff))
+                {
+                    double newX = coordinates2.X + Math.Sign(xDiff) * (Math.Abs(xDiff) + requiredIncrease);
+                    return $"Please set X to at least {newX:0}";
+                }
+                else
+                {
+                    double newZ = coordinates2.Z + Math.Sign(zDiff) * (Math.Abs(zDiff) + requiredIncrease);
+                    return $"Please set Z to at least {newZ:0}";
+                }
+            }
+            return "";
         }
 
         protected void OnPropertyChanged(string propertyName)
