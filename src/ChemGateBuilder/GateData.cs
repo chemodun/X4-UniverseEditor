@@ -26,7 +26,7 @@ namespace ChemGateBuilder
         private bool _isReadyToSave = false;
 
         private bool IsDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
-        private bool IsDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && IsDataChanged;
+        private bool IsDataReadyToSave => _sectorDirect != null && _sectorOpposite != null && CheckGateDistance() && CheckGateDistance(false) && IsDataChanged;
 
         public SectorItem? SectorDirect
         {
@@ -36,6 +36,7 @@ namespace ChemGateBuilder
                 if (_sectorDirect != value)
                 {
                     _sectorDirect = value;
+                    CheckGateDistance();
                     OnPropertyChanged(nameof(SectorDirect));
                 }
             }
@@ -101,6 +102,7 @@ namespace ChemGateBuilder
                         _gateDirect.PropertyChanged -= ChildPropertyChanged;
                     }
                     _gateDirect = value;
+                    CheckGateDistance();
                     OnPropertyChanged(nameof(GateDirect));
                     if (_gateDirect != null)
                     {
@@ -118,6 +120,7 @@ namespace ChemGateBuilder
                 if (_sectorOpposite != value)
                 {
                     _sectorOpposite = value;
+                    CheckGateDistance(false);
                     OnPropertyChanged(nameof(SectorOpposite));
                 }
             }
@@ -185,6 +188,7 @@ namespace ChemGateBuilder
                         _gateOpposite.PropertyChanged -= ChildPropertyChanged;
                     }
                     _gateOpposite = value;
+                    CheckGateDistance(false);
                     OnPropertyChanged(nameof(GateOpposite));
                     if (_gateOpposite != null)
                     {
@@ -321,6 +325,76 @@ namespace ChemGateBuilder
             if (gateCurrent == null) return;
             gateCurrent.Coordinates = new Coordinates(X, Y ,Z);
         }
+
+        private bool CheckGateDistance(bool isDirect = true) {
+            if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow != null)
+            {
+                if (mainWindow.GatesMinimalDistanceBetween == 0 || mainWindow.GatesConnectionCurrent == null)
+                {
+                    return true;
+                }
+                string? sectorMacro = isDirect ? SectorDirect?.Macro : SectorOpposite?.Macro;
+                if (sectorMacro == null)
+                {
+                    return true;
+                }
+                Coordinates coordinates = isDirect ? GateDirect.Coordinates : GateOpposite.Coordinates;
+                ObservableCollection<SectorConnectionData> sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
+                foreach (var sectorConnection in sectorConnections)
+                {
+                    if (sectorConnection == null)
+                    {
+                        continue;
+                    }
+                    Coordinates coordinates2 = new(sectorConnection.X, sectorConnection.Y, sectorConnection.Z);
+                    double distance = CalculateDistance(coordinates, coordinates2);
+                    if (distance < mainWindow.GatesMinimalDistanceBetween)
+                    {
+                        mainWindow.StatusMessage = "The gate is too close to another gate";
+                        return false;
+                    }
+                }
+                foreach (var connection in mainWindow.GalaxyConnections)
+                {
+                    if (connection == null || connection.Connection == null ||
+                        connection.Connection.PathDirect == null || connection.Connection.PathOpposite == null ||
+                        connection.Connection.PathDirect.Sector == null || connection.Connection.PathOpposite.Sector == null ||
+                        connection.Connection.PathDirect.Sector.Macro == null || connection.Connection.PathOpposite.Sector.Macro == null)
+
+                    {
+                        continue;
+                    }
+                    if (connection == mainWindow.CurrentGalaxyConnection)
+                    {
+                        continue;
+                    }
+                    foreach (var modSectorMacro in new string[] { connection.Connection.PathDirect.Sector.Macro, connection.Connection.PathOpposite.Sector.Macro })
+                    {
+                        if (modSectorMacro != sectorMacro)
+                        {
+                            continue;
+                        }
+                        Coordinates coordinates2 = modSectorMacro == connection.Connection.PathDirect.Sector.Macro ?
+                            new Coordinates(connection.GateDirectX, connection.GateDirectY, connection.GateDirectZ) :
+                            new Coordinates(connection.GateOppositeX, connection.GateOppositeY, connection.GateOppositeZ);
+                        double distance = CalculateDistance(coordinates, coordinates2);
+                        if (distance < mainWindow.GatesMinimalDistanceBetween)
+                        {
+                            mainWindow.StatusMessage = "The gate is too close to another gate";
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private static double CalculateDistance(Coordinates coordinates1, Coordinates coordinates2)
+        {
+            return Math.Sqrt(Math.Pow(coordinates1.X - coordinates2.X, 2) + Math.Pow(coordinates1.Y - coordinates2.Y, 2) + Math.Pow(coordinates1.Z - coordinates2.Z, 2));
+        }
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (_isChanged != IsDataChanged) IsChanged = IsDataChanged;
