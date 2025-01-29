@@ -147,7 +147,9 @@
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="X4 Data">
                 <fluent:RibbonGroupBox Header="X4 Data">
-                    <fluent:Button Header="Load" Style="{StaticResource FluentButtonStyle}">
+                    <fluent:Button Header="Load"
+                                    Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonLoadX4Data_Click">
                         <fluent:Button.Icon>
                             <StaticResource ResourceKey="XIcon"/>
                         </fluent:Button.Icon>

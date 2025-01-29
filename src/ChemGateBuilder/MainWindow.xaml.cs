@@ -567,6 +567,19 @@ namespace ChemGateBuilder
             SelectX4DataFolder_Click(null, null);
         }
 
+        private void ButtonLoadX4Data_Click(object sender, RoutedEventArgs e)
+        {
+            if (AllSectors.Count > 0)
+            {
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to reload the X4 data? Any unsaved changes will be lost.", "Reload X4 Data", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+            LoadSectors();
+        }
+
         private void LoadSectors()
         {
             AllSectors.Clear();
