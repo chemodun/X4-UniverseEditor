@@ -117,7 +117,7 @@ namespace ChemGateBuilder
                     // unless it's just "-", which is invalid but might be intermediate input
                     if (fullText == "-")
                     {
-                        e.Handled = false;
+                        // e.Handled = false;
                         OnValidationError?.Invoke(string.Empty);
                     }
                     else
