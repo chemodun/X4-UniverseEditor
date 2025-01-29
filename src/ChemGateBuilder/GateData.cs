@@ -102,7 +102,6 @@ namespace ChemGateBuilder
                         _gateDirect.PropertyChanged -= ChildPropertyChanged;
                     }
                     _gateDirect = value;
-                    CheckGateDistance();
                     OnPropertyChanged(nameof(GateDirect));
                     if (_gateDirect != null)
                     {
@@ -338,6 +337,8 @@ namespace ChemGateBuilder
                 {
                     return true;
                 }
+                string? sectorName = isDirect ? SectorDirect?.Name : SectorOpposite?.Name;
+                string message = $"The new gate in {sectorName} is too close to another gate";
                 Coordinates coordinates = isDirect ? GateDirect.Coordinates : GateOpposite.Coordinates;
                 ObservableCollection<SectorConnectionData> sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
                 foreach (var sectorConnection in sectorConnections)
@@ -350,7 +351,7 @@ namespace ChemGateBuilder
                     double distance = CalculateDistance(coordinates, coordinates2);
                     if (distance < mainWindow.GatesMinimalDistanceBetween)
                     {
-                        mainWindow.StatusMessage = "The gate is too close to another gate";
+                        mainWindow.SetStatusMessage(message, StatusMessageType.Warning);
                         return false;
                     }
                 }
@@ -380,7 +381,7 @@ namespace ChemGateBuilder
                         double distance = CalculateDistance(coordinates, coordinates2);
                         if (distance < mainWindow.GatesMinimalDistanceBetween)
                         {
-                            mainWindow.StatusMessage = "The gate is too close to another gate";
+                            mainWindow.SetStatusMessage(message, StatusMessageType.Warning);
                             return false;
                         }
                     }

@@ -92,6 +92,20 @@
             <Setter Property="IsSnapToTickEnabled" Value="True"/>
             <Setter Property="TickPlacement" Value="BottomRight"/>
         </Style>
+        <Style x:Key="StatusMessageStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black"/> <!-- Default color -->
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding StatusMessageType}" Value="Info">
+                    <Setter Property="Foreground" Value="Blue"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusMessageType}" Value="Warning">
+                    <Setter Property="Foreground" Value="DarkOrange"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusMessageType}" Value="Error">
+                    <Setter Property="Foreground" Value="DarkRed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <DockPanel>
         <fluent:Ribbon DockPanel.Dock="Top">
@@ -236,7 +250,8 @@
             <!-- StatusBar Docked to Bottom -->
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
-                    <TextBlock Text="{Binding StatusMessage}" />
+                    <TextBlock Text="{Binding StatusMessage}"
+                        Style ="{StaticResource StatusMessageStyle}"/>
                 </StatusBarItem>
             </StatusBar>
             <GroupBox Header="Chem Gate Builder" DockPanel.Dock="Top" Margin="5">

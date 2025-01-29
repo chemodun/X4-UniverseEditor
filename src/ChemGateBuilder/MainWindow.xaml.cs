@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Threading;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -192,8 +193,58 @@ namespace ChemGateBuilder
                 {
                     _statusMessage = value;
                     OnPropertyChanged(nameof(StatusMessage));
+                    StartStatusMessageTimer();
                 }
             }
+        }
+
+        private StatusMessageType _statusMessageType = StatusMessageType.Info;
+        public StatusMessageType StatusMessageType
+        {
+            get => _statusMessageType;
+            set
+            {
+                if (_statusMessageType != value)
+                {
+                    _statusMessageType = value;
+                    OnPropertyChanged(nameof(StatusMessageType));
+                }
+            }
+        }
+
+        // Timer to hide the StatusMessage
+        private DispatcherTimer? _statusMessageTimer;
+        private readonly TimeSpan _statusMessageDisplayDuration = TimeSpan.FromSeconds(5); // Adjust as needed
+
+        private void StartStatusMessageTimer()
+        {
+            // Stop existing timer if any
+            _statusMessageTimer?.Stop();
+
+            if (string.IsNullOrEmpty(_statusMessage))
+                return;
+
+            // Initialize and start the timer
+            _statusMessageTimer = new DispatcherTimer
+            {
+                Interval = _statusMessageDisplayDuration
+            };
+            _statusMessageTimer.Tick += StatusMessageTimer_Tick;
+            _statusMessageTimer.Start();
+        }
+
+        private void StatusMessageTimer_Tick(object? sender, EventArgs e)
+        {
+            _statusMessageTimer?.Stop();
+            StatusMessage = string.Empty; // Clear the message
+            StatusMessageType = StatusMessageType.Info; // Reset the message type
+        }
+
+        // Method to set status message with type
+        public void SetStatusMessage(string message, StatusMessageType messageType)
+        {
+            StatusMessage = message;
+            StatusMessageType = messageType;
         }
 
         private string _gateMacroDefault = "props_gates_anc_gate_macro";
@@ -291,7 +342,7 @@ namespace ChemGateBuilder
             // Optional: Log the validation message for debugging
             Log.Error($"Validation Error: {message}");
 
-            StatusMessage = message;
+            SetStatusMessage(message, StatusMessageType.Error);
         }
 
         // Galaxy and Sectors
@@ -392,7 +443,7 @@ namespace ChemGateBuilder
             // Validate the loaded X4DataFolder
             if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
             {
-                StatusMessage = errorMessage;
+                SetStatusMessage(errorMessage, StatusMessageType.Error);
                 // Prompt the user to select a valid folder
                 SelectX4DataFolder();
             }
@@ -400,7 +451,7 @@ namespace ChemGateBuilder
             // Load sectors if the folder is valid
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
-                StatusMessage = "X4 Data folder validated successfully.";
+                SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
                 LoadSectors();
                 GateMacros.Add(_gateMacroDefault);
             }
@@ -495,18 +546,18 @@ namespace ChemGateBuilder
                 {
                     X4DataFolder = selectedPath;
                     LoadSectors();
-                    StatusMessage = "X4 Data folder set successfully.";
+                    SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
                 }
                 else
                 {
-                    StatusMessage = errorMessage;
+                    SetStatusMessage(errorMessage, StatusMessageType.Error);
                     MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
                     // Optionally, prompt again
                 }
             }
             else
             {
-                StatusMessage = "Folder selection was canceled or invalid.";
+                SetStatusMessage("Folder selection was canceled or invalid.", StatusMessageType.Warning);
             }
         }
 
@@ -536,8 +587,7 @@ namespace ChemGateBuilder
             }
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
-
-            StatusMessage = "X4 data loaded successfully.";
+            SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
         }
 
         // Filter methods
@@ -796,19 +846,19 @@ namespace ChemGateBuilder
                 Log.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
                 if (Galaxy == null)
                 {
-                    StatusMessage = "Error: Galaxy data is not loaded.";
+                    SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
                     return;
                 }
                 if (GatesConnectionCurrent.SectorDirect == null || GatesConnectionCurrent.SectorOpposite == null)
                 {
-                    StatusMessage = "Error: Both sectors must be selected.";
+                    SetStatusMessage("Error: Both sectors must be selected.", StatusMessageType.Error);
                     return;
                 }
                 Sector? sectorDirect = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorDirect.Macro);
                 Sector? sectorOpposite = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorOpposite.Macro);
                 if (sectorDirect == null || sectorOpposite == null)
                 {
-                    StatusMessage = "Error: Sectors not found.";
+                    SetStatusMessage("Error: Sectors not found.", StatusMessageType.Error);
                     return;
                 }
                 string uniqueId = $"{sectorDirect.ClusterId:D3}{sectorDirect.Id:D3}{sectorOpposite.ClusterId:D3}{sectorOpposite.Id:D3}";
@@ -855,7 +905,7 @@ namespace ChemGateBuilder
                 Cluster? clusterOpposite = Galaxy.GetClusterById(sectorOpposite.ClusterId);
                 if (clusterDirect == null || clusterOpposite == null)
                 {
-                    StatusMessage = "Error: Clusters not found.";
+                    SetStatusMessage("Error: Clusters not found.", StatusMessageType.Error);
                     return;
                 }
                 GalaxyConnection galaxyConnection = new GalaxyConnection();
@@ -925,7 +975,7 @@ namespace ChemGateBuilder
         {
             if (Galaxy == null)
             {
-                StatusMessage = "Error: Galaxy data is not loaded.";
+                SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
                 return;
             }
             if (_mod.LoadData(Galaxy))
@@ -945,10 +995,10 @@ namespace ChemGateBuilder
                 {
                     CurrentGalaxyConnection = null;
                 }
-                StatusMessage = "Mod data loaded successfully.";
+                SetStatusMessage("Mod data loaded successfully.", StatusMessageType.Info);
             }
             else {
-                StatusMessage = "Error: Mod data could not be loaded.";
+                SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
                 Log.Warn("Mod data could not be loaded.");
             }
         }
@@ -1003,5 +1053,12 @@ namespace ChemGateBuilder
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public enum StatusMessageType
+    {
+        Info,
+        Warning,
+        Error
     }
 }
