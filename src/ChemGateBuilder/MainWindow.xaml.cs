@@ -731,12 +731,20 @@ namespace ChemGateBuilder
         {
             ClusterMapWindow clusterMapWindow = new ClusterMapWindow(this);
             clusterMapWindow.ShowDialog();
+            if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
+            {
+                GatesConnectionCurrent.SectorDirect = AllSectors.FirstOrDefault(s => s.Macro == clusterMapWindow.SelectedSector.Macro);
+            }
         }
 
         private void ButtonSectorOppositeSelectFromMap_Click(object sender, RoutedEventArgs e)
         {
             ClusterMapWindow clusterMapWindow = new ClusterMapWindow(this);
             clusterMapWindow.ShowDialog();
+            if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
+            {
+                GatesConnectionCurrent.SectorOpposite = AllSectors.FirstOrDefault(s => s.Macro == clusterMapWindow.SelectedSector.Macro);
+            }
         }
 
         // Handle Canvas Size Changed to adjust Hexagon Size
