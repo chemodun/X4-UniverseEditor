@@ -69,7 +69,6 @@ namespace X4DataTestConsole
                 Console.WriteLine($"    Zone: {connection.PathOpposite.Zone.Name}, Source: {connection.PathOpposite.Zone.Source}, FileName: {connection.PathOpposite.Zone.FileName}");
                 Console.WriteLine($"    Gate: {connection.PathOpposite.Gate.Name}, Source: {connection.PathOpposite.Gate.Source}, FileName: {connection.PathOpposite.Gate.FileName}");
             }
-            PrepareClusterMap(galaxy);
         }
         public static void ConfigureNLog()
         {
@@ -82,66 +81,6 @@ namespace X4DataTestConsole
             //longdate
             config.AddRule(logLevel, LogLevel.Fatal, logConsole);
             LogManager.Configuration = config;
-        }
-
-        /// <summary>
-        /// Prepares a map of clusters organized into rows and columns based on their positions.
-        /// </summary>
-        /// <returns>A list of rows, each containing a list of cluster names or empty strings.</returns>
-        public static void PrepareClusterMap(Galaxy galaxy)
-        {
-            const double ColumnWidth = 15000000;  // 15,000,000 units for horizontal (X) axis
-            const double RowHeight = 17320000;    // 34,640,000 units for vertical (Z) axis
-
-            // Dictionary to hold rowId and corresponding columns
-            Dictionary<string, Dictionary<string, string>> mapDict = [];
-            List <string> X = [];
-            List <string> Z = [];
-
-            // Determine the rowId and columnId for each cluster and populate the dictionary
-            foreach (var cluster in galaxy.Clusters)
-            {
-                string columnId = $"{(int)Math.Floor(cluster.Position.X / ColumnWidth)}";
-                string rowId = $"{cluster.Position.Z / RowHeight:F1}";
-
-                if (!mapDict.ContainsKey(rowId))
-                {
-                    mapDict[rowId] = [];
-                }
-                if (cluster.Sectors.Count > 1)
-                {
-                    mapDict[rowId][columnId] = cluster.Name;
-                } else {
-                    mapDict[rowId][columnId] = $"{cluster.Sectors[0].Name} ({cluster.Name})";
-                }
-                if (!X.Contains(rowId))
-                {
-                    X.Add(rowId);
-                }
-                if (!Z.Contains(columnId))
-                {
-                    Z.Add(columnId);
-                }
-            }
-            Z.Sort((a, b) => int.Parse(a).CompareTo(int.Parse(b)));
-            X.Sort((a, b) => -double.Parse(a).CompareTo(double.Parse(b)));
-
-            var csv = new StringBuilder();
-            csv.Append("Z;" + string.Join(";", Z) + "\n");
-            foreach (var rowId in X)
-            {
-                var row = new List<string> { rowId };
-                foreach (var columnId in Z)
-                {
-                    if (mapDict.ContainsKey(rowId) && mapDict[rowId].ContainsKey(columnId))
-                        row.Add(mapDict[rowId][columnId]);
-                    else
-                        row.Add("");
-                }
-                csv.Append(string.Join(";", row) + "\n");
-            }
-            File.WriteAllText("clusterMap.csv", csv.ToString());
-            Log.Info("Cluster Map prepared.");
         }
     }
 }
