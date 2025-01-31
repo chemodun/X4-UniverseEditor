@@ -763,6 +763,7 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent?.SectorDirectMap != null)
             {
                 GatesConnectionCurrent.SectorDirectMap.MouseLeftButtonDown(sender, e);
+                this.Cursor = Cursors.Hand;
             }
         }
         private void SectorOppositeMapItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -770,6 +771,7 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent?.SectorOppositeMap != null)
             {
                 GatesConnectionCurrent.SectorOppositeMap.MouseLeftButtonDown(sender, e);
+                this.Cursor = Cursors.Hand;
             }
         }
 
@@ -790,6 +792,7 @@ namespace ChemGateBuilder
 
         private void SectorDirectMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            this.Cursor = Cursors.Arrow;
             if (GatesConnectionCurrent?.SectorDirectMap != null)
             {
                 SectorConnectionData? connectionData = GatesConnectionCurrent.SectorDirectMap.MouseLeftButtonUp(sender, e);
@@ -808,6 +811,7 @@ namespace ChemGateBuilder
         }
         private void SectorOppositeMapItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            this.Cursor = Cursors.Arrow;
             if (GatesConnectionCurrent?.SectorOppositeMap != null)
             {
                 SectorConnectionData? connectionData = GatesConnectionCurrent.SectorOppositeMap.MouseLeftButtonUp(sender, e);

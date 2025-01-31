@@ -316,6 +316,8 @@ namespace ChemGateBuilder
                 // Adjust the ScrollViewer's offsets
                 GalaxyScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
                 GalaxyScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
+                // Change cursor to SizeAll
+                this.Cursor = Cursors.SizeAll;
             }
         }
 
@@ -326,6 +328,7 @@ namespace ChemGateBuilder
             {
                 isPanning = false;
                 GalaxyCanvas.ReleaseMouseCapture();
+                this.Cursor = Cursors.Arrow;
             }
             if (SelectedSector != null)
             {
