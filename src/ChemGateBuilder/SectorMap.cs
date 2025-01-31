@@ -96,6 +96,11 @@ namespace ChemGateBuilder
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public void Connect(Canvas canvas, Polygon hexagon)
+        {
+            MapCanvas = canvas;
+            MapHexagon = hexagon;
+        }
         public void ClearItems()
         {
             Items.Clear();

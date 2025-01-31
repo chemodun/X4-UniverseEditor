@@ -218,10 +218,8 @@ namespace ChemGateBuilder
 
         public void SetMapsCanvasAndHexagons(Canvas canvasDirect, Polygon hexagonDirect, Canvas canvasOpposite, Polygon hexagonOpposite)
         {
-            SectorDirectMap.MapCanvas = canvasDirect;
-            SectorDirectMap.MapHexagon = hexagonDirect;
-            SectorOppositeMap.MapCanvas = canvasOpposite;
-            SectorOppositeMap.MapHexagon = hexagonOpposite;
+            SectorDirectMap.Connect(canvasDirect, hexagonDirect);
+            SectorOppositeMap.Connect(canvasOpposite, hexagonOpposite);
         }
         public void Reset()
         {

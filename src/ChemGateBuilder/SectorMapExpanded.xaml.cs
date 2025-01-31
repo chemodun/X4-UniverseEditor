@@ -36,8 +36,7 @@ namespace ChemGateBuilder
             InitializeComponent();
             DataContext = this;
             _sectorMapExpanded.InternalSizeKm = sectorRadius;
-            _sectorMapExpanded.MapCanvas = SectorMapExpandedCanvas;
-            _sectorMapExpanded.MapHexagon = SectorHexagon;
+            _sectorMapExpanded.Connect(SectorMapExpandedCanvas, SectorHexagon);
         }
 
         private void SectorMapExpandedCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
