@@ -190,6 +190,20 @@ namespace ChemGateBuilder
                     GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (X - minCol), maxRow - Z, GalaxyCanvas, cluster);
                     clusterMapCluster.Create();
                     _clusters.Add(clusterMapCluster);
+                    if (cluster.Sectors.Count > 1 && cluster.Highways.Count > 0)
+                    {
+                        foreach (HighwayClusterLevel highway in cluster.Highways)
+                        {
+                            SectorMapItem? pointEntry = SectorsItems.Find(item => item.Id == highway?.EntryPointPath?.Zone?.Name);
+                            SectorMapItem? pointExit = SectorsItems.Find(item => item.Id == highway?.ExitPointPath?.Zone?.Name);
+                            if (pointEntry == null || pointExit == null)
+                            {
+                                continue;
+                            }
+                            GalaxyMapInterConnection galaxyMapHighway = new(pointEntry, pointExit, false);
+                            galaxyMapHighway.Create(GalaxyCanvas);
+                        }
+                    }
                 }
             }
             if (SectorsItems.Count > 0 && Galaxy?.Connections.Count > 0)
@@ -207,7 +221,7 @@ namespace ChemGateBuilder
                     {
                         continue;
                     }
-                    GalaxyMapGateConnection galaxyMapGateConnection = new(gateDirect, gateOpposite);
+                    GalaxyMapInterConnection galaxyMapGateConnection = new(gateDirect, gateOpposite);
                     galaxyMapGateConnection.Create(GalaxyCanvas);
                 }
             }
@@ -843,50 +857,54 @@ namespace ChemGateBuilder
         }
     }
 
-    public class GalaxyMapGateConnection : INotifyPropertyChanged
+    public class GalaxyMapInterConnection : INotifyPropertyChanged
     {
-        private SectorMapItem? _gateDirect;
-        public SectorMapItem? GateDirect
+        private SectorMapItem? _source;
+        public SectorMapItem? Source
         {
-            get => _gateDirect;
+            get => _source;
             set
             {
-                _gateDirect = value;
-                OnPropertyChanged(nameof(GateDirect));
+                _source = value;
+                OnPropertyChanged(nameof(Source));
             }
         }
-        private SectorMapItem? _gateOpposite;
-        public SectorMapItem? GateOpposite
+        private SectorMapItem? _destination;
+        public SectorMapItem? Destination
         {
-            get => _gateOpposite;
+            get => _destination;
             set
             {
-                _gateOpposite = value;
-                OnPropertyChanged(nameof(GateOpposite));
+                _destination = value;
+                OnPropertyChanged(nameof(Destination));
             }
         }
+
+        private bool IsGate = true;
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public GalaxyMapGateConnection(SectorMapItem gateDirect, SectorMapItem gateOpposite)
+        public GalaxyMapInterConnection(SectorMapItem gateDirect, SectorMapItem gateOpposite, bool isGate = true)
         {
-            GateDirect = gateDirect;
-            GateOpposite = gateOpposite;
+            Source = gateDirect;
+            Destination = gateOpposite;
+            IsGate = isGate;
         }
 
         public void Create(Canvas canvas)
         {
-            if (GateDirect == null || GateOpposite == null)
+            if (Source == null || Destination == null)
             {
                 return;
             }
             Line line = new()
-            {   DataContext = this,
-                Stroke = Brushes.Gold,
-                StrokeThickness = 2,
+            {
+                DataContext = this,
+                Stroke = IsGate ? Brushes.Gold : Brushes.SkyBlue,
+                StrokeThickness = IsGate ? 2 : 1,
                 // X1 = GateDirect.X,
                 // Y1 = GateDirect.Y,
                 // X2 = GateOpposite.X,
@@ -894,22 +912,22 @@ namespace ChemGateBuilder
             };
             Binding x1Binding = new("CenterX")
             {
-                Source = GateDirect
+                Source = Source
             };
             line.SetBinding(Line.X1Property, x1Binding);
             Binding y1Binding = new("CenterY")
             {
-                Source = GateDirect
+                Source = Source
             };
             line.SetBinding(Line.Y1Property, y1Binding);
             Binding x2Binding = new("CenterX")
             {
-                Source = GateOpposite
+                Source = Destination
             };
             line.SetBinding(Line.X2Property, x2Binding);
             Binding y2Binding = new("CenterY")
             {
-                Source = GateOpposite
+                Source = Destination
             };
             line.SetBinding(Line.Y2Property, y2Binding);
             // Canvas.SetZIndex(line, -1);
