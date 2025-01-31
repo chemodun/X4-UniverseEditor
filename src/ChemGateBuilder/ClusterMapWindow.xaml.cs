@@ -10,6 +10,8 @@ using System.Windows.Input;
 using Utilities.Logging;
 using X4DataLoader;
 
+using System.Windows.Data;
+
 namespace ChemGateBuilder
 {
     public partial class ClusterMapWindow : Window, INotifyPropertyChanged
@@ -63,8 +65,8 @@ namespace ChemGateBuilder
         private readonly List<int> AxisX = [];
 
         // Reference to the main window's size (assumed to be passed or accessible)
-        private readonly MainWindow MainWindowReference;
-        private readonly Galaxy? Galaxy;
+        public readonly MainWindow MainWindowReference;
+        public readonly Galaxy? Galaxy;
 
         private readonly List<ClusterMapCluster> _clusters = [];
 
@@ -674,10 +676,11 @@ namespace ChemGateBuilder
         protected Sector? Sector = sector;
         protected Grid? Grid = null;
         protected TextBox? TextBox = null;
+        private SectorMap SectorMapHelper = new();
 
         public override void Create()
         {
-            if (Cluster == null || Sector == null || Canvas == null)
+            if (Cluster == null || Sector == null || Canvas == null || Map == null || Map.Galaxy == null)
             {
                 return;
             }
@@ -697,7 +700,6 @@ namespace ChemGateBuilder
                 Height = Height,
                 DataContext = Sector
             };
-
             Grid.Children.Add(Hexagon);
             // Create TextBox
             TextBox = new()
@@ -717,6 +719,77 @@ namespace ChemGateBuilder
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
             Canvas.Children.Add(Grid);
+            SectorMapHelper.Connect(Canvas, Hexagon);
+            SectorMapHelper.VisualX = X;
+            SectorMapHelper.VisualY = Y;
+            SectorMapHelper.VisualSizePx = Width;
+            SectorMapHelper.InternalSizeKm= Map.MainWindowReference.SectorRadius;
+            SectorMapHelper.ItemSizeMinPx = 4;
+            SectorMapHelper.SetSector(Sector, Map.Galaxy);
+            foreach(SectorMapItem item in SectorMapHelper.Items)
+            {
+                Image image = new()
+                {
+                    DataContext = item
+                };
+                // Binding for Width
+                Binding widthBinding = new("ItemSizePx")
+                {
+                    Source = item
+                };
+                image.SetBinding(Image.WidthProperty, widthBinding);
+
+                // Binding for Height
+                Binding heightBinding = new("ItemSizePx")
+                {
+                    Source = item
+                };
+                image.SetBinding(Image.HeightProperty, heightBinding);
+                // Binding for Source
+                Binding sourceBinding = new("ObjectImage")
+                {
+                    Source = item
+                };
+                image.SetBinding(Image.SourceProperty, sourceBinding);
+                // Create TranslateTransform
+                TranslateTransform translateTransform = new();
+
+                // Binding for TranslateTransform.X
+                Binding translateXBinding = new("X")
+                {
+                    Source = item
+                };
+                BindingOperations.SetBinding(translateTransform, TranslateTransform.XProperty, translateXBinding);
+
+                // Binding for TranslateTransform.Y
+                Binding translateYBinding = new("Y")
+                {
+                    Source = item
+                };
+                BindingOperations.SetBinding(translateTransform, TranslateTransform.YProperty, translateYBinding);
+
+                // Assign the transform to the Image
+                image.RenderTransform = translateTransform;
+                // Option 1: Direct Binding
+                Binding toolTipBinding = new("ToolTip")
+                {
+                    Source = item
+                };
+                image.SetBinding(Image.ToolTipProperty, toolTipBinding);
+
+                // Option 2: Using ToolTip Element
+                /*
+                ToolTip toolTip = new ToolTip();
+                Binding toolTipContentBinding = new Binding("ToolTip")
+                {
+                    Source = item
+                };
+                toolTip.SetBinding(ToolTip.ContentProperty, toolTipContentBinding);
+                image.ToolTip = toolTip;
+                */
+                // Add the Image to the Canvas
+                Canvas.Children.Add(image);
+            }
         }
 
         public override void Update()
@@ -734,6 +807,13 @@ namespace ChemGateBuilder
             // Position the Hexagon on the Canvas
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
+            SectorMapHelper.VisualX = X;
+            SectorMapHelper.VisualY = Y;
+            SectorMapHelper.VisualSizePx = Width;
+            foreach(SectorMapItem item in SectorMapHelper.Items)
+            {
+                item.Update();
+            }
         }
     }
 
