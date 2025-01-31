@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.Windows.Input;
 using Utilities.Logging;
 using X4DataLoader;
 
@@ -68,7 +69,15 @@ namespace ChemGateBuilder
         private readonly List<ClusterMapCluster> _clusters = [];
 
         public Sector? SelectedSector = null;
-
+        // Fields to track panning state
+        private bool isPanning = false;
+        private Point panStartPoint = new Point();
+        private double scrollHorizontalOffset = 0;
+        private double canvasToScrollWidthDelta = 0;
+        private double canvasToScrollHeightDelta = 0;
+        private double scrollVerticalOffset = 0;
+        private double canvasWidth = 0;
+        private Sector? clickedSector = null;
         public ClusterMapWindow(MainWindow mainWindow)
         {
             InitializeComponent();
@@ -90,6 +99,11 @@ namespace ChemGateBuilder
                 return;
             }
             UpdateMap();
+            // Attach mouse event handlers for panning
+            ClusterCanvas.MouseLeftButtonDown += ClusterCanvas_MouseLeftButtonDown;
+            ClusterCanvas.MouseLeftButtonUp += ClusterCanvas_MouseLeftButtonUp;
+            ClusterCanvas.MouseMove += ClusterCanvas_MouseMove;
+            // ClusterCanvas.MouseWheel += ClusterCanvas_MouseWheel;
         }
 
         /// <summary>
@@ -183,6 +197,9 @@ namespace ChemGateBuilder
             }
             else
             {
+                scrollVerticalOffset = ClusterScrollViewer.VerticalOffset;
+                scrollHorizontalOffset = ClusterScrollViewer.HorizontalOffset;
+                canvasWidth = ClusterCanvas.Width;
                 ClusterCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
                 ClusterCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
                 foreach (ClusterMapCluster cluster in _clusters)
@@ -191,7 +208,131 @@ namespace ChemGateBuilder
                 }
             }
         }
+        private void ClusterScrollViewer_ScrollChanged(object sender, RoutedEventArgs e)
+        {
+            double viewportWidth = ClusterScrollViewer.ViewportWidth;
+            double viewportHeight = ClusterScrollViewer.ViewportHeight;
+            double currentCanvasWidth = ClusterCanvas.Width;
+            double currentCanvasHeight = ClusterCanvas.Height;
+            if (currentCanvasWidth - viewportWidth != canvasWidth && viewportWidth != 0 && viewportWidth != ClusterScrollViewer.ActualWidth)
+            {
+                if (currentCanvasWidth > viewportWidth)
+                {
+                    double newCanvasToScrollWidthDelta = currentCanvasWidth - viewportWidth;
+                    if (newCanvasToScrollWidthDelta != canvasToScrollWidthDelta)
+                    {
+                        Log.Debug($"ClusterCanvas.Width: {ClusterCanvas.Width}, canvasWidth: {canvasWidth}");
+                        Log.Debug($"ClusterScrollViewer.ActualWidth: {ClusterScrollViewer.ActualWidth}, ViewportWidth: {viewportWidth}");
+                        if (scrollHorizontalOffset == 0 || canvasToScrollWidthDelta == 0)
+                        {
+                            Log.Debug($"Centering the map: new offsets: {newCanvasToScrollWidthDelta / 2}");
+                            ClusterScrollViewer.ScrollToHorizontalOffset(newCanvasToScrollWidthDelta / 2);
+                        }
+                        else
+                        {
+                            Log.Debug($"Scrolling the map: old offset: {scrollHorizontalOffset}, new offset: {scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta}");
+                            ClusterScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta);
+                        }
+                        canvasToScrollWidthDelta = newCanvasToScrollWidthDelta;
+                    }
+                }
+                if (currentCanvasHeight > viewportHeight)
+                {
+                    double newCanvasToScrollHeightDelta = currentCanvasHeight - viewportHeight;
+                    if (newCanvasToScrollHeightDelta != canvasToScrollHeightDelta)
+                    {
+                        Log.Debug($"ClusterScrollViewer.ActualHeight: {ClusterScrollViewer.ActualHeight}, ViewportHeight: {viewportHeight}");
+                        if (scrollVerticalOffset == 0 || canvasToScrollHeightDelta == 0)
+                        {
+                            Log.Debug($"Centering the map: new offsets: {newCanvasToScrollHeightDelta / 2}");
+                            ClusterScrollViewer.ScrollToVerticalOffset(newCanvasToScrollHeightDelta / 2);
+                        }
+                        else
+                        {
+                            Log.Debug($"Scrolling the map: old offset: {scrollVerticalOffset}, new offset: {scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta}");
+                            ClusterScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta);
+                        }
+                        canvasToScrollHeightDelta = newCanvasToScrollHeightDelta;
+                    }
+                }
+            }
+        }
+// Mouse Left Button Down - Start Panning
+        private void ClusterCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var clickedElement = e.OriginalSource as DependencyObject;
+            if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
+            {
+                SelectedSector = _sectorFromPolygon;
+            }
+            else if (clickedElement is Grid grid && grid.DataContext is Sector _sectorFromGrid)
+            {
+                SelectedSector = _sectorFromGrid;
+            }
+            isPanning = true;
+            panStartPoint = e.GetPosition(this);
+            scrollHorizontalOffset = ClusterScrollViewer.HorizontalOffset;
+            scrollVerticalOffset = ClusterScrollViewer.VerticalOffset;
+            ClusterCanvas.CaptureMouse();
+        }
 
+        // Mouse Move - Perform Panning
+        private void ClusterCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isPanning)
+            {
+                Point currentPoint = e.GetPosition(this);
+                double deltaX = currentPoint.X - panStartPoint.X;
+                double deltaY = currentPoint.Y - panStartPoint.Y;
+                if (Math.Abs(deltaX) < 0.1 && Math.Abs(deltaY) < 0.1)
+                {
+                    return;
+                }
+                SelectedSector = null;
+                // Adjust the ScrollViewer's offsets
+                ClusterScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
+                ClusterScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
+            }
+        }
+
+        // Mouse Left Button Up - End Panning
+        private void ClusterCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (isPanning)
+            {
+                isPanning = false;
+                ClusterCanvas.ReleaseMouseCapture();
+            }
+            if (SelectedSector != null)
+            {
+                MessageBoxResult result = MessageBox.Show($"Do you want to select Sector: {SelectedSector.Name}", "Select Sector", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    Close();
+                }
+                else {
+                    SelectedSector = null;
+                }
+            }
+        }
+
+        private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (e.Delta > 0)
+                {
+                    // Zoom In
+                    HexagonWidth = Math.Min(HexagonWidth + 10, HexagonWidthMaximal);
+                }
+                else if (e.Delta < 0)
+                {
+                    // Zoom Out
+                    HexagonWidth = Math.Max(HexagonWidth - 10, HexagonWidthMinimal);
+                }
+                e.Handled = true;
+            }
+        }
         private void ClusterMapWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ClusterScrollViewer.ActualWidth != 0 && ClusterScrollViewer.ActualHeight != 0)
@@ -224,7 +365,7 @@ namespace ChemGateBuilder
     class ClusterMapCluster(ClusterMapWindow map, double x, double y, Canvas canvas, Cluster cluster) : INotifyPropertyChanged
     {
         protected Cluster? Cluster = cluster;
-
+        protected virtual double Modifier { get; set; } = 1.0;
         private readonly double _x = x;
         protected double X {
             get {
@@ -250,7 +391,7 @@ namespace ChemGateBuilder
             get {
                 if (Map != null)
                 {
-                    return Map.HexagonWidth * Map.ScaleFactor;
+                    return Map.HexagonWidth * Map.ScaleFactor * Modifier;
                 }
                 return 0;
             }
@@ -259,7 +400,7 @@ namespace ChemGateBuilder
             get {
                 if (Map != null)
                 {
-                    return  Map.HexagonHeight * Map.ScaleFactor;
+                    return  Map.HexagonHeight * Map.ScaleFactor * Modifier;
                 }
                 return 0;
             }
@@ -278,12 +419,12 @@ namespace ChemGateBuilder
                 return;
             }
             UpdatePoints();
-            Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
+            // Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
             Hexagon = new()
             {
                 Stroke = Brushes.Black,
                 StrokeThickness = 1,
-                Fill = Brushes.LightGray,
+                Fill = new SolidColorBrush(Color.FromRgb(245, 245, 245)),
                 Tag = Cluster.Name,
                 DataContext = Cluster,
                 Points = Points
@@ -298,6 +439,140 @@ namespace ChemGateBuilder
                 ClusterMapSector clusterMapSector = new(Map, _x, _y, Canvas, Cluster, sector);
                 clusterMapSector.Create();
                 _sectors.Add(clusterMapSector);
+            }
+            else {
+                List <HexagonCorner> corners = [];
+                List <double?> angles = [];
+                for (int i = 0; i < Cluster.Sectors.Count; i++)
+                {
+                    double? angle = null;
+                    Sector sector = Cluster.Sectors[i];
+                    if (i == 0)
+                    {
+                        corners.Add(HexagonCorner.Unknown);
+                        angles.Add(0);
+                    }
+                    else
+                    {
+                        angle = Math.Atan2(sector.Position.Z, sector.Position.X) * (180 / Math.PI);
+                        angles.Add(angle);
+                        if (angle <= 30 && angle > -30)
+                        {
+                            corners.Add(HexagonCorner.RightCenter);
+                        }
+                        else if (angle <= -30 && angle > -90)
+                        {
+                            corners.Add(HexagonCorner.RightBottom);
+                        }
+                        else if (angle <= -90 && angle > -120)
+                        {
+                            corners.Add(HexagonCorner.LeftBottom);
+                        }
+                        else if (angle <= -120 || angle > 120)
+                        {
+                            corners.Add(HexagonCorner.LeftCenter);
+                        }
+                        else if (angle <= 120 && angle > 90)
+                        {
+                            corners.Add(HexagonCorner.LeftTop);
+                        }
+                        else if (angle <= 90 && angle > 30)
+                        {
+                            corners.Add(HexagonCorner.RightTop);
+                        }
+                    }
+                    Log.Debug($"Sector {sector.Name}  with Position: X = {sector.Position.X}, Y = {sector.Position.Y}, Z = {sector.Position.Z}. Angle: {angle}, Corner: {corners[i]}");
+                }
+                if (corners.Count == 3 ) {
+                    corners[0] = ThreeSectorsGetOppositeCorner(corners[1], corners[2]);
+                } else if (corners.Count == 2) {
+                    if (angles[1] < 90 && angles[1] > 0) {
+                        corners[0] = HexagonCorner.LeftBottom;
+                        corners[1] = HexagonCorner.RightTop;
+                    }
+                    else if (angles[1] < 0 && angles[1] > -90) {
+                        corners[0] = HexagonCorner.LeftTop;
+                        corners[1] = HexagonCorner.RightBottom;
+                    }
+                    else if (angles[1] < -90 && angles[1] > -180) {
+                        corners[0] = HexagonCorner.RightTop;
+                        corners[1] = HexagonCorner.LeftBottom;
+                    }
+                    else if (angles[1] < 180 && angles[1] > 90) {
+                        corners[0] = HexagonCorner.RightBottom;
+                        corners[1] = HexagonCorner.LeftTop;
+                    }
+                    else if (angles[1] == 90) {
+                        if (Math.Abs(Cluster.Sectors[1].Position.Z) > 100000000) {
+                            corners[0] = HexagonCorner.LeftBottom;
+                            corners[1] = HexagonCorner.RightTop;
+                        }
+                        else {
+                            corners[0] = HexagonCorner.RightBottom;
+                            corners[1] = HexagonCorner.LeftTop;
+                        }
+                    }
+                    else if (angles[1] == 0) {
+                        switch (Cluster.Macro) {
+                            case "Cluster_42_macro":
+                                corners[0] = HexagonCorner.LeftTop;
+                                corners[1] = HexagonCorner.RightBottom;
+                                break;
+                            case "Cluster_19_macro":
+                            case "Cluster_15_macro":
+                                corners[0] = HexagonCorner.LeftBottom;
+                                corners[1] = HexagonCorner.RightTop;
+                                break;
+                        }
+                    }
+                    else if (angles[1] == -90) {
+                        if (Math.Abs(Cluster.Sectors[1].Position.Z) > 100000000) {
+                            corners[0] = HexagonCorner.LeftTop;
+                            corners[1] = HexagonCorner.RightBottom;
+                        }
+                        else {
+                            corners[0] = HexagonCorner.LeftBottom;
+                            corners[1] = HexagonCorner.RightTop;
+                        }
+                    }
+                    else if (angles[1] == -180) {
+                    }
+                }
+                for (int i = 0; i < Cluster.Sectors.Count; i++) {
+                    double x = 0;
+                    double y = 0;
+                    switch (corners[i])
+                    {
+                        case HexagonCorner.RightCenter:
+                            x = _x + 0.5;
+                            y = _y + 0.25;
+                            break;
+                        case HexagonCorner.RightBottom:
+                            x = _x + 0.375;
+                            y = _y + 0.5;
+                            break;
+                        case HexagonCorner.LeftBottom:
+                            x = _x + 0.125;
+                            y = _y + 0.5;
+                            break;
+                        case HexagonCorner.LeftCenter:
+                            x = _x;
+                            y = _y +  0.25;
+                            break;
+                        case HexagonCorner.LeftTop:
+                            x = _x + 0.125;
+                            y = _y;
+                            break;
+                        case HexagonCorner.RightTop:
+                            x = _x + 0.375;
+                            y = _y;
+                            break;
+                    }
+                    Log.Debug($"Sector {Cluster.Sectors[i].Name}: Corner: {corners[i]}, Position: X = {x}, Y = {y}");
+                    ClusterMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[i], true);
+                    clusterMapSector.Create();
+                    _sectors.Add(clusterMapSector);
+                }
             }
         }
 
@@ -335,10 +610,48 @@ namespace ChemGateBuilder
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private static HexagonCorner ThreeSectorsGetOppositeCorner(HexagonCorner corner1, HexagonCorner corner2)
+        {
+            if (corner1 == HexagonCorner.RightCenter && corner2 == HexagonCorner.LeftBottom || corner1 == HexagonCorner.LeftBottom && corner2 == HexagonCorner.RightCenter)
+            {
+                return HexagonCorner.LeftTop;
+            }
+            else if (corner1 == HexagonCorner.RightCenter && corner2 == HexagonCorner.RightTop || corner1 == HexagonCorner.RightTop && corner2 == HexagonCorner.RightCenter)
+            {
+                return HexagonCorner.LeftCenter;
+            }
+            else if (corner1 == HexagonCorner.RightCenter && corner2 == HexagonCorner.LeftTop || corner1 == HexagonCorner.LeftTop && corner2 == HexagonCorner.RightCenter)
+            {
+                return HexagonCorner.RightBottom;
+            }
+            else if (corner1 == HexagonCorner.RightBottom && corner2 == HexagonCorner.RightTop || corner1 == HexagonCorner.RightTop && corner2 == HexagonCorner.RightBottom)
+            {
+                return  HexagonCorner.LeftTop;
+            }
+            else if (corner1 == HexagonCorner.RightBottom && corner2 == HexagonCorner.LeftCenter || corner1 == HexagonCorner.LeftCenter && corner2 == HexagonCorner.RightBottom)
+            {
+                return HexagonCorner.RightTop;
+            }
+            else if (corner1 == HexagonCorner.LeftBottom && corner2 == HexagonCorner.LeftTop || corner1 == HexagonCorner.LeftTop && corner2 == HexagonCorner.LeftBottom)
+            {
+                return HexagonCorner.RightCenter;
+            }
+            else if (corner1 == HexagonCorner.LeftCenter && corner2 == HexagonCorner.RightTop || corner1 == HexagonCorner.RightTop && corner2 == HexagonCorner.LeftCenter)
+            {
+                return HexagonCorner.RightBottom;
+            }
+            else {
+                Log.Warn($"ThreeSectorsGetOppositeCorner: Unexpected corners: {corner1}, {corner2}");
+            }
+            return HexagonCorner.Unknown;
+        }
     }
 
-    class ClusterMapSector(ClusterMapWindow map, double x, double y, Canvas canvas, Cluster cluster, Sector sector) : ClusterMapCluster(map, x, y, canvas, cluster)
+    class ClusterMapSector(ClusterMapWindow map, double x, double y, Canvas canvas, Cluster cluster, Sector sector, bool isHalf = false) : ClusterMapCluster(map, x, y, canvas, cluster)
     {
+
+        protected override double Modifier { get; set; } = isHalf ? 0.5 : 1;
         protected Sector? Sector = sector;
         protected Grid? Grid = null;
         protected TextBox? TextBox = null;
@@ -385,27 +698,6 @@ namespace ChemGateBuilder
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
             Canvas.Children.Add(Grid);
-            Grid.MouseLeftButtonUp += (s, e) =>
-            {
-                Sector? sector = null;
-                if (s is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
-                {
-                    sector = _sectorFromPolygon;
-                }
-                else if (s is Grid grid && grid.DataContext is Sector _sectorFromGrid)
-                {
-                    sector = _sectorFromGrid;
-                }
-                if (sector != null)
-                {
-                    MessageBoxResult result = MessageBox.Show($"Do you want to select Sector: {sector.Name}", "Select Sector", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes && Map != null)
-                    {
-                        Map.SelectedSector = sector;
-                        Map.Close();
-                    }
-                }
-            };
         }
 
         public override void Update()
@@ -424,5 +716,16 @@ namespace ChemGateBuilder
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
         }
+    }
+
+    enum HexagonCorner
+    {
+        RightCenter,
+        RightBottom,
+        LeftBottom,
+        LeftCenter,
+        LeftTop,
+        RightTop,
+        Unknown
     }
 }
