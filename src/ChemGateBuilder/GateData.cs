@@ -609,7 +609,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-
+        public Dictionary<string, string> Attributes = new();
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)

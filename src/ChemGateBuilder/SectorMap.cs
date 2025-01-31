@@ -146,18 +146,39 @@ namespace ChemGateBuilder
                         }
                     }
                 }
+                foreach (HighwayPoint highwayPoint in sector.HighwayPoints)
+                {
+                    if (highwayPoint.Position == null) continue;
+                    if (highwayPoint.HighwayLevel != HighwayLevel.Cluster) continue;
+                    SectorConnectionData newConnection = new()
+                    {
+                        Active = true,
+                        ToSector = highwayPoint.SectorConnected?.Name ?? "",
+                        X = (int)(highwayPoint.Position.X / 1000),
+                        Y = (int)(highwayPoint.Position.Y / 1000),
+                        Z = (int)(highwayPoint.Position.Z / 1000),
+                        Type = "highway",
+                        From = "map",
+                        Id = highwayPoint.Name
+                    };
+                    newConnection.Attributes.Add("PointType", highwayPoint.Type  == HighwayPointType.EntryPoint ? "entry" : "exit");
+                    sectorConnections.Add(newConnection);
+                    AddItem(newConnection);
+                }
             }
             return sectorConnections;
         }
 
         public void AddItem(SectorConnectionData connectionData)
         {
-            Items.Add(new SectorMapItem
+            SectorMapItem item = new SectorMapItem
             {
                 SectorMap = this,
                 ConnectionData = connectionData,
                 IsNew = connectionData.Id == "New"
-            });
+            };
+            Items.Add(item);
+            item.Update();
         }
 
 
@@ -397,6 +418,10 @@ namespace ChemGateBuilder
         public double CenterX { get => X + ItemSizePx / 2;}
         public double CenterY { get => Y + ItemSizePx / 2;}
 
+        private Dictionary<string, string> Attributes {
+            get => ConnectionData?.Attributes ?? new Dictionary<string, string>();
+        }
+
         public void Update()
         {
             UpdateSize();
@@ -409,6 +434,13 @@ namespace ChemGateBuilder
                 return;
             double newSizePx = SectorMap.VisualSizePx * _sizeCoefficient;
             ItemSizePx = Math.Max(newSizePx, SectorMap.ItemSizeMinPx);
+            if (Type == "highway")
+            {
+                if (Attributes.TryGetValue("PointType", out string? pointType) && pointType == "exit")
+                {
+                    ItemSizePx = ItemSizePx * 0.7;
+                }
+            }
         }
 
         private void UpdatePosition()
@@ -441,10 +473,19 @@ namespace ChemGateBuilder
             if (_connectionData == null)
                 ToolTip = "No connection data";
             string result = $"{char.ToUpper(Type[0])}{Type.Substring(1)}";
-            if (Type == "gate")
-                result += $": {Status} ({From})\n";
             if (Type == "gate" || Type == "highway")
+                result += $": {Status} ({From})\n";
+            if (Type == "gate")
+            {
                 result += $"To: {_connectionData?.ToSector ?? ""}\n";
+            }
+            else if (Type == "highway") {
+                if (Attributes.TryGetValue("PointType", out string? pointType))
+                {
+                    string fromTo = pointType == "entry" ? "to" : "from";
+                    result += $"{char.ToUpper(pointType[0])}{pointType.Substring(1)} point {fromTo} {_connectionData?.ToSector ?? ""}\n";
+                }
+            }
             result += $"X: {_connectionData?.X ?? 0, 4}, Y: {_connectionData?.Y ?? 0, 4}, Z: {_connectionData?.Z ?? 0, 4}";
             ToolTip = result;
         }
