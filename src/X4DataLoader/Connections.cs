@@ -343,6 +343,11 @@ namespace X4DataLoader
         public double X { get; private set; } = x;
         public double Y { get; private set; } = y;
         public double Z { get; private set; } = z;
+
+        public override string ToString()
+        {
+            return $"X: {X}, Y: {Y}, Z: {Z}";
+        }
     }
 
     public class Quaternion(double qx = 0.0, double qy = 0.0, double qz = 0.0, double qw = 0.0)
@@ -351,5 +356,10 @@ namespace X4DataLoader
         public double QY { get; private set; } = qy;
         public double QZ { get; private set; } = qz;
         public double QW { get; private set; } = qw;
+
+        public override string ToString()
+        {
+            return $"QX: {QX}, QY: {QY}, QZ: {QZ}, QW: {QW}";
+        }
     }
 }
