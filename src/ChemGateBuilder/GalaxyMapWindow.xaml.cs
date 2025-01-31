@@ -546,7 +546,7 @@ namespace ChemGateBuilder
                     }
                     else if (angles[1] == 90) {
                         switch (Cluster.Macro) {
-                            case "Cluster_32_macro":
+                            case "Cluster_32_macro":                        // Tharka's Cascade
                                 corners[0] = HexagonCorner.RightBottom;
                                 corners[1] = HexagonCorner.LeftTop;
                                 break;
@@ -554,30 +554,28 @@ namespace ChemGateBuilder
                     }
                     else if (angles[1] == 0) {
                         switch (Cluster.Macro) {
-                            case "Cluster_42_macro":
-                                corners[0] = HexagonCorner.LeftTop;
-                                corners[1] = HexagonCorner.RightBottom;
-                                break;
-                            case "Cluster_19_macro":
-                            case "Cluster_15_macro":
+                            case "Cluster_15_macro":                        // Ianamus Zura
+                            case "Cluster_19_macro":                        // Hewa's Twin I & II
                                 corners[0] = HexagonCorner.LeftBottom;
                                 corners[1] = HexagonCorner.RightTop;
                                 break;
+                            case "Cluster_42_macro":                        // Hewa's Twin III & IV
+                                corners[0] = HexagonCorner.LeftTop;
+                                corners[1] = HexagonCorner.RightBottom;
+                                break;
+
                         }
                     }
                     else if (angles[1] == -90) {
                         switch (Cluster.Macro) {
-                            case "Cluster_112_macro":
+                            case "Cluster_25_macro":                        // Faulty Logic
+                            case "Cluster_112_macro":                       // Savage Spur
                                 corners[0] = HexagonCorner.RightTop;
                                 corners[1] = HexagonCorner.LeftBottom;
                                 break;
                             case "Cluster_104_macro":
-                                corners[0] = HexagonCorner.LeftTop;
-                                corners[1] = HexagonCorner.RightBottom;
-                                break;
-                            case "Cluster_25_macro":
-                                corners[0] = HexagonCorner.RightTop;
-                                corners[1] = HexagonCorner.LeftBottom;
+                                corners[0] = HexagonCorner.LeftTop;         // Earth
+                                corners[1] = HexagonCorner.RightBottom;     // Moon
                                 break;
                         }
                     }
