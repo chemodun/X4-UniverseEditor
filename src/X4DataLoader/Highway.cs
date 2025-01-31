@@ -109,17 +109,17 @@ namespace X4DataLoader
                 string path = macro.Attribute("path")?.Value
                     ?? throw new ArgumentException("MacroReference must have a path attribute");
                 HighwayClusterConnectionPath? pointPath = null;
-                if (reference == "entrypoint")
-                {
-                    ExitPointPath = new HighwayClusterConnectionPath(cluster, macroReference);
-                    ExitPointPath.Load(path);
-                    pointPath = ExitPointPath;
-                }
-                else if (reference == "exitpoint")
+               if (reference == "entrypoint")
                 {
                     EntryPointPath = new HighwayClusterConnectionPath(cluster, macroReference);
                     EntryPointPath.Load(path);
                     pointPath = EntryPointPath;
+                }
+                else if (reference == "exitpoint")
+                {
+                    ExitPointPath = new HighwayClusterConnectionPath(cluster, macroReference);
+                    ExitPointPath.Load(path);
+                    pointPath = ExitPointPath;
                 }
                 if (pointPath != null)
                 {
@@ -127,7 +127,7 @@ namespace X4DataLoader
                     {
                         pointPath.Sector.AddHighwayPoint(new HighwayPoint(
                             HighwayLevel.Cluster,
-                            HighwayPointType.ExitPoint,
+                            pointPath == EntryPointPath ? HighwayPointType.EntryPoint : HighwayPointType.ExitPoint,
                             pointPath.Zone,
                             pointPath.Gate
                         ));
