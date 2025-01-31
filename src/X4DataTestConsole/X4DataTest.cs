@@ -52,6 +52,10 @@ namespace X4DataTestConsole
                             Console.WriteLine($"      Zone Connection: {connection.Name}, Reference: {connection.Reference}, Source: {connection.Source}, FileName: {connection.FileName}");
                         }
                     }
+                    foreach (var highwayPoint in sector.HighwayPoints)
+                    {
+                        Console.WriteLine($"    Highway Point: {highwayPoint.Name}, Level: {highwayPoint.HighwayLevel}, Type: {highwayPoint.Type}, Position: {highwayPoint.Position}, Source: {highwayPoint.Source}, FileName: {highwayPoint.FileName}");
+                    }
                 }
             }
 
