@@ -434,12 +434,16 @@ namespace ChemGateBuilder
                 var sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
                 sectorConnections.Clear();
                 SectorMap sectorMap = isDirect ? SectorDirectMap : SectorOppositeMap;
-                sectorMap.ClearItems();
-                if (sectorCurrent != null) {
-                    if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
-                    {
-                        Galaxy galaxy = mainWindow.Galaxy;
-                        Sector? sector = galaxy.GetSectorByMacro(sectorCurrent.Macro);
+                if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
+                {
+                    Galaxy galaxy = mainWindow.Galaxy;
+                    Sector? sector = sectorCurrent != null ? galaxy.GetSectorByMacro(sectorCurrent.Macro) : null;
+                    List<SectorConnectionData> connectionsList = sectorMap.SetSector(sector, galaxy);
+                    if (sectorCurrent != null) {
+                        foreach (var connection in connectionsList)
+                        {
+                            sectorConnections.Add(connection);
+                        }
                         var sectorsViewSource = isDirect ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
                         if (sectorsViewSource != null)
                         {
@@ -459,43 +463,11 @@ namespace ChemGateBuilder
                             }
                             sectorsViewSource.View.Refresh();
                         }
-                        if (sector != null && sector.Zones != null && sector.Zones.Count != 0)
-                        {
-                            foreach (var zone in sector.Zones)
-                            {
-                                if (zone.Connections == null || zone.Connections.Count == 0) continue;
-                                foreach (var connection in zone.Connections.Values)
-                                {
-                                    if (connection is GateConnection gateConnection)
-                                    {
-                                        bool active = gateConnection.IsActive;
-                                        string? sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
-                                        Position zoneCoordinates = zone.Position;
-                                        if (zoneCoordinates == null) continue;
-                                        Position? gateCoordinates = gateConnection.Position;
-                                        if (gateCoordinates == null) continue;
-                                        SectorConnectionData newConnection = new()
-                                        {
-                                            Active = active && !string.IsNullOrEmpty(sectorTo),
-                                            ToSector = sectorTo ?? "",
-                                            X = (int)((zoneCoordinates.X + gateCoordinates.X) / 1000),
-                                            Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
-                                            Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
-                                            Type = "gate",
-                                            From = "map",
-                                            Id = gateConnection.Name
-                                        };
-                                        sectorConnections.Add(newConnection);
-                                        sectorMap.AddItem(newConnection);
-                                    }
-                                }
-                            }
-                        }
                         foreach(SectorConnectionData modConnection in mainWindow.GetSectorConnectionsFromMod(sectorCurrent.Macro)) {
                             sectorMap.AddItem(modConnection);
                         }
+                        FillPositionByRandomValues(isDirect);
                     }
-                    FillPositionByRandomValues(isDirect);
                 }
                 UpdateCurrentGateOnMap(isDirect ? nameof(GateOpposite) : nameof(GateDirect));
                 UpdateCurrentGateOnMap(isDirect ? nameof(GateDirect) : nameof(GateOpposite));

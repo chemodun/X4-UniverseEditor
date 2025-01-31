@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Utilities.Logging;
 using System.Windows.Shapes;
+using X4DataLoader;
 
 namespace ChemGateBuilder
 {
@@ -20,8 +21,8 @@ namespace ChemGateBuilder
         private double _maxInternalSizeKm = 999;
         private double _visualX;
         private double _visualY;
-        private double _visualSizePx = 200; // Default size
-        private double _internalSizeKm = 400;
+        protected double _visualSizePx = 200; // Default size
+        protected double _internalSizeKm = 400;
         private string?  _selectedItemId = "";
 
         public double MinInternalSizeKm
@@ -88,6 +89,7 @@ namespace ChemGateBuilder
         public System.Windows.Point MouseOffset;
         public Canvas? MapCanvas;
         public Polygon? MapHexagon;
+        private Sector? Sector;
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
@@ -98,6 +100,47 @@ namespace ChemGateBuilder
         {
             Items.Clear();
         }
+
+        public List<SectorConnectionData> SetSector(Sector? sector, Galaxy galaxy)
+        {
+            Sector = sector;
+            ClearItems();
+            List<SectorConnectionData> sectorConnections = new();
+            if (sector != null && sector.Zones != null && sector.Zones.Count != 0)
+            {
+                foreach (var zone in sector.Zones)
+                {
+                    if (zone.Connections == null || zone.Connections.Count == 0) continue;
+                    foreach (var connection in zone.Connections.Values)
+                    {
+                        if (connection is GateConnection gateConnection)
+                        {
+                            bool active = gateConnection.IsActive;
+                            string? sectorTo = active ? galaxy.GetOppositeSectorForGateConnection(gateConnection)?.Name : "";
+                            Position zoneCoordinates = zone.Position;
+                            if (zoneCoordinates == null) continue;
+                            Position? gateCoordinates = gateConnection.Position;
+                            if (gateCoordinates == null) continue;
+                            SectorConnectionData newConnection = new()
+                            {
+                                Active = active && !string.IsNullOrEmpty(sectorTo),
+                                ToSector = sectorTo ?? "",
+                                X = (int)((zoneCoordinates.X + gateCoordinates.X) / 1000),
+                                Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
+                                Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
+                                Type = "gate",
+                                From = "map",
+                                Id = gateConnection.Name
+                            };
+                            sectorConnections.Add(newConnection);
+                            AddItem(newConnection);
+                        }
+                    }
+                }
+            }
+            return sectorConnections;
+        }
+
         public void AddItem(SectorConnectionData connectionData)
         {
             Items.Add(new SectorMapItem
@@ -107,6 +150,7 @@ namespace ChemGateBuilder
                 IsNew = connectionData.Id == "New"
             });
         }
+
 
         public void SelectItem(string? ItemId)
         {
