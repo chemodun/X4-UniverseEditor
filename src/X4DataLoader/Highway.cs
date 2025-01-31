@@ -78,8 +78,8 @@ namespace X4DataLoader
     public class HighwayClusterLevel : Highway
     {
         private Cluster? Cluster;
-        HighwayClusterConnectionPath? EntryPointPath;
-        HighwayClusterConnectionPath? ExitPointPath;
+        public HighwayClusterConnectionPath? EntryPointPath;
+        public HighwayClusterConnectionPath? ExitPointPath;
         public HighwayClusterLevel(XElement element, string source, string fileName) : base(element, source, fileName)
         {
             if (Reference != "standardsechighway")
