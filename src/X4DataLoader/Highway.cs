@@ -135,6 +135,16 @@ namespace X4DataLoader
 
                 }
             }
+            if (EntryPointPath != null && ExitPointPath != null)
+            {
+                if (EntryPointPath.Sector != null && ExitPointPath.Sector != null && EntryPointPath.Zone != null && ExitPointPath.Zone != null)
+                {
+                    HighwayPoint? entryPoint = EntryPointPath.Sector.HighwayPoints.FirstOrDefault(p => p.Name == EntryPointPath.Zone.Name);
+                    entryPoint?.Connect(ExitPointPath.Sector);
+                    HighwayPoint? exitPoint = ExitPointPath.Sector.HighwayPoints.FirstOrDefault(p => p.Name == ExitPointPath.Zone.Name);
+                    exitPoint?.Connect(EntryPointPath.Sector);
+                }
+            }
         }
     }
 
@@ -209,10 +219,16 @@ namespace X4DataLoader
         public HighwayPointType Type { get; private set; } = type;
         public Zone Zone { get; private set; } = zone;
         public Zone Gate { get; private set; } = gate;
+        public Sector? SectorConnected = null;
         public string Name => Zone.Name;
         public Position Position => Zone.Position;
         public string Source => Zone.Source;
         public string FileName => Zone.FileName;
+
+        public void Connect(Sector sector)
+        {
+            SectorConnected = sector;
+        }
     }
 
     public enum HighwayPointType
