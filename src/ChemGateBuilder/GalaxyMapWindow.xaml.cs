@@ -545,13 +545,11 @@ namespace ChemGateBuilder
                         corners[1] = HexagonCorner.LeftTop;
                     }
                     else if (angles[1] == 90) {
-                        if (Math.Abs(Cluster.Sectors[1].Position.Z) > 100000000) {
-                            corners[0] = HexagonCorner.LeftBottom;
-                            corners[1] = HexagonCorner.RightTop;
-                        }
-                        else {
-                            corners[0] = HexagonCorner.RightBottom;
-                            corners[1] = HexagonCorner.LeftTop;
+                        switch (Cluster.Macro) {
+                            case "Cluster_32_macro":
+                                corners[0] = HexagonCorner.RightBottom;
+                                corners[1] = HexagonCorner.LeftTop;
+                                break;
                         }
                     }
                     else if (angles[1] == 0) {
@@ -568,13 +566,19 @@ namespace ChemGateBuilder
                         }
                     }
                     else if (angles[1] == -90) {
-                        if (Math.Abs(Cluster.Sectors[1].Position.Z) > 100000000) {
-                            corners[0] = HexagonCorner.LeftTop;
-                            corners[1] = HexagonCorner.RightBottom;
-                        }
-                        else {
-                            corners[0] = HexagonCorner.LeftBottom;
-                            corners[1] = HexagonCorner.RightTop;
+                        switch (Cluster.Macro) {
+                            case "Cluster_112_macro":
+                                corners[0] = HexagonCorner.RightTop;
+                                corners[1] = HexagonCorner.LeftBottom;
+                                break;
+                            case "Cluster_104_macro":
+                                corners[0] = HexagonCorner.LeftTop;
+                                corners[1] = HexagonCorner.RightBottom;
+                                break;
+                            case "Cluster_25_macro":
+                                corners[0] = HexagonCorner.RightTop;
+                                corners[1] = HexagonCorner.LeftBottom;
+                                break;
                         }
                     }
                     else if (angles[1] == -180) {
