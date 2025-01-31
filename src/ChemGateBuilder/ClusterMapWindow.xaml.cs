@@ -538,7 +538,25 @@ namespace ChemGateBuilder
                     else if (angles[1] == -180) {
                     }
                 }
-                for (int i = 0; i < Cluster.Sectors.Count; i++) {
+                List <int> sortedByCorner = [];
+                for (int i = 0; i < corners.Count; i++) {
+                    if (corners[i] == HexagonCorner.LeftTop || corners[i] == HexagonCorner.RightTop) {
+                        sortedByCorner.Insert(0, i);
+                    }
+                    else if (corners[i] == HexagonCorner.LeftCenter || corners[i] == HexagonCorner.RightCenter) {
+                        if (sortedByCorner.Count == 0 || (sortedByCorner.Count == 1 && (corners[sortedByCorner[0]] == HexagonCorner.LeftTop || corners[sortedByCorner[0]] == HexagonCorner.RightTop))) {
+                            sortedByCorner.Add(i);
+                        }
+                        else {
+                            sortedByCorner.Insert(0, i);
+                        }
+                    }
+                    else if (corners[i] == HexagonCorner.LeftBottom || corners[i] == HexagonCorner.RightBottom) {
+                        sortedByCorner.Add(i);
+                    }
+                }
+                for (int j = 0; j < sortedByCorner.Count; j++) {
+                    int i = sortedByCorner[j];
                     double x = 0;
                     double y = 0;
                     switch (corners[i])
