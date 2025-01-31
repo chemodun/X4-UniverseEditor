@@ -79,8 +79,12 @@ namespace ChemGateBuilder
             set { _selectedItemId = value; OnPropertyChanged(); }
         }
 
+
+        public static double ItemSizeMinDefaultPx = 10;
         public static double MinVisualSectorSize = 50;
         public static double MaxVisualSectorSize = 1200;
+
+        public double ItemSizeMinPx = ItemSizeMinDefaultPx;
 
         public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
 
@@ -173,37 +177,45 @@ namespace ChemGateBuilder
                 }
             }
         }
+
         public bool RefreshItem(string ItemId)
         {
-            for (int i = 0; i < Items.Count; i++)
+            SectorMapItem? item = Items.FirstOrDefault(i => i.ConnectionData?.Id == ItemId);
+            if (item != null)
             {
-                if (Items[i].Id == ItemId)
-                {
-                    var Item = Items[i];
-                    Items.RemoveAt(i);
-                    Items.Add(Item);
-                    return true;
-                }
+                item.Update();
+                return true;
             }
             return false;
         }
+
         public void UpdateItem(SectorConnectionData? connectionData)
         {
-            for (int i = 0; i < Items.Count; i++)
+
+            SectorMapItem? item = Items.FirstOrDefault(i => i.ConnectionData?.Id == connectionData?.Id);
+            if (item != null)
             {
-                if (Items[i].Id == connectionData?.Id)
+                if (connectionData != null)
                 {
-                    Items.RemoveAt(i);
+                    item.ConnectionData = connectionData;
+                    item.Update();
+                }
+                else
+                {
+                    Items.Remove(item);
                 }
             }
-            if (connectionData != null) AddItem(connectionData);
+            else
+            {
+                if (connectionData != null) AddItem(connectionData);
+            }
         }
 
         private void UpdateItems()
         {
             foreach (var item in Items.ToArray())
             {
-                UpdateItem(item.ConnectionData);
+                item.Update();
             }
         }
         public void OnSizeChanged(double newWidth, double newHeight)
@@ -315,8 +327,8 @@ namespace ChemGateBuilder
         private double _x;
         private double _y;
         private static double _sizeCoefficient = 0.03;
-        private static double _itemSizeMinPx = 10;
-        private double _itemSizePx = _itemSizeMinPx;
+        private static double _itemSizeMinPx = SectorMap.ItemSizeMinDefaultPx;
+        private double _itemSizePx = SectorMap.ItemSizeMinDefaultPx;
         private bool _isNew;
         private string _toolTip = "";
         private SectorConnectionData? _connectionData;
@@ -381,12 +393,18 @@ namespace ChemGateBuilder
             set { _isNew = value; OnPropertyChanged(); }
         }
 
+        public void Update()
+        {
+            UpdateSize();
+            UpdatePosition();
+        }
+
         private void UpdateSize()
         {
             if (SectorMap == null)
                 return;
             double newSizePx = SectorMap.VisualSizePx * _sizeCoefficient;
-            ItemSizePx = Math.Max(newSizePx, _itemSizeMinPx);
+            ItemSizePx = Math.Max(newSizePx, SectorMap.ItemSizeMinPx);
         }
 
         private void UpdatePosition()
