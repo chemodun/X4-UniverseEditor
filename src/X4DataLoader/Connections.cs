@@ -20,6 +20,7 @@ namespace X4DataLoader
         public string Source { get; private set; }
         public string FileName { get; private set; }
         public XElement? XML { get; private set; }
+        public XElement? MacroXML { get; private set; }
 
         public Connection() {
             Name = "";
@@ -76,6 +77,9 @@ namespace X4DataLoader
                 if (MacroReference == "" || MacroConnection == "")
                 {
                     throw new ArgumentException("Macro element of Connection must have ref and connection attributes");
+                }
+                else {
+                    MacroXML = macroElement;
                 }
             }
 
@@ -293,9 +297,12 @@ namespace X4DataLoader
 
         public override void Load(XElement element, string source, string fileName) {
             base.Load(element, source, fileName);
-            var macroElement = element.Element("macro") ?? throw new ArgumentException("Gate connection must have a macro element");
+            if (MacroXML == null)
+            {
+                throw new ArgumentException("Gate connection must have a macro element");
+            }
             IsActive = true;
-            var propertiesElement = macroElement.Element("properties");
+            var propertiesElement = MacroXML.Element("properties");
             if (propertiesElement != null)
             {
                 var stateElement = propertiesElement.Element("state");

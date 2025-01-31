@@ -228,15 +228,16 @@ namespace X4DataLoader
                     {
                         var highway = new HighwayClusterLevel(macroElement, source, sechighwaysFile.fileName);
                         var cluster = clusters
-                            .FirstOrDefault(c => c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Name)));
+                            .FirstOrDefault(c => c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro)));
                         if (cluster != null)
                         {
                             cluster.Highways.Add(highway);
+                            highway.Load(cluster);
                             Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
                         }
                         else
                         {
-                            Log.Warn($"No matching cluster found for Sector Highway: {highway.Name}");
+                            Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
                         }
                     }
                     Log.Debug($"Sector Highways loaded from: {sechighwaysFile.fileName} for {source}");
@@ -259,7 +260,7 @@ namespace X4DataLoader
                     {
                         var highway = new HighwaySectorLevel(macroElement, source, zonehighwaysFile.fileName);
                         var sector = sectors
-                            .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Name)));
+                            .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro)));
                         if (sector != null)
                         {
                             sector.Highways.Add(highway);
@@ -267,7 +268,7 @@ namespace X4DataLoader
                         }
                         else
                         {
-                            Log.Warn($"No matching sector found for Zone Highway: {highway.Name}");
+                            Log.Warn($"No matching sector found for Zone Highway: {highway.Macro}");
                         }
                     }
                     Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");

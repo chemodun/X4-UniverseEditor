@@ -27,9 +27,10 @@ namespace X4DataLoader
         public XElement? PositionXML { get; set; }
         public XElement? XML { get; set; }
 
-        public List<Zone> Zones { get; private set; }
-        public Dictionary<string, Connection> Connections { get; private set; }
-        public List<Highway> Highways { get; private set; }
+        public List<Zone> Zones { get; private set; } = [];
+        public Dictionary<string, Connection> Connections { get; private set; } = [];
+        public List<Highway> Highways { get; private set; } = [];
+        public List <HighwayPoint> HighwayPoints { get; private set; } = [];
         private static readonly Regex SectorRegex = new(@"^(Cluster)_(\d+)_(Sector)(\d+)_macro", RegexOptions.IgnoreCase);
         public Sector()
         {
@@ -39,9 +40,6 @@ namespace X4DataLoader
             ClusterId = 0;
             IdPrefix = "Sector";
             ClusterIdPrefix = "Cluster";
-            Zones = [];
-            Connections = [];
-            Highways = [];
             Reference = "";
             Position = new Position();
             PositionId = "";
@@ -117,5 +115,9 @@ namespace X4DataLoader
             zone.SetPosition(zoneConnection.Position, zoneConnection.Name, zoneConnection.XML);
         }
 
+        public void  AddHighwayPoint(HighwayPoint highwayPoint)
+        {
+            HighwayPoints.Add(highwayPoint);
+        }
     }
 }

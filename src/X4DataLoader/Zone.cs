@@ -60,6 +60,7 @@ namespace X4DataLoader
             PositionId = "";
             Source = source;
             FileName = fileName;
+            XML = element;
         }
 
         public void SetPosition(Position? position, string positionId, XElement? positionXML)
