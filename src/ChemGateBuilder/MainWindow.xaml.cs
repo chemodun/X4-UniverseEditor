@@ -729,7 +729,7 @@ namespace ChemGateBuilder
 
         private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
         {
-            ClusterMapWindow clusterMapWindow = new ClusterMapWindow(this);
+            GalaxyMapWindow clusterMapWindow = new GalaxyMapWindow(this);
             clusterMapWindow.ShowDialog();
             if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
             {
@@ -739,7 +739,7 @@ namespace ChemGateBuilder
 
         private void ButtonSectorOppositeSelectFromMap_Click(object sender, RoutedEventArgs e)
         {
-            ClusterMapWindow clusterMapWindow = new ClusterMapWindow(this);
+            GalaxyMapWindow clusterMapWindow = new GalaxyMapWindow(this);
             clusterMapWindow.ShowDialog();
             if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
             {

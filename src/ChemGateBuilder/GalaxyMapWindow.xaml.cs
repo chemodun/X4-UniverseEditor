@@ -14,7 +14,7 @@ using System.Windows.Data;
 
 namespace ChemGateBuilder
 {
-    public partial class ClusterMapWindow : Window, INotifyPropertyChanged
+    public partial class GalaxyMapWindow : Window, INotifyPropertyChanged
     {
         // Constants for hexagon dimensions and scaling
         private const double HexagonWidthDefault = 100;      // Width of the hexagon in pixels
@@ -68,7 +68,7 @@ namespace ChemGateBuilder
         public readonly MainWindow MainWindowReference;
         public readonly Galaxy? Galaxy;
 
-        private readonly List<ClusterMapCluster> _clusters = [];
+        private readonly List<GalaxyMapCluster> _clusters = [];
 
         public Sector? SelectedSector = null;
         // Fields to track panning state
@@ -80,7 +80,7 @@ namespace ChemGateBuilder
         private double scrollVerticalOffset = 0;
         private double canvasWidth = 0;
         private Sector? clickedSector = null;
-        public ClusterMapWindow(MainWindow mainWindow)
+        public GalaxyMapWindow(MainWindow mainWindow)
         {
             InitializeComponent();
             DataContext = this;
@@ -95,24 +95,24 @@ namespace ChemGateBuilder
             // Center the window relative to the main window
             Left = mainWindow.Left + (mainWindow.Width - Width) / 2;
             Top = mainWindow.Top + (mainWindow.Height - Height) / 2;
-            if (!PrepareClusterMap())
+            if (!PrepareGalaxyMap())
             {
                 Log.Error("Cluster map is not prepared.");
                 return;
             }
             UpdateMap();
             // Attach mouse event handlers for panning
-            ClusterCanvas.MouseLeftButtonDown += ClusterCanvas_MouseLeftButtonDown;
-            ClusterCanvas.MouseLeftButtonUp += ClusterCanvas_MouseLeftButtonUp;
-            ClusterCanvas.MouseMove += ClusterCanvas_MouseMove;
-            // ClusterCanvas.MouseWheel += ClusterCanvas_MouseWheel;
+            GalaxyCanvas.MouseLeftButtonDown += GalaxyCanvas_MouseLeftButtonDown;
+            GalaxyCanvas.MouseLeftButtonUp += GalaxyCanvas_MouseLeftButtonUp;
+            GalaxyCanvas.MouseMove += GalaxyCanvas_MouseMove;
+            // GalaxyCanvas.MouseWheel += GalaxyCanvas_MouseWheel;
         }
 
         /// <summary>
         /// Prepares a map of clusters organized into rows and columns based on their positions.
         /// </summary>
         /// <returns>True if the map was prepared successfully; otherwise, false.</returns>
-        public bool PrepareClusterMap()
+        public bool PrepareGalaxyMap()
         {
             if (Galaxy == null)
             {
@@ -158,9 +158,9 @@ namespace ChemGateBuilder
                 Log.Warn("Cluster map is empty.");
                 return;
             }
-            if (ClusterScrollViewer.ActualHeight == 0 || ClusterScrollViewer.ActualWidth == 0)
+            if (GalaxyScrollViewer.ActualHeight == 0 || GalaxyScrollViewer.ActualWidth == 0)
             {
-                Log.Warn("ClusterScrollViewer size is zero.");
+                Log.Warn("GalaxyScrollViewer size is zero.");
                 return;
             }
             double maxRow = AxisZ.First();
@@ -169,10 +169,10 @@ namespace ChemGateBuilder
             _canvasWidthBase = AxisX.Count * 0.75 + 0.25;
             _canvasHeightBase = (AxisZ.Count + 1) * 0.5;
 
-            ClusterCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
-            ClusterCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
+            GalaxyCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
+            GalaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
 
-            ClusterCanvas.Children.Clear();
+            GalaxyCanvas.Children.Clear();
             foreach (var Z in AxisZ)
             {
                 Dictionary<string, Cluster> row = mapDict[Z.ToString("F1")];
@@ -183,7 +183,7 @@ namespace ChemGateBuilder
                         continue;
                     }
                     Cluster cluster = row[X.ToString()];
-                    ClusterMapCluster clusterMapCluster = new(this, 0.75 * (X - minCol), maxRow - Z, ClusterCanvas, cluster);
+                    GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (X - minCol), maxRow - Z, GalaxyCanvas, cluster);
                     clusterMapCluster.Create();
                     _clusters.Add(clusterMapCluster);
                 }
@@ -199,41 +199,41 @@ namespace ChemGateBuilder
             }
             else
             {
-                scrollVerticalOffset = ClusterScrollViewer.VerticalOffset;
-                scrollHorizontalOffset = ClusterScrollViewer.HorizontalOffset;
-                canvasWidth = ClusterCanvas.Width;
-                ClusterCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
-                ClusterCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
-                foreach (ClusterMapCluster cluster in _clusters)
+                scrollVerticalOffset = GalaxyScrollViewer.VerticalOffset;
+                scrollHorizontalOffset = GalaxyScrollViewer.HorizontalOffset;
+                canvasWidth = GalaxyCanvas.Width;
+                GalaxyCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
+                GalaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
+                foreach (GalaxyMapCluster cluster in _clusters)
                 {
                     cluster.Update();
                 }
             }
         }
-        private void ClusterScrollViewer_ScrollChanged(object sender, RoutedEventArgs e)
+        private void GalaxyScrollViewer_ScrollChanged(object sender, RoutedEventArgs e)
         {
-            double viewportWidth = ClusterScrollViewer.ViewportWidth;
-            double viewportHeight = ClusterScrollViewer.ViewportHeight;
-            double currentCanvasWidth = ClusterCanvas.Width;
-            double currentCanvasHeight = ClusterCanvas.Height;
-            if (currentCanvasWidth - viewportWidth != canvasWidth && viewportWidth != 0 && viewportWidth != ClusterScrollViewer.ActualWidth)
+            double viewportWidth = GalaxyScrollViewer.ViewportWidth;
+            double viewportHeight = GalaxyScrollViewer.ViewportHeight;
+            double currentCanvasWidth = GalaxyCanvas.Width;
+            double currentCanvasHeight = GalaxyCanvas.Height;
+            if (currentCanvasWidth - viewportWidth != canvasWidth && viewportWidth != 0 && viewportWidth != GalaxyScrollViewer.ActualWidth)
             {
                 if (currentCanvasWidth > viewportWidth)
                 {
                     double newCanvasToScrollWidthDelta = currentCanvasWidth - viewportWidth;
                     if (newCanvasToScrollWidthDelta != canvasToScrollWidthDelta)
                     {
-                        Log.Debug($"ClusterCanvas.Width: {ClusterCanvas.Width}, canvasWidth: {canvasWidth}");
-                        Log.Debug($"ClusterScrollViewer.ActualWidth: {ClusterScrollViewer.ActualWidth}, ViewportWidth: {viewportWidth}");
+                        Log.Debug($"GalaxyCanvas.Width: {GalaxyCanvas.Width}, canvasWidth: {canvasWidth}");
+                        Log.Debug($"GalaxyScrollViewer.ActualWidth: {GalaxyScrollViewer.ActualWidth}, ViewportWidth: {viewportWidth}");
                         if (scrollHorizontalOffset == 0 || canvasToScrollWidthDelta == 0)
                         {
                             Log.Debug($"Centering the map: new offsets: {newCanvasToScrollWidthDelta / 2}");
-                            ClusterScrollViewer.ScrollToHorizontalOffset(newCanvasToScrollWidthDelta / 2);
+                            GalaxyScrollViewer.ScrollToHorizontalOffset(newCanvasToScrollWidthDelta / 2);
                         }
                         else
                         {
                             Log.Debug($"Scrolling the map: old offset: {scrollHorizontalOffset}, new offset: {scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta}");
-                            ClusterScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta);
+                            GalaxyScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta);
                         }
                         canvasToScrollWidthDelta = newCanvasToScrollWidthDelta;
                     }
@@ -243,16 +243,16 @@ namespace ChemGateBuilder
                     double newCanvasToScrollHeightDelta = currentCanvasHeight - viewportHeight;
                     if (newCanvasToScrollHeightDelta != canvasToScrollHeightDelta)
                     {
-                        Log.Debug($"ClusterScrollViewer.ActualHeight: {ClusterScrollViewer.ActualHeight}, ViewportHeight: {viewportHeight}");
+                        Log.Debug($"GalaxyScrollViewer.ActualHeight: {GalaxyScrollViewer.ActualHeight}, ViewportHeight: {viewportHeight}");
                         if (scrollVerticalOffset == 0 || canvasToScrollHeightDelta == 0)
                         {
                             Log.Debug($"Centering the map: new offsets: {newCanvasToScrollHeightDelta / 2}");
-                            ClusterScrollViewer.ScrollToVerticalOffset(newCanvasToScrollHeightDelta / 2);
+                            GalaxyScrollViewer.ScrollToVerticalOffset(newCanvasToScrollHeightDelta / 2);
                         }
                         else
                         {
                             Log.Debug($"Scrolling the map: old offset: {scrollVerticalOffset}, new offset: {scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta}");
-                            ClusterScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta);
+                            GalaxyScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta);
                         }
                         canvasToScrollHeightDelta = newCanvasToScrollHeightDelta;
                     }
@@ -260,7 +260,7 @@ namespace ChemGateBuilder
             }
         }
 // Mouse Left Button Down - Start Panning
-        private void ClusterCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GalaxyCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var clickedElement = e.OriginalSource as DependencyObject;
             if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
@@ -273,13 +273,13 @@ namespace ChemGateBuilder
             }
             isPanning = true;
             panStartPoint = e.GetPosition(this);
-            scrollHorizontalOffset = ClusterScrollViewer.HorizontalOffset;
-            scrollVerticalOffset = ClusterScrollViewer.VerticalOffset;
-            ClusterCanvas.CaptureMouse();
+            scrollHorizontalOffset = GalaxyScrollViewer.HorizontalOffset;
+            scrollVerticalOffset = GalaxyScrollViewer.VerticalOffset;
+            GalaxyCanvas.CaptureMouse();
         }
 
         // Mouse Move - Perform Panning
-        private void ClusterCanvas_MouseMove(object sender, MouseEventArgs e)
+        private void GalaxyCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (isPanning)
             {
@@ -292,18 +292,18 @@ namespace ChemGateBuilder
                 }
                 SelectedSector = null;
                 // Adjust the ScrollViewer's offsets
-                ClusterScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
-                ClusterScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
+                GalaxyScrollViewer.ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
+                GalaxyScrollViewer.ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
             }
         }
 
         // Mouse Left Button Up - End Panning
-        private void ClusterCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void GalaxyCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (isPanning)
             {
                 isPanning = false;
-                ClusterCanvas.ReleaseMouseCapture();
+                GalaxyCanvas.ReleaseMouseCapture();
             }
             if (SelectedSector != null)
             {
@@ -336,12 +336,12 @@ namespace ChemGateBuilder
                 e.Handled = true;
             }
         }
-        private void ClusterMapWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void GalaxyMapWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ClusterScrollViewer.ActualWidth != 0 && ClusterScrollViewer.ActualHeight != 0)
+            if (GalaxyScrollViewer.ActualWidth != 0 && GalaxyScrollViewer.ActualHeight != 0)
             {
-                double width = ClusterScrollViewer.ActualWidth;
-                double height = ClusterScrollViewer.ActualHeight;
+                double width = GalaxyScrollViewer.ActualWidth;
+                double height = GalaxyScrollViewer.ActualHeight;
                 double scaleFactorWidth = width / (AxisX.Count * 0.75 + 0.25) / HexagonWidthDefault;
                 double scaleFactorHeight = height / (AxisZ.Count + 1)  / 0.5 / HexagonHeightDefault;
                 ScaleFactor = Math.Min(scaleFactorWidth, scaleFactorHeight);
@@ -365,7 +365,7 @@ namespace ChemGateBuilder
         }
     }
 
-    class ClusterMapCluster(ClusterMapWindow map, double x, double y, Canvas canvas, Cluster cluster) : INotifyPropertyChanged
+    class GalaxyMapCluster(GalaxyMapWindow map, double x, double y, Canvas canvas, Cluster cluster) : INotifyPropertyChanged
     {
         protected Cluster? Cluster = cluster;
         protected virtual double Modifier { get; set; } = 1.0;
@@ -408,12 +408,12 @@ namespace ChemGateBuilder
                 return 0;
             }
         }
-        protected ClusterMapWindow? Map = map;
+        protected GalaxyMapWindow? Map = map;
         protected Canvas? Canvas = canvas;
         protected PointCollection Points = [];
         protected Polygon? Hexagon = null;
 
-        private readonly List<ClusterMapSector> _sectors = [];
+        private readonly List<GalaxyMapSector> _sectors = [];
 
         public virtual void Create()
         {
@@ -439,7 +439,7 @@ namespace ChemGateBuilder
             if (Cluster.Sectors.Count == 1)
             {
                 Sector sector = Cluster.Sectors[0];
-                ClusterMapSector clusterMapSector = new(Map, _x, _y, Canvas, Cluster, sector);
+                GalaxyMapSector clusterMapSector = new(Map, _x, _y, Canvas, Cluster, sector);
                 clusterMapSector.Create();
                 _sectors.Add(clusterMapSector);
             }
@@ -590,7 +590,7 @@ namespace ChemGateBuilder
                             break;
                     }
                     Log.Debug($"Sector {Cluster.Sectors[i].Name}: Corner: {corners[i]}, Position: X = {x}, Y = {y}");
-                    ClusterMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[i], true);
+                    GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[i], true);
                     clusterMapSector.Create();
                     _sectors.Add(clusterMapSector);
                 }
@@ -608,7 +608,7 @@ namespace ChemGateBuilder
             // Position the Hexagon on the Canvas
             Canvas.SetLeft(Hexagon, X);
             Canvas.SetTop(Hexagon, Y);
-            foreach (ClusterMapSector sector in _sectors)
+            foreach (GalaxyMapSector sector in _sectors)
             {
                 sector.Update();
             }
@@ -669,7 +669,7 @@ namespace ChemGateBuilder
         }
     }
 
-    class ClusterMapSector(ClusterMapWindow map, double x, double y, Canvas canvas, Cluster cluster, Sector sector, bool isHalf = false) : ClusterMapCluster(map, x, y, canvas, cluster)
+    class GalaxyMapSector(GalaxyMapWindow map, double x, double y, Canvas canvas, Cluster cluster, Sector sector, bool isHalf = false) : GalaxyMapCluster(map, x, y, canvas, cluster)
     {
 
         protected override double Modifier { get; set; } = isHalf ? 0.5 : 1;
