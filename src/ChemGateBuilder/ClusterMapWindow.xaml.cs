@@ -320,15 +320,16 @@ namespace ChemGateBuilder
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
+                double step = HexagonWidth / HexagonWidthMinimal < 2 ? 10 : HexagonWidthMinimal * 0.5;
                 if (e.Delta > 0)
                 {
                     // Zoom In
-                    HexagonWidth = Math.Min(HexagonWidth + 10, HexagonWidthMaximal);
+                    HexagonWidth = Math.Min(HexagonWidth + step, HexagonWidthMaximal);
                 }
                 else if (e.Delta < 0)
                 {
                     // Zoom Out
-                    HexagonWidth = Math.Max(HexagonWidth - 10, HexagonWidthMinimal);
+                    HexagonWidth = Math.Max(HexagonWidth - step, HexagonWidthMinimal);
                 }
                 e.Handled = true;
             }
@@ -344,11 +345,11 @@ namespace ChemGateBuilder
                 ScaleFactor = Math.Min(scaleFactorWidth, scaleFactorHeight);
                 if (width * HexagonSizesRelation < height)
                 {
-                    HexagonWidthMaximal = width / ScaleFactor;
+                    HexagonWidthMaximal = width / ScaleFactor * 2;
                 }
                 else
                 {
-                    HexagonWidthMaximal = height / HexagonSizesRelation / ScaleFactor;
+                    HexagonWidthMaximal = height / HexagonSizesRelation / ScaleFactor * 2;
                 }
             }
             UpdateMap();
