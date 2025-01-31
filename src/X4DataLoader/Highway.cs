@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Xml.Linq;
 using X4DataLoader.Helpers;
 using Utilities.Logging;
+using System.Diagnostics;
 
 namespace X4DataLoader
 {
@@ -208,11 +209,10 @@ namespace X4DataLoader
         public HighwayPointType Type { get; private set; } = type;
         public Zone Zone { get; private set; } = zone;
         public Zone Gate { get; private set; } = gate;
-
-        public Position Position => Zone.Position;
         public string Name => Zone.Name;
-
-
+        public Position Position => Zone.Position;
+        public string Source => Zone.Source;
+        public string FileName => Zone.FileName;
     }
 
     public enum HighwayPointType
