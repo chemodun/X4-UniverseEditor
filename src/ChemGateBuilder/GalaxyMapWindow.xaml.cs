@@ -905,10 +905,6 @@ namespace ChemGateBuilder
                 DataContext = this,
                 Stroke = IsGate ? Brushes.Gold : Brushes.SkyBlue,
                 StrokeThickness = IsGate ? 2 : 1,
-                // X1 = GateDirect.X,
-                // Y1 = GateDirect.Y,
-                // X2 = GateOpposite.X,
-                // Y2 = GateOpposite.Y
             };
             Binding x1Binding = new("CenterX")
             {

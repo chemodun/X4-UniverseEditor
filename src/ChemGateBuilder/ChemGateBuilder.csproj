@@ -25,6 +25,8 @@
     <Resource Include="Assets\mapob_jumpgate_new_active.png" />
     <Resource Include="Assets\mapob_jumpgate_new_inactive.png" />
     <Resource Include="Assets\mapob_superhighway_default.png" />
+    <Resource Include="Assets\mapob_superhighway_map_active.png" />
+    <Resource Include="Assets\mapob_superhighway_map_inactive.png" />
   </ItemGroup>
 
 </Project>

@@ -529,7 +529,31 @@ namespace ChemGateBuilder
                         break;
                     case "highway":
                     {
-                        imagePath += "superhighway_default";
+                        imagePath += "superhighway";
+                        switch (From)
+                        {
+                            case "new":
+                                imagePath += "_new";
+                                break;
+                            case "mod":
+                                imagePath += "_mod";
+                                break;
+                            default:
+                                imagePath += "_map";
+                                break;
+                        }
+                        switch (Status)
+                        {
+                            case "active":
+                                imagePath += "_active";
+                                break;
+                            case "inactive":
+                                imagePath += "_inactive";
+                                break;
+                            default:
+                                imagePath += "_unknown";
+                                break;
+                        }
                         break;
                     }
                     default:
