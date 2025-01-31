@@ -373,18 +373,18 @@ namespace ChemGateBuilder
         }
         public double ItemSizePx {
             get => _itemSizePx;
-            set { _itemSizePx = value; OnPropertyChanged(); }
+            set { _itemSizePx = value; OnPropertyChanged(); OnPropertyChanged(nameof(CenterX)); OnPropertyChanged(nameof(CenterY)); }
         }
         public double X
         {
             get => _x;
-            set { _x = value; OnPropertyChanged(); }
+            set { _x = value; OnPropertyChanged(); OnPropertyChanged(nameof(CenterX)); }
         }
 
         public double Y
         {
             get => _y;
-            set { _y = value; OnPropertyChanged(); }
+            set { _y = value; OnPropertyChanged(); OnPropertyChanged(nameof(CenterY)); }
         }
 
         public bool IsNew
@@ -392,6 +392,10 @@ namespace ChemGateBuilder
             get => _isNew;
             set { _isNew = value; OnPropertyChanged(); }
         }
+
+        // Computed Properties for Center Coordinates
+        public double CenterX { get => X + ItemSizePx / 2;}
+        public double CenterY { get => Y + ItemSizePx / 2;}
 
         public void Update()
         {

@@ -11,6 +11,8 @@ using Utilities.Logging;
 using X4DataLoader;
 
 using System.Windows.Data;
+using Microsoft.Windows.Themes;
+using System.Runtime.CompilerServices;
 
 namespace ChemGateBuilder
 {
@@ -80,6 +82,8 @@ namespace ChemGateBuilder
         private double scrollVerticalOffset = 0;
         private double canvasWidth = 0;
         private Sector? clickedSector = null;
+        public List<SectorMapItem> SectorsItems = [];
+
         public GalaxyMapWindow(MainWindow mainWindow)
         {
             InitializeComponent();
@@ -188,7 +192,25 @@ namespace ChemGateBuilder
                     _clusters.Add(clusterMapCluster);
                 }
             }
-
+            if (SectorsItems.Count > 0 && Galaxy?.Connections.Count > 0)
+            {
+                foreach (GalaxyConnection connection in Galaxy.Connections)
+                {
+                    if (connection.PathDirect == null || connection.PathDirect.Gate == null || connection.PathDirect.Gate.Name == null ||
+                         connection.PathOpposite == null || connection.PathOpposite.Gate == null || connection.PathOpposite.Gate.Name == null)
+                    {
+                        continue;
+                    }
+                    SectorMapItem? gateDirect = SectorsItems.Find(item => item.Id == connection.PathDirect.Gate.Name);
+                    SectorMapItem? gateOpposite = SectorsItems.Find(item => item.Id == connection.PathOpposite.Gate.Name);
+                    if (gateDirect == null || gateOpposite == null)
+                    {
+                        continue;
+                    }
+                    GalaxyMapGateConnection galaxyMapGateConnection = new(gateDirect, gateOpposite);
+                    galaxyMapGateConnection.Create(GalaxyCanvas);
+                }
+            }
         }
 
         private void UpdateMap()
@@ -728,6 +750,7 @@ namespace ChemGateBuilder
             SectorMapHelper.SetSector(Sector, Map.Galaxy);
             foreach(SectorMapItem item in SectorMapHelper.Items)
             {
+                Map.SectorsItems.Add(item);
                 Image image = new()
                 {
                     DataContext = item
@@ -814,6 +837,80 @@ namespace ChemGateBuilder
             {
                 item.Update();
             }
+        }
+    }
+
+    public class GalaxyMapGateConnection : INotifyPropertyChanged
+    {
+        private SectorMapItem? _gateDirect;
+        public SectorMapItem? GateDirect
+        {
+            get => _gateDirect;
+            set
+            {
+                _gateDirect = value;
+                OnPropertyChanged(nameof(GateDirect));
+            }
+        }
+        private SectorMapItem? _gateOpposite;
+        public SectorMapItem? GateOpposite
+        {
+            get => _gateOpposite;
+            set
+            {
+                _gateOpposite = value;
+                OnPropertyChanged(nameof(GateOpposite));
+            }
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public GalaxyMapGateConnection(SectorMapItem gateDirect, SectorMapItem gateOpposite)
+        {
+            GateDirect = gateDirect;
+            GateOpposite = gateOpposite;
+        }
+
+        public void Create(Canvas canvas)
+        {
+            if (GateDirect == null || GateOpposite == null)
+            {
+                return;
+            }
+            Line line = new()
+            {   DataContext = this,
+                Stroke = Brushes.Gold,
+                StrokeThickness = 2,
+                // X1 = GateDirect.X,
+                // Y1 = GateDirect.Y,
+                // X2 = GateOpposite.X,
+                // Y2 = GateOpposite.Y
+            };
+            Binding x1Binding = new("CenterX")
+            {
+                Source = GateDirect
+            };
+            line.SetBinding(Line.X1Property, x1Binding);
+            Binding y1Binding = new("CenterY")
+            {
+                Source = GateDirect
+            };
+            line.SetBinding(Line.Y1Property, y1Binding);
+            Binding x2Binding = new("CenterX")
+            {
+                Source = GateOpposite
+            };
+            line.SetBinding(Line.X2Property, x2Binding);
+            Binding y2Binding = new("CenterY")
+            {
+                Source = GateOpposite
+            };
+            line.SetBinding(Line.Y2Property, y2Binding);
+            // Canvas.SetZIndex(line, -1);
+            canvas.Children.Add(line);
         }
     }
 
