@@ -54,7 +54,7 @@ namespace X4DataTestConsole
                     }
                     foreach (var highwayPoint in sector.HighwayPoints)
                     {
-                        Console.WriteLine($"    Highway Point: {highwayPoint.Name}, Level: {highwayPoint.HighwayLevel}, Type: {highwayPoint.Type}, Position: {highwayPoint.Position}, Source: {highwayPoint.Source}, FileName: {highwayPoint.FileName}");
+                        Console.WriteLine($"    Highway Point: {highwayPoint.Name}, Level: {highwayPoint.HighwayLevel}, Type: {highwayPoint.Type}, Position: {highwayPoint.Position}, Source: {highwayPoint.Source}, FileName: {highwayPoint.FileName}, ConnectedSector: {highwayPoint.SectorConnected?.Name}");
                     }
                 }
             }
