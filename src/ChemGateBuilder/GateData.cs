@@ -510,7 +510,7 @@ namespace ChemGateBuilder
             if (position.X == 0 && position.Y == 0 && position.Z == 0)
             {
                 var random = new Random();
-                int[] possibleValues = { -250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250 };
+                int[] possibleValues = [-250, -200, -150, -100, -50, 0, 50, 100, 150, 200, 250];
 
                 do
                 {
@@ -634,7 +634,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public Dictionary<string, string> Attributes = new();
+        public Dictionary<string, string> Attributes = [];
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
