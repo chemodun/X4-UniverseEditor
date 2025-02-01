@@ -35,6 +35,10 @@ namespace ChemGateBuilder
             {
                 if (_sectorDirect != value)
                 {
+                    if (_sectorDirect == null)
+                    {
+                        FillPositionByRandomValues();
+                    }
                     _sectorDirect = value;
                     OnPropertyChanged(nameof(SectorDirect));
                 }
@@ -117,6 +121,10 @@ namespace ChemGateBuilder
             {
                 if (_sectorOpposite != value)
                 {
+                    if (_sectorOpposite == null)
+                    {
+                        FillPositionByRandomValues(false);
+                    }
                     _sectorOpposite = value;
                     OnPropertyChanged(nameof(SectorOpposite));
                 }
@@ -482,7 +490,6 @@ namespace ChemGateBuilder
                         foreach(SectorConnectionData modConnection in mainWindow.GetSectorConnectionsFromMod(sectorCurrent.Macro)) {
                             sectorMap.AddItem(modConnection);
                         }
-                        FillPositionByRandomValues(isDirect);
                     }
                 }
                 UpdateCurrentGateOnMap(isDirect ? nameof(GateOpposite) : nameof(GateDirect));

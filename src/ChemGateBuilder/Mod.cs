@@ -301,9 +301,10 @@ namespace ChemGateBuilder
             }
             _modFolderPath = currentPath;
             Connections = GalaxyConnections.Select(gc => gc.Connection).Where(c => c != null).ToList();
-            _date = DateTime.Now.ToString("yyyy-MM-dd");
+            Date = DateTime.Now.ToString("yyyy-MM-dd");
             _versionInitial = _version;
             SaveModXMLs();
+            Version = _versionInitial;
             return true;
         }
 
@@ -423,9 +424,10 @@ namespace ChemGateBuilder
 
         public bool IsModChanged(ObservableCollection<GalaxyConnectionData> GalaxyConnections)
         {
+            bool result = false;
             if (Connections.Count != GalaxyConnections.Count)
             {
-                return true;
+                result = true;
             }
             else
             {
@@ -433,7 +435,8 @@ namespace ChemGateBuilder
                 {
                     if (!GalaxyConnections.Any(gc => gc.Connection != null && gc.Connection.Name == Connections[i].Name))
                     {
-                        return true;
+                       result = true;
+                       break;
                     }
 
                 }
@@ -441,7 +444,8 @@ namespace ChemGateBuilder
                 {
                     if(!Connections.Any(c => c.Name == GalaxyConnections[i].Connection.Name))
                     {
-                        return true;
+                        result = true;
+                        break;
                     }
                 }
                 for (int i = 0; i < Connections.Count; i++)
@@ -449,15 +453,42 @@ namespace ChemGateBuilder
                     GalaxyConnection newConnection = GalaxyConnections.First(gc => gc.Connection.Name == Connections[i].Name).Connection;
                     if (Connections[i].PathDirect?.Zone?.PositionXML?.ToString() != newConnection.PathDirect?.Zone?.PositionXML?.ToString())
                     {
-                        return true;
+                        result = true;
+                        break;
                     }
                     else if (Connections[i].PathOpposite?.Zone?.XML?.ToString() != newConnection.PathOpposite?.Zone?.XML?.ToString())
                     {
-                        return true;
+                        result = true;
+                        break;
+                    }
+                    else if (Connections[i].PathDirect?.Gate?.XML?.ToString() != newConnection.PathDirect?.Gate?.XML?.ToString())
+                    {
+                        result = true;
+                        break;
+                    }
+                    else if (Connections[i].PathOpposite?.Gate?.XML?.ToString() != newConnection.PathOpposite?.Gate?.XML?.ToString())
+                    {
+                        result = true;
+                        break;
+                    }
+                    else if (Connections[i].PathOpposite?.Gate?.XML?.ToString() != newConnection.PathOpposite?.Gate?.XML?.ToString())
+                    {
+                        result = true;
+                        break;
                     }
                 }
             }
-            return false;
+            if (result)
+            {
+                Log.Debug("Mod has been changed");
+                Version = _versionInitial + 1;
+            }
+            else
+            {
+                Log.Debug("Mod has not been changed");
+                Version = _versionInitial;
+            }
+            return result;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
