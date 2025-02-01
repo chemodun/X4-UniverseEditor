@@ -30,7 +30,7 @@ namespace ChemGateBuilder
         public static readonly Dictionary<string, (string ColorString, SolidColorBrush Brush)> OwnerToColor = new Dictionary<string, (string, SolidColorBrush)>
         {
             { "antigone", ("#00A6ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00A6ff"))) },
-            { "argon", ("#0079a5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0079a5"))) },
+            { "argon", ("#0050A0", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0050A0"))) },
             { "boron", ("#4cc6ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4cc6ff"))) },
             { "freesplit", ("#ffac00", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffac00"))) },
             { "hatikvah", ("#50ffff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#50ffff"))) },
@@ -39,12 +39,12 @@ namespace ChemGateBuilder
             { "loanshark", ("#b5a750", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b5a750"))) },
             { "paranid", ("#c530c5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c530c5"))) },
             { "pioneers", ("#00c1d5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00c1d5"))) },
-            { "scavenger", ("#005986", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#005986"))) },
+            { "scavenger", ("#302586", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#302586"))) },
             { "split", ("#d58100", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#d58100"))) },
             { "teladi", ("#c5c500", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c5c500"))) },
             { "terran", ("#aad8ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aad8ff"))) },
-            { "xenon", ("#c90000", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c90000"))) },
-            {"", ("#F0F0F0", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F0F0F0"))) }
+            { "xenon", ("#b90000", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b90000"))) },
+            {"", ("#B0B0B0", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B0B0B0"))) }
         };
 
         public double MinInternalSizeKm

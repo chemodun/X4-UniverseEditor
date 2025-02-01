@@ -21,6 +21,7 @@ namespace ChemGateBuilder
     public class AppConfig
     {
         public EditConfig Edit { get; set; } = new EditConfig();
+        public MapConfig Map { get; set; } = new MapConfig();
         public DataConfig Data { get; set; } = new DataConfig();
         public LoggingConfig Logging { get; set; } = new LoggingConfig();
 
@@ -30,9 +31,13 @@ namespace ChemGateBuilder
     {
         public bool GatesActiveByDefault { get; set; } = true;
         public int GatesMinimalDistanceBetween { get; set; } = 10;
-        public int SectorRadius { get; set; } = 400;
     }
 
+    public class MapConfig
+    {
+        public double MapColorsOpacity { get; set; } = 0.5;
+        public int SectorRadius { get; set; } = 400;
+    }
     public class DataConfig
     {
         public string X4DataExtractedPath { get; set; } = ".";
@@ -84,7 +89,7 @@ namespace ChemGateBuilder
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private string _configFileName;
+        private readonly string _configFileName;
 
         private string _x4DataFolder = ".";
         public string X4DataFolder
@@ -112,7 +117,7 @@ namespace ChemGateBuilder
                 {
                     _gatesActiveByDefault = value;
                     OnPropertyChanged(nameof(GatesActiveByDefault));
-                    if (GatesConnectionCurrent != null) GatesConnectionCurrent.SetGateStatusDefaults(value);
+                    GatesConnectionCurrent?.SetGateStatusDefaults(value);
                     SaveConfiguration();
                 }
             }
@@ -153,6 +158,20 @@ namespace ChemGateBuilder
         }
         public int SectorRadiusNegative => -SectorRadius;
 
+        private double _mapColorsOpacity = 0.5;
+        public double MapColorsOpacity
+        {
+            get => _mapColorsOpacity;
+            set
+            {
+                if (_mapColorsOpacity != value)
+                {
+                    _mapColorsOpacity = value;
+                    OnPropertyChanged(nameof(MapColorsOpacity));
+                    SaveConfiguration();
+                }
+            }
+        }
         private string _logLevel = "Warning";
         public string LogLevel
         {
@@ -479,7 +498,8 @@ namespace ChemGateBuilder
                     X4DataFolder = config.Data.X4DataExtractedPath;
                     GatesActiveByDefault = config.Edit.GatesActiveByDefault;
                     GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
-                    SectorRadius = config.Edit.SectorRadius;
+                    MapColorsOpacity = config.Map.MapColorsOpacity;
+                    SectorRadius = config.Map.SectorRadius;
                     LogLevel = config.Logging.LogLevel;
                     LogToFile = config.Logging.LogToFile;
                 }
@@ -495,6 +515,7 @@ namespace ChemGateBuilder
             }
         }
 
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
         private void SaveConfiguration()
         {
             var config = new AppConfig
@@ -504,6 +525,10 @@ namespace ChemGateBuilder
                 {
                     GatesActiveByDefault = GatesActiveByDefault,
                     GatesMinimalDistanceBetween = GatesMinimalDistanceBetween,
+                },
+                Map = new MapConfig
+                {
+                    MapColorsOpacity = MapColorsOpacity,
                     SectorRadius = SectorRadius
                 },
                 Logging = new LoggingConfig
@@ -513,11 +538,11 @@ namespace ChemGateBuilder
                 }
             };
 
-            var jsonString = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
             File.WriteAllText(_configFileName, jsonString);
         }
 
-        private bool ValidateX4DataFolder(string folderPath, out string errorMessage)
+        private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
         {
             string subfolderPath = System.IO.Path.Combine(folderPath, "t");
             string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");

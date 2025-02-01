@@ -739,7 +739,7 @@ namespace ChemGateBuilder
             if (SectorMap.OwnerToColor.TryGetValue(Sector.DominantOwner, out (string ColorString, SolidColorBrush Brush) ownerColor))
             {
                 Hexagon.Fill = ownerColor.Brush;
-                Hexagon.Fill.Opacity = 0.5;
+                Hexagon.Fill.Opacity = Map.MainWindowReference.MapColorsOpacity;
             }
             Grid = new()
             {
