@@ -274,6 +274,32 @@ namespace X4DataLoader
                     Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
                 }
 
+                // Process god (Stations)
+                if (fileSet.Value.TryGetValue("god", out var godFile))
+                {
+                    XDocument godDoc;
+                    try
+                    {
+                        godDoc = XDocument.Load(godFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading god {godFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    var godElements = godDoc.XPathSelectElements("/god/stations/station");
+                    if (!godElements.Any())
+                    {
+                       godElements = godDoc.XPathSelectElements("/diff/add[@sel='/god/stations']/station");
+                    }
+                    foreach (XElement stationElement in godElements)
+                    {
+                        var station = new Station();
+                        station.Load(stationElement, source, godFile.fileName, sectors);
+                    }
+                    Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
+                }
+
                 // Process galaxy
                 if (fileSet.Value.TryGetValue("galaxy", out var galaxyFile))
                 {
@@ -308,6 +334,11 @@ namespace X4DataLoader
                         }
                     }
                 }
+            }
+
+            foreach(Sector sector in galaxy.Sectors)
+            {
+                sector.CalculateOwnership();;
             }
 
             // Load other data files (galaxy, clusters, sectors, zones, highways) similarly

@@ -362,4 +362,24 @@ namespace X4DataLoader
             return $"QX: {QX}, QY: {QY}, QZ: {QZ}, QW: {QW}";
         }
     }
+
+    public class Rotation(double pitch = 0.0, double yaw = 0.0, double roll = 0.0)
+    {
+        public double Pitch { get; private set; } = pitch;
+        public double Yaw { get; private set; } = yaw;
+        public double Roll { get; private set; } = roll;
+
+        public static Rotation FromQuaternion(Quaternion quaternion)
+        {
+            double pitch = Math.Atan2(2 * (quaternion.QY * quaternion.QZ + quaternion.QX * quaternion.QW), 1 - 2 * (quaternion.QX * quaternion.QX + quaternion.QY * quaternion.QY));
+            double yaw = Math.Asin(2 * (quaternion.QX * quaternion.QZ - quaternion.QY * quaternion.QW));
+            double roll = Math.Atan2(2 * (quaternion.QX * quaternion.QY + quaternion.QZ * quaternion.QW), 1 - 2 * (quaternion.QY * quaternion.QY + quaternion.QZ * quaternion.QZ));
+            return new Rotation(pitch, yaw, roll);
+        }
+
+        public override string ToString()
+        {
+            return $"Pitch: {Pitch}, Yaw: {Yaw}, Roll: {Roll}";
+        }
+    }
 }

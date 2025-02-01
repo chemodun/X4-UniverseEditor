@@ -31,6 +31,9 @@ namespace X4DataLoader
         public Dictionary<string, Connection> Connections { get; private set; } = [];
         public List<Highway> Highways { get; private set; } = [];
         public List <HighwayPoint> HighwayPoints { get; private set; } = [];
+        public List<Station> Stations { get; private set; } = [];
+
+        public string DominantOwner { get; private set; } = "";
         private static readonly Regex SectorRegex = new(@"^(Cluster)_(\d+)_(Sector)(\d+)_macro", RegexOptions.IgnoreCase);
         public Sector()
         {
@@ -118,6 +121,46 @@ namespace X4DataLoader
         public void  AddHighwayPoint(HighwayPoint highwayPoint)
         {
             HighwayPoints.Add(highwayPoint);
+        }
+
+        public void  AddStation(Station station)
+        {
+            Stations.Add(station);
+        }
+
+        public void CalculateOwnership()
+        {
+            Dictionary<string, int> ownerStationCount = new();
+            List<string> toIgnoreOwners = ["player", "civilian", "khaak", "ownerless"];
+            List<string> toIgnoreTypes = ["piratebase"];
+            Dictionary<string, string> ownerReplacements = new() { ["alliance"] = "paranid", ["ministry"] = "teladi"};
+            foreach (Station station in Stations)
+            {
+                if (toIgnoreOwners.Contains(station.Owner))
+                {
+                    continue;
+                }
+                if (toIgnoreTypes.Contains(station.Type))
+                {
+                    continue;
+                }
+                string owner = ownerReplacements.TryGetValue(station.Owner, out string? value) ? value : station.Owner;
+                if (ownerStationCount.TryGetValue(owner, out int countedValue))
+                {
+                    ownerStationCount[owner] = ++countedValue;
+                }
+                else
+                {
+                    ownerStationCount[owner] = 1;
+                }
+            }
+            if (ownerStationCount.Count == 0) return;
+            int totalCalculableStations = ownerStationCount.Values.Sum();
+            string dominantOwner = ownerStationCount.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            if (ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100 > 50)
+            {
+                DominantOwner = dominantOwner;
+            }
         }
     }
 }
