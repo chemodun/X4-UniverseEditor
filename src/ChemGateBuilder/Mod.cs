@@ -21,7 +21,7 @@ namespace ChemGateBuilder
         private string _description = "This extension adds new gate connections between sectors";
         private string _author = "Chem O`Dun";
         private int _version = 100;
-        private int _versionInitial = 100;
+        private int _versionInitial = 0;
         private string _date = "2021-09-01";
         private int _gameVersion = 710;
         private readonly string _save = "false";
@@ -73,10 +73,11 @@ namespace ChemGateBuilder
             };
 
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.FileName))
+            if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
             {
-                currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
+                return false;
             }
+            currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
             Dictionary<string, (string path, string fileName)> relativePaths = new()
             {
                 { "galaxy", ("maps/xu_ep2_universe", "galaxy.xml") },
@@ -357,7 +358,7 @@ namespace ChemGateBuilder
             XElement content = new("content");
             content.SetAttributeValue("id", _id);
             content.SetAttributeValue("name", _name);
-            content.SetAttributeValue("version", (_version / 100.0).ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
+            content.SetAttributeValue("version", _version);
             content.SetAttributeValue("author", _author);
             content.SetAttributeValue("date", _date);
             content.SetAttributeValue("save", _save);
@@ -481,12 +482,12 @@ namespace ChemGateBuilder
             if (result)
             {
                 Log.Debug("Mod has been changed");
-                Version = _versionInitial + 1;
+                Version = _versionInitial == 0 ? 100 : (_versionInitial + 1);
             }
             else
             {
                 Log.Debug("Mod has not been changed");
-                Version = _versionInitial;
+                Version = _versionInitial == 0 ? 100 : _versionInitial;
             }
             return result;
         }
