@@ -21,9 +21,10 @@
                         Grid.Row="1"
                         HorizontalScrollBarVisibility="Auto"
                         VerticalScrollBarVisibility="Auto"
+                        Background="LightGray"
                         ScrollChanged="GalaxyScrollViewer_ScrollChanged">
             <Canvas x:Name="GalaxyCanvas"
-                Background="White"
+                Background="LightGray"
                 />
         </ScrollViewer>
     </Grid>

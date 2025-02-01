@@ -77,13 +77,13 @@ namespace ChemGateBuilder
         public Sector? SelectedSector = null;
         // Fields to track panning state
         private bool isPanning = false;
-        private Point panStartPoint = new Point();
+        private Point panStartPoint = new();
         private double scrollHorizontalOffset = 0;
         private double canvasToScrollWidthDelta = 0;
         private double canvasToScrollHeightDelta = 0;
         private double scrollVerticalOffset = 0;
         private double canvasWidth = 0;
-        private Sector? clickedSector = null;
+        private readonly Sector? clickedSector = null;
         public List<SectorMapItem> SectorsItems = [];
 
         public GalaxyMapWindow(MainWindow mainWindow)
@@ -194,7 +194,7 @@ namespace ChemGateBuilder
                     _clusters.Add(clusterMapCluster);
                     if (cluster.Sectors.Count > 1 && cluster.Highways.Count > 0)
                     {
-                        foreach (HighwayClusterLevel highway in cluster.Highways)
+                        foreach (HighwayClusterLevel highway in cluster.Highways.Cast<HighwayClusterLevel>())
                         {
                             SectorMapItem? pointEntry = SectorsItems.Find(item => item.Id == highway?.EntryPointPath?.Zone?.Name);
                             SectorMapItem? pointExit = SectorsItems.Find(item => item.Id == highway?.ExitPointPath?.Zone?.Name);
@@ -498,27 +498,14 @@ namespace ChemGateBuilder
             (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
         ];
 
+        private static readonly SolidColorBrush FillColor = Brushes.LightGray;
+
         public virtual void Create()
         {
             if (Map == null ||Cluster == null || Canvas == null)
             {
                 return;
             }
-            UpdatePoints();
-            // Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
-            Hexagon = new()
-            {
-                Stroke = Brushes.Black,
-                StrokeThickness = 1,
-                Fill = new SolidColorBrush(Color.FromRgb(245, 245, 245)),
-                Tag = Cluster.Name,
-                DataContext = Cluster,
-                Points = Points
-            };
-            // Position the Hexagon on the Canvas
-            Canvas.SetLeft(Hexagon, X);
-            Canvas.SetTop(Hexagon, Y);
-            Canvas.Children.Add(Hexagon);
             if (Cluster.Sectors.Count == 1)
             {
                 Sector sector = Cluster.Sectors[0];
@@ -527,6 +514,21 @@ namespace ChemGateBuilder
                 _sectors.Add(clusterMapSector);
             }
             else {
+                UpdatePoints();
+                // Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
+                Hexagon = new()
+                {
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1,
+                    Fill = Brushes.Transparent,
+                    Tag = Cluster.Name,
+                    DataContext = Cluster,
+                    Points = Points
+                };
+                // Position the Hexagon on the Canvas
+                Canvas.SetLeft(Hexagon, X);
+                Canvas.SetTop(Hexagon, Y);
+                Canvas.Children.Add(Hexagon);
                 List <HexagonCorner> corners = [];
                 List <double?> angles = [];
                 for (int i = 0; i < Cluster.Sectors.Count; i++)
@@ -676,15 +678,17 @@ namespace ChemGateBuilder
 
         public virtual void Update()
         {
-            if (Cluster == null || Canvas == null || Hexagon == null)
+            if (Cluster == null || Canvas == null)
             {
                 return;
             }
-            UpdatePoints();
-            Hexagon.Points = Points;
-            // Position the Hexagon on the Canvas
-            Canvas.SetLeft(Hexagon, X);
-            Canvas.SetTop(Hexagon, Y);
+            if (Hexagon != null) {
+                UpdatePoints();
+                Hexagon.Points = Points;
+                // Position the Hexagon on the Canvas
+                Canvas.SetLeft(Hexagon, X);
+                Canvas.SetTop(Hexagon, Y);
+            }
             foreach (GalaxyMapSector sector in _sectors)
             {
                 sector.Update();

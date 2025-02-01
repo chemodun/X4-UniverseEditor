@@ -242,7 +242,7 @@ namespace X4DataLoader
             }
         }
 
-        public static List<string> ConnectionOwnerClasses =
+        private static readonly List<string> ConnectionOwnerClasses =
         [
             "cluster",
             "sector",
@@ -324,15 +324,15 @@ namespace X4DataLoader
             if (properties != null && properties.Count > 0 && properties.TryGetValue("isActive", out string? isActive))
             {
                 IsActive = isActive == "true";
-                XElement macroElement = XML.Element("macro") ?? new XElement("macro");
+                XElement macroElement = XML?.Element("macro") ?? new XElement("macro");
                 XElement propertiesElement = macroElement.Element("properties") ?? new XElement("properties");
                 XElement stateElement = propertiesElement.Element("state") ?? new XElement("state");
                 stateElement.SetAttributeValue("active", IsActive);
                 propertiesElement.Add(stateElement);
                 macroElement.Add(propertiesElement);
-                if (XML.Element("macro") == null)
+                if (XML?.Element("macro") == null)
                 {
-                    XML.Add(macroElement);
+                    XML?.Add(macroElement);
                 }
             }
         }
