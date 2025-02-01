@@ -229,6 +229,22 @@ namespace ChemGateBuilder
                         galaxyMapGateConnection.Create(GalaxyCanvas);
                     }
                 }
+                if (MainWindowReference.GalaxyConnections != null && MainWindowReference.GalaxyConnections.Count > 0)
+                {
+                    foreach (GalaxyConnectionData connection in MainWindowReference.GalaxyConnections)
+                    {
+                        if (connection.Connection.Name == null)
+                        {
+                            continue;
+                        }
+                        List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == connection.Connection.Name);
+                        if (newGatesItems.Count == 2)
+                        {
+                            GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);
+                            galaxyMapGateConnection.Create(GalaxyCanvas);
+                        }
+                    }
+                }
                 if (MainWindowReference.GatesConnectionCurrent?.SectorDirect != null && MainWindowReference.GatesConnectionCurrent.SectorOpposite != null)
                 {
                     List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == "New");
@@ -765,16 +781,23 @@ namespace ChemGateBuilder
             SectorMapHelper.InternalSizeKm= Map.MainWindowReference.SectorRadius;
             SectorMapHelper.ItemSizeMinPx = 4;
             SectorMapHelper.SetSector(Sector, Map.Galaxy);
-            if (Map.MainWindowReference.GatesConnectionCurrent != null)
+            if (Map.MainWindowReference != null)
             {
-                if (Map.MainWindowReference.GatesConnectionCurrent.SectorDirect?.Macro == Sector.Macro)
-                {
-                    Map.MainWindowReference.GatesConnectionCurrent.UpdateCurrentGateOnMap("GateDirect", SectorMapHelper);
+                foreach(SectorConnectionData modConnection in Map.MainWindowReference.GetSectorConnectionsFromMod(Sector.Macro)) {
+                    SectorMapHelper.AddItem(modConnection);
                 }
-                else if (Map.MainWindowReference.GatesConnectionCurrent.SectorOpposite?.Macro == Sector.Macro)
+                if (Map.MainWindowReference.GatesConnectionCurrent != null)
                 {
-                    Map.MainWindowReference.GatesConnectionCurrent.UpdateCurrentGateOnMap("GateOpposite", SectorMapHelper);
+                    if (Map.MainWindowReference.GatesConnectionCurrent.SectorDirect?.Macro == Sector.Macro)
+                    {
+                        Map.MainWindowReference.GatesConnectionCurrent.UpdateCurrentGateOnMap("GateDirect", SectorMapHelper);
+                    }
+                    else if (Map.MainWindowReference.GatesConnectionCurrent.SectorOpposite?.Macro == Sector.Macro)
+                    {
+                        Map.MainWindowReference.GatesConnectionCurrent.UpdateCurrentGateOnMap("GateOpposite", SectorMapHelper);
+                    }
                 }
+
             }
             foreach(SectorMapItem item in SectorMapHelper.Items)
             {
