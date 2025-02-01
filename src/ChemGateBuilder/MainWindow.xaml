@@ -113,6 +113,7 @@
                 <fluent:RibbonGroupBox Header="Mod Actions">
                     <fluent:Button Header="New"
                                     IsEnabled="{Binding IsGateCanBeCreated}"
+                                    Click="ButtonNewMod_Click"
                                     Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="FileCirclePlus" Style="{StaticResource FontAwesomeIconStyle}"/>

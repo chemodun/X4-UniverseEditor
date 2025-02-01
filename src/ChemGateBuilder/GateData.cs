@@ -223,8 +223,8 @@ namespace ChemGateBuilder
         }
         public void Reset()
         {
-            _sectorDirect = _sectorDirectDefault;
-            _sectorOpposite = _sectorOppositeDefault;
+            SectorDirect = _sectorDirectDefault;
+            SectorOpposite = _sectorOppositeDefault;
             _gateDirect.Reset();
             _gateOpposite.Reset();
             IsChanged = IsDataChanged;
@@ -441,7 +441,11 @@ namespace ChemGateBuilder
                 var sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
                 sectorConnections.Clear();
                 SectorMap sectorMap = isDirect ? SectorDirectMap : SectorOppositeMap;
-                if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null && sectorCurrent?.Macro != null)
+                if (sectorCurrent?.Macro == null) {
+                    sectorMap.ClearItems();
+                    sectorMap.OwnerColor = SectorMap.OwnerColorInitial;
+                }
+                else if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null)
                 {
                     Galaxy galaxy = mainWindow.Galaxy;
                     Sector? sector = sectorCurrent != null ? galaxy.GetSectorByMacro(sectorCurrent.Macro) : null;

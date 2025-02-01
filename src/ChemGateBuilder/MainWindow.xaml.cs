@@ -1045,6 +1045,17 @@ namespace ChemGateBuilder
             }
         }
 
+        public void ButtonNewMod_Click(object sender, RoutedEventArgs e)
+        {
+            ChemGateKeeperMod = new();
+            GalaxyConnections.Clear();
+            GatesConnectionCurrent?.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
+            SectorsDirectViewSource.View.Refresh();
+            SectorsOppositeViewSource.View.Refresh();
+            CurrentGalaxyConnection = null;
+            IsModCanBeSaved = false;
+        }
+
         public void ButtonLoadMod_Click(object sender, RoutedEventArgs e)
         {
             if (Galaxy == null)

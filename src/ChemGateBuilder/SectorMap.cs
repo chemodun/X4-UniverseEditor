@@ -25,7 +25,8 @@ namespace ChemGateBuilder
         protected double _visualSizePx = 200; // Default size
         protected double _internalSizeKm = 400;
         private string?  _selectedItemId = "";
-        private string _ownerColor = "#F0F0F0";
+        private string _ownerColor = OwnerColorInitial;
+        public static string OwnerColorInitial = "#F0F0F0";
 
         public static readonly Dictionary<string, (string ColorString, SolidColorBrush Brush)> OwnerToColor = new Dictionary<string, (string, SolidColorBrush)>
         {
