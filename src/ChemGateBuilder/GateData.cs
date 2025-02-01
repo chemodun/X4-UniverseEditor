@@ -424,10 +424,15 @@ namespace ChemGateBuilder
             return "";
         }
 
-        protected void OnPropertyChanged(string propertyName)
+        public void UpdateDataFlags()
         {
             if (_isChanged != IsDataChanged) IsChanged = IsDataChanged;
             if (_isReadyToSave != IsDataReadyToSave) IsReadyToSave = IsDataReadyToSave;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            UpdateDataFlags();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             if (propertyName == nameof(SectorDirect) || propertyName == nameof(SectorOpposite))
             {

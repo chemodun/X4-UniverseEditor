@@ -20,7 +20,7 @@ namespace ChemGateBuilder
         private string _name = "Chem Gate Keeper";
         private string _description = "This extension adds new gate connections between sectors";
         private string _author = "Chem O`Dun";
-        private int _version = 0;
+        private int _version = 100;
         private int _versionInitial = 100;
         private string _date = "2021-09-01";
         private int _gameVersion = 710;
@@ -32,17 +32,24 @@ namespace ChemGateBuilder
         public int Version
         {
             get => _version;
-            set { _version = value; OnPropertyChanged(nameof(Version)); }
+            set { _version = value; OnPropertyChanged(nameof(Version)); OnPropertyChanged(nameof(Title));}
         }
         public string Date
         {
             get => _date;
-            set { _date = value; OnPropertyChanged(nameof(Date)); }
+            set { _date = value; OnPropertyChanged(nameof(Date)); OnPropertyChanged(nameof(Title));}
         }
         public int GameVersion
         {
             get => _gameVersion;
-            set { _gameVersion = value; OnPropertyChanged(nameof(GameVersion)); }
+            set { _gameVersion = value; OnPropertyChanged(nameof(GameVersion)); OnPropertyChanged(nameof(Title));}
+        }
+        public string Title {
+            get {
+                string versionString = $" {_version / 100.0:F2}".Replace(',', '.') + (_version != _versionInitial ? "*" : "");
+                string gameVersion = $"{_gameVersion / 100.0:F2}".Replace(',', '.');
+                return $"{_name} v.{versionString} built {_date} for X4: Foundations v.{gameVersion}";
+            }
         }
 
         public List<GalaxyConnection> Connections = [];
@@ -51,6 +58,7 @@ namespace ChemGateBuilder
         public ChemGateKeeper()
         {
             XML = null;
+            Date = DateTime.Now.ToString("yyyy-MM-dd");
         }
 
         public bool LoadData(Galaxy galaxy)
@@ -235,11 +243,11 @@ namespace ChemGateBuilder
             }
             _id = contentElement.Attribute("id")?.Value ?? _id;
             _name = contentElement.Attribute("name")?.Value ?? _name;
-            _version = (int)(double.Parse(contentElement.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture) * 100);
+            Version = int.Parse(contentElement.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture);
             _author = contentElement.Attribute("author")?.Value ?? _author;
-            _date = contentElement.Attribute("date")?.Value ?? _date;
+            Date = contentElement.Attribute("date")?.Value ?? _date;
             _description = contentElement.Attribute("description")?.Value ?? _description;
-            _gameVersion = int.Parse(contentElement.Element("dependency")?.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture);
+            GameVersion = int.Parse(contentElement.Element("dependency")?.Attribute("version")?.Value ?? "710", System.Globalization.CultureInfo.InvariantCulture);
             Connections = modGalaxy.Connections;
             _versionInitial = _version;
             return true;

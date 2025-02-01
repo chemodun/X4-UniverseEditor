@@ -287,7 +287,7 @@
                         Style ="{StaticResource StatusMessageStyle}"/>
                 </StatusBarItem>
             </StatusBar>
-            <GroupBox Header="Chem Gate Builder" DockPanel.Dock="Top" Margin="5">
+            <GroupBox Header="{Binding ChemGateKeeperMod.Title}" DockPanel.Dock="Top" Margin="5">
                 <DockPanel  VerticalAlignment="Stretch" LastChildFill="True">
                     <GroupBox Header="Gates" Margin="5" DockPanel.Dock="Bottom">
                         <StackPanel Orientation="Vertical" Margin="5">

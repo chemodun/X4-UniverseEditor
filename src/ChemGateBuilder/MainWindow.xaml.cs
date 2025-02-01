@@ -134,6 +134,7 @@ namespace ChemGateBuilder
                     _gatesMinimalDistanceBetween = value;
                     OnPropertyChanged(nameof(GatesMinimalDistanceBetween));
                     SaveConfiguration();
+                    GatesConnectionCurrent?.UpdateDataFlags();
                 }
             }
         }
@@ -293,7 +294,19 @@ namespace ChemGateBuilder
 
         public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = [];
 
-        private readonly ChemGateKeeper _mod = new();
+        private ChemGateKeeper _chemGateKeeperMod = new();
+        public ChemGateKeeper ChemGateKeeperMod
+        {
+            get => _chemGateKeeperMod;
+            set
+            {
+                if (_chemGateKeeperMod != value)
+                {
+                    _chemGateKeeperMod = value;
+                    OnPropertyChanged(nameof(ChemGateKeeperMod));
+                }
+            }
+        }
 
         private bool _isModCanBeSaved = false;
         public bool IsModCanBeSaved
@@ -413,7 +426,7 @@ namespace ChemGateBuilder
                 }
                 if (value && IsGateCanBeDeleted)
                 {
-                    IsModCanBeSaved = _mod.IsModChanged(GalaxyConnections);
+                    IsModCanBeSaved = ChemGateKeeperMod.IsModChanged(GalaxyConnections);
                 } else
                 {
                     IsModCanBeSaved = false;
@@ -1039,10 +1052,10 @@ namespace ChemGateBuilder
                 SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
                 return;
             }
-            if (_mod.LoadData(Galaxy))
+            if (ChemGateKeeperMod.LoadData(Galaxy))
             {
                 GalaxyConnections.Clear();
-                foreach (var connection in _mod.Connections)
+                foreach (var connection in ChemGateKeeperMod.Connections)
                 {
                     GalaxyConnectionData newConnection = new(connection);
                     GalaxyConnections.Add(newConnection);
@@ -1068,7 +1081,7 @@ namespace ChemGateBuilder
         {
             if (GalaxyConnections.Count > 0)
             {
-                _mod.SaveData(GalaxyConnections);
+                ChemGateKeeperMod.SaveData(GalaxyConnections);
                 IsModCanBeSaved = false;
             }
         }
