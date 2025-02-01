@@ -14,6 +14,7 @@ using System.Windows.Data;
 using Microsoft.Windows.Themes;
 using System.Runtime.CompilerServices;
 using System.Windows.Ink;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace ChemGateBuilder
 {
@@ -452,8 +453,18 @@ namespace ChemGateBuilder
         protected Canvas? Canvas = canvas;
         protected PointCollection Points = [];
         protected Polygon? Hexagon = null;
-
         private readonly List<GalaxyMapSector> _sectors = [];
+
+        private static readonly List<HexagonCornersTriplet> Triplets = [
+            new HexagonCornersTriplet(HexagonCorner.LeftTop, HexagonCorner.RightCenter, HexagonCorner.LeftBottom),
+            new HexagonCornersTriplet(HexagonCorner.RightTop, HexagonCorner.LeftCenter, HexagonCorner.RightBottom),
+        ];
+
+        private static readonly List<(HexagonCorner, HexagonCorner)> HorizontalPairs = [
+            (HexagonCorner.LeftTop, HexagonCorner.RightTop),
+            (HexagonCorner.LeftCenter, HexagonCorner.RightCenter),
+            (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
+        ];
 
         public virtual void Create()
         {
@@ -526,9 +537,11 @@ namespace ChemGateBuilder
                     }
                     Log.Debug($"Sector {sector.Name}  with Position: X = {sector.Position.X}, Y = {sector.Position.Y}, Z = {sector.Position.Z}. Angle: {angle}, Corner: {corners[i]}");
                 }
-                if (corners.Count == 3 ) {
-                    corners[0] = ThreeSectorsGetOppositeCorner(corners[1], corners[2]);
-                } else if (corners.Count == 2) {
+                if (corners.Count == 3 )
+                {
+                    corners[0] = HexagonCornersTriplet.GetCornerByTwoOther(corners[1], corners[2], Triplets);
+                } else if (corners.Count == 2)
+                {
                     if (angles[1] < 90 && angles[1] > 0) {
                         corners[0] = HexagonCorner.LeftBottom;
                         corners[1] = HexagonCorner.RightTop;
@@ -553,7 +566,8 @@ namespace ChemGateBuilder
                                 break;
                         }
                     }
-                    else if (angles[1] == 0) {
+                    else if (angles[1] == 0)
+                    {
                         switch (Cluster.Macro) {
                             case "Cluster_15_macro":                        // Ianamus Zura
                             case "Cluster_19_macro":                        // Hewa's Twin I & II
@@ -567,7 +581,8 @@ namespace ChemGateBuilder
 
                         }
                     }
-                    else if (angles[1] == -90) {
+                    else if (angles[1] == -90)
+                    {
                         switch (Cluster.Macro) {
                             case "Cluster_25_macro":                        // Faulty Logic
                             case "Cluster_112_macro":                       // Savage Spur
@@ -580,61 +595,49 @@ namespace ChemGateBuilder
                                 break;
                         }
                     }
-                    else if (angles[1] == -180) {
-                    }
-                }
-                List <int> sortedByCorner = [];
-                for (int i = 0; i < corners.Count; i++) {
-                    if (corners[i] == HexagonCorner.LeftTop || corners[i] == HexagonCorner.RightTop) {
-                        sortedByCorner.Insert(0, i);
-                    }
-                    else if (corners[i] == HexagonCorner.LeftCenter || corners[i] == HexagonCorner.RightCenter) {
-                        if (sortedByCorner.Count == 0 || (sortedByCorner.Count == 1 && (corners[sortedByCorner[0]] == HexagonCorner.LeftTop || corners[sortedByCorner[0]] == HexagonCorner.RightTop))) {
-                            sortedByCorner.Add(i);
-                        }
-                        else {
-                            sortedByCorner.Insert(0, i);
-                        }
-                    }
-                    else if (corners[i] == HexagonCorner.LeftBottom || corners[i] == HexagonCorner.RightBottom) {
-                        sortedByCorner.Add(i);
-                    }
-                }
-                for (int j = 0; j < sortedByCorner.Count; j++) {
-                    int i = sortedByCorner[j];
-                    double x = 0;
-                    double y = 0;
-                    switch (corners[i])
+                    else if (angles[1] == -180)
                     {
-                        case HexagonCorner.RightCenter:
-                            x = _x + 0.5;
-                            y = _y + 0.25;
-                            break;
-                        case HexagonCorner.RightBottom:
-                            x = _x + 0.375;
-                            y = _y + 0.5;
-                            break;
-                        case HexagonCorner.LeftBottom:
-                            x = _x + 0.125;
-                            y = _y + 0.5;
-                            break;
-                        case HexagonCorner.LeftCenter:
-                            x = _x;
-                            y = _y +  0.25;
-                            break;
-                        case HexagonCorner.LeftTop:
-                            x = _x + 0.125;
-                            y = _y;
-                            break;
-                        case HexagonCorner.RightTop:
-                            x = _x + 0.375;
-                            y = _y;
-                            break;
                     }
-                    Log.Debug($"Sector {Cluster.Sectors[i].Name}: Corner: {corners[i]}, Position: X = {x}, Y = {y}");
-                    GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[i], true);
-                    clusterMapSector.Create();
-                    _sectors.Add(clusterMapSector);
+                }
+                foreach (var pair in HorizontalPairs)
+                {
+                    if (corners.Contains(pair.Item1) || corners.Contains(pair.Item2))
+                    {
+                        int index = corners.Contains(pair.Item1) ? corners.IndexOf(pair.Item1) : corners.IndexOf(pair.Item2);
+                        double x = 0;
+                        double y = 0;
+                        switch (corners[index])
+                        {
+                            case HexagonCorner.RightCenter:
+                                x = _x + 0.5;
+                                y = _y + 0.25;
+                                break;
+                            case HexagonCorner.RightBottom:
+                                x = _x + 0.375;
+                                y = _y + 0.5;
+                                break;
+                            case HexagonCorner.LeftBottom:
+                                x = _x + 0.125;
+                                y = _y + 0.5;
+                                break;
+                            case HexagonCorner.LeftCenter:
+                                x = _x;
+                                y = _y +  0.25;
+                                break;
+                            case HexagonCorner.LeftTop:
+                                x = _x + 0.125;
+                                y = _y;
+                                break;
+                            case HexagonCorner.RightTop:
+                                x = _x + 0.375;
+                                y = _y;
+                                break;
+                        }
+                        Log.Debug($"Sector {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
+                        GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[index], true);
+                        clusterMapSector.Create();
+                        _sectors.Add(clusterMapSector);
+                    }
                 }
             }
         }
@@ -673,42 +676,6 @@ namespace ChemGateBuilder
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private static HexagonCorner ThreeSectorsGetOppositeCorner(HexagonCorner corner1, HexagonCorner corner2)
-        {
-            if (corner1 == HexagonCorner.RightCenter && corner2 == HexagonCorner.LeftBottom || corner1 == HexagonCorner.LeftBottom && corner2 == HexagonCorner.RightCenter)
-            {
-                return HexagonCorner.LeftTop;
-            }
-            else if (corner1 == HexagonCorner.RightCenter && corner2 == HexagonCorner.RightTop || corner1 == HexagonCorner.RightTop && corner2 == HexagonCorner.RightCenter)
-            {
-                return HexagonCorner.LeftCenter;
-            }
-            else if (corner1 == HexagonCorner.RightCenter && corner2 == HexagonCorner.LeftTop || corner1 == HexagonCorner.LeftTop && corner2 == HexagonCorner.RightCenter)
-            {
-                return HexagonCorner.RightBottom;
-            }
-            else if (corner1 == HexagonCorner.RightBottom && corner2 == HexagonCorner.RightTop || corner1 == HexagonCorner.RightTop && corner2 == HexagonCorner.RightBottom)
-            {
-                return  HexagonCorner.LeftTop;
-            }
-            else if (corner1 == HexagonCorner.RightBottom && corner2 == HexagonCorner.LeftCenter || corner1 == HexagonCorner.LeftCenter && corner2 == HexagonCorner.RightBottom)
-            {
-                return HexagonCorner.RightTop;
-            }
-            else if (corner1 == HexagonCorner.LeftBottom && corner2 == HexagonCorner.LeftTop || corner1 == HexagonCorner.LeftTop && corner2 == HexagonCorner.LeftBottom)
-            {
-                return HexagonCorner.RightCenter;
-            }
-            else if (corner1 == HexagonCorner.LeftCenter && corner2 == HexagonCorner.RightTop || corner1 == HexagonCorner.RightTop && corner2 == HexagonCorner.LeftCenter)
-            {
-                return HexagonCorner.RightBottom;
-            }
-            else {
-                Log.Warn($"ThreeSectorsGetOppositeCorner: Unexpected corners: {corner1}, {corner2}");
-            }
-            return HexagonCorner.Unknown;
-        }
     }
 
     class GalaxyMapSector(GalaxyMapWindow map, double x, double y, Canvas canvas, Cluster cluster, Sector sector, bool isHalf = false) : GalaxyMapCluster(map, x, y, canvas, cluster)
@@ -718,7 +685,7 @@ namespace ChemGateBuilder
         protected Sector? Sector = sector;
         protected Grid? Grid = null;
         protected TextBox? TextBox = null;
-        private SectorMap SectorMapHelper = new();
+        private readonly SectorMap SectorMapHelper = new();
 
         public override void Create()
         {
@@ -818,24 +785,13 @@ namespace ChemGateBuilder
 
                 // Assign the transform to the Image
                 image.RenderTransform = translateTransform;
-                // Option 1: Direct Binding
+                // Binding for ToolTip
                 Binding toolTipBinding = new("ToolTip")
                 {
                     Source = item
                 };
                 image.SetBinding(Image.ToolTipProperty, toolTipBinding);
 
-                // Option 2: Using ToolTip Element
-                /*
-                ToolTip toolTip = new ToolTip();
-                Binding toolTipContentBinding = new Binding("ToolTip")
-                {
-                    Source = item
-                };
-                toolTip.SetBinding(ToolTip.ContentProperty, toolTipContentBinding);
-                image.ToolTip = toolTip;
-                */
-                // Add the Image to the Canvas
                 Canvas.Children.Add(image);
             }
         }
@@ -888,7 +844,7 @@ namespace ChemGateBuilder
             }
         }
 
-        private bool IsGate = true;
+        private readonly bool IsGate = true;
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
@@ -939,6 +895,32 @@ namespace ChemGateBuilder
         }
     }
 
+    class HexagonCornersTriplet(HexagonCorner top, HexagonCorner center, HexagonCorner bottom)
+    {
+        public HexagonCorner Top = top;
+        public HexagonCorner Center = center;
+        public HexagonCorner Bottom = bottom;
+
+        public static HexagonCorner GetCornerByTwoOther(HexagonCorner corner1, HexagonCorner corner2, List<HexagonCornersTriplet> triplets)
+        {
+            foreach (HexagonCornersTriplet triplet in triplets)
+            {
+                if ((triplet.Top == corner1 && triplet.Center == corner2) || (triplet.Top == corner2 && triplet.Center == corner1))
+                {
+                    return triplet.Bottom;
+                }
+                else if ((triplet.Center == corner1 && triplet.Bottom == corner2) || (triplet.Center == corner2 && triplet.Bottom == corner1))
+                {
+                    return triplet.Top;
+                }
+                else if ((triplet.Top == corner1 && triplet.Bottom == corner2) || (triplet.Top == corner2 && triplet.Bottom == corner1))
+                {
+                    return triplet.Center;
+                }
+            }
+            return HexagonCorner.Unknown;
+        }
+    }
     enum HexagonCorner
     {
         RightCenter,
