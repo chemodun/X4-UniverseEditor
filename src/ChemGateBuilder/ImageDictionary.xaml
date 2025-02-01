@@ -3,4 +3,5 @@
                     xmlns:local="clr-namespace:tradeware.Resources">
     <BitmapImage x:Key="BuilderIcon" UriSource="Assets/builder.ico"/>
     <BitmapImage x:Key="XIcon" UriSource="Assets/x4.ico"/>
+    <BitmapImage x:Key="GalaxyMapIcon" UriSource="Assets/galaxymap.ico"/>
 </ResourceDictionary>

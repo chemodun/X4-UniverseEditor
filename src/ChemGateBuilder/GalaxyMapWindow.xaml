@@ -1,9 +1,10 @@
 <Window x:Class="ChemGateBuilder.GalaxyMapWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Cluster Map" Height="600" Width="800"
+        Title="Galaxy Map" Height="600" Width="800"
         WindowStartupLocation="CenterScreen"
         SizeChanged="GalaxyMapWindow_SizeChanged"
+        Icon="{StaticResource BuilderIcon}"
         PreviewMouseWheel="Window_PreviewMouseWheel">
     <Grid>
         <Grid.RowDefinitions>
