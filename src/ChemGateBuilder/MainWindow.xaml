@@ -10,6 +10,7 @@
         mc:Ignorable="d"
         Title="Chem Gate Builder" MinWidth="1200" MinHeight="940"
         Icon="{StaticResource BuilderIcon}"
+        WindowStartupLocation="CenterScreen"
         Name="ChemGateBuilder">
         <!-- DataContext="{Binding Main, Source={StaticResource Locator}}" -->
     <Window.Resources>

@@ -266,8 +266,8 @@ namespace ChemGateBuilder
             StatusMessageType = messageType;
         }
 
-        private string _gateMacroDefault = "props_gates_anc_gate_macro";
-        private static string GalaxyConnectionPrefix = "Chem_Gate";
+        private readonly string _gateMacroDefault = "props_gates_anc_gate_macro";
+        private static readonly string GalaxyConnectionPrefix = "Chem_Gate";
 
         private GalaxyConnectionData? _currentGalaxyConnection;
         public GalaxyConnectionData? CurrentGalaxyConnection
@@ -291,9 +291,9 @@ namespace ChemGateBuilder
             }
         }
 
-        public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = new ObservableCollection<GalaxyConnectionData>();
+        public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = [];
 
-        private ChemGateKeeper _mod = new ChemGateKeeper();
+        private readonly ChemGateKeeper _mod = new();
 
         private bool _isModCanBeSaved = false;
         public bool IsModCanBeSaved
@@ -310,13 +310,13 @@ namespace ChemGateBuilder
         }
 
         // Master sector list
-        public ObservableCollection<SectorItem> AllSectors { get; } = new ObservableCollection<SectorItem>();
+        public ObservableCollection<SectorItem> AllSectors { get; } = [];
 
         // CollectionViewSources for filtering
         public CollectionViewSource SectorsDirectViewSource { get; } = new CollectionViewSource();
         public CollectionViewSource SectorsOppositeViewSource { get; } = new CollectionViewSource();
 
-        public ObservableCollection<string> GateMacros { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> GateMacros { get; } = [];
         // GatesConnectionCurrent Property
         private GatesConnectionData? _gatesConnectionCurrent;
         public GatesConnectionData? GatesConnectionCurrent
@@ -696,7 +696,7 @@ namespace ChemGateBuilder
 
         private List<string> GetOppositeSectorsMacrosFromMod(string sectorMacro)
         {
-            List<string> oppositeSectorsMacros = new List<string>();
+            List<string> oppositeSectorsMacros = [];
             foreach (var connection in GalaxyConnections)
             {
                 if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
@@ -721,7 +721,7 @@ namespace ChemGateBuilder
 
         public List<SectorConnectionData> GetSectorConnectionsFromMod(string sectorMacro)
         {
-            List<SectorConnectionData> sectorConnections = new List<SectorConnectionData>();
+            List<SectorConnectionData> sectorConnections = [];
             foreach (var connection in GalaxyConnections)
             {
                 if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
@@ -754,7 +754,7 @@ namespace ChemGateBuilder
 
         private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
         {
-            GalaxyMapWindow clusterMapWindow = new GalaxyMapWindow(this);
+            GalaxyMapWindow clusterMapWindow = new(this);
             clusterMapWindow.ShowDialog();
             if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
             {
@@ -764,7 +764,7 @@ namespace ChemGateBuilder
 
         private void ButtonSectorOppositeSelectFromMap_Click(object sender, RoutedEventArgs e)
         {
-            GalaxyMapWindow clusterMapWindow = new GalaxyMapWindow(this);
+            GalaxyMapWindow clusterMapWindow = new(this);
             clusterMapWindow.ShowDialog();
             if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
             {
@@ -869,17 +869,18 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent != null)
             {
                 Log.Debug($"[ButtonSectorDirectMapExpand_Click] Direct: ");
-                SectorMapExpandedWindow sectorMapExpandedWindow = new SectorMapExpandedWindow(SectorRadius);
-
-                // Set the owner to the main window for proper window behavior
-                sectorMapExpandedWindow.Owner = this;
+                SectorMapExpandedWindow sectorMapExpandedWindow = new(SectorRadius)
+                {
+                    // Set the owner to the main window for proper window behavior
+                    Owner = this
+                };
                 var minSize = Math.Min(this.ActualWidth, this.ActualHeight) * 0.9;
                 sectorMapExpandedWindow.Width = minSize;
                 sectorMapExpandedWindow.Height = minSize;
                 sectorMapExpandedWindow.Left = GetWindowLeft() + (this.ActualWidth - minSize) / 2;
                 sectorMapExpandedWindow.Top = GetWindowTop() + (this.ActualHeight - minSize) / 2;
                 SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
-                sectorMapExpandedWindow.SetMapItems(sectorMap.Items.ToList());
+                sectorMapExpandedWindow.SetMapItems([.. sectorMap.Items]);
                 sectorMapExpandedWindow.SectorMapExpanded.OwnerColor = sectorMap.OwnerColor;
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
                 sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm = isDirect ? GatesConnectionCurrent.SectorDirectMap.InternalSizeKm : GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm;
@@ -929,23 +930,23 @@ namespace ChemGateBuilder
                 string gateOppositeId = $"connection_{GalaxyConnectionPrefix}_{sectorOppositeId}_to_{sectorDirectId}";
                 string zoneDirectId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_Cluster_{sectorDirect.ClusterId:D2}_Sector_{sectorDirect.Id:D3}";
                 string zoneOppositeId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_Cluster_{sectorOpposite.ClusterId:D2}_Sector_{sectorOpposite.Id:D3}";
-                GateConnection gateDirect = new GateConnection();
+                GateConnection gateDirect = new();
                 GateData gateData = GatesConnectionCurrent.GateDirect;
                 Coordinates position = gateData.Position;
-                Position gatePosition = new Position(position.X, position.Y, position.Z);
+                Position gatePosition = new(position.X, position.Y, position.Z);
                 Coordinates coordinates = gateData.Coordinates;
-                Position zonePosition = new Position(coordinates.X, coordinates.Y, coordinates.Z);
+                Position zonePosition = new(coordinates.X, coordinates.Y, coordinates.Z);
                 gateDirect.Create(gateDirectId, gatePosition, gateData.Rotation.ToQuaternion(), new Dictionary<string, string>
                 {
                     ["gateMacro"] = gateData.GateMacro,
                     ["isActive"] = gateData.Active ? "true" : "false"
                 });
-                Zone zoneDirect = new Zone();
+                Zone zoneDirect = new();
                 zoneDirect.Create($"{zoneDirectId}_macro", new Dictionary<string, Connection>
                 {
                     [gateDirectId] = gateDirect
                 }, zonePosition, $"{zoneDirectId}_connection");
-                GateConnection gateOpposite = new GateConnection();
+                GateConnection gateOpposite = new();
                 gateData = GatesConnectionCurrent.GateOpposite;
                 position = gateData.Position;
                 gatePosition = new Position(position.X, position.Y, position.Z);
@@ -956,7 +957,7 @@ namespace ChemGateBuilder
                     ["gateMacro"] = gateData.GateMacro,
                     ["isActive"] = gateData.Active ? "true" : "false"
                 });
-                Zone zoneOpposite = new Zone();
+                Zone zoneOpposite = new();
                 zoneOpposite.Create($"{zoneOppositeId}_macro", new Dictionary<string, Connection>
                 {
                     [gateOppositeId] = gateOpposite
@@ -968,7 +969,7 @@ namespace ChemGateBuilder
                     SetStatusMessage("Error: Clusters not found.", StatusMessageType.Error);
                     return;
                 }
-                GalaxyConnection galaxyConnection = new GalaxyConnection();
+                GalaxyConnection galaxyConnection = new();
                 galaxyConnection.Create(galaxyConnectionId, clusterDirect, sectorDirect, zoneDirect, gateDirect, clusterOpposite, sectorOpposite, zoneOpposite, gateOpposite);
                 if (CurrentGalaxyConnection != null)
                 {
@@ -978,7 +979,7 @@ namespace ChemGateBuilder
                 }
                 else
                 {
-                    GalaxyConnectionData newConnection = new GalaxyConnectionData(galaxyConnection, GatesConnectionCurrent);
+                    GalaxyConnectionData newConnection = new(galaxyConnection, GatesConnectionCurrent);
                     GalaxyConnections.Add(newConnection);
                     CurrentGalaxyConnection = newConnection;
                 }
@@ -1043,7 +1044,7 @@ namespace ChemGateBuilder
                 GalaxyConnections.Clear();
                 foreach (var connection in _mod.Connections)
                 {
-                    GalaxyConnectionData newConnection = new GalaxyConnectionData(connection);
+                    GalaxyConnectionData newConnection = new(connection);
                     GalaxyConnections.Add(newConnection);
                 }
                 SectorsDirectViewSource.View.Refresh();
