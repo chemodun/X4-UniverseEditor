@@ -301,7 +301,11 @@ namespace ChemGateBuilder
         private void GalaxyCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var clickedElement = e.OriginalSource as DependencyObject;
-            if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
+            if (clickedElement is TextBlock textBlock && textBlock.DataContext is Sector _sectorFromTextBlock)
+            {
+                SelectedSector = _sectorFromTextBlock;
+            }
+            else if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
             {
                 SelectedSector = _sectorFromPolygon;
             }
@@ -684,8 +688,10 @@ namespace ChemGateBuilder
         protected override double Modifier { get; set; } = isHalf ? 0.5 : 1;
         protected Sector? Sector = sector;
         protected Grid? Grid = null;
-        protected TextBox? TextBox = null;
+        protected TextBlock? TextBlock = null;
         private readonly SectorMap SectorMapHelper = new();
+        private readonly double FrontSizeProportion = 0.12;
+        private readonly double FrontSizeMax = 22;
 
         public override void Create()
         {
@@ -714,21 +720,28 @@ namespace ChemGateBuilder
                 Height = Height,
                 DataContext = Sector
             };
+            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(25, GridUnitType.Star) });
+            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50, GridUnitType.Star) });
+            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(25, GridUnitType.Star) });
+            Grid.SetColumn(Hexagon, 0);
+            Grid.SetColumnSpan(Hexagon, 3);
             Grid.Children.Add(Hexagon);
             // Create TextBox
-            TextBox = new()
+            TextBlock = new()
             {
                 Text = Sector.Name,
                 Foreground = Brushes.Black,
-                FontSize = Math.Min(Height * 0.1, 22), // Initial proportional font size
+                FontSize = SetFontSize(), // Initial proportional font size
                 TextAlignment = TextAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
                 TextWrapping = TextWrapping.Wrap,
-                BorderThickness = new Thickness(1),
-                IsReadOnly = true
+                Background = Brushes.Transparent, // Make the background transparent
+                DataContext = Sector,
+                FontWeight = FontWeights.DemiBold// Make the text bold
             };
-            Grid.Children.Add(TextBox);
+            Grid.SetColumn(TextBlock, 1);
+            Grid.Children.Add(TextBlock);
             // Position the Hexagon on the Canvas
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
@@ -798,14 +811,14 @@ namespace ChemGateBuilder
 
         public override void Update()
         {
-            if (Cluster == null || Sector == null || Canvas == null || Hexagon == null || Grid == null || TextBox == null)
+            if (Cluster == null || Sector == null || Canvas == null || Hexagon == null || Grid == null || TextBlock == null)
             {
                 return;
             }
             UpdatePoints();
             Hexagon.Points = Points;
             // Update TextBox
-            TextBox.FontSize = Math.Min(Height * 0.1, 22);
+            TextBlock.FontSize = SetFontSize();
             Grid.Width = Width;
             Grid.Height = Height;
             // Position the Hexagon on the Canvas
@@ -818,6 +831,11 @@ namespace ChemGateBuilder
             {
                 item.Update();
             }
+        }
+
+        private double SetFontSize()
+        {
+            return Math.Min(Height * FrontSizeProportion, FrontSizeMax);
         }
     }
 
