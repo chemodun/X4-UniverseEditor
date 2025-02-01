@@ -848,9 +848,6 @@ namespace ChemGateBuilder
 
                 // Set the owner to the main window for proper window behavior
                 sectorMapExpandedWindow.Owner = this;
-
-
-
                 var minSize = Math.Min(this.ActualWidth, this.ActualHeight) * 0.9;
                 sectorMapExpandedWindow.Width = minSize;
                 sectorMapExpandedWindow.Height = minSize;
@@ -858,6 +855,7 @@ namespace ChemGateBuilder
                 sectorMapExpandedWindow.Top = GetWindowTop() + (this.ActualHeight - minSize) / 2;
                 SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
                 sectorMapExpandedWindow.SetMapItems(sectorMap.Items.ToList());
+                sectorMapExpandedWindow.SectorMapExpanded.OwnerColor = sectorMap.OwnerColor;
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
                 sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm = isDirect ? GatesConnectionCurrent.SectorDirectMap.InternalSizeKm : GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm;
                 sectorMapExpandedWindow.Title = $"Map of {sectorName}";

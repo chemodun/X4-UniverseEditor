@@ -436,6 +436,11 @@ namespace ChemGateBuilder
                 {
                     Galaxy galaxy = mainWindow.Galaxy;
                     Sector? sector = sectorCurrent != null ? galaxy.GetSectorByMacro(sectorCurrent.Macro) : null;
+                    string sectorOwner = sector?.DominantOwner ?? "";
+                    if (SectorMap.OwnerToColor.TryGetValue(sectorOwner, out (string ColorString, System.Windows.Media.SolidColorBrush Brush) ownerColor))
+                    {
+                        sectorMap.OwnerColor = ownerColor.ColorString;
+                    }
                     List<SectorConnectionData> connectionsList = sectorMap.SetSector(sector, galaxy);
                     if (sectorCurrent != null) {
                         foreach (var connection in connectionsList)

@@ -13,6 +13,7 @@ using X4DataLoader;
 using System.Windows.Data;
 using Microsoft.Windows.Themes;
 using System.Runtime.CompilerServices;
+using System.Windows.Ink;
 
 namespace ChemGateBuilder
 {
@@ -735,6 +736,11 @@ namespace ChemGateBuilder
                 DataContext = Sector,
                 Points = Points
             };
+            if (SectorMap.OwnerToColor.TryGetValue(Sector.DominantOwner, out (string ColorString, SolidColorBrush Brush) ownerColor))
+            {
+                Hexagon.Fill = ownerColor.Brush;
+                Hexagon.Fill.Opacity = 0.5;
+            }
             Grid = new()
             {
                 Width = Width,

@@ -19,7 +19,6 @@
         <Style x:Key="SectorHexagonStyle" TargetType="Polygon">
             <Setter Property="Stroke" Value="DarkGray"/>
             <Setter Property="StrokeThickness" Value="2"/>
-            <Setter Property="Fill" Value="#F0F0F0"/>
         </Style>
         <Style x:Key="CoordinatesTextBlockStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="5"/>
@@ -81,7 +80,12 @@
                     Points="{Binding SectorMapExpanded.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
                     Style="{StaticResource SectorHexagonStyle}"
                     Canvas.Left="{Binding SectorMapExpanded.VisualX}"
-                    Canvas.Top="{Binding SectorMapExpanded.VisualY}" />
+                    Canvas.Top="{Binding SectorMapExpanded.VisualY}"
+                    >
+                <Polygon.Fill>
+                    <SolidColorBrush Color="{Binding SectorMapExpanded.OwnerColor}" Opacity="0.2"/>
+                </Polygon.Fill>
+            </Polygon>
             <!-- Gates Representation -->
             <ItemsControl ItemsSource="{Binding SectorMapExpanded.Items}">
                 <ItemsControl.ItemsPanel>

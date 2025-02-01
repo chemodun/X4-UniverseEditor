@@ -81,7 +81,6 @@
         <Style x:Key="SectorHexagonStyle" TargetType="Polygon">
             <Setter Property="Stroke" Value="DarkGray"/>
             <Setter Property="StrokeThickness" Value="2"/>
-            <Setter Property="Fill" Value="#F0F0F0"/>
         </Style>
         <Style x:Key="SectorInternalRadius" TargetType="Slider">
             <Setter Property="Margin" Value="5"/>
@@ -319,7 +318,12 @@
                                                 <Polygon x:Name="SectorDirectHexagon" Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
                                                         Style="{StaticResource SectorHexagonStyle}"
                                                         Canvas.Left="{Binding GatesConnectionCurrent.SectorDirectMap.VisualX}"
-                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}" />
+                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}"
+                                                        >
+                                                        <Polygon.Fill>
+                                                            <SolidColorBrush Color="{Binding GatesConnectionCurrent.SectorDirectMap.OwnerColor}" Opacity="0.2"/>
+                                                        </Polygon.Fill>
+                                                        </Polygon>
                                                 <!-- Gates Representation -->
                                                 <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorDirectMap.Items}">
                                                     <ItemsControl.ItemsPanel>
@@ -519,7 +523,12 @@
                                                 <Polygon x:Name="SectorOppositeHexagon" Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
                                                         Style="{StaticResource SectorHexagonStyle}"
                                                         Canvas.Left="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualX}"
-                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}" />
+                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}"
+                                                        >
+                                                    <Polygon.Fill>
+                                                        <SolidColorBrush Color="{Binding GatesConnectionCurrent.SectorOppositeMap.OwnerColor}" Opacity="0.2"/>
+                                                    </Polygon.Fill>
+                                                </Polygon>
                                                 <!-- Gates Representation -->
                                                 <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeMap.Items}">
                                                     <ItemsControl.ItemsPanel>

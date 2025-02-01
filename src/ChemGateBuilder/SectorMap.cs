@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Utilities.Logging;
 using System.Windows.Shapes;
 using X4DataLoader;
+using System.Windows.Media.Media3D;
 
 namespace ChemGateBuilder
 {
@@ -24,6 +25,27 @@ namespace ChemGateBuilder
         protected double _visualSizePx = 200; // Default size
         protected double _internalSizeKm = 400;
         private string?  _selectedItemId = "";
+        private string _ownerColor = "#F0F0F0";
+
+        public static readonly Dictionary<string, (string ColorString, SolidColorBrush Brush)> OwnerToColor = new Dictionary<string, (string, SolidColorBrush)>
+        {
+            { "antigone", ("#00A6ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00A6ff"))) },
+            { "argon", ("#0079a5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0079a5"))) },
+            { "boron", ("#4cc6ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4cc6ff"))) },
+            { "freesplit", ("#ffac00", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffac00"))) },
+            { "hatikvah", ("#50ffff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#50ffff"))) },
+            { "holyorder", ("#ffbaff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffbaff"))) },
+            { "kaori", ("#ffca96", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffca96"))) },
+            { "loanshark", ("#b5a750", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b5a750"))) },
+            { "paranid", ("#c530c5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c530c5"))) },
+            { "pioneers", ("#00c1d5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00c1d5"))) },
+            { "scavenger", ("#005986", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#005986"))) },
+            { "split", ("#d58100", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#d58100"))) },
+            { "teladi", ("#c5c500", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c5c500"))) },
+            { "terran", ("#aad8ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aad8ff"))) },
+            { "xenon", ("#c90000", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c90000"))) },
+            {"", ("#F0F0F0", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F0F0F0"))) }
+        };
 
         public double MinInternalSizeKm
         {
@@ -79,6 +101,15 @@ namespace ChemGateBuilder
             set { _selectedItemId = value; OnPropertyChanged(); }
         }
 
+        public string OwnerColor
+        {
+            get => _ownerColor;
+            set
+            {
+                _ownerColor = value;
+                OnPropertyChanged();
+            }
+        }
 
         public static double ItemSizeMinDefaultPx = 10;
         public static double MinVisualSectorSize = 50;
