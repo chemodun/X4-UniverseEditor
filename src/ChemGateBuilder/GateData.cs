@@ -286,12 +286,16 @@ namespace ChemGateBuilder
         }
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void UpdateCurrentGateOnMap(string propertyName)
+        public void UpdateCurrentGateOnMap(string propertyName, SectorMap? alternateSectorMap = null)
         {
             GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
             if (gateCurrent == null) return;
             SectorItem? sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
             SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
+            if (alternateSectorMap != null)
+            {
+                sectorMap = alternateSectorMap;
+            }
             if (sectorMap == null || sectorMap.IsDragging) return;
             SectorConnectionData newConnection = new()
             {

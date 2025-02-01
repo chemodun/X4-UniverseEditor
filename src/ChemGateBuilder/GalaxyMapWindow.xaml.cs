@@ -208,23 +208,35 @@ namespace ChemGateBuilder
                     }
                 }
             }
-            if (SectorsItems.Count > 0 && Galaxy?.Connections.Count > 0)
+            if (SectorsItems.Count > 0)
             {
-                foreach (GalaxyConnection connection in Galaxy.Connections)
+                if (Galaxy?.Connections.Count > 0)
                 {
-                    if (connection.PathDirect == null || connection.PathDirect.Gate == null || connection.PathDirect.Gate.Name == null ||
-                         connection.PathOpposite == null || connection.PathOpposite.Gate == null || connection.PathOpposite.Gate.Name == null)
+                    foreach (GalaxyConnection connection in Galaxy.Connections)
                     {
-                        continue;
+                        if (connection.PathDirect == null || connection.PathDirect.Gate == null || connection.PathDirect.Gate.Name == null ||
+                            connection.PathOpposite == null || connection.PathOpposite.Gate == null || connection.PathOpposite.Gate.Name == null)
+                        {
+                            continue;
+                        }
+                        SectorMapItem? gateDirect = SectorsItems.Find(item => item.Id == connection.PathDirect.Gate.Name);
+                        SectorMapItem? gateOpposite = SectorsItems.Find(item => item.Id == connection.PathOpposite.Gate.Name);
+                        if (gateDirect == null || gateOpposite == null)
+                        {
+                            continue;
+                        }
+                        GalaxyMapInterConnection galaxyMapGateConnection = new(gateDirect, gateOpposite);
+                        galaxyMapGateConnection.Create(GalaxyCanvas);
                     }
-                    SectorMapItem? gateDirect = SectorsItems.Find(item => item.Id == connection.PathDirect.Gate.Name);
-                    SectorMapItem? gateOpposite = SectorsItems.Find(item => item.Id == connection.PathOpposite.Gate.Name);
-                    if (gateDirect == null || gateOpposite == null)
+                }
+                if (MainWindowReference.GatesConnectionCurrent?.SectorDirect != null && MainWindowReference.GatesConnectionCurrent.SectorOpposite != null)
+                {
+                    List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == "New");
+                    if (newGatesItems.Count == 2)
                     {
-                        continue;
+                        GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);
+                        galaxyMapGateConnection.Create(GalaxyCanvas);
                     }
-                    GalaxyMapInterConnection galaxyMapGateConnection = new(gateDirect, gateOpposite);
-                    galaxyMapGateConnection.Create(GalaxyCanvas);
                 }
             }
         }
@@ -753,6 +765,17 @@ namespace ChemGateBuilder
             SectorMapHelper.InternalSizeKm= Map.MainWindowReference.SectorRadius;
             SectorMapHelper.ItemSizeMinPx = 4;
             SectorMapHelper.SetSector(Sector, Map.Galaxy);
+            if (Map.MainWindowReference.GatesConnectionCurrent != null)
+            {
+                if (Map.MainWindowReference.GatesConnectionCurrent.SectorDirect?.Macro == Sector.Macro)
+                {
+                    Map.MainWindowReference.GatesConnectionCurrent.UpdateCurrentGateOnMap("GateDirect", SectorMapHelper);
+                }
+                else if (Map.MainWindowReference.GatesConnectionCurrent.SectorOpposite?.Macro == Sector.Macro)
+                {
+                    Map.MainWindowReference.GatesConnectionCurrent.UpdateCurrentGateOnMap("GateOpposite", SectorMapHelper);
+                }
+            }
             foreach(SectorMapItem item in SectorMapHelper.Items)
             {
                 Map.SectorsItems.Add(item);
@@ -882,12 +905,25 @@ namespace ChemGateBuilder
             {
                 return;
             }
+
             Line line = new()
             {
                 DataContext = this,
-                Stroke = IsGate ? Brushes.Gold : Brushes.SkyBlue,
                 StrokeThickness = IsGate ? 2 : 1,
             };
+            if (IsGate)
+            {
+                line.Stroke = Source.From switch
+                {
+                    "new" => Brushes.Green,
+                    "mod" => Brushes.DarkOrange,
+                    _ => Brushes.Gold,
+                };
+            }
+            else
+            {
+                line.Stroke = Brushes.SkyBlue;
+            }
             Binding x1Binding = new("CenterX")
             {
                 Source = Source
