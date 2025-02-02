@@ -61,6 +61,11 @@ namespace ChemGateBuilder
             Date = DateTime.Now.ToString("yyyy-MM-dd");
         }
 
+        public void SetGameVersion(int version)
+        {
+            GameVersion = version;
+        }
+
         public bool LoadData(Galaxy galaxy)
         {
             string currentPath = _modFolderPath;

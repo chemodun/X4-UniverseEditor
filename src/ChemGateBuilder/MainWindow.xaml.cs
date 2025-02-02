@@ -516,6 +516,7 @@ namespace ChemGateBuilder
             LoadConfiguration();
             InitializeComponent();
             DataContext = this;
+            _chemGateKeeperMod.SetGameVersion(X4DataVersion);
             GatesConnectionCurrent.SetMapsCanvasAndHexagons(SectorDirectCanvas, SectorDirectHexagon, SectorOppositeCanvas, SectorOppositeHexagon);
             GatesConnectionCurrent.Reset();
 
@@ -707,7 +708,7 @@ namespace ChemGateBuilder
             }
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
-            if (Galaxy.Version != 0 && (!X4DataVersionOverride || Galaxy.Version != X4DataVersion))
+            if (!X4DataVersionOverride && Galaxy.Version != 0 && Galaxy.Version != X4DataVersion)
             {
                 X4DataVersion = Galaxy.Version;
             }
@@ -1121,6 +1122,7 @@ namespace ChemGateBuilder
         public void ButtonNewMod_Click(object sender, RoutedEventArgs e)
         {
             ChemGateKeeperMod = new();
+            _chemGateKeeperMod.SetGameVersion(X4DataVersion);
             GalaxyConnections.Clear();
             GatesConnectionCurrent?.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
             SectorsDirectViewSource.View.Refresh();
