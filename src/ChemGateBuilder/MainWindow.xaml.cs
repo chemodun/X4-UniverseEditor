@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
+using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Shapes;
 using X4DataLoader;
@@ -41,6 +42,8 @@ namespace ChemGateBuilder
     public class DataConfig
     {
         public string X4DataExtractedPath { get; set; } = ".";
+        public bool X4DataVersionOverride { get; set; } = false;
+        public int X4DataVersion { get; set; } = 710;
     }
 
     public class LoggingConfig : INotifyPropertyChanged
@@ -106,6 +109,56 @@ namespace ChemGateBuilder
                 }
             }
         }
+
+        private bool _x4DataVersionOverride = false;
+        public bool X4DataVersionOverride
+        {
+            get => _x4DataVersionOverride;
+            set
+            {
+                if (_x4DataVersionOverride != value)
+                {
+                    _x4DataVersionOverride = value;
+                    OnPropertyChanged(nameof(X4DataVersionOverride));
+                    SaveConfiguration();
+                }
+            }
+        }
+
+        private int _x4DataVersion = 710;
+        public int X4DataVersion
+        {
+            get => _x4DataVersion;
+            set
+            {
+                if (_x4DataVersion != value)
+                {
+                    _x4DataVersion = value;
+                    OnPropertyChanged(nameof(X4DataVersion));
+                    OnPropertyChanged(nameof(X4DataVersionString));
+                    SaveConfiguration();
+                }
+            }
+        }
+
+        public string X4DataVersionString
+        {
+            get => $"{_x4DataVersion / 100}.{_x4DataVersion % 100:D2}";
+            set
+            {
+                string[] versionParts = value?.Split('.') ?? [];
+                if (versionParts.Length == 2 && int.TryParse(versionParts[0], out int major) && int.TryParse(versionParts[1], out int minor))
+                {
+                    int version = major * 100 + minor;
+                    if (version != _x4DataVersion)
+                    {
+                        X4DataVersion = version;
+                    }
+                }
+            }
+        }
+
+        public ObservableCollection<string> X4DataVersions { get; set; } = ["7.10", "7.50"];
 
         private bool _gatesActiveByDefault = true;
         public bool GatesActiveByDefault
@@ -509,6 +562,11 @@ namespace ChemGateBuilder
                 if (config != null)
                 {
                     X4DataFolder = config.Data.X4DataExtractedPath;
+                    X4DataVersionOverride = config.Data.X4DataVersionOverride;
+                    if (X4DataVersionOverride)
+                    {
+                        X4DataVersion = config.Data.X4DataVersion;
+                    }
                     GatesActiveByDefault = config.Edit.GatesActiveByDefault;
                     GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
                     MapColorsOpacity = config.Map.MapColorsOpacity;
@@ -533,7 +591,10 @@ namespace ChemGateBuilder
         {
             var config = new AppConfig
             {
-                Data = new DataConfig { X4DataExtractedPath = X4DataFolder },
+                Data = new DataConfig {
+                    X4DataExtractedPath = X4DataFolder,
+                    X4DataVersionOverride = X4DataVersionOverride
+                },
                 Edit = new EditConfig
                 {
                     GatesActiveByDefault = GatesActiveByDefault,
@@ -550,6 +611,10 @@ namespace ChemGateBuilder
                     LogToFile = LogToFile
                 }
             };
+            if (X4DataVersionOverride)
+            {
+                config.Data.X4DataVersion = X4DataVersion;
+            }
 
             var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
             File.WriteAllText(_configFileName, jsonString);
