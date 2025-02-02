@@ -121,6 +121,10 @@ namespace ChemGateBuilder
                     _x4DataVersionOverride = value;
                     OnPropertyChanged(nameof(X4DataVersionOverride));
                     SaveConfiguration();
+                    if (!value && Galaxy != null && Galaxy.Version != 0 && Galaxy.Version != X4DataVersion)
+                    {
+                        X4DataVersion = Galaxy.Version;
+                    }
                 }
             }
         }
@@ -537,7 +541,7 @@ namespace ChemGateBuilder
             if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
             {
                 SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
-                LoadSectors();
+                LoadX4Data();
                 GateMacros.Add(_gateMacroDefault);
             }
 
@@ -648,7 +652,7 @@ namespace ChemGateBuilder
                 if (ValidateX4DataFolder(selectedPath, out string errorMessage))
                 {
                     X4DataFolder = selectedPath;
-                    LoadSectors();
+                    LoadX4Data();
                     SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
                 }
                 else
@@ -680,10 +684,10 @@ namespace ChemGateBuilder
                     return;
                 }
             }
-            LoadSectors();
+            LoadX4Data();
         }
 
-        private void LoadSectors()
+        private void LoadX4Data()
         {
             AllSectors.Clear();
 
@@ -703,6 +707,10 @@ namespace ChemGateBuilder
             }
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
+            if (Galaxy.Version != 0 && (!X4DataVersionOverride || Galaxy.Version != X4DataVersion))
+            {
+                X4DataVersion = Galaxy.Version;
+            }
             SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
         }
 

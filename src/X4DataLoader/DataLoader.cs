@@ -335,10 +335,42 @@ namespace X4DataLoader
                     }
                 }
             }
+            if (vanillaFiles.TryGetValue("patchactions", out var patchActionsFile))
+            {
+                XDocument? patchActionsDoc = null;
+                try
+                {
+                    patchActionsDoc = XDocument.Load(patchActionsFile.fullPath);
+                }
+                catch (ArgumentException e)
+                {
+                    Log.Warn($"Error loading patch actions {patchActionsFile.fullPath}: {e.Message}");
+                }
+                int version = 0;
+                if (patchActionsDoc != null)
+                {
+                    foreach (var actionElement in patchActionsDoc.XPathSelectElements("/actions/action"))
+                    {
+                        string versionStr = actionElement.Attribute("version")?.Value ?? "0";
+                        if (int.TryParse(versionStr, out int actionVersion))
+                        {
+                            if (actionVersion > version)
+                            {
+                                version = actionVersion;
+                            }
+                        }
+                    }
+                    Log.Debug($"Patch actions loaded from: {patchActionsFile.fileName} for vanilla. Version: {version}");
+                    if (version > 0)
+                    {
+                        galaxy.Version = version;
+                    }
+                }
+            }
 
             foreach(Sector sector in galaxy.Sectors)
             {
-                sector.CalculateOwnership();;
+                sector.CalculateOwnership();
             }
 
             // Load other data files (galaxy, clusters, sectors, zones, highways) similarly

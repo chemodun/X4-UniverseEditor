@@ -10,6 +10,7 @@ namespace X4DataLoader
                 { "translation", ("t", "0001-l044.xml") },
                 { "mapDefaults", ("libraries", "mapdefaults.xml") },
                 { "god", ("libraries", "god.xml") },
+                { "patchactions", ("libraries", "patchactions.xml ") },
                 { "galaxy", ("maps/xu_ep2_universe", "galaxy.xml") },
                 { "clusters", ("maps/xu_ep2_universe", "clusters.xml") },
                 { "sectors", ("maps/xu_ep2_universe", "sectors.xml") },
