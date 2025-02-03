@@ -18,10 +18,10 @@ namespace X4DataLoader
 
             Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
             // Scan for vanilla files
-            var vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
-            foreach (var item in relativePaths)
+            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
+            foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
             {
-                var filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
+                string? filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
                 if (File.Exists(filePath))
                 {
                     vanillaFiles[item.Key] = (filePath, item.Value.fileName);
@@ -35,21 +35,21 @@ namespace X4DataLoader
             Log.Debug($"Vanilla files identified.");
 
             // Scan for extension files
-            var extensionsFolder = Path.Combine(coreFolderPath, "extensions");
+            string? extensionsFolder = Path.Combine(coreFolderPath, "extensions");
             Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
             if (Directory.Exists(extensionsFolder))
             {
-                foreach (var extensionFolder in Directory.GetDirectories(extensionsFolder))
+                foreach (string extensionFolder in Directory.GetDirectories(extensionsFolder))
                 {
-                    var extensionName = Path.GetFileName(extensionFolder);
-                    var extensionFiles = new Dictionary<string, (string fullPath, string fileName)>();
+                    string? extensionName = Path.GetFileName(extensionFolder);
+                    Dictionary<string, (string fullPath, string fileName)>? extensionFiles = new Dictionary<string, (string fullPath, string fileName)>();
 
-                    foreach (var item in relativePaths)
+                    foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
                     {
-                        var searchPath = Path.Combine(extensionFolder, item.Value.path);
+                        string? searchPath = Path.Combine(extensionFolder, item.Value.path);
                         if (Directory.Exists(searchPath))
                         {
-                            var files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
+                            string[]? files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
                             if (files.Length > 0)
                             {
                                 extensionFiles[item.Key] = (files[0], item.Value.fileName);
@@ -65,36 +65,39 @@ namespace X4DataLoader
                 }
             }
 
-            var translation = new Translation();
+            Translation? translation = new Translation();
             translation.Load(fileSets["vanilla"]["translation"].fullPath);
             Log.Debug("Translation loaded.");
 
-            var clusters = new List<Cluster>();
-            var sectors = new List<Sector>();
-            var galaxy = new Galaxy();
+            List<Cluster>? clusters = new List<Cluster>();
+            List<Sector>? sectors = new List<Sector>();
+            Galaxy? galaxy = new Galaxy();
             // Process each file set
-            foreach (var fileSet in fileSets)
+            foreach (KeyValuePair<string, Dictionary<string, (string fullPath, string fileName)>> fileSet in fileSets)
             {
-                var source = fileSet.Key;
+                string? source = fileSet.Key;
 
                 // Process mapDefaults
-                if (fileSet.Value.TryGetValue("mapDefaults", out var mapDefaultsFile))
+                if (fileSet.Value.TryGetValue("mapDefaults", out (string fullPath, string fileName) mapDefaultsFile))
                 {
                     XDocument mapDefaultsDoc;
-                    try {
+                    try
+                    {
                         mapDefaultsDoc = XDocument.Load(mapDefaultsFile.fullPath);
-                    } catch (ArgumentException e) {
+                    }
+                    catch (ArgumentException e)
+                    {
                         Log.Error($"Error loading map defaults {mapDefaultsFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    foreach (var datasetElement in mapDefaultsDoc.XPathSelectElements("/defaults/dataset"))
+                    foreach (XElement datasetElement in mapDefaultsDoc.XPathSelectElements("/defaults/dataset"))
                     {
-                        var macro = datasetElement.Attribute("macro")?.Value;
+                        string? macro = datasetElement.Attribute("macro")?.Value;
                         if (macro != null)
                         {
                             if (Cluster.IsClusterMacro(macro))
                             {
-                                var cluster = new Cluster();
+                                Cluster? cluster = new Cluster();
                                 try
                                 {
                                     cluster.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
@@ -108,12 +111,12 @@ namespace X4DataLoader
                             }
                             else if (Sector.IsSectorMacro(macro))
                             {
-                                var sector = new Sector();
+                                Sector? sector = new Sector();
                                 try
                                 {
                                     sector.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
                                     sectors.Add(sector);
-                                    var cluster = clusters.Find(c => c.Id == sector.ClusterId);
+                                    Cluster? cluster = clusters.Find(c => c.Id == sector.ClusterId);
                                     if (cluster != null)
                                     {
                                         cluster.Sectors.Add(sector);
@@ -132,16 +135,19 @@ namespace X4DataLoader
                 }
 
                 // Process clusters
-                if (fileSet.Value.TryGetValue("clusters", out var clustersFile))
+                if (fileSet.Value.TryGetValue("clusters", out (string fullPath, string fileName) clustersFile))
                 {
                     XDocument clustersDoc;
-                    try {
+                    try
+                    {
                         clustersDoc = XDocument.Load(clustersFile.fullPath);
-                    } catch (ArgumentException e) {
+                    }
+                    catch (ArgumentException e)
+                    {
                         Log.Error($"Error loading clusters {clustersFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    foreach (var macroElement in clustersDoc.XPathSelectElements("/macros/macro"))
+                    foreach (XElement macroElement in clustersDoc.XPathSelectElements("/macros/macro"))
                     {
                         try
                         {
@@ -156,16 +162,19 @@ namespace X4DataLoader
                 }
 
                 // Process sectors
-                if (fileSet.Value.TryGetValue("sectors", out var sectorsFile))
+                if (fileSet.Value.TryGetValue("sectors", out (string fullPath, string fileName) sectorsFile))
                 {
                     XDocument sectorsDoc;
-                    try {
+                    try
+                    {
                         sectorsDoc = XDocument.Load(sectorsFile.fullPath);
-                    } catch (ArgumentException e) {
+                    }
+                    catch (ArgumentException e)
+                    {
                         Log.Error($"Error loading sectors {sectorsFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    foreach (var macroElement in sectorsDoc.XPathSelectElements("/macros/macro"))
+                    foreach (XElement macroElement in sectorsDoc.XPathSelectElements("/macros/macro"))
                     {
                         try
                         {
@@ -180,7 +189,7 @@ namespace X4DataLoader
                 }
 
                 // Process zones
-                if (fileSet.Value.TryGetValue("zones", out var zonesFile))
+                if (fileSet.Value.TryGetValue("zones", out (string fullPath, string fileName) zonesFile))
                 {
                     XDocument zonesDoc;
                     try
@@ -192,11 +201,11 @@ namespace X4DataLoader
                         Log.Error($"Error loading zones {zonesFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    foreach (var macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
+                    foreach (XElement macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
                     {
-                        var zone = new Zone();
+                        Zone? zone = new Zone();
                         zone.Load(macroElement, source, zonesFile.fileName);
-                        var sector = sectors
+                        Sector? sector = sectors
                             .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name)));
                         if (sector != null)
                         {
@@ -212,7 +221,7 @@ namespace X4DataLoader
                 }
 
                 // Process sechighways
-                if (fileSet.Value.TryGetValue("sechighways", out var sechighwaysFile))
+                if (fileSet.Value.TryGetValue("sechighways", out (string fullPath, string fileName) sechighwaysFile))
                 {
                     XDocument sechighwaysDoc;
                     try
@@ -224,10 +233,10 @@ namespace X4DataLoader
                         Log.Error($"Error loading sechighways {sechighwaysFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    foreach (var macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
+                    foreach (XElement macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
                     {
-                        var highway = new HighwayClusterLevel(macroElement, source, sechighwaysFile.fileName);
-                        var cluster = clusters
+                        HighwayClusterLevel? highway = new HighwayClusterLevel(macroElement, source, sechighwaysFile.fileName);
+                        Cluster? cluster = clusters
                             .FirstOrDefault(c => c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro)));
                         if (cluster != null)
                         {
@@ -244,7 +253,7 @@ namespace X4DataLoader
                 }
 
                 // Process zonehighways
-                if (fileSet.Value.TryGetValue("zonehighways", out var zonehighwaysFile))
+                if (fileSet.Value.TryGetValue("zonehighways", out (string fullPath, string fileName) zonehighwaysFile))
                 {
                     XDocument zonehighwaysDoc;
                     try
@@ -256,10 +265,10 @@ namespace X4DataLoader
                         Log.Error($"Error loading zonehighways {zonehighwaysFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    foreach (var macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
+                    foreach (XElement macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
                     {
-                        var highway = new HighwaySectorLevel(macroElement, source, zonehighwaysFile.fileName);
-                        var sector = sectors
+                        HighwaySectorLevel? highway = new HighwaySectorLevel(macroElement, source, zonehighwaysFile.fileName);
+                        Sector? sector = sectors
                             .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro)));
                         if (sector != null)
                         {
@@ -273,7 +282,7 @@ namespace X4DataLoader
                     }
                     Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("colors", out var colorsFile))
+                if (fileSet.Value.TryGetValue("colors", out (string fullPath, string fileName) colorsFile))
                 {
                     XDocument colorsDoc;
                     try
@@ -289,7 +298,7 @@ namespace X4DataLoader
                     X4MappedColor.LoadElements(colorsDoc.XPathSelectElements("/colormap/mappings/mapping"), source, colorsFile.fileName, galaxy.MappedColors, galaxy.Colors);
                     Log.Debug($"Colors loaded from: {colorsFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("factions", out var factionsFile))
+                if (fileSet.Value.TryGetValue("factions", out (string fullPath, string fileName) factionsFile))
                 {
                     XDocument factionsDoc;
                     try
@@ -309,7 +318,7 @@ namespace X4DataLoader
                     Faction.LoadElements(factions, source, factionsFile.fileName, galaxy.Factions, translation);
                     Log.Debug($"Factions loaded from: {factionsFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("modules", out var modulesFile))
+                if (fileSet.Value.TryGetValue("modules", out (string fullPath, string fileName) modulesFile))
                 {
                     XDocument modulesDoc;
                     try
@@ -329,7 +338,7 @@ namespace X4DataLoader
                     StationModule.LoadElements(modules, source, modulesFile.fileName, galaxy.StationModules);
                     Log.Debug($"Modules loaded from: {modulesFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("modulegroups", out var stationModuleGroupsFile))
+                if (fileSet.Value.TryGetValue("modulegroups", out (string fullPath, string fileName) stationModuleGroupsFile))
                 {
                     XDocument stationModuleGroupsDoc;
                     try
@@ -344,7 +353,7 @@ namespace X4DataLoader
                     StationModuleGroup.LoadElements(stationModuleGroupsDoc.XPathSelectElements("/groups/group"), source, stationModuleGroupsFile.fileName, galaxy.StationModuleGroups);
                     Log.Debug($"Station module groups loaded from: {stationModuleGroupsFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("constructionplans", out var constructionPlansFile))
+                if (fileSet.Value.TryGetValue("constructionplans", out (string fullPath, string fileName) constructionPlansFile))
                 {
                     XDocument constructionPlansDoc;
                     try
@@ -359,7 +368,7 @@ namespace X4DataLoader
                     ConstructionPlan.LoadElements(constructionPlansDoc.XPathSelectElements("/plans/plan"), source, constructionPlansFile.fileName, galaxy.ConstructionPlans, translation, galaxy.StationModules, galaxy.StationModuleGroups);
                     Log.Debug($"Construction plans loaded from: {constructionPlansFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("stationgroups", out var stationGroupsFile))
+                if (fileSet.Value.TryGetValue("stationgroups", out (string fullPath, string fileName) stationGroupsFile))
                 {
                     XDocument stationGroupsDoc;
                     try
@@ -379,7 +388,7 @@ namespace X4DataLoader
                     StationGroup.LoadElements(stationGroups, source, stationGroupsFile.fileName, galaxy.StationGroups, galaxy.ConstructionPlans);
                     Log.Debug($"Station groups loaded from: {stationGroupsFile.fileName} for {source}");
                 }
-                if (fileSet.Value.TryGetValue("stations", out var stationCategoriesFile))
+                if (fileSet.Value.TryGetValue("stations", out (string fullPath, string fileName) stationCategoriesFile))
                 {
                     XDocument stationCategoriesDoc;
                     try
@@ -400,7 +409,7 @@ namespace X4DataLoader
                     Log.Debug($"Station categories loaded from: {stationCategoriesFile.fileName} for {source}");
                 }
                 // Process god (Stations)
-                if (fileSet.Value.TryGetValue("god", out var godFile))
+                if (fileSet.Value.TryGetValue("god", out (string fullPath, string fileName) godFile))
                 {
                     XDocument godDoc;
                     try
@@ -412,21 +421,21 @@ namespace X4DataLoader
                         Log.Error($"Error loading god {godFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    var godElements = godDoc.XPathSelectElements("/god/stations/station");
+                    IEnumerable<XElement>? godElements = godDoc.XPathSelectElements("/god/stations/station");
                     if (!godElements.Any())
                     {
-                       godElements = godDoc.XPathSelectElements("/diff/add[@sel='/god/stations']/station");
+                        godElements = godDoc.XPathSelectElements("/diff/add[@sel='/god/stations']/station");
                     }
                     foreach (XElement stationElement in godElements)
                     {
-                        var station = new Station();
+                        Station? station = new Station();
                         station.Load(stationElement, source, godFile.fileName, sectors, galaxy.StationCategories, galaxy.ConstructionPlans);
                     }
                     Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
                 }
 
                 // Process galaxy
-                if (fileSet.Value.TryGetValue("galaxy", out var galaxyFile))
+                if (fileSet.Value.TryGetValue("galaxy", out (string fullPath, string fileName) galaxyFile))
                 {
                     XDocument galaxyDoc;
                     try
@@ -438,29 +447,36 @@ namespace X4DataLoader
                         Log.Error($"Error loading galaxy {galaxyFile.fullPath}: {e.Message}");
                         continue;
                     }
-                    var galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
-                    if (galaxyElement != null) {
+                    XElement? galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
+                    if (galaxyElement != null)
+                    {
                         galaxy.Load(galaxyElement, clusters, source, galaxyFile.fileName);
                         Log.Debug($"Galaxy loaded from: {galaxyFile.fileName} for {source}");
                     }
-                    else {
-                        var galaxyDiffElement = galaxyDoc.XPathSelectElement("/diff");
-                        if (galaxyDiffElement != null) {
-                            var galaxyDiffElements = galaxyDiffElement.Elements();
-                            foreach (var galaxyElementDiff in galaxyDiffElements) {
-                                if (galaxyElementDiff.Name == "add" && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections") {
+                    else
+                    {
+                        XElement? galaxyDiffElement = galaxyDoc.XPathSelectElement("/diff");
+                        if (galaxyDiffElement != null)
+                        {
+                            IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();
+                            foreach (XElement galaxyElementDiff in galaxyDiffElements)
+                            {
+                                if (galaxyElementDiff.Name == "add" && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections")
+                                {
                                     galaxy.LoadConnections(galaxyElementDiff, clusters, source, galaxyFile.fileName);
                                     Log.Debug($"Galaxy connections loaded from: {galaxyFile.fileName} for {source}");
                                 }
                             }
-                        } else {
+                        }
+                        else
+                        {
                             Log.Error("Invalid galaxy file format");
                             throw new ArgumentException("Invalid galaxy file format");
                         }
                     }
                 }
             }
-            if (vanillaFiles.TryGetValue("patchactions", out var patchActionsFile))
+            if (vanillaFiles.TryGetValue("patchactions", out (string fullPath, string fileName) patchActionsFile))
             {
                 XDocument? patchActionsDoc = null;
                 try
@@ -474,7 +490,7 @@ namespace X4DataLoader
                 int version = 0;
                 if (patchActionsDoc != null)
                 {
-                    foreach (var actionElement in patchActionsDoc.XPathSelectElements("/actions/action"))
+                    foreach (XElement actionElement in patchActionsDoc.XPathSelectElements("/actions/action"))
                     {
                         string versionStr = actionElement.Attribute("version")?.Value ?? "0";
                         if (int.TryParse(versionStr, out int actionVersion))
@@ -493,7 +509,7 @@ namespace X4DataLoader
                 }
             }
 
-            foreach(Sector sector in galaxy.Sectors)
+            foreach (Sector sector in galaxy.Sectors)
             {
                 sector.CalculateOwnership(galaxy.Factions);
             }
@@ -510,14 +526,14 @@ namespace X4DataLoader
 
         public static Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> GatherFiles(string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
         {
-            Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> result  = [];
+            Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> result = [];
 
             Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
             // Scan for vanilla files
-            var vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
-            foreach (var item in relativePaths)
+            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
+            foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
             {
-                var filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
+                string? filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
                 if (File.Exists(filePath))
                 {
                     vanillaFiles[item.Key] = (filePath, item.Value.fileName);
@@ -539,17 +555,17 @@ namespace X4DataLoader
                 Log.Debug($"No extensions folder found. Will check if the dlc folders is in the {coreFolderPath}.");
             }
 
-            foreach (var dlcFolder in Directory.GetDirectories(extensionsFolder, "ego_dlc_*"))
+            foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, "ego_dlc_*"))
             {
-                var dlcName = Path.GetFileName(dlcFolder);
-                var dlcFiles = new Dictionary<string, (string fullPath, string fileName)>();
+                string? dlcName = Path.GetFileName(dlcFolder);
+                Dictionary<string, (string fullPath, string fileName)>? dlcFiles = new Dictionary<string, (string fullPath, string fileName)>();
 
-                foreach (var item in relativePaths)
+                foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
                 {
-                    var searchPath = Path.Combine(dlcFolder, item.Value.path);
+                    string? searchPath = Path.Combine(dlcFolder, item.Value.path);
                     if (Directory.Exists(searchPath))
                     {
-                        var files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
+                        string[]? files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
                         if (files.Length > 0)
                         {
                             dlcFiles[item.Key] = (files[0], item.Value.fileName);
