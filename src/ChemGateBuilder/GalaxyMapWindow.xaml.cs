@@ -22,12 +22,14 @@ namespace ChemGateBuilder
     {
         // Constants for hexagon dimensions and scaling
         private const double HexagonWidthDefault = 100;      // Width of the hexagon in pixels
-        public static readonly double HexagonSizesRelation = Math.Sqrt(3)/2;    // Height of the hexagon in pixels (Width * sqrt(3)/2)
+        public static readonly double HexagonSizesRelation = Math.Sqrt(3) / 2;    // Height of the hexagon in pixels (Width * sqrt(3)/2)
         private static readonly double HexagonHeightDefault = HexagonWidthDefault * HexagonSizesRelation;    // Height of the hexagon in pixels (Width * sqrt(3)/2)
         private double _hexagonWidth = HexagonWidthDefault;      // Width of the hexagon in pixels
-        public double HexagonWidth {
+        public double HexagonWidth
+        {
             get => _hexagonWidth;
-            set {
+            set
+            {
                 _hexagonWidth = value;
                 _hexagonHeight = value * HexagonSizesRelation;
                 OnPropertyChanged(nameof(HexagonWidth));
@@ -37,22 +39,27 @@ namespace ChemGateBuilder
         }      // Width of the hexagon in pixel
 
         private double _hexagonHeight = HexagonWidthDefault * HexagonSizesRelation;    // Height of the hexagon in pixels (Width * sqrt(3)/2)
-        public double HexagonHeight {
+        public double HexagonHeight
+        {
             get => _hexagonHeight;
-            set {}
+            set { }
         }    // Height of the hexagon in pixels (Width * sqrt(3)/2)
         private double _hexagonWidthMinimal = HexagonWidthDefault;
-        public double HexagonWidthMinimal {
+        public double HexagonWidthMinimal
+        {
             get => _hexagonWidthMinimal;
-            set {
+            set
+            {
                 _hexagonWidthMinimal = value;
                 OnPropertyChanged(nameof(HexagonWidthMinimal));
             }
         }
         private double _hexagonWidthMaximal = HexagonWidthDefault;
-        public double HexagonWidthMaximal {
+        public double HexagonWidthMaximal
+        {
             get => _hexagonWidthMaximal;
-            set {
+            set
+            {
                 _hexagonWidthMaximal = value;
                 OnPropertyChanged(nameof(HexagonWidthMaximal));
             }
@@ -64,9 +71,11 @@ namespace ChemGateBuilder
         public double ScaleFactor = 0.001;   // Scaling factor to convert units to pixels
         private double _canvasWidthBase = 0;
         private double _canvasHeightBase = 0;
-        private readonly Dictionary<string, Dictionary<string, Cluster>> mapDict = [];
+        private readonly Dictionary<string, Dictionary<string, Cluster>> MapDict = [];
         private readonly List<double> AxisZ = [];
         private readonly List<int> AxisX = [];
+        private int MinCol = 0;
+        private double MaxRow = 0;
 
         // Reference to the main window's size (assumed to be passed or accessible)
         public readonly MainWindow MainWindowReference;
@@ -132,10 +141,10 @@ namespace ChemGateBuilder
                 string columnIdStr = $"{(int)Math.Floor(cluster.Position.X / ColumnWidth)}";
                 string rowIdStr = $"{cluster.Position.Z / RowHeight:F1}";
 
-                if (!mapDict.TryGetValue(rowIdStr, out Dictionary<string, Cluster>? value))
+                if (!MapDict.TryGetValue(rowIdStr, out Dictionary<string, Cluster>? value))
                 {
                     value = [];
-                    mapDict[rowIdStr] = value;
+                    MapDict[rowIdStr] = value;
                 }
 
                 value[columnIdStr] = cluster;
@@ -154,12 +163,17 @@ namespace ChemGateBuilder
             AxisX.Sort();
             AxisZ.Sort();
             AxisZ.Reverse();
+            MaxRow = AxisZ.First();
+            MinCol = AxisX.First();
+
+            _canvasWidthBase = (AxisX.Last() - MinCol + 1) * 0.75 + 0.25;
+            _canvasHeightBase = MaxRow - AxisZ.Last() + 1;
             return true;
         }
 
         private void CreateMap()
         {
-            if (mapDict.Count == 0)
+            if (MapDict.Count == 0)
             {
                 Log.Warn("Cluster map is empty.");
                 return;
@@ -169,11 +183,6 @@ namespace ChemGateBuilder
                 Log.Warn("GalaxyScrollViewer size is zero.");
                 return;
             }
-            double maxRow = AxisZ.First();
-            int minCol = AxisX.First();
-
-            _canvasWidthBase = AxisX.Count * 0.75 + 0.25;
-            _canvasHeightBase = (AxisZ.Count + 1) * 0.5;
 
             GalaxyCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
             GalaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
@@ -181,15 +190,15 @@ namespace ChemGateBuilder
             GalaxyCanvas.Children.Clear();
             foreach (var Z in AxisZ)
             {
-                Dictionary<string, Cluster> row = mapDict[Z.ToString("F1")];
+                Dictionary<string, Cluster> row = MapDict[Z.ToString("F1")];
                 foreach (var X in AxisX)
                 {
-                    if (!row.ContainsKey(X.ToString()) )
+                    if (!row.ContainsKey(X.ToString()))
                     {
                         continue;
                     }
                     Cluster cluster = row[X.ToString()];
-                    GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (X - minCol), maxRow - Z, GalaxyCanvas, cluster);
+                    GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (X - MinCol), MaxRow - Z, GalaxyCanvas, cluster);
                     clusterMapCluster.Create();
                     _clusters.Add(clusterMapCluster);
                     if (cluster.Sectors.Count > 1 && cluster.Highways.Count > 0)
@@ -325,7 +334,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-// Mouse Left Button Down - Start Panning
+        // Mouse Left Button Down - Start Panning
         private void GalaxyCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var clickedElement = e.OriginalSource as DependencyObject;
@@ -385,7 +394,8 @@ namespace ChemGateBuilder
                 {
                     Close();
                 }
-                else {
+                else
+                {
                     SelectedSector = null;
                 }
             }
@@ -415,8 +425,8 @@ namespace ChemGateBuilder
             {
                 double width = GalaxyScrollViewer.ActualWidth;
                 double height = GalaxyScrollViewer.ActualHeight;
-                double scaleFactorWidth = width / (AxisX.Count * 0.75 + 0.25) / HexagonWidthDefault;
-                double scaleFactorHeight = height / (AxisZ.Count + 1)  / 0.5 / HexagonHeightDefault;
+                double scaleFactorWidth = width / _canvasWidthBase / HexagonWidthDefault;
+                double scaleFactorHeight = height / _canvasHeightBase / HexagonHeightDefault;
                 ScaleFactor = Math.Min(scaleFactorWidth, scaleFactorHeight);
                 if (width * HexagonSizesRelation < height)
                 {
@@ -443,8 +453,10 @@ namespace ChemGateBuilder
         protected Cluster? Cluster = cluster;
         protected virtual double Modifier { get; set; } = 1.0;
         private readonly double _x = x;
-        protected double X {
-            get {
+        protected double X
+        {
+            get
+            {
                 if (Map != null)
                 {
                     return _x * Map.HexagonWidth * Map.ScaleFactor;
@@ -454,8 +466,10 @@ namespace ChemGateBuilder
         }
 
         private readonly double _y = y;
-        protected double Y {
-            get {
+        protected double Y
+        {
+            get
+            {
                 if (Map != null)
                 {
                     return _y * Map.HexagonHeight * Map.ScaleFactor;
@@ -463,8 +477,10 @@ namespace ChemGateBuilder
                 return 0;
             }
         }
-        protected double Width {
-            get {
+        protected double Width
+        {
+            get
+            {
                 if (Map != null)
                 {
                     return Map.HexagonWidth * Map.ScaleFactor * Modifier;
@@ -472,11 +488,13 @@ namespace ChemGateBuilder
                 return 0;
             }
         }
-        protected double Height {
-            get {
+        protected double Height
+        {
+            get
+            {
                 if (Map != null)
                 {
-                    return  Map.HexagonHeight * Map.ScaleFactor * Modifier;
+                    return Map.HexagonHeight * Map.ScaleFactor * Modifier;
                 }
                 return 0;
             }
@@ -502,7 +520,7 @@ namespace ChemGateBuilder
 
         public virtual void Create()
         {
-            if (Map == null ||Cluster == null || Canvas == null)
+            if (Map == null || Cluster == null || Canvas == null)
             {
                 return;
             }
@@ -513,7 +531,8 @@ namespace ChemGateBuilder
                 clusterMapSector.Create();
                 _sectors.Add(clusterMapSector);
             }
-            else {
+            else
+            {
                 UpdatePoints();
                 // Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
                 Hexagon = new()
@@ -529,8 +548,8 @@ namespace ChemGateBuilder
                 Canvas.SetLeft(Hexagon, X);
                 Canvas.SetTop(Hexagon, Y);
                 Canvas.Children.Add(Hexagon);
-                List <HexagonCorner> corners = [];
-                List <double?> angles = [];
+                List<HexagonCorner> corners = [];
+                List<double?> angles = [];
                 for (int i = 0; i < Cluster.Sectors.Count; i++)
                 {
                     double? angle = null;
@@ -571,29 +590,36 @@ namespace ChemGateBuilder
                     }
                     Log.Debug($"Sector {sector.Name}  with Position: X = {sector.Position.X}, Y = {sector.Position.Y}, Z = {sector.Position.Z}. Angle: {angle}, Corner: {corners[i]}");
                 }
-                if (corners.Count == 3 )
+                if (corners.Count == 3)
                 {
                     corners[0] = HexagonCornersTriplet.GetCornerByTwoOther(corners[1], corners[2], Triplets);
-                } else if (corners.Count == 2)
+                }
+                else if (corners.Count == 2)
                 {
-                    if (angles[1] < 90 && angles[1] > 0) {
+                    if (angles[1] < 90 && angles[1] > 0)
+                    {
                         corners[0] = HexagonCorner.LeftBottom;
                         corners[1] = HexagonCorner.RightTop;
                     }
-                    else if (angles[1] < 0 && angles[1] > -90) {
+                    else if (angles[1] < 0 && angles[1] > -90)
+                    {
                         corners[0] = HexagonCorner.LeftTop;
                         corners[1] = HexagonCorner.RightBottom;
                     }
-                    else if (angles[1] < -90 && angles[1] > -180) {
+                    else if (angles[1] < -90 && angles[1] > -180)
+                    {
                         corners[0] = HexagonCorner.RightTop;
                         corners[1] = HexagonCorner.LeftBottom;
                     }
-                    else if (angles[1] < 180 && angles[1] > 90) {
+                    else if (angles[1] < 180 && angles[1] > 90)
+                    {
                         corners[0] = HexagonCorner.RightBottom;
                         corners[1] = HexagonCorner.LeftTop;
                     }
-                    else if (angles[1] == 90) {
-                        switch (Cluster.Macro) {
+                    else if (angles[1] == 90)
+                    {
+                        switch (Cluster.Macro)
+                        {
                             case "Cluster_32_macro":                        // Tharka's Cascade
                                 corners[0] = HexagonCorner.RightBottom;
                                 corners[1] = HexagonCorner.LeftTop;
@@ -602,7 +628,8 @@ namespace ChemGateBuilder
                     }
                     else if (angles[1] == 0)
                     {
-                        switch (Cluster.Macro) {
+                        switch (Cluster.Macro)
+                        {
                             case "Cluster_15_macro":                        // Ianamus Zura
                             case "Cluster_19_macro":                        // Hewa's Twin I & II
                                 corners[0] = HexagonCorner.LeftBottom;
@@ -617,7 +644,8 @@ namespace ChemGateBuilder
                     }
                     else if (angles[1] == -90)
                     {
-                        switch (Cluster.Macro) {
+                        switch (Cluster.Macro)
+                        {
                             case "Cluster_25_macro":                        // Faulty Logic
                             case "Cluster_112_macro":                       // Savage Spur
                                 corners[0] = HexagonCorner.RightTop;
@@ -656,7 +684,7 @@ namespace ChemGateBuilder
                                 break;
                             case HexagonCorner.LeftCenter:
                                 x = _x;
-                                y = _y +  0.25;
+                                y = _y + 0.25;
                                 break;
                             case HexagonCorner.LeftTop:
                                 x = _x + 0.125;
@@ -682,7 +710,8 @@ namespace ChemGateBuilder
             {
                 return;
             }
-            if (Hexagon != null) {
+            if (Hexagon != null)
+            {
                 UpdatePoints();
                 Hexagon.Points = Points;
                 // Position the Hexagon on the Canvas
@@ -788,12 +817,13 @@ namespace ChemGateBuilder
             SectorMapHelper.VisualX = X;
             SectorMapHelper.VisualY = Y;
             SectorMapHelper.VisualSizePx = Width;
-            SectorMapHelper.InternalSizeKm= Map.MainWindowReference.SectorRadius;
+            SectorMapHelper.InternalSizeKm = Map.MainWindowReference.SectorRadius;
             SectorMapHelper.ItemSizeMinPx = 4;
             SectorMapHelper.SetSector(Sector, Map.Galaxy);
             if (Map.MainWindowReference != null)
             {
-                foreach(SectorConnectionData modConnection in Map.MainWindowReference.GetSectorConnectionsFromMod(Sector.Macro)) {
+                foreach (SectorConnectionData modConnection in Map.MainWindowReference.GetSectorConnectionsFromMod(Sector.Macro))
+                {
                     SectorMapHelper.AddItem(modConnection);
                 }
                 if (Map.MainWindowReference.GatesConnectionCurrent != null)
@@ -809,7 +839,7 @@ namespace ChemGateBuilder
                 }
 
             }
-            foreach(SectorMapItem item in SectorMapHelper.Items)
+            foreach (SectorMapItem item in SectorMapHelper.Items)
             {
                 Map.SectorsItems.Add(item);
                 Image image = new()
@@ -883,7 +913,7 @@ namespace ChemGateBuilder
             SectorMapHelper.VisualX = X;
             SectorMapHelper.VisualY = Y;
             SectorMapHelper.VisualSizePx = Width;
-            foreach(SectorMapItem item in SectorMapHelper.Items)
+            foreach (SectorMapItem item in SectorMapHelper.Items)
             {
                 item.Update();
             }
