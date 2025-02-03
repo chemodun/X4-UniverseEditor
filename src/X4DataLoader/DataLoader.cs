@@ -498,10 +498,10 @@ namespace X4DataLoader
                 sector.CalculateOwnership(galaxy.Factions);
             }
 
-            foreach (Faction faction in galaxy.Factions)
-            {
-                Log.Debug($"Faction: {faction.Name}, color: {faction.ColorId}, hex: {galaxy.MappedColors.FirstOrDefault(c => c.Id == faction.ColorId)?.Hex}");
-            }
+            // foreach (Faction faction in galaxy.Factions)
+            // {
+            //     Log.Debug($"Faction: {faction.Name}, color: {faction.ColorId}, hex: {galaxy.MappedColors.FirstOrDefault(c => c.Id == faction.ColorId)?.Hex}");
+            // }
             // Load other data files (galaxy, clusters, sectors, zones, highways) similarly
             // and populate the respective properties in clusters, sectors, and zones.
 

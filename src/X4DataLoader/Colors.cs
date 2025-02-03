@@ -1,5 +1,6 @@
 using System.Xml.Linq;
 using X4DataLoader.Helpers;
+using System.Drawing;
 using Utilities.Logging;
 using System.Data;
 
@@ -12,7 +13,7 @@ namespace X4DataLoader
         public int Green { get; protected set; }
         public int Blue { get; protected set; }
         public int Alpha { get; protected set; }
-        public string  Hex { get; protected set; }
+        public Color Color { get; protected set; }
         public string Source { get; protected set; }
         public string FileName { get; protected set; }
         public XElement? XML { get; set; }
@@ -24,7 +25,7 @@ namespace X4DataLoader
             Green = 0;
             Blue = 0;
             Alpha = 0;
-            Hex = "";
+            Color = Color.FromArgb(0, 0, 0, 0);
             Source = "";
             FileName = "";
             XML = null;
@@ -36,7 +37,7 @@ namespace X4DataLoader
             Green = int.Parse(XmlHelper.GetAttribute(element, "g") ?? "0");
             Blue = int.Parse(XmlHelper.GetAttribute(element, "b") ?? "0");
             Alpha = int.Parse(XmlHelper.GetAttribute(element, "a") ?? "0");
-            Hex = $"#{Red:X2}{Green:X2}{Blue:X2}{Alpha:X2}";
+            Color = Color.FromArgb(Alpha, Red, Green, Blue);
             Source = source;
             FileName = fileName;
             XML = element;
@@ -75,7 +76,7 @@ namespace X4DataLoader
                     Green = originalColor.Green;
                     Blue = originalColor.Blue;
                     Alpha = originalColor.Alpha;
-                    Hex = originalColor.Hex;
+                    Color = originalColor.Color;
                 }
             }
             Source = source;
