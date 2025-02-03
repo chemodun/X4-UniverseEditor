@@ -42,11 +42,11 @@ namespace X4DataLoader
             {
                 throw new ArgumentException("Connection must have a name or reference");
             }
-            var offsetElement = element.Element("offset");
+            XElement? offsetElement = element.Element("offset");
             if (offsetElement != null)
             {
                 Offset = true;
-                var positionElement = offsetElement.Element("position");
+                XElement? positionElement = offsetElement.Element("position");
                 if (positionElement != null)
                 {
                     Position = new Position(
@@ -55,7 +55,7 @@ namespace X4DataLoader
                         double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
                     );
                 }
-                var quaternionElement = offsetElement.Element("quaternion");
+                XElement? quaternionElement = offsetElement.Element("quaternion");
                 if (quaternionElement != null)
                 {
                     Quaternion = new Quaternion(
@@ -70,7 +70,7 @@ namespace X4DataLoader
             {
                 Offset = false;
             }
-            var macroElement = element.Element("macro");
+            XElement? macroElement = element.Element("macro");
             if (macroElement != null)
             {
                 MacroReference = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
@@ -100,8 +100,8 @@ namespace X4DataLoader
             XML.SetAttributeValue("ref", Reference);
             if (!(Position.X == 0 && Position.Y == 0 && Position.Z == 0))
             {
-                var offsetElement = new XElement("offset");
-                var positionElement = new XElement("position");
+                XElement? offsetElement = new XElement("offset");
+                XElement? positionElement = new XElement("position");
                 positionElement.SetAttributeValue("x", Position.X);
                 positionElement.SetAttributeValue("y", Position.Y);
                 positionElement.SetAttributeValue("z", Position.Z);
@@ -110,8 +110,8 @@ namespace X4DataLoader
             }
             if (!(Quaternion.QX == 0 && Quaternion.QY == 0 && Quaternion.QZ == 0 && Quaternion.QW == 0))
             {
-                var offsetElement = XML.Element("offset") ?? new XElement("offset");
-                var quaternionElement = new XElement("quaternion");
+                XElement? offsetElement = XML.Element("offset") ?? new XElement("offset");
+                XElement? quaternionElement = new XElement("quaternion");
                 quaternionElement.SetAttributeValue("qx", Quaternion.QX);
                 quaternionElement.SetAttributeValue("qy", Quaternion.QY);
                 quaternionElement.SetAttributeValue("qz", Quaternion.QZ);
@@ -124,7 +124,7 @@ namespace X4DataLoader
             }
             if (properties != null && properties.Count > 0 && properties.TryGetValue("macroReference", out string? macroReference) && properties.TryGetValue("macroConnection", out string? macroConnection))
             {
-                var macroElement = new XElement("macro");
+                XElement? macroElement = new XElement("macro");
                 MacroConnection = macroConnection;
                 MacroReference = macroReference;
                 macroElement.SetAttributeValue("ref", MacroReference);
@@ -140,7 +140,7 @@ namespace X4DataLoader
             string reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
             int sectorId = 0;
             int clusterId = 0;
-            var connections = new List<Connection>();
+            List<Connection>? connections = new List<Connection>();
             try
             {
                 if (Cluster.IsClusterMacro(name))
@@ -173,17 +173,17 @@ namespace X4DataLoader
                     throw new ArgumentException("Sector connection must have both cluster and sector id");
 
                 }
-                var connectionsElement = element.Element("connections");
+                XElement? connectionsElement = element.Element("connections");
                 if (connectionsElement != null)
                 {
-                    foreach (var connectionElement in connectionsElement.Elements("connection"))
+                    foreach (XElement connectionElement in connectionsElement.Elements("connection"))
                     {
-                        var connectionName = connectionElement.Attribute("name")?.Value;
-                        var connectionReference = connectionElement.Attribute("ref")?.Value;
+                        string? connectionName = connectionElement.Attribute("name")?.Value;
+                        string? connectionReference = connectionElement.Attribute("ref")?.Value;
 
                         if (connectionName != null && connectionReference == "sectors")
                         {
-                            var positionElement = connectionElement.Element("offset")?.Element("position");
+                            XElement? positionElement = connectionElement.Element("offset")?.Element("position");
                             Position position = positionElement != null
                                 ? new Position(
                                     double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
@@ -198,7 +198,7 @@ namespace X4DataLoader
                                 string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
                                 if (macroConnection == "cluster" && string.IsNullOrEmpty(macroRef) == false)
                                 {
-                                    Sector sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
+                                    Sector? sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
                                     sector?.SetPosition(position, connectionName, connectionElement);
                                 }
                             }
@@ -224,11 +224,11 @@ namespace X4DataLoader
                 }
                 if (sectorId > 0 && clusterId > 0)
                 {
-                    var sector = allSectors.Find(s => s.Id == sectorId && s.ClusterId == clusterId);
+                    Sector? sector = allSectors.Find(s => s.Id == sectorId && s.ClusterId == clusterId);
                     if (sector != null)
                     {
                         sector.Reference = reference;
-                        foreach (var connection in connections)
+                        foreach (Connection connection in connections)
                         {
                             sector.Connections[connection.Name] = connection;
                         }
@@ -236,11 +236,11 @@ namespace X4DataLoader
                 }
                 else if (clusterId > 0)
                 {
-                    var cluster = allClusters.Find(c => c.Id == clusterId);
+                    Cluster? cluster = allClusters.Find(c => c.Id == clusterId);
                     if (cluster != null)
                     {
                         cluster.Reference = reference;
-                        foreach (var connection in connections)
+                        foreach (Connection connection in connections)
                         {
                             cluster.Connections[connection.Name] = connection;
                         }
@@ -315,10 +315,10 @@ namespace X4DataLoader
                 throw new ArgumentException("Gate connection must have a macro element");
             }
             IsActive = true;
-            var propertiesElement = MacroXML.Element("properties");
+            XElement? propertiesElement = MacroXML.Element("properties");
             if (propertiesElement != null)
             {
-                var stateElement = propertiesElement.Element("state");
+                XElement? stateElement = propertiesElement.Element("state");
                 if (stateElement != null)
                 {
                     IsActive = XmlHelper.GetAttribute(stateElement, "active") == "true";
