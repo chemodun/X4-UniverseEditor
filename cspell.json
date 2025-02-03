@@ -6,6 +6,8 @@
         "en"
     ],
     "words": [
+        "constructionplan",
+        "constructionplans",
         "cosp",
         "cosr",
         "DemiBold",
@@ -13,6 +15,7 @@
         "exitpoint",
         "freesplit",
         "galaxymap",
+        "gamestart",
         "hatikvah",
         "Hewa's",
         "holyorder",
@@ -22,6 +25,7 @@
         "longdate",
         "mapdefaults",
         "mapob",
+        "modulegroups",
         "paranid",
         "patchactions",
         "sechighways",
@@ -31,6 +35,7 @@
         "standardsechighway",
         "standardzone",
         "standardzonehighway",
+        "stationgroups",
         "teladi",
         "Tharka's",
         "tradeware",
