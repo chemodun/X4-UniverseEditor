@@ -136,30 +136,36 @@ namespace X4DataLoader
             Dictionary<string, string> ownerReplacements = new() { ["alliance"] = "paranid", ["ministry"] = "teladi"};
             foreach (Station station in Stations)
             {
-                if (toIgnoreOwners.Contains(station.Owner))
+                if (station.IsClaimCapable && !station.GameStartDependent)
                 {
-                    continue;
+                    if (ownerStationCount.TryGetValue(station.Owner, out int countedValue))
+                    {
+                        ownerStationCount[station.Owner] = ++countedValue;
+                    }
+                    else
+                    {
+                        ownerStationCount[station.Owner] = 1;
+                    }
                 }
-                if (toIgnoreTypes.Contains(station.Type))
+                Log.Debug($"Sector {Name}: Station {station.Id} Owner: {station.Owner}, isClaimCapable: {station.IsClaimCapable}");
+            }
+            if (ownerStationCount.Count > 0)
+            {
+                int totalCalculableStations = ownerStationCount.Values.Sum();
+                string dominantOwner = ownerStationCount.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+                if (ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100 > 50)
                 {
-                    continue;
-                }
-                string owner = ownerReplacements.TryGetValue(station.Owner, out string? value) ? value : station.Owner;
-                if (ownerStationCount.TryGetValue(owner, out int countedValue))
-                {
-                    ownerStationCount[owner] = ++countedValue;
+                    DominantOwner = dominantOwner;
+                    Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
                 }
                 else
                 {
-                    ownerStationCount[owner] = 1;
+                    Log.Debug($"Sector {Name}: Dominant Owner not found");
                 }
             }
-            if (ownerStationCount.Count == 0) return;
-            int totalCalculableStations = ownerStationCount.Values.Sum();
-            string dominantOwner = ownerStationCount.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-            if (ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100 > 50)
+            else
             {
-                DominantOwner = dominantOwner;
+                Log.Debug($"Sector {Name}: No claim capable stations found");
             }
         }
     }

@@ -12,11 +12,14 @@ namespace X4DataLoader
         public string Race { get; private set; }
         public string Owner { get; private set; }
         public string Type { get; private set; }
+        public bool GameStartDependent { get; private set; } = false;
+        public bool IsClaimCapable { get; private set; }
         public Sector? Sector { get; private set; }
         public Zone? Zone { get; private set; }
         public Position Position { get; private set; }
         public Rotation Rotation { get; private set; }
         public XElement? PositionXML { get; set; }
+        public List<string> Tags { get; private set; } = [];
         public XElement? XML { get; set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
@@ -27,6 +30,7 @@ namespace X4DataLoader
             Race = "";
             Owner = "";
             Type = "";
+            IsClaimCapable = false;
             Sector = null;
             Zone = null;
             Position = new Position();
@@ -36,7 +40,7 @@ namespace X4DataLoader
             Source = "";
             FileName = "";
         }
-        public void Load(XElement element, string source, string fileName, List<Sector> allSectors)
+        public void Load(XElement element, string source, string fileName, List<Sector> allSectors, List<StationCategory> allStationCategories, List<ConstructionPlan> allConstructionPlans)
         {
             Id = XmlHelper.GetAttribute(element, "id") ?? "";
             Race = XmlHelper.GetAttribute(element, "race") ?? "";
@@ -95,6 +99,44 @@ namespace X4DataLoader
                     double.Parse(XmlHelper.GetAttribute(positionElement, "roll") ?? "0")
                 );
                 PositionXML = positionElement;
+            }
+            XElement? stationElement = element.Element("station");
+            ConstructionPlan? constructionPlan = null;
+            if (stationElement != null)
+            {
+                string constructionPlanId = XmlHelper.GetAttribute(stationElement, "constructionplan")?.Trim('\'') ?? "";
+                if (!String.IsNullOrEmpty(constructionPlanId))
+                {
+                    constructionPlan = allConstructionPlans.FirstOrDefault(cp => cp.Id == constructionPlanId);
+                }
+                XElement? selectElement = stationElement.Element("select");
+                if (selectElement != null)
+                {
+                    Tags = XmlHelper.GetAttributeAsList(selectElement, "tags");
+                    string faction = XmlHelper.GetAttribute(selectElement, "faction") ?? "";
+                    if (String.IsNullOrEmpty(constructionPlanId) && !String.IsNullOrEmpty(faction) && Tags.Count == 1)
+                    {
+                        StationCategory? stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, Tags[0], faction);
+                        if (stationCategory != null)
+                        {
+                            constructionPlan = stationCategory.StationGroup?.GetMostWeightedConstructionPlan();
+                        }
+                    }
+                }
+            }
+            IsClaimCapable = constructionPlan?.IsClaimCapable ?? false;
+            XElement?  quotasElement = element.Element("quotas");
+            if (quotasElement != null)
+            {
+                foreach (XElement quotaElement in quotasElement.Elements("quota"))
+                {
+                    string gameStart = XmlHelper.GetAttribute(quotaElement, "gamestart") ?? "";
+                    if (!String.IsNullOrEmpty(gameStart))
+                    {
+                        GameStartDependent = true;
+                        break;
+                    }
+                }
             }
             Source = source;
             FileName = fileName;

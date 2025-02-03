@@ -273,7 +273,96 @@ namespace X4DataLoader
                     }
                     Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
                 }
-
+                if (fileSet.Value.TryGetValue("modules", out var modulesFile))
+                {
+                    XDocument modulesDoc;
+                    try
+                    {
+                        modulesDoc = XDocument.Load(modulesFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading modules {modulesFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    IEnumerable<XElement> modules = modulesDoc.XPathSelectElements("/modules/module");
+                    if (!modules.Any())
+                    {
+                        modules = modulesDoc.XPathSelectElements("/diff/add[@sel='/modules']/module");
+                    }
+                    StationModule.LoadElements(modules, source, modulesFile.fileName, galaxy.StationModules);
+                    Log.Debug($"Modules loaded from: {modulesFile.fileName} for {source}");
+                }
+                if (fileSet.Value.TryGetValue("modulegroups", out var stationModuleGroupsFile))
+                {
+                    XDocument stationModuleGroupsDoc;
+                    try
+                    {
+                        stationModuleGroupsDoc = XDocument.Load(stationModuleGroupsFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading station module groups {stationModuleGroupsFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    StationModuleGroup.LoadElements(stationModuleGroupsDoc.XPathSelectElements("/groups/group"), source, stationModuleGroupsFile.fileName, galaxy.StationModuleGroups);
+                    Log.Debug($"Station module groups loaded from: {stationModuleGroupsFile.fileName} for {source}");
+                }
+                if (fileSet.Value.TryGetValue("constructionplans", out var constructionPlansFile))
+                {
+                    XDocument constructionPlansDoc;
+                    try
+                    {
+                        constructionPlansDoc = XDocument.Load(constructionPlansFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading construction plans {constructionPlansFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    ConstructionPlan.LoadElements(constructionPlansDoc.XPathSelectElements("/plans/plan"), source, constructionPlansFile.fileName, galaxy.ConstructionPlans, translation, galaxy.StationModules, galaxy.StationModuleGroups);
+                    Log.Debug($"Construction plans loaded from: {constructionPlansFile.fileName} for {source}");
+                }
+                if (fileSet.Value.TryGetValue("stationgroups", out var stationGroupsFile))
+                {
+                    XDocument stationGroupsDoc;
+                    try
+                    {
+                        stationGroupsDoc = XDocument.Load(stationGroupsFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading station groups {stationGroupsFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    IEnumerable<XElement> stationGroups = stationGroupsDoc.XPathSelectElements("/groups/group");
+                    if (!stationGroups.Any())
+                    {
+                        stationGroups = stationGroupsDoc.XPathSelectElements("/diff/add[@sel='/groups']/group");
+                    }
+                    StationGroup.LoadElements(stationGroups, source, stationGroupsFile.fileName, galaxy.StationGroups, galaxy.ConstructionPlans);
+                    Log.Debug($"Station groups loaded from: {stationGroupsFile.fileName} for {source}");
+                }
+                if (fileSet.Value.TryGetValue("stations", out var stationCategoriesFile))
+                {
+                    XDocument stationCategoriesDoc;
+                    try
+                    {
+                        stationCategoriesDoc = XDocument.Load(stationCategoriesFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading station categories {stationCategoriesFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    IEnumerable<XElement> stationCategories = stationCategoriesDoc.XPathSelectElements("/stations/station");
+                    if (!stationCategories.Any())
+                    {
+                        stationCategories = stationCategoriesDoc.XPathSelectElements("/diff/add[@sel='/stations']/station");
+                    }
+                    StationCategory.LoadElements(stationCategories, source, stationCategoriesFile.fileName, galaxy.StationCategories, galaxy.StationGroups);
+                    Log.Debug($"Station categories loaded from: {stationCategoriesFile.fileName} for {source}");
+                }
                 // Process god (Stations)
                 if (fileSet.Value.TryGetValue("god", out var godFile))
                 {
@@ -295,7 +384,7 @@ namespace X4DataLoader
                     foreach (XElement stationElement in godElements)
                     {
                         var station = new Station();
-                        station.Load(stationElement, source, godFile.fileName, sectors);
+                        station.Load(stationElement, source, godFile.fileName, sectors, galaxy.StationCategories, galaxy.ConstructionPlans);
                     }
                     Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
                 }
