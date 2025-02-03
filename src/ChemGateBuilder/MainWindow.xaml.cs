@@ -481,9 +481,10 @@ namespace ChemGateBuilder
                     IsGateCanBeDeleted = IsNowGateCanBeDeleted && value;
                     OnPropertyChanged(nameof(ChangingGalaxyConnectionIsPossible));
                 }
+                bool isModChanged = ChemGateKeeperMod.IsModChanged(GalaxyConnections);
                 if (value && IsGateCanBeDeleted)
                 {
-                    IsModCanBeSaved = ChemGateKeeperMod.IsModChanged(GalaxyConnections);
+                    IsModCanBeSaved =isModChanged;
                 } else
                 {
                     IsModCanBeSaved = false;

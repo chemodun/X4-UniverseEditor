@@ -46,12 +46,13 @@ namespace ChemGateBuilder
         }
         public string Title {
             get {
-                string versionString = $" {_version / 100.0:F2}".Replace(',', '.') + (_version != _versionInitial ? "*" : "");
+                string versionString = $" {_version / 100.0:F2}".Replace(',', '.');
+                versionString += _isModChanged ? "*" : "";
                 string gameVersion = $"{_gameVersion / 100.0:F2}".Replace(',', '.');
                 return $"{_name} v.{versionString} built {_date} for X4: Foundations v.{gameVersion}";
             }
         }
-
+        private bool _isModChanged = false;
         public List<GalaxyConnection> Connections = [];
         public XElement? XML = null;
 
@@ -494,6 +495,7 @@ namespace ChemGateBuilder
                 Log.Debug("Mod has not been changed");
                 Version = _versionInitial == 0 ? 100 : _versionInitial;
             }
+            _isModChanged = result;
             return result;
         }
 
