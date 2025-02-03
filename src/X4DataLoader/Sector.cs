@@ -128,7 +128,7 @@ namespace X4DataLoader
             Stations.Add(station);
         }
 
-        public void CalculateOwnership()
+        public void CalculateOwnership(List<Faction> allFactions)
         {
             Dictionary<string, int> ownerStationCount = new();
             List<string> toIgnoreOwners = ["player", "civilian", "khaak", "ownerless"];
@@ -138,6 +138,8 @@ namespace X4DataLoader
             {
                 if (station.IsClaimCapable && !station.GameStartDependent)
                 {
+                    Faction? stationOwner = allFactions.Find(faction => faction.Id == station.Owner);
+                    if (stationOwner == null || !stationOwner.IsContainsTag("claimspace")) continue;
                     if (ownerStationCount.TryGetValue(station.Owner, out int countedValue))
                     {
                         ownerStationCount[station.Owner] = ++countedValue;

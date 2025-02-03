@@ -13,6 +13,7 @@ namespace X4DataLoader
         public int Version { get; set; } = 0;
         public List<Cluster> Clusters { get; private set; }
         public List<Sector> Sectors { get; private set; }
+        public List<Faction> Factions { get; private set; } = [];
         public List<StationModule> StationModules { get; private set; } = [];
         public List<StationModuleGroup> StationModuleGroups { get; private set; } = [];
         public List<ConstructionPlan> ConstructionPlans { get; private set; } = [];

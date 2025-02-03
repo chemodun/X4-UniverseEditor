@@ -9,6 +9,7 @@ namespace X4DataLoader
             {
                 { "translation", ("t", "0001-l044.xml") },
                 { "mapDefaults", ("libraries", "mapdefaults.xml") },
+                { "factions", ("libraries", "factions.xml") },
                 { "modules", ("libraries", "modules.xml") },
                 { "modulegroups", ("libraries", "modulegroups.xml") },
                 { "constructionplans", ("libraries", "constructionplans.xml") },
