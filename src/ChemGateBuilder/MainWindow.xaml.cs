@@ -715,6 +715,7 @@ namespace ChemGateBuilder
                 X4DataVersion = Galaxy.Version;
             }
             FactionColors.Load(Galaxy.Factions, Galaxy.MappedColors);
+            GatesConnectionCurrent?.SetColors(FactionColors);
             SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
         }
 
@@ -959,7 +960,7 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent != null)
             {
                 Log.Debug($"[ButtonSectorDirectMapExpand_Click] Direct: ");
-                SectorMapExpandedWindow sectorMapExpandedWindow = new(SectorRadius)
+                SectorMapExpandedWindow sectorMapExpandedWindow = new(SectorRadius, FactionColors)
                 {
                     // Set the owner to the main window for proper window behavior
                     Owner = this

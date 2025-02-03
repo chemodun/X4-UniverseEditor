@@ -31,12 +31,13 @@ namespace ChemGateBuilder
                 OnPropertyChanged(nameof(NewGateCoordinates));
             }
         }
-        public SectorMapExpandedWindow(int sectorRadius)
+        public SectorMapExpandedWindow(int sectorRadius, FactionColors factionColors)
         {
             InitializeComponent();
             DataContext = this;
             _sectorMapExpanded.InternalSizeKm = sectorRadius;
             _sectorMapExpanded.Connect(SectorMapExpandedCanvas, SectorHexagon);
+            _sectorMapExpanded.SetColors(factionColors);
         }
 
         private void SectorMapExpandedCanvas_SizeChanged(object sender, SizeChangedEventArgs e)

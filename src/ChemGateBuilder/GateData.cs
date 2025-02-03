@@ -229,6 +229,11 @@ namespace ChemGateBuilder
             SectorDirectMap.Connect(canvasDirect, hexagonDirect);
             SectorOppositeMap.Connect(canvasOpposite, hexagonOpposite);
         }
+        public void SetColors(FactionColors factionColors)
+        {
+            SectorDirectMap.SetColors(factionColors);
+            SectorOppositeMap.SetColors(factionColors);
+        }
         public void Reset()
         {
             SectorDirect = _sectorDirectDefault;
@@ -458,10 +463,7 @@ namespace ChemGateBuilder
                     Galaxy galaxy = mainWindow.Galaxy;
                     Sector? sector = sectorCurrent != null ? galaxy.GetSectorByMacro(sectorCurrent.Macro) : null;
                     string sectorOwner = sector?.DominantOwner ?? "";
-                    if (SectorMap.OwnerToColor.TryGetValue(sectorOwner, out (string ColorString, System.Windows.Media.SolidColorBrush Brush) ownerColor))
-                    {
-                        sectorMap.OwnerColor = ownerColor.ColorString;
-                    }
+                    sectorMap.UpdateSectorColor(sectorOwner);
                     List<SectorConnectionData> connectionsList = sectorMap.SetSector(sector, galaxy);
                     if (sectorCurrent != null) {
                         foreach (var connection in connectionsList)

@@ -53,6 +53,16 @@ namespace ChemGateBuilder
             }
             return null;
         }
+
+        public string GetColorString(string id)
+        {
+            if (MappedColors.ContainsKey(id))
+            {
+                Color color = MappedColors[id];
+                return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            }
+            return string.Empty;
+        }
     }
 
 }

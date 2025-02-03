@@ -28,25 +28,7 @@ namespace ChemGateBuilder
         private string _ownerColor = OwnerColorInitial;
         public static string OwnerColorInitial = "#F0F0F0";
 
-        public static readonly Dictionary<string, (string ColorString, SolidColorBrush Brush)> OwnerToColor = new Dictionary<string, (string, SolidColorBrush)>
-        {
-            { "antigone", ("#00A6ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00A6ff"))) },
-            { "argon", ("#0050A0", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0050A0"))) },
-            { "boron", ("#4cc6ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4cc6ff"))) },
-            { "freesplit", ("#ffac00", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffac00"))) },
-            { "hatikvah", ("#50ffff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#50ffff"))) },
-            { "holyorder", ("#ffbaff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffbaff"))) },
-            { "kaori", ("#ffca96", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffca96"))) },
-            { "loanshark", ("#b5a750", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b5a750"))) },
-            { "paranid", ("#c530c5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c530c5"))) },
-            { "pioneers", ("#00c1d5", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00c1d5"))) },
-            { "scavenger", ("#302586", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#302586"))) },
-            { "split", ("#d58100", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#d58100"))) },
-            { "teladi", ("#c5c500", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#c5c500"))) },
-            { "terran", ("#aad8ff", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#aad8ff"))) },
-            { "xenon", ("#b90000", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#b90000"))) },
-            {"", ("#B0B0B0", new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B0B0B0"))) }
-        };
+        private FactionColors FactionColors = new();
 
         public double MinInternalSizeKm
         {
@@ -132,6 +114,18 @@ namespace ChemGateBuilder
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public void SetColors(FactionColors factionColors)
+        {
+            FactionColors = factionColors;
+        }
+        public void UpdateSectorColor(string id)
+        {
+            string color = FactionColors.GetColorString(id);
+            if (!String.IsNullOrEmpty(color)) {
+                OwnerColor = color;
+            }
+
+        }
         public void Connect(Canvas canvas, Polygon hexagon)
         {
             MapCanvas = canvas;
