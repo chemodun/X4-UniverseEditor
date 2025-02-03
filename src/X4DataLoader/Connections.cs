@@ -22,7 +22,8 @@ namespace X4DataLoader
         public XElement? XML { get; private set; }
         public XElement? MacroXML { get; private set; }
 
-        public Connection() {
+        public Connection()
+        {
             Name = "";
             Reference = "";
             Offset = false;
@@ -78,7 +79,8 @@ namespace X4DataLoader
                 {
                     throw new ArgumentException("Macro element of Connection must have ref and connection attributes");
                 }
-                else {
+                else
+                {
                     MacroXML = macroElement;
                 }
             }
@@ -88,7 +90,7 @@ namespace X4DataLoader
             FileName = fileName;
         }
 
-        public virtual void Create (string name, Position? position, Quaternion? quaternion, Dictionary<string, string>? properties = null)
+        public virtual void Create(string name, Position? position, Quaternion? quaternion, Dictionary<string, string>? properties = null)
         {
             Name = name;
             Position = position ?? new Position();
@@ -120,7 +122,8 @@ namespace X4DataLoader
                     XML.Add(offsetElement);
                 }
             }
-            if (properties != null && properties.Count > 0 && properties.TryGetValue("macroReference", out string? macroReference) && properties.TryGetValue("macroConnection", out string? macroConnection)) {
+            if (properties != null && properties.Count > 0 && properties.TryGetValue("macroReference", out string? macroReference) && properties.TryGetValue("macroConnection", out string? macroConnection))
+            {
                 var macroElement = new XElement("macro");
                 MacroConnection = macroConnection;
                 MacroReference = macroReference;
@@ -138,12 +141,18 @@ namespace X4DataLoader
             int sectorId = 0;
             int clusterId = 0;
             var connections = new List<Connection>();
-            try {
-                if (Cluster.IsClusterMacro(name)) {
-                    (string clusterIdPrefix, clusterId)  = Cluster.GetClusterIdData(name);
-                } else if (Sector.IsSectorMacro(name)) {
+            try
+            {
+                if (Cluster.IsClusterMacro(name))
+                {
+                    (string clusterIdPrefix, clusterId) = Cluster.GetClusterIdData(name);
+                }
+                else if (Sector.IsSectorMacro(name))
+                {
                     (string clusterIdPrefix, clusterId, string sectorIdPrefix, sectorId) = Sector.GetSectorIdData(name);
-                } else {
+                }
+                else
+                {
                     throw new ArgumentException("Invalid macro format");
                 }
                 if (ConnectionOwnerClasses.Contains(connectionClass) == false)
@@ -155,7 +164,7 @@ namespace X4DataLoader
                 {
                     throw new ArgumentException("Connection macro must have a cluster or sector id");
                 }
-                else if(connectionClass == "cluster" && clusterId == 0)
+                else if (connectionClass == "cluster" && clusterId == 0)
                 {
                     throw new ArgumentException("Cluster connection must have a cluster id");
                 }
@@ -182,30 +191,32 @@ namespace X4DataLoader
                                     double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
                                   )
                                 : new Position();
-                            var macroElement = connectionElement.Element("macro");
+                            XElement? macroElement = connectionElement.Element("macro");
                             if (macroElement != null)
                             {
                                 string macroRef = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
                                 string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
                                 if (macroConnection == "cluster" && string.IsNullOrEmpty(macroRef) == false)
                                 {
-                                    var sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
+                                    Sector sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
                                     sector?.SetPosition(position, connectionName, connectionElement);
                                 }
                             }
-                        } else {
-                            var connection = connectionReference switch
-                                {
-                                    "entrypoint" => new EntryPointConnection(),
-                                    "exitpoint" => new ExitPointConnection(),
-                                    "zonehighways" => new ZoneHighwayConnection(),
-                                    "zones" => new ZoneConnection(),
-                                    "content" => new ContentConnection(),
-                                    "regions" => new RegionConnection(),
-                                    "sechighways" => new SecHighwayConnection(),
-                                    "gate" => new GateConnection(),
-                                    _ => new Connection()
-                                };
+                        }
+                        else
+                        {
+                            Connection? connection = connectionReference switch
+                            {
+                                "entrypoint" => new EntryPointConnection(),
+                                "exitpoint" => new ExitPointConnection(),
+                                "zonehighways" => new ZoneHighwayConnection(),
+                                "zones" => new ZoneConnection(),
+                                "content" => new ContentConnection(),
+                                "regions" => new RegionConnection(),
+                                "sechighways" => new SecHighwayConnection(),
+                                "gate" => new GateConnection(),
+                                _ => new Connection()
+                            };
                             connection.Load(connectionElement, source, fileName);
                             connections.Add(connection);
                         }
@@ -290,12 +301,14 @@ namespace X4DataLoader
         public string GateMacro => MacroReference;
         public bool IsActive { get; private set; }
 
-        public GateConnection() : base() {
+        public GateConnection() : base()
+        {
             Reference = "gates";
             IsActive = false;
         }
 
-        public override void Load(XElement element, string source, string fileName) {
+        public override void Load(XElement element, string source, string fileName)
+        {
             base.Load(element, source, fileName);
             if (MacroXML == null)
             {
