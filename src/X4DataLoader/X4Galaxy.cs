@@ -8,6 +8,7 @@ namespace X4DataLoader
             var relativePaths = new Dictionary<string, (string path, string fileName)>
             {
                 { "translation", ("t", "0001-l044.xml") },
+                { "colors", ("libraries", "colors.xml") },
                 { "mapDefaults", ("libraries", "mapdefaults.xml") },
                 { "factions", ("libraries", "factions.xml") },
                 { "modules", ("libraries", "modules.xml") },

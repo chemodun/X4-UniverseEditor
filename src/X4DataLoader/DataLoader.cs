@@ -273,6 +273,22 @@ namespace X4DataLoader
                     }
                     Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
                 }
+                if (fileSet.Value.TryGetValue("colors", out var colorsFile))
+                {
+                    XDocument colorsDoc;
+                    try
+                    {
+                        colorsDoc = XDocument.Load(colorsFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading colors {colorsFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    X4Color.LoadElements(colorsDoc.XPathSelectElements("/colormap/colors/color"), source, colorsFile.fileName, galaxy.Colors);
+                    X4MappedColor.LoadElements(colorsDoc.XPathSelectElements("/colormap/mappings/mapping"), source, colorsFile.fileName, galaxy.MappedColors, galaxy.Colors);
+                    Log.Debug($"Colors loaded from: {colorsFile.fileName} for {source}");
+                }
                 if (fileSet.Value.TryGetValue("factions", out var factionsFile))
                 {
                     XDocument factionsDoc;
@@ -482,6 +498,10 @@ namespace X4DataLoader
                 sector.CalculateOwnership(galaxy.Factions);
             }
 
+            foreach (Faction faction in galaxy.Factions)
+            {
+                Log.Debug($"Faction: {faction.Name}, color: {faction.ColorId}, hex: {galaxy.MappedColors.FirstOrDefault(c => c.Id == faction.ColorId)?.Hex}");
+            }
             // Load other data files (galaxy, clusters, sectors, zones, highways) similarly
             // and populate the respective properties in clusters, sectors, and zones.
 
