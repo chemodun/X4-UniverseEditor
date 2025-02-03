@@ -1,4 +1,6 @@
 using System.Xml.Linq;
+using System.Text.Json;
+using Utilities.Logging;
 
 namespace X4DataLoader.Helpers
 {
@@ -19,6 +21,21 @@ namespace X4DataLoader.Helpers
             }
 
             return null;
+        }
+
+        public static List<string> GetAttributeAsList(XElement element, string attributeName)
+        {
+            var tags = new List<string>();
+            var tagsAttribute = element.Attribute(attributeName)?.Value;
+            if (!string.IsNullOrEmpty(tagsAttribute))
+            {
+                tags =  tagsAttribute.Trim('[', ']')
+                    .Split(',')
+                    .Select(item => item.Trim())
+                    .ToList();
+            }
+
+            return tags;
         }
     }
 }
