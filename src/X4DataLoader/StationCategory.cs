@@ -61,6 +61,11 @@ namespace X4DataLoader
                     Log.Warn($"StationCategory {stationCategory.StationId} must have a category");
                     continue;
                 }
+                if (allStationCategories.Any(sc => sc.Tag == stationCategory.Tag && sc.Factions.SequenceEqual(stationCategory.Factions)))
+                {
+                    Log.Warn($"StationCategory {stationCategory.StationId} has a duplicate tag and faction");
+                    continue;
+                }
                 allStationCategories.Add(stationCategory);
             }
         }

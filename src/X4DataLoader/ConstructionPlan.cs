@@ -78,6 +78,11 @@ namespace X4DataLoader
                     Log.Warn($"ConstructionPlan {constructionPlan.Id} must have a name");
                     continue;
                 }
+                if (allConstructionPlans.Any(cp => cp.Id == constructionPlan.Id))
+                {
+                    Log.Warn($"ConstructionPlan {constructionPlan.Id} has a duplicate id");
+                    continue;
+                }
                 allConstructionPlans.Add(constructionPlan);
             }
         }

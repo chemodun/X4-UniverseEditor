@@ -51,6 +51,11 @@ namespace X4DataLoader
             {
                 StationModule module = new();
                 module.Load(element, source, fileName);
+                if (allModules.Any(m => m.Id == module.Id))
+                {
+                    Log.Error($"Duplicate module id {module.Id}");
+                    continue;
+                }
                 allModules.Add(module);
             }
         }

@@ -89,6 +89,11 @@ namespace X4DataLoader
                     Log.Warn($"Faction must have a name");
                     continue;
                 }
+                if (allFactions.Any(f => f.Id == faction.Id))
+                {
+                    Log.Warn($"Duplicate faction id {faction.Id}");
+                    continue;
+                }
                 allFactions.Add(faction);
             }
         }

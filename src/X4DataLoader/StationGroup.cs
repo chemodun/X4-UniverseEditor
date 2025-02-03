@@ -70,6 +70,11 @@ namespace X4DataLoader
                     Log.Warn($"StationGroup must have a name");
                     continue;
                 }
+                if (allGroups.Any(x => x.Name == group.Name))
+                {
+                    Log.Warn($"Duplicate StationGroup name {group.Name}");
+                    continue;
+                }
                 allGroups.Add(group);
             }
         }
