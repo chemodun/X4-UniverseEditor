@@ -8,13 +8,13 @@ namespace X4DataLoader.Helpers
     {
         public static string? GetAttribute(XElement element, string attributeName)
         {
-            var attribute = element.Attribute(attributeName)?.Value;
+            string? attribute = element.Attribute(attributeName)?.Value;
             if (attribute != null)
             {
                 return attribute;
             }
 
-            var componentElement = element.Element("component");
+            XElement? componentElement = element.Element("component");
             if (componentElement != null)
             {
                 return componentElement.Attribute(attributeName)?.Value;
@@ -25,11 +25,11 @@ namespace X4DataLoader.Helpers
 
         public static List<string> GetAttributeAsList(XElement element, string attributeName, string separator = ",")
         {
-            var tags = new List<string>();
-            var tagsAttribute = element.Attribute(attributeName)?.Value;
+            List<string>? tags = new List<string>();
+            string? tagsAttribute = element.Attribute(attributeName)?.Value;
             if (!string.IsNullOrEmpty(tagsAttribute))
             {
-                tags =  tagsAttribute.Trim('[', ']')
+                tags = tagsAttribute.Trim('[', ']')
                     .Split(separator)
                     .Select(item => item.Trim())
                     .ToList();
