@@ -23,14 +23,14 @@ namespace X4DataLoader.Helpers
             return null;
         }
 
-        public static List<string> GetAttributeAsList(XElement element, string attributeName)
+        public static List<string> GetAttributeAsList(XElement element, string attributeName, string separator = ",")
         {
             var tags = new List<string>();
             var tagsAttribute = element.Attribute(attributeName)?.Value;
             if (!string.IsNullOrEmpty(tagsAttribute))
             {
                 tags =  tagsAttribute.Trim('[', ']')
-                    .Split(',')
+                    .Split(separator)
                     .Select(item => item.Trim())
                     .ToList();
             }
