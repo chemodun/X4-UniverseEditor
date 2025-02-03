@@ -15,18 +15,18 @@ namespace ChemGateBuilder
         private SectorConnectionData? _sectorDirectSelectedConnection = new();
         private SectorMap _sectorDirectMap = new();
         private ObservableCollection<SectorConnectionData> _sectorDirectConnections = [];
-        private GateData _gateDirect ;
+        private GateData _gateDirect;
         private SectorItem? _sectorOpposite;
         private SectorItem? _sectorOppositeDefault;
         private SectorConnectionData? _sectorOppositeSelectedConnection = new();
-        private SectorMap _sectorOppositeMap = new() ;
-        private ObservableCollection<SectorConnectionData>  _SectorOppositeConnections = [];
+        private SectorMap _sectorOppositeMap = new();
+        private ObservableCollection<SectorConnectionData> _SectorOppositeConnections = [];
         private GateData _gateOpposite;
         private bool _isChanged = false;
         private bool _isReadyToSave = false;
 
         private bool IsDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
-        private bool IsDataReadyToSave => CheckGateDistance() && CheckGateDistance(false) &&_sectorDirect != null && _sectorOpposite != null && IsDataChanged;
+        private bool IsDataReadyToSave => CheckGateDistance() && CheckGateDistance(false) && _sectorDirect != null && _sectorOpposite != null && IsDataChanged;
 
         public SectorItem? SectorDirect
         {
@@ -202,9 +202,11 @@ namespace ChemGateBuilder
             }
         }
 
-        public bool IsChanged {
+        public bool IsChanged
+        {
             get => _isChanged;
-            set {
+            set
+            {
                 _isChanged = value;
                 OnPropertyChanged(nameof(IsChanged));
                 if (Application.Current.MainWindow is MainWindow mainWindow)
@@ -213,7 +215,7 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public bool IsReadyToSave { get => _isReadyToSave; set { _isReadyToSave = value; OnPropertyChanged(nameof(IsReadyToSave)); }}
+        public bool IsReadyToSave { get => _isReadyToSave; set { _isReadyToSave = value; OnPropertyChanged(nameof(IsReadyToSave)); } }
         public GatesConnectionData(bool gateActiveDefault, string gateMacroDefault)
         {
             // Subscribe to child PropertyChanged events
@@ -334,10 +336,11 @@ namespace ChemGateBuilder
         {
             GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
             if (gateCurrent == null) return;
-            gateCurrent.Coordinates = new Coordinates(X, Y ,Z);
+            gateCurrent.Coordinates = new Coordinates(X, Y, Z);
         }
 
-        private bool CheckGateDistance(bool isDirect = true) {
+        private bool CheckGateDistance(bool isDirect = true)
+        {
             if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow != null)
             {
                 if (mainWindow.GatesMinimalDistanceBetween == 0 || mainWindow.GatesConnectionCurrent == null)
@@ -454,7 +457,8 @@ namespace ChemGateBuilder
                 var sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
                 sectorConnections.Clear();
                 SectorMap sectorMap = isDirect ? SectorDirectMap : SectorOppositeMap;
-                if (sectorCurrent?.Macro == null) {
+                if (sectorCurrent?.Macro == null)
+                {
                     sectorMap.ClearItems();
                     sectorMap.OwnerColor = SectorMap.OwnerColorInitial;
                 }
@@ -465,7 +469,8 @@ namespace ChemGateBuilder
                     string sectorOwner = sector?.DominantOwner ?? "";
                     sectorMap.UpdateSectorColor(sectorOwner);
                     List<SectorConnectionData> connectionsList = sectorMap.SetSector(sector, galaxy);
-                    if (sectorCurrent != null) {
+                    if (sectorCurrent != null)
+                    {
                         foreach (var connection in connectionsList)
                         {
                             sectorConnections.Add(connection);
@@ -489,7 +494,8 @@ namespace ChemGateBuilder
                             }
                             sectorsViewSource.View.Refresh();
                         }
-                        foreach(SectorConnectionData modConnection in mainWindow.GetSectorConnectionsFromMod(sectorCurrent.Macro)) {
+                        foreach (SectorConnectionData modConnection in mainWindow.GetSectorConnectionsFromMod(sectorCurrent.Macro))
+                        {
                             sectorMap.AddItem(modConnection);
                         }
                     }

@@ -24,9 +24,9 @@ namespace ChemGateBuilder
         private double _visualY;
         protected double _visualSizePx = 200; // Default size
         protected double _internalSizeKm = 400;
-        private string?  _selectedItemId = "";
+        private string? _selectedItemId = "";
         private string _ownerColor = OwnerColorInitial;
-        public static string OwnerColorInitial = "#F0F0F0";
+        public static readonly string OwnerColorInitial = "#F0F0F0";
 
         private FactionColors FactionColors = new();
 
@@ -69,7 +69,8 @@ namespace ChemGateBuilder
             get => _visualSizePx;
             set { _visualSizePx = value; OnPropertyChanged(); }
         }
-        public double InternalSizeKm {
+        public double InternalSizeKm
+        {
             get => _internalSizeKm;
             set
             {
@@ -94,13 +95,13 @@ namespace ChemGateBuilder
             }
         }
 
-        public static double ItemSizeMinDefaultPx = 10;
-        public static double MinVisualSectorSize = 50;
-        public static double MaxVisualSectorSize = 1200;
+        public static readonly double ItemSizeMinDefaultPx = 10;
+        public static readonly double MinVisualSectorSize = 50;
+        public static readonly double MaxVisualSectorSize = 1200;
 
         public double ItemSizeMinPx = ItemSizeMinDefaultPx;
 
-        public ObservableCollection<SectorMapItem> Items { get; set; } = new ObservableCollection<SectorMapItem>();
+        public ObservableCollection<SectorMapItem> Items { get; set; } = [];
 
         public bool IsDragging = false;
         public SectorMapItem? SelectedItem = null;
@@ -121,7 +122,8 @@ namespace ChemGateBuilder
         public void UpdateSectorColor(string id)
         {
             string color = FactionColors.GetColorString(id);
-            if (!String.IsNullOrEmpty(color)) {
+            if (!String.IsNullOrEmpty(color))
+            {
                 OwnerColor = color;
             }
 
@@ -140,10 +142,10 @@ namespace ChemGateBuilder
         {
             Sector = sector;
             ClearItems();
-            List<SectorConnectionData> sectorConnections = new();
-            if (sector != null && sector.Zones != null && sector.Zones.Count != 0)
+            List<SectorConnectionData> sectorConnections = [];
+            if (Sector != null && Sector.Zones != null && Sector.Zones.Count != 0)
             {
-                foreach (var zone in sector.Zones)
+                foreach (var zone in Sector.Zones)
                 {
                     if (zone.Connections == null || zone.Connections.Count == 0) continue;
                     foreach (var connection in zone.Connections.Values)
@@ -172,7 +174,7 @@ namespace ChemGateBuilder
                         }
                     }
                 }
-                foreach (HighwayPoint highwayPoint in sector.HighwayPoints)
+                foreach (HighwayPoint highwayPoint in Sector.HighwayPoints)
                 {
                     if (highwayPoint.Position == null) continue;
                     if (highwayPoint.HighwayLevel != HighwayLevel.Cluster) continue;
@@ -187,7 +189,7 @@ namespace ChemGateBuilder
                         From = "map",
                         Id = highwayPoint.Name
                     };
-                    newConnection.Attributes.Add("PointType", highwayPoint.Type  == HighwayPointType.EntryPoint ? "entry" : "exit");
+                    newConnection.Attributes.Add("PointType", highwayPoint.Type == HighwayPointType.EntryPoint ? "entry" : "exit");
                     sectorConnections.Add(newConnection);
                     AddItem(newConnection);
                 }
@@ -197,7 +199,7 @@ namespace ChemGateBuilder
 
         public void AddItem(SectorConnectionData connectionData)
         {
-            SectorMapItem item = new SectorMapItem
+            SectorMapItem item = new()
             {
                 SectorMap = this,
                 ConnectionData = connectionData,
@@ -287,7 +289,7 @@ namespace ChemGateBuilder
             }
             UpdateItems();
         }
-        public void SetInternalSize (int sizeKm)
+        public void SetInternalSize(int sizeKm)
         {
             InternalSizeKm = sizeKm;
             UpdateItems();
@@ -324,7 +326,7 @@ namespace ChemGateBuilder
                 double halfSize = SelectedItem.ItemSizePx / 2;
                 SectorMapItem selectedItem = SelectedItem;
                 Log.Debug($"[MouseMove] Selected Item: {SelectedItem?.ConnectionData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}, sender: {sender}, isImage: {sender is Image}");
-                if (sender is Image image && MapCanvas != null && MapHexagon != null)
+                if (sender is Image && MapCanvas != null && MapHexagon != null)
                 {
                     // Get the current mouse position relative to the SectorCanvas
                     Point mousePosition = e.GetPosition(MapCanvas);
@@ -332,7 +334,7 @@ namespace ChemGateBuilder
                     double newX = mousePosition.X - MouseOffset.X;
                     double newY = mousePosition.Y - MouseOffset.Y;
                     // Account the size of the item
-                    Point newPoint = new Point(newX + halfSize - VisualX, newY + halfSize - VisualY);
+                    Point newPoint = new(newX + halfSize - VisualX, newY + halfSize - VisualY);
                     // Check if the new position is inside the hexagon
                     bool isInside = MapHexagon.RenderedGeometry.FillContains(newPoint);
                     Log.Debug($"[MouseMove] IsInside: {isInside}");
@@ -341,7 +343,8 @@ namespace ChemGateBuilder
                         // Update the SectorMapItem's coordinates
                         selectedItem.X = newX;
                         selectedItem.Y = newY;
-                        if (coordinates != null) {
+                        if (coordinates != null)
+                        {
                             selectedItem.UpdateInternalCoordinates(coordinates);
                         }
                         Log.Debug($"[MouseMove] New X: {newX}, New Y: {newY}");
@@ -360,7 +363,8 @@ namespace ChemGateBuilder
                 if (sender is Image image && image.DataContext is SectorMapItem item && item != null)
                 {
                     image.ReleaseMouseCapture();
-                    if (!item.IsNew) {
+                    if (!item.IsNew)
+                    {
                         return item.ConnectionData;
                     }
                 }
@@ -373,52 +377,74 @@ namespace ChemGateBuilder
     {
         private double _x;
         private double _y;
-        private static double _sizeCoefficient = 0.03;
-        private static double _itemSizeMinPx = SectorMap.ItemSizeMinDefaultPx;
+        private static readonly double _sizeCoefficient = 0.03;
         private double _itemSizePx = SectorMap.ItemSizeMinDefaultPx;
         private bool _isNew;
         private string _toolTip = "";
         private SectorConnectionData? _connectionData;
         private SectorMap? _sectorMap;
-        public SectorMap? SectorMap {
+        public SectorMap? SectorMap
+        {
             get => _sectorMap;
-            set {
+            set
+            {
                 _sectorMap = value;
                 UpdateSize();
                 UpdatePosition();
             }
         }
-        public SectorConnectionData? ConnectionData {
+        public SectorConnectionData? ConnectionData
+        {
             get => _connectionData;
-            set {
+            set
+            {
                 _connectionData = value;
                 UpdatePosition();
             }
         }
-        public string Type { get {
-            if (_connectionData == null || _connectionData?.Type == null)
-                return "empty";
-            return _connectionData.Type;
-        } } // e.g., "empty", "gate", "highway", etc.
-        public string From { get {
-            if (_connectionData == null || _connectionData?.From == null)
-                return "unknown";
-            return _connectionData.From;
-        } } // e.g., "new", "mod", "map", etc.
-        public string Status { get {
-            if (_connectionData == null || _connectionData?.Active == null)
-                return "unknown";
-            return _connectionData.Active ? "active" : "inactive";
-        } } // e.g., "active", "inactive", "unknown"
-        public string? Id { get {
-            if (_connectionData == null)
-                return "unknown";
-            return _connectionData.Id;
-        } }
-        public string ToolTip { get => _toolTip;
+        public string Type
+        {
+            get
+            {
+                if (_connectionData == null || _connectionData?.Type == null)
+                    return "empty";
+                return _connectionData.Type;
+            }
+        } // e.g., "empty", "gate", "highway", etc.
+        public string From
+        {
+            get
+            {
+                if (_connectionData == null || _connectionData?.From == null)
+                    return "unknown";
+                return _connectionData.From;
+            }
+        } // e.g., "new", "mod", "map", etc.
+        public string Status
+        {
+            get
+            {
+                if (_connectionData == null || _connectionData?.Active == null)
+                    return "unknown";
+                return _connectionData.Active ? "active" : "inactive";
+            }
+        } // e.g., "active", "inactive", "unknown"
+        public string? Id
+        {
+            get
+            {
+                if (_connectionData == null)
+                    return "unknown";
+                return _connectionData.Id;
+            }
+        }
+        public string ToolTip
+        {
+            get => _toolTip;
             set { _toolTip = value; OnPropertyChanged(); }
         }
-        public double ItemSizePx {
+        public double ItemSizePx
+        {
             get => _itemSizePx;
             set { _itemSizePx = value; OnPropertyChanged(); OnPropertyChanged(nameof(CenterX)); OnPropertyChanged(nameof(CenterY)); }
         }
@@ -441,11 +467,12 @@ namespace ChemGateBuilder
         }
 
         // Computed Properties for Center Coordinates
-        public double CenterX { get => X + ItemSizePx / 2;}
-        public double CenterY { get => Y + ItemSizePx / 2;}
+        public double CenterX { get => X + ItemSizePx / 2; }
+        public double CenterY { get => Y + ItemSizePx / 2; }
 
-        private Dictionary<string, string> Attributes {
-            get => ConnectionData?.Attributes ?? new Dictionary<string, string>();
+        private Dictionary<string, string> Attributes
+        {
+            get => ConnectionData?.Attributes ?? [];
         }
 
         public void Update()
@@ -464,7 +491,7 @@ namespace ChemGateBuilder
             {
                 if (Attributes.TryGetValue("PointType", out string? pointType) && pointType == "exit")
                 {
-                    ItemSizePx = ItemSizePx * 0.7;
+                    ItemSizePx *= 0.7;
                 }
             }
         }
@@ -474,7 +501,7 @@ namespace ChemGateBuilder
             if (SectorMap == null || ConnectionData == null)
                 return;
             X = SectorMap.VisualX + (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
-            Y = SectorMap.VisualY  - SectorMap.VisualSizePx * 0.067 + (- ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            Y = SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 + (-ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
             UpdateToolTip();
@@ -485,7 +512,7 @@ namespace ChemGateBuilder
             if (SectorMap == null)
                 return;
             coordinates.X = (int)(((X - SectorMap.VisualX) * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
-            coordinates.Z = (int)((SectorMap.VisualSizePx + (SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 - Y ) * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
+            coordinates.Z = (int)((SectorMap.VisualSizePx + (SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 - Y) * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
             if (_connectionData == null)
                 return;
             _connectionData.X = coordinates.X;
@@ -498,21 +525,22 @@ namespace ChemGateBuilder
         {
             if (_connectionData == null)
                 ToolTip = "No connection data";
-            string result = $"{char.ToUpper(Type[0])}{Type.Substring(1)}";
+            string result = $"{char.ToUpper(Type[0])}{Type[1..]}";
             if (Type == "gate" || Type == "highway")
                 result += $": {Status} ({From})\n";
             if (Type == "gate")
             {
                 result += $"To: {_connectionData?.ToSector ?? ""}\n";
             }
-            else if (Type == "highway") {
+            else if (Type == "highway")
+            {
                 if (Attributes.TryGetValue("PointType", out string? pointType))
                 {
                     string fromTo = pointType == "entry" ? "to" : "from";
-                    result += $"{char.ToUpper(pointType[0])}{pointType.Substring(1)} point {fromTo} {_connectionData?.ToSector ?? ""}\n";
+                    result += $"{char.ToUpper(pointType[0])}{pointType[1..]} point {fromTo} {_connectionData?.ToSector ?? ""}\n";
                 }
             }
-            result += $"X: {_connectionData?.X ?? 0, 4}, Y: {_connectionData?.Y ?? 0, 4}, Z: {_connectionData?.Z ?? 0, 4}";
+            result += $"X: {_connectionData?.X ?? 0,4}, Y: {_connectionData?.Y ?? 0,4}, Z: {_connectionData?.Z ?? 0,4}";
             ToolTip = result;
         }
 
@@ -528,60 +556,36 @@ namespace ChemGateBuilder
                         break;
                     case "gate":
                         imagePath += "jumpgate";
-                        switch (From)
+                        imagePath += From switch
                         {
-                            case "new":
-                                imagePath += "_new";
-                                break;
-                            case "mod":
-                                imagePath += "_mod";
-                                break;
-                            default:
-                                imagePath += "_map";
-                                break;
-                        }
-                        switch (Status)
+                            "new" => "_new",
+                            "mod" => "_mod",
+                            _ => "_map",
+                        };
+                        imagePath += Status switch
                         {
-                            case "active":
-                                imagePath += "_active";
-                                break;
-                            case "inactive":
-                                imagePath += "_inactive";
-                                break;
-                            default:
-                                imagePath += "_unknown";
-                                break;
-                        }
+                            "active" => "_active",
+                            "inactive" => "_inactive",
+                            _ => "_unknown",
+                        };
                         break;
                     case "highway":
-                    {
-                        imagePath += "superhighway";
-                        switch (From)
                         {
-                            case "new":
-                                imagePath += "_new";
-                                break;
-                            case "mod":
-                                imagePath += "_mod";
-                                break;
-                            default:
-                                imagePath += "_map";
-                                break;
+                            imagePath += "superhighway";
+                            imagePath += From switch
+                            {
+                                "new" => "_new",
+                                "mod" => "_mod",
+                                _ => "_map",
+                            };
+                            imagePath += Status switch
+                            {
+                                "active" => "_active",
+                                "inactive" => "_inactive",
+                                _ => "_unknown",
+                            };
+                            break;
                         }
-                        switch (Status)
-                        {
-                            case "active":
-                                imagePath += "_active";
-                                break;
-                            case "inactive":
-                                imagePath += "_inactive";
-                                break;
-                            default:
-                                imagePath += "_unknown";
-                                break;
-                        }
-                        break;
-                    }
                     default:
                         imagePath += "unknown";
                         break;
@@ -617,7 +621,7 @@ namespace ChemGateBuilder.Core.Converters
         public static PointCollection Converter(double size)
         {
             double radius = size / 2;
-            PointCollection points = new PointCollection();
+            PointCollection points = [];
 
             for (int i = 0; i < 6; i++)
             {

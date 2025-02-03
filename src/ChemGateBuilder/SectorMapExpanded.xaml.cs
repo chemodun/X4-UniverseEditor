@@ -57,7 +57,7 @@ namespace ChemGateBuilder
 
         private void SectorMapExpandedItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-           SectorMapExpanded.MouseLeftButtonUp(sender, e);
+            SectorMapExpanded.MouseLeftButtonUp(sender, e);
         }
 
         public void SetMapItems(List<SectorMapItem> mapItems)
