@@ -741,11 +741,17 @@ namespace ChemGateBuilder
                 DataContext = Sector,
                 Points = Points
             };
-            if (SectorMap.OwnerToColor.TryGetValue(Sector.DominantOwner, out (string ColorString, SolidColorBrush Brush) ownerColor))
+            SolidColorBrush? brush = Map.MainWindowReference.FactionColors.GetBrush(Sector.DominantOwner);
+            if (brush != null)
             {
-                Hexagon.Fill = ownerColor.Brush;
+                Hexagon.Fill = brush;
                 Hexagon.Fill.Opacity = Map.MainWindowReference.MapColorsOpacity;
             }
+            // if (SectorMap.OwnerToColor.TryGetValue(Sector.DominantOwner, out (string ColorString, SolidColorBrush Brush) ownerColor))
+            // {
+            //     Hexagon.Fill = ownerColor.Brush;
+            //     Hexagon.Fill.Opacity = Map.MainWindowReference.MapColorsOpacity;
+            // }
             Grid = new()
             {
                 Width = Width,
