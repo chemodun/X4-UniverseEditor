@@ -24,6 +24,7 @@ namespace ChemGateBuilder
             "Windows",
             "UIAutomation",
             "DirectWriteForwarder",
+            "netstandard",
         ];
         public AboutWindow()
         {
