@@ -27,6 +27,7 @@ namespace ChemGateBuilder
         private string? _selectedItemId = "";
         private string _ownerColor = OwnerColorInitial;
         public static readonly string OwnerColorInitial = "#F0F0F0";
+        private List<string> StationsToDisplay = new() { "equipmentdock", "tradestation", "tradingstation", "shipyard", "wharf" };
 
         private FactionColors FactionColors = new();
 
@@ -190,6 +191,30 @@ namespace ChemGateBuilder
                         Id = highwayPoint.Name
                     };
                     newConnection.Attributes.Add("PointType", highwayPoint.Type == HighwayPointType.EntryPoint ? "entry" : "exit");
+                    sectorConnections.Add(newConnection);
+                    AddItem(newConnection);
+                }
+                List<Station> stations = Sector.GetStationsByTagsOrTypes(StationsToDisplay);
+                foreach (Station station in stations)
+                {
+                    if (station.Position == null) continue;
+                    SectorConnectionData newConnection = new()
+                    {
+                        Active = true,
+                        ToSector = "",
+                        X = (int)(station.Position.X / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.X / 1000) : 0),
+                        Y = (int)(station.Position.Y / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Y / 1000) : 0),
+                        Z = (int)(station.Position.Z / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Z / 1000) : 0),
+                        Type = "station",
+                        From = "map",
+                        Id = station.Name
+                    };
+                    string stationType = station.Tags.Count == 0 ? station.Type : station.Tags[0];
+                    if (stationType == "tradingstation")
+                    {
+                        stationType = "tradestation";
+                    }
+                    newConnection.Attributes.Add("StationType", stationType);
                     sectorConnections.Add(newConnection);
                     AddItem(newConnection);
                 }
@@ -540,6 +565,10 @@ namespace ChemGateBuilder
                     result += $"{char.ToUpper(pointType[0])}{pointType[1..]} point {fromTo} {_connectionData?.ToSector ?? ""}\n";
                 }
             }
+            else if (Type == "station")
+            {
+                result += $" {Id}\n";
+            }
             result += $"X: {_connectionData?.X ?? 0,4}, Y: {_connectionData?.Y ?? 0,4}, Z: {_connectionData?.Z ?? 0,4}";
             ToolTip = result;
         }
@@ -584,6 +613,11 @@ namespace ChemGateBuilder
                                 "inactive" => "_inactive",
                                 _ => "_unknown",
                             };
+                            break;
+                        }
+                    case "station":
+                        {
+                            imagePath += Attributes.TryGetValue("StationType", out string? stationType) ? $"{stationType}" : "unknown";
                             break;
                         }
                     default:
