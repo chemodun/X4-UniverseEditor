@@ -22,95 +22,61 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            if (_logger == null)
-            {
-                return;
-            }
-            var className = GetClassName(filePath);
-            var logEvent = new LogEventInfo(LogLevel.Info, _logger!.Name, message);
-            logEvent.Properties["ClassName"] = className;
-            logEvent.Properties["MemberName"] = memberName;
-            logEvent.Properties["FilePath"] = Path.GetFileName(filePath);
-            _logger.Log(logEvent);
+            LogMessage(LogLevel.Info, message, null, memberName, filePath);
         }
 
         public static void Debug(string message,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            if (_logger == null)
-            {
-                return;
-            }
-            var className = GetClassName(filePath);
-            var logEvent = new LogEventInfo(LogLevel.Debug, _logger!.Name, message);
-            logEvent.Properties["ClassName"] = className;
-            logEvent.Properties["MemberName"] = memberName;
-            logEvent.Properties["FilePath"] = Path.GetFileName(filePath);
-            _logger.Log(logEvent);
+            LogMessage(LogLevel.Debug, message, null, memberName, filePath);
         }
 
         public static void Error(string message, Exception? ex = null,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            if (_logger == null)
-            {
-                return;
-            }
-            var className = GetClassName(filePath);
-            var logEvent = new LogEventInfo(LogLevel.Error, _logger!.Name, message)
-            {
-                Exception = ex
-            };
-            logEvent.Properties["ClassName"] = className;
-            logEvent.Properties["MemberName"] = memberName;
-            logEvent.Properties["FilePath"] = Path.GetFileName(filePath);
-            _logger.Log(logEvent);
+            LogMessage(LogLevel.Error, message, ex, memberName, filePath);
         }
 
         public static void Warn(string message,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            if (_logger == null)
-            {
-                return;
-            }
-            var className = GetClassName(filePath);
-            var logEvent = new LogEventInfo(LogLevel.Warn, _logger!.Name, message);
-            logEvent.Properties["ClassName"] = className;
-            logEvent.Properties["MemberName"] = memberName;
-            logEvent.Properties["FilePath"] = Path.GetFileName(filePath);
-            _logger.Log(logEvent);
+            LogMessage(LogLevel.Warn, message, null, memberName, filePath);
         }
 
         public static void Trace(string message,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            if (_logger == null)
-            {
-                return;
-            }
-            var className = GetClassName(filePath);
-            var logEvent = new LogEventInfo(LogLevel.Trace, _logger!.Name, message);
-            logEvent.Properties["ClassName"] = className;
-            logEvent.Properties["MemberName"] = memberName;
-            logEvent.Properties["FilePath"] = Path.GetFileName(filePath);
-            _logger.Log(logEvent);
+            LogMessage(LogLevel.Trace, message, null, memberName, filePath);
         }
 
         public static void Fatal(string message, Exception? ex = null,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            LogMessage(LogLevel.Fatal, message, ex, memberName, filePath);
+        }
+
+        /// <summary>
+        /// Logs a message with the specified log level and additional information.
+        /// </summary>
+        /// <param name="level">The log level.</param>
+        /// <param name="message">The log message.</param>
+        /// <param name="ex">An optional exception.</param>
+        /// <param name="memberName">The name of the member calling the log method.</param>
+        /// <param name="filePath">The file path of the source file.</param>
+        private static void LogMessage(LogLevel level, string message, Exception? ex, string memberName, string filePath)
+        {
             if (_logger == null)
             {
                 return;
             }
+
             var className = GetClassName(filePath);
-            var logEvent = new LogEventInfo(LogLevel.Fatal, _logger!.Name, message)
+            var logEvent = new LogEventInfo(level, _logger.Name, message)
             {
                 Exception = ex
             };
