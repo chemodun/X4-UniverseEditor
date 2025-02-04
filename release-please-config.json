@@ -63,16 +63,6 @@
     }
   ],
   "packages": {
-    ".": {
-      "release-type": "simple",
-      "skip-github-release": true,
-      "exclude-paths": [
-        "src/X4DataLoader",
-        "src/X4DataTestConsole",
-        "src/ChemGateBuilder",
-        "src/Logger"
-      ]
-    },
     "src/X4DataLoader": {
       "package-name": "X4DataLoader",
       "release-type": "simple",
