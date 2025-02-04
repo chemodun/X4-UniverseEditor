@@ -59,11 +59,11 @@ namespace X4DataTestConsole
                     var ownerStationCount = new Dictionary<string, int>();
                     List<string> toIgnoreOwners = ["player", "civilian", "khaak", "ownerless"];
                     List<string> toIgnoreTypes = ["piratebase"];
-                    Dictionary<string, string> ownerReplacements = new Dictionary<string, string> { ["alliance"] = "paranid", ["ministry"] = "teladi"};
+                    Dictionary<string, string> ownerReplacements = new Dictionary<string, string> { ["alliance"] = "paranid", ["ministry"] = "teladi" };
                     foreach (Station station in sector.Stations)
                     {
-                        Console.WriteLine($"    Station: Id: {station.Id}, Type: {station.Type}, Race: {station.Race}, Owner: {station.Owner}, Position: {station.Position}, Rotation: {station.Rotation}, Source: {station.Source}, FileName: {station.FileName}");
-                        if (toIgnoreOwners.Contains(station.Owner))
+                        Console.WriteLine($"    Station: Id: {station.Id}, Type: {station.Type}, Race: {station.Race}, Owner: {station.OwnerId}, Position: {station.Position}, Rotation: {station.Rotation}, Source: {station.Source}, FileName: {station.FileName}");
+                        if (toIgnoreOwners.Contains(station.OwnerId))
                         {
                             continue;
                         }
@@ -71,7 +71,7 @@ namespace X4DataTestConsole
                         {
                             continue;
                         }
-                        string owner = ownerReplacements.ContainsKey(station.Owner) ? ownerReplacements[station.Owner] : station.Owner;
+                        string owner = ownerReplacements.ContainsKey(station.OwnerId) ? ownerReplacements[station.OwnerId] : station.OwnerId;
                         if (ownerStationCount.ContainsKey(owner))
                         {
                             ownerStationCount[owner]++;
@@ -92,7 +92,7 @@ namespace X4DataTestConsole
                     if (ownerStationCount.Count > 0)
                     {
                         string dominantOwner = ownerStationCount.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-                        Console.WriteLine($"    Dominant Owner: {dominantOwner} with Percentage: {ownerStationCount[dominantOwner]/(double)totalCalculableStations*100}% stations in sector {sector.Name}");
+                        Console.WriteLine($"    Dominant Owner: {dominantOwner} with Percentage: {ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100}% stations in sector {sector.Name}");
                     }
                     else
                     {
