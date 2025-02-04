@@ -30,7 +30,7 @@ namespace X4DataLoader
         public List<Zone> Zones { get; private set; } = [];
         public Dictionary<string, Connection> Connections { get; private set; } = [];
         public List<Highway> Highways { get; private set; } = [];
-        public List <HighwayPoint> HighwayPoints { get; private set; } = [];
+        public List<HighwayPoint> HighwayPoints { get; private set; } = [];
         public List<Station> Stations { get; private set; } = [];
 
         public string DominantOwner { get; private set; } = "";
@@ -58,8 +58,8 @@ namespace X4DataLoader
             {
                 var propertiesElement = element.Element("properties");
                 string nameId = propertiesElement?.Element("identification")?.Attribute("name")?.Value ?? "";
-                string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value?? "";
-                if (nameId != null && nameId != ""  && descriptionId != null && descriptionId != "")
+                string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
+                if (nameId != null && nameId != "" && descriptionId != null && descriptionId != "")
                 {
                     Id = int.Parse(sectorIdMatch.Groups[4].Value, CultureInfo.InvariantCulture);
                     IdPrefix = sectorIdMatch.Groups[3].Value;
@@ -72,11 +72,13 @@ namespace X4DataLoader
                     Source = source;
                     FileName = fileName;
                 }
-                else {
+                else
+                {
                     throw new ArgumentException("Sector must have name and description");
                 }
             }
-            else {
+            else
+            {
                 throw new ArgumentException($"Invalid macro format: {macro}");
             }
         }
@@ -112,18 +114,18 @@ namespace X4DataLoader
         public void AddZone(Zone zone)
         {
             Zones.Add(zone);
-            Connection? zoneConnection  = Connections.Values
+            Connection? zoneConnection = Connections.Values
                 .FirstOrDefault(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name));
             if (zoneConnection == null || zoneConnection.Position == null) return;
             zone.SetPosition(zoneConnection.Position, zoneConnection.Name, zoneConnection.XML);
         }
 
-        public void  AddHighwayPoint(HighwayPoint highwayPoint)
+        public void AddHighwayPoint(HighwayPoint highwayPoint)
         {
             HighwayPoints.Add(highwayPoint);
         }
 
-        public void  AddStation(Station station)
+        public void AddStation(Station station)
         {
             Stations.Add(station);
         }
@@ -133,7 +135,7 @@ namespace X4DataLoader
             Dictionary<string, int> ownerStationCount = new();
             List<string> toIgnoreOwners = ["player", "civilian", "khaak", "ownerless"];
             List<string> toIgnoreTypes = ["piratebase"];
-            Dictionary<string, string> ownerReplacements = new() { ["alliance"] = "paranid", ["ministry"] = "teladi"};
+            Dictionary<string, string> ownerReplacements = new() { ["alliance"] = "paranid", ["ministry"] = "teladi" };
             foreach (Station station in Stations)
             {
                 if (station.IsClaimCapable && !station.GameStartDependent)
@@ -169,6 +171,16 @@ namespace X4DataLoader
             {
                 Log.Debug($"Sector {Name}: No claim capable stations found");
             }
+        }
+
+        public List<Station> GetStationsByTagOrType(string tag)
+        {
+            return Stations.FindAll(station => station.Tags.Contains(tag) || station.Tags.Count == 0 && station.Type == tag);
+        }
+
+        public List<Station> GetStationsByTagsOrTypes(List<string> tags)
+        {
+            return Stations.FindAll(station => station.Tags.Intersect(tags).Any() || station.Tags.Count == 0 && tags.Contains(station.Type));
         }
     }
 }
