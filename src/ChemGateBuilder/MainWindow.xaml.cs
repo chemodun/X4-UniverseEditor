@@ -653,7 +653,11 @@ namespace ChemGateBuilder
 
         private void SelectX4DataFolder_Click(object? sender, RoutedEventArgs? e)
         {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            var dialog = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Please select the folder where the X4 extracted data files are located.",
+                ShowNewFolderButton = false
+            };
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
             if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
