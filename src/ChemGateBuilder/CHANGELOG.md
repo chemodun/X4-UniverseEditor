@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.1.0...ChemGateBuilder@v0.1.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* **AboutWindow:** add components list to About dialog ([418a5e5](https://github.com/chemodun/X4-UniverseEditor/commit/418a5e5d1b86ee2f10cd4679a809b02698e67f52))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.0.1...ChemGateBuilder@v0.1.0) (2025-02-04)
 
 
