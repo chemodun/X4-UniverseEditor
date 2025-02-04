@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-and-release:
     runs-on: windows-latest
-    if: startsWith(github.event.release.tag_name, 'ChemGateBuilder@')
+    if: startsWith(github.event.release.tag_name, 'ChemGateBuilder@') || github.event_name == 'workflow_dispatch'
     steps:
       # Step 1: Checkout the repository
       -
