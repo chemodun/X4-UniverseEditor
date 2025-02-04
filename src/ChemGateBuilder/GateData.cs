@@ -11,14 +11,14 @@ namespace ChemGateBuilder
 {
     public class GatesConnectionData : INotifyPropertyChanged
     {
-        private SectorItem? _sectorDirect;
-        private SectorItem? _sectorDirectDefault;
+        private SectorsListItem? _sectorDirect;
+        private SectorsListItem? _sectorDirectDefault;
         private SectorConnectionData? _sectorDirectSelectedConnection = new();
         private SectorMap _sectorDirectMap = new();
         private ObservableCollection<SectorConnectionData> _sectorDirectConnections = [];
         private GateData _gateDirect;
-        private SectorItem? _sectorOpposite;
-        private SectorItem? _sectorOppositeDefault;
+        private SectorsListItem? _sectorOpposite;
+        private SectorsListItem? _sectorOppositeDefault;
         private SectorConnectionData? _sectorOppositeSelectedConnection = new();
         private SectorMap _sectorOppositeMap = new();
         private ObservableCollection<SectorConnectionData> _SectorOppositeConnections = [];
@@ -29,7 +29,7 @@ namespace ChemGateBuilder
         private bool IsDataChanged => _sectorDirect != _sectorDirectDefault || _sectorOpposite != _sectorOppositeDefault || _gateDirect.IsChanged || _gateOpposite.IsChanged;
         private bool IsDataReadyToSave => CheckGateDistance() && CheckGateDistance(false) && _sectorDirect != null && _sectorOpposite != null && IsDataChanged;
 
-        public SectorItem? SectorDirect
+        public SectorsListItem? SectorDirect
         {
             get => _sectorDirect;
             set
@@ -115,7 +115,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public SectorItem? SectorOpposite
+        public SectorsListItem? SectorOpposite
         {
             get => _sectorOpposite;
             set
@@ -271,7 +271,7 @@ namespace ChemGateBuilder
             _gateDirect.PropertyChanged += ChildPropertyChanged;
         }
 
-        public void SetDefaultsFromReference(GalaxyConnectionData reference, ObservableCollection<SectorItem> AllSectors)
+        public void SetDefaultsFromReference(GalaxyConnectionData reference, ObservableCollection<SectorsListItem> AllSectors)
         {
             if (reference == null) return;
             GalaxyConnection connection = reference.Connection;
@@ -306,7 +306,7 @@ namespace ChemGateBuilder
         {
             GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
             if (gateCurrent == null) return;
-            SectorItem? sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
+            SectorsListItem? sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
             SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
             if (alternateSectorMap != null)
             {
@@ -454,7 +454,7 @@ namespace ChemGateBuilder
             if (propertyName == nameof(SectorDirect) || propertyName == nameof(SectorOpposite))
             {
                 bool isDirect = propertyName == nameof(SectorDirect);
-                SectorItem? sectorCurrent = isDirect ? SectorDirect : SectorOpposite;
+                SectorsListItem? sectorCurrent = isDirect ? SectorDirect : SectorOpposite;
                 var sectorConnections = isDirect ? SectorDirectConnections : SectorOppositeConnections;
                 sectorConnections.Clear();
                 SectorMap sectorMap = isDirect ? SectorDirectMap : SectorOppositeMap;
@@ -535,7 +535,7 @@ namespace ChemGateBuilder
     }
 
 
-    public class SectorItem
+    public class SectorsListItem
     {
         public string? Name { get; set; }
         public string? Source { get; set; }

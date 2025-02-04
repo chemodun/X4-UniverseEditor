@@ -380,7 +380,7 @@ namespace ChemGateBuilder
         }
 
         // Master sector list
-        public ObservableCollection<SectorItem> AllSectors { get; } = [];
+        public ObservableCollection<SectorsListItem> AllSectors { get; } = [];
 
         // CollectionViewSources for filtering
         public CollectionViewSource SectorsDirectViewSource { get; } = new CollectionViewSource();
@@ -484,8 +484,9 @@ namespace ChemGateBuilder
                 bool isModChanged = ChemGateKeeperMod.IsModChanged(GalaxyConnections);
                 if (value && IsGateCanBeDeleted)
                 {
-                    IsModCanBeSaved =isModChanged;
-                } else
+                    IsModCanBeSaved = isModChanged;
+                }
+                else
                 {
                     IsModCanBeSaved = false;
                 }
@@ -598,7 +599,8 @@ namespace ChemGateBuilder
         {
             var config = new AppConfig
             {
-                Data = new DataConfig {
+                Data = new DataConfig
+                {
                     X4DataExtractedPath = X4DataFolder,
                     X4DataVersionOverride = X4DataVersionOverride
                 },
@@ -699,14 +701,14 @@ namespace ChemGateBuilder
 
             foreach (var sector in sectors.Values.OrderBy(s => s.Name))
             {
-                var sectorItem = new SectorItem
+                var sectorListItem = new SectorsListItem
                 {
                     Name = sector.Name,
                     Source = sector.Source,
                     Macro = sector.Macro,
                     Selectable = true
                 };
-                AllSectors.Add(sectorItem);
+                AllSectors.Add(sectorListItem);
             }
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
@@ -722,7 +724,7 @@ namespace ChemGateBuilder
         // Filter methods
         private void SectorsDirect_Filter(object sender, FilterEventArgs e)
         {
-            if (e.Item is SectorItem sector && sector != null && sector?.Macro != null)
+            if (e.Item is SectorsListItem sector && sector != null && sector?.Macro != null)
             {
                 sector.Selectable = true;
                 // Exclude the sector selected in Opposite ComboBox
@@ -755,7 +757,7 @@ namespace ChemGateBuilder
 
         private void SectorsOpposite_Filter(object sender, FilterEventArgs e)
         {
-            if (e.Item is SectorItem sector && sector != null && sector?.Macro != null)
+            if (e.Item is SectorsListItem sector && sector != null && sector?.Macro != null)
             {
                 sector.Selectable = true;
                 // Exclude the sector selected in Direct ComboBox
@@ -891,7 +893,8 @@ namespace ChemGateBuilder
             }
         }
 
-        private void SectorDirectMapItem_MouseMove(object sender, MouseEventArgs e){
+        private void SectorDirectMapItem_MouseMove(object sender, MouseEventArgs e)
+        {
             if (GatesConnectionCurrent?.SectorDirectMap != null)
             {
                 GatesConnectionCurrent.SectorDirectMap.MouseMove(sender, e, GatesConnectionCurrent.GateDirect.Coordinates);
@@ -1155,13 +1158,15 @@ namespace ChemGateBuilder
                 if (GalaxyConnections.Count > 0)
                 {
                     CurrentGalaxyConnection = GalaxyConnections[0];
-                } else
+                }
+                else
                 {
                     CurrentGalaxyConnection = null;
                 }
                 SetStatusMessage("Mod data loaded successfully.", StatusMessageType.Info);
             }
-            else {
+            else
+            {
                 SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
                 Log.Warn("Mod data could not be loaded.");
             }
