@@ -41,8 +41,8 @@ jobs:
         name: Compress to zip
         run: |
           mkdir -p ChemGateBuilder
-          cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.exe XMLDiffAndPatch
-          cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.dll XMLDiffAndPatch
+          cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.exe ChemGateBuilder
+          cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.dll ChemGateBuilder
           7z a -tzip ChemGateBuilder.zip ChemGateBuilder
         shell: powershell
 
