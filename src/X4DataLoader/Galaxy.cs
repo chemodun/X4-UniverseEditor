@@ -15,6 +15,7 @@ namespace X4DataLoader
         public List<Sector> Sectors { get; private set; }
         public List<X4Color> Colors { get; private set; } = [];
         public List<X4MappedColor> MappedColors { get; private set; } = [];
+        public List<Race> Races { get; private set; } = [];
         public List<Faction> Factions { get; private set; } = [];
         public List<StationModule> StationModules { get; private set; } = [];
         public List<StationModuleGroup> StationModuleGroups { get; private set; } = [];
@@ -32,7 +33,7 @@ namespace X4DataLoader
             Connections = [];
         }
 
-        public void Load (XElement element, List<Cluster> allClusters, string source, string fileName)
+        public void Load(XElement element, List<Cluster> allClusters, string source, string fileName)
         {
             Name = XmlHelper.GetAttribute(element, "name") ?? "";
             Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
@@ -63,7 +64,7 @@ namespace X4DataLoader
                     var offsetElement = connectionElement.Element("offset");
                     var positionElement = offsetElement?.Element("position");
                     Position position = positionElement != null
-                        ? new Position (
+                        ? new Position(
                             double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
                             double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
                             double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
@@ -141,7 +142,8 @@ namespace X4DataLoader
             {
                 return connection.PathOpposite.Sector;
             }
-            else {
+            else
+            {
                 connection = Connections.FirstOrDefault(c => c.PathOpposite?.Gate == gateConnection);
                 if (connection != null && connection.PathDirect != null)
                 {
@@ -235,7 +237,7 @@ namespace X4DataLoader
             XElement macroElement = new("macro");
             macroElement.SetAttributeValue("connection", "destination");
             path.Clear();
-            for (int i=0; i<5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 path.Add("..");
             }

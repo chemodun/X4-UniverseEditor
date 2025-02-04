@@ -15,7 +15,8 @@ namespace X4DataLoader
         public string PrefixName { get; private set; }
         public string SpaceName { get; private set; }
         public string HomeSpaceName { get; private set; }
-        public string PrimaryRace { get; private set; }
+        public string PrimaryRaceId { get; private set; }
+        public string PrimaryRaceName { get; private set; }
         public string BehaviorSet { get; private set; }
         public List<string> Tags { get; private set; } = [];
         public string PoliceFaction { get; private set; }
@@ -34,7 +35,8 @@ namespace X4DataLoader
             PrefixName = "";
             SpaceName = "";
             HomeSpaceName = "";
-            PrimaryRace = "";
+            PrimaryRaceId = "";
+            PrimaryRaceName = "";
             BehaviorSet = "";
             PoliceFaction = "";
             ColorId = "";
@@ -44,7 +46,7 @@ namespace X4DataLoader
             Source = "";
             FileName = "";
         }
-        public void Load(XElement element, string source, string fileName, Translation translation)
+        public void Load(XElement element, string source, string fileName, Translation translation, List<Race> allRaces)
         {
             Id = XmlHelper.GetAttribute(element, "id") ?? "";
             Name = translation.Translate(XmlHelper.GetAttribute(element, "name") ?? "");
@@ -53,7 +55,8 @@ namespace X4DataLoader
             PrefixName = translation.Translate(XmlHelper.GetAttribute(element, "prefixname") ?? "");
             SpaceName = translation.Translate(XmlHelper.GetAttribute(element, "spacename") ?? "");
             HomeSpaceName = translation.Translate(XmlHelper.GetAttribute(element, "homespacename") ?? "");
-            PrimaryRace = XmlHelper.GetAttribute(element, "primaryrace") ?? "";
+            PrimaryRaceId = XmlHelper.GetAttribute(element, "primaryrace") ?? "";
+            PrimaryRaceName = allRaces.Find(r => r.Id == PrimaryRaceId)?.Name ?? "";
             BehaviorSet = XmlHelper.GetAttribute(element, "behaviorset") ?? "";
             Tags = XmlHelper.GetAttributeAsList(element, "tags", " ");
             PoliceFaction = XmlHelper.GetAttribute(element, "policefaction") ?? "";
@@ -78,12 +81,12 @@ namespace X4DataLoader
             return Tags.Contains(tag);
         }
 
-        public static void LoadElements(IEnumerable<XElement> elements, string source, string fileName, List<Faction> allFactions, Translation translation)
+        public static void LoadElements(IEnumerable<XElement> elements, string source, string fileName, List<Faction> allFactions, Translation translation, List<Race> allRaces)
         {
             foreach (XElement element in elements)
             {
                 Faction faction = new();
-                faction.Load(element, source, fileName, translation);
+                faction.Load(element, source, fileName, translation, allRaces);
                 if (faction.Name == "")
                 {
                     Log.Warn($"Faction must have a name");

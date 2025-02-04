@@ -10,6 +10,7 @@ namespace X4DataLoader
                 { "translation", ("t", "0001-l044.xml") },
                 { "colors", ("libraries", "colors.xml") },
                 { "mapDefaults", ("libraries", "mapdefaults.xml") },
+                { "races", ("libraries", "races.xml") },
                 { "factions", ("libraries", "factions.xml") },
                 { "modules", ("libraries", "modules.xml") },
                 { "modulegroups", ("libraries", "modulegroups.xml") },

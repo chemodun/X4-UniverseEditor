@@ -298,6 +298,26 @@ namespace X4DataLoader
                     X4MappedColor.LoadElements(colorsDoc.XPathSelectElements("/colormap/mappings/mapping"), source, colorsFile.fileName, galaxy.MappedColors, galaxy.Colors);
                     Log.Debug($"Colors loaded from: {colorsFile.fileName} for {source}");
                 }
+                if (fileSet.Value.TryGetValue("races", out (string fullPath, string fileName) racesFile))
+                {
+                    XDocument racesDoc;
+                    try
+                    {
+                        racesDoc = XDocument.Load(racesFile.fullPath);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Log.Error($"Error loading races {racesFile.fullPath}: {e.Message}");
+                        continue;
+                    }
+                    IEnumerable<XElement> races = racesDoc.XPathSelectElements("/races/race");
+                    if (!races.Any())
+                    {
+                        races = racesDoc.XPathSelectElements("/diff/add[@sel='/races']/race");
+                    }
+                    Race.LoadElements(races, source, racesFile.fileName, galaxy.Races, translation);
+                    Log.Debug($"Races loaded from: {racesFile.fileName} for {source}");
+                }
                 if (fileSet.Value.TryGetValue("factions", out (string fullPath, string fileName) factionsFile))
                 {
                     XDocument factionsDoc;
@@ -315,7 +335,7 @@ namespace X4DataLoader
                     {
                         factions = factionsDoc.XPathSelectElements("/diff/add[@sel='/factions']/faction");
                     }
-                    Faction.LoadElements(factions, source, factionsFile.fileName, galaxy.Factions, translation);
+                    Faction.LoadElements(factions, source, factionsFile.fileName, galaxy.Factions, translation, galaxy.Races);
                     Log.Debug($"Factions loaded from: {factionsFile.fileName} for {source}");
                 }
                 if (fileSet.Value.TryGetValue("modules", out (string fullPath, string fileName) modulesFile))
