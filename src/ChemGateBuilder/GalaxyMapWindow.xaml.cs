@@ -818,9 +818,9 @@ namespace ChemGateBuilder
             SectorMapHelper.SetSector(Sector, Map.Galaxy);
             if (Map.MainWindowReference != null)
             {
-                foreach (SectorConnectionData modConnection in Map.MainWindowReference.GetSectorConnectionsFromMod(Sector.Macro))
+                foreach (ObjectInSector modObject in Map.MainWindowReference.GetObjectsInSectorFromMod(Sector.Macro))
                 {
-                    SectorMapHelper.AddItem(modConnection);
+                    SectorMapHelper.AddItem(modObject);
                 }
                 if (Map.MainWindowReference.GatesConnectionCurrent != null)
                 {

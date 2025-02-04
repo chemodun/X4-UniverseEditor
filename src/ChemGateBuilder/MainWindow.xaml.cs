@@ -735,8 +735,8 @@ namespace ChemGateBuilder
                         sector.Selectable = false;
                     }
                     else if (
-                        GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros != null &&
-                        GatesConnectionCurrent.SectorOppositeExistingConnectionsMacros.Contains(sector.Macro) ||
+                        GatesConnectionCurrent.SectorOppositeExistingObjectsMacros != null &&
+                        GatesConnectionCurrent.SectorOppositeExistingObjectsMacros.Contains(sector.Macro) ||
                         (
                             GatesConnectionCurrent.SectorOpposite.Macro != null &&
                             GetOppositeSectorsMacrosFromMod(sector.Macro).Contains(GatesConnectionCurrent.SectorOpposite.Macro)
@@ -768,8 +768,8 @@ namespace ChemGateBuilder
                         sector.Selectable = false;
                     }
                     else if (
-                        GatesConnectionCurrent.SectorDirectExistingConnectionsMacros != null &&
-                        GatesConnectionCurrent.SectorDirectExistingConnectionsMacros.Contains(sector.Macro) ||
+                        GatesConnectionCurrent.SectorDirectExistingObjectsMacros != null &&
+                        GatesConnectionCurrent.SectorDirectExistingObjectsMacros.Contains(sector.Macro) ||
                         (
                             GatesConnectionCurrent.SectorDirect.Macro != null &&
                             GetOppositeSectorsMacrosFromMod(sector.Macro).Contains(GatesConnectionCurrent.SectorDirect.Macro)
@@ -812,9 +812,9 @@ namespace ChemGateBuilder
             return oppositeSectorsMacros;
         }
 
-        public List<SectorConnectionData> GetSectorConnectionsFromMod(string sectorMacro)
+        public List<ObjectInSector> GetObjectsInSectorFromMod(string sectorMacro)
         {
-            List<SectorConnectionData> sectorConnections = [];
+            List<ObjectInSector> sectorObjects = [];
             foreach (var connection in GalaxyConnections)
             {
                 if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
@@ -828,7 +828,7 @@ namespace ChemGateBuilder
                         continue;
                     }
                     bool isDirect = modSectorMacro == connection.Connection.PathDirect.Sector.Macro;
-                    SectorConnectionData newConnection = new()
+                    ObjectInSector newObject = new()
                     {
                         Active = isDirect ? connection.GateDirectActive : connection.GateOppositeActive,
                         ToSector = isDirect ? connection.SectorOppositeName : connection.SectorDirectName,
@@ -839,10 +839,10 @@ namespace ChemGateBuilder
                         From = "mod",
                         Type = "gate"
                     };
-                    sectorConnections.Add(newConnection);
+                    sectorObjects.Add(newObject);
                 }
             }
-            return sectorConnections;
+            return sectorObjects;
         }
 
         private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
@@ -914,16 +914,16 @@ namespace ChemGateBuilder
             this.Cursor = Cursors.Arrow;
             if (GatesConnectionCurrent?.SectorDirectMap != null)
             {
-                SectorConnectionData? connectionData = GatesConnectionCurrent.SectorDirectMap.MouseLeftButtonUp(sender, e);
-                if (connectionData != null)
+                ObjectInSector? objectData = GatesConnectionCurrent.SectorDirectMap.MouseLeftButtonUp(sender, e);
+                if (objectData != null)
                 {
-                    if (GatesConnectionCurrent.SectorDirectSelectedConnection == connectionData)
+                    if (GatesConnectionCurrent.SectorDirectSelectedObject == objectData)
                     {
-                        GatesConnectionCurrent.SectorDirectSelectedConnection = null;
+                        GatesConnectionCurrent.SectorDirectSelectedObject = null;
                     }
                     else
                     {
-                        GatesConnectionCurrent.SectorDirectSelectedConnection = connectionData;
+                        GatesConnectionCurrent.SectorDirectSelectedObject = objectData;
                     }
                 }
             }
@@ -933,16 +933,16 @@ namespace ChemGateBuilder
             this.Cursor = Cursors.Arrow;
             if (GatesConnectionCurrent?.SectorOppositeMap != null)
             {
-                SectorConnectionData? connectionData = GatesConnectionCurrent.SectorOppositeMap.MouseLeftButtonUp(sender, e);
-                if (connectionData != null)
+                ObjectInSector? objectData = GatesConnectionCurrent.SectorOppositeMap.MouseLeftButtonUp(sender, e);
+                if (objectData != null)
                 {
-                    if (GatesConnectionCurrent.SectorOppositeSelectedConnection == connectionData)
+                    if (GatesConnectionCurrent.SectorOppositeSelectedObject == objectData)
                     {
-                        GatesConnectionCurrent.SectorOppositeSelectedConnection = null;
+                        GatesConnectionCurrent.SectorOppositeSelectedObject = null;
                     }
                     else
                     {
-                        GatesConnectionCurrent.SectorOppositeSelectedConnection = connectionData;
+                        GatesConnectionCurrent.SectorOppositeSelectedObject = objectData;
                     }
                 }
             }

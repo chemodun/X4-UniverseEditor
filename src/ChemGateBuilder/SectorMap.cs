@@ -140,11 +140,11 @@ namespace ChemGateBuilder
             Items.Clear();
         }
 
-        public List<SectorConnectionData> SetSector(Sector? sector, Galaxy galaxy)
+        public List<ObjectInSector> SetSector(Sector? sector, Galaxy galaxy)
         {
             Sector = sector;
             ClearItems();
-            List<SectorConnectionData> sectorConnections = [];
+            List<ObjectInSector> sectorObjects = [];
             if (Sector != null && Sector.Zones != null && Sector.Zones.Count != 0)
             {
                 foreach (var zone in Sector.Zones)
@@ -160,7 +160,7 @@ namespace ChemGateBuilder
                             if (zoneCoordinates == null) continue;
                             Position? gateCoordinates = gateConnection.Position;
                             if (gateCoordinates == null) continue;
-                            SectorConnectionData newConnection = new()
+                            ObjectInSector newObject = new()
                             {
                                 Active = active && !string.IsNullOrEmpty(sectorTo),
                                 ToSector = sectorTo ?? "",
@@ -171,8 +171,8 @@ namespace ChemGateBuilder
                                 From = "map",
                                 Id = gateConnection.Name
                             };
-                            sectorConnections.Add(newConnection);
-                            AddItem(newConnection);
+                            sectorObjects.Add(newObject);
+                            AddItem(newObject);
                         }
                     }
                 }
@@ -180,7 +180,7 @@ namespace ChemGateBuilder
                 {
                     if (highwayPoint.Position == null) continue;
                     if (highwayPoint.HighwayLevel != HighwayLevel.Cluster) continue;
-                    SectorConnectionData newConnection = new()
+                    ObjectInSector newObject = new()
                     {
                         Active = true,
                         ToSector = highwayPoint.SectorConnected?.Name ?? "",
@@ -191,15 +191,15 @@ namespace ChemGateBuilder
                         From = "map",
                         Id = highwayPoint.Name
                     };
-                    newConnection.Attributes.Add("PointType", highwayPoint.Type == HighwayPointType.EntryPoint ? "entry" : "exit");
-                    sectorConnections.Add(newConnection);
-                    AddItem(newConnection);
+                    newObject.Attributes.Add("PointType", highwayPoint.Type == HighwayPointType.EntryPoint ? "entry" : "exit");
+                    sectorObjects.Add(newObject);
+                    AddItem(newObject);
                 }
                 List<Station> stations = Sector.GetStationsByTagsOrTypes(StationsToDisplay);
                 foreach (Station station in stations)
                 {
                     if (station.Position == null) continue;
-                    SectorConnectionData newConnection = new()
+                    ObjectInSector newObject = new()
                     {
                         Active = true,
                         ToSector = "",
@@ -216,21 +216,21 @@ namespace ChemGateBuilder
                     {
                         stationType = "tradestation";
                     }
-                    newConnection.Attributes.Add("StationType", stationType);
-                    sectorConnections.Add(newConnection);
-                    AddItem(newConnection);
+                    newObject.Attributes.Add("StationType", stationType);
+                    sectorObjects.Add(newObject);
+                    AddItem(newObject);
                 }
             }
-            return sectorConnections;
+            return sectorObjects;
         }
 
-        public void AddItem(SectorConnectionData connectionData)
+        public void AddItem(ObjectInSector objectData)
         {
             SectorMapItem item = new()
             {
                 SectorMap = this,
-                ConnectionData = connectionData,
-                IsNew = connectionData.Id == "New"
+                ObjectData = objectData,
+                IsNew = objectData.Id == "New"
             };
             Items.Add(item);
             item.Update();
@@ -256,7 +256,7 @@ namespace ChemGateBuilder
 
         public bool RefreshItem(string ItemId)
         {
-            SectorMapItem? item = Items.FirstOrDefault(i => i.ConnectionData?.Id == ItemId);
+            SectorMapItem? item = Items.FirstOrDefault(i => i.ObjectData?.Id == ItemId);
             if (item != null)
             {
                 item.Update();
@@ -265,15 +265,15 @@ namespace ChemGateBuilder
             return false;
         }
 
-        public void UpdateItem(SectorConnectionData? connectionData)
+        public void UpdateItem(ObjectInSector? objectData)
         {
 
-            SectorMapItem? item = Items.FirstOrDefault(i => i.ConnectionData?.Id == connectionData?.Id);
+            SectorMapItem? item = Items.FirstOrDefault(i => i.ObjectData?.Id == objectData?.Id);
             if (item != null)
             {
-                if (connectionData != null)
+                if (objectData != null)
                 {
-                    item.ConnectionData = connectionData;
+                    item.ObjectData = objectData;
                     item.Update();
                 }
                 else
@@ -283,7 +283,7 @@ namespace ChemGateBuilder
             }
             else
             {
-                if (connectionData != null) AddItem(connectionData);
+                if (objectData != null) AddItem(objectData);
             }
         }
 
@@ -324,7 +324,7 @@ namespace ChemGateBuilder
 
         public SectorMapItem? GetItem(string id)
         {
-            return Items.FirstOrDefault(i => i.ConnectionData != null && i.ConnectionData.Id == id);
+            return Items.FirstOrDefault(i => i.ObjectData != null && i.ObjectData.Id == id);
         }
 
         public void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -342,7 +342,7 @@ namespace ChemGateBuilder
                     // Capture the mouse to receive MouseMove events even if the cursor leaves the image
                     image.CaptureMouse();
                 }
-                Log.Debug($"[MouseLeftButtonDown] Selected Item: {SelectedItem?.ConnectionData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}");
+                Log.Debug($"[MouseLeftButtonDown] Selected Item: {SelectedItem?.ObjectData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}");
             }
         }
 
@@ -352,7 +352,7 @@ namespace ChemGateBuilder
             {
                 double halfSize = SelectedItem.ItemSizePx / 2;
                 SectorMapItem selectedItem = SelectedItem;
-                Log.Debug($"[MouseMove] Selected Item: {SelectedItem?.ConnectionData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}, sender: {sender}, isImage: {sender is Image}");
+                Log.Debug($"[MouseMove] Selected Item: {SelectedItem?.ObjectData?.Id}, IsDragging: {IsDragging}, MouseOffset: {MouseOffset}, sender: {sender}, isImage: {sender is Image}");
                 if (sender is Image && MapCanvas != null && MapHexagon != null)
                 {
                     // Get the current mouse position relative to the SectorCanvas
@@ -380,7 +380,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public SectorConnectionData? MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        public ObjectInSector? MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (SelectedItem != null)
             {
@@ -392,7 +392,7 @@ namespace ChemGateBuilder
                     image.ReleaseMouseCapture();
                     if (!item.IsNew)
                     {
-                        return item.ConnectionData;
+                        return item.ObjectData;
                     }
                 }
             }
@@ -408,7 +408,7 @@ namespace ChemGateBuilder
         private double _itemSizePx = SectorMap.ItemSizeMinDefaultPx;
         private bool _isNew;
         private string _toolTip = "";
-        private SectorConnectionData? _connectionData;
+        private ObjectInSector? _objectData;
         private SectorMap? _sectorMap;
         public SectorMap? SectorMap
         {
@@ -420,12 +420,12 @@ namespace ChemGateBuilder
                 UpdatePosition();
             }
         }
-        public SectorConnectionData? ConnectionData
+        public ObjectInSector? ObjectData
         {
-            get => _connectionData;
+            get => _objectData;
             set
             {
-                _connectionData = value;
+                _objectData = value;
                 UpdatePosition();
             }
         }
@@ -433,36 +433,36 @@ namespace ChemGateBuilder
         {
             get
             {
-                if (_connectionData == null || _connectionData?.Type == null)
+                if (_objectData == null || _objectData?.Type == null)
                     return "empty";
-                return _connectionData.Type;
+                return _objectData.Type;
             }
         } // e.g., "empty", "gate", "highway", etc.
         public string From
         {
             get
             {
-                if (_connectionData == null || _connectionData?.From == null)
+                if (_objectData == null || _objectData?.From == null)
                     return "unknown";
-                return _connectionData.From;
+                return _objectData.From;
             }
         } // e.g., "new", "mod", "map", etc.
         public string Status
         {
             get
             {
-                if (_connectionData == null || _connectionData?.Active == null)
+                if (_objectData == null || _objectData?.Active == null)
                     return "unknown";
-                return _connectionData.Active ? "active" : "inactive";
+                return _objectData.Active ? "active" : "inactive";
             }
         } // e.g., "active", "inactive", "unknown"
         public string? Id
         {
             get
             {
-                if (_connectionData == null)
+                if (_objectData == null)
                     return "unknown";
-                return _connectionData.Id;
+                return _objectData.Id;
             }
         }
         public string ToolTip
@@ -499,7 +499,7 @@ namespace ChemGateBuilder
 
         private Dictionary<string, string> Attributes
         {
-            get => ConnectionData?.Attributes ?? [];
+            get => ObjectData?.Attributes ?? [];
         }
 
         public void Update()
@@ -536,10 +536,10 @@ namespace ChemGateBuilder
 
         private void UpdatePosition()
         {
-            if (SectorMap == null || ConnectionData == null)
+            if (SectorMap == null || ObjectData == null)
                 return;
-            X = SectorMap.VisualX + (ConnectionData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
-            Y = SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 + (-ConnectionData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            X = SectorMap.VisualX + (ObjectData.X * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
+            Y = SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 + (-ObjectData.Z * SectorMap.VisualSizePx / SectorMap.InternalSizeKm + SectorMap.VisualSizePx - ItemSizePx) / 2;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
             UpdateToolTip();
@@ -551,38 +551,38 @@ namespace ChemGateBuilder
                 return;
             coordinates.X = (int)(((X - SectorMap.VisualX) * 2 + ItemSizePx - SectorMap.VisualSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
             coordinates.Z = (int)((SectorMap.VisualSizePx + (SectorMap.VisualY - SectorMap.VisualSizePx * 0.067 - Y) * 2 - ItemSizePx) * SectorMap.InternalSizeKm / SectorMap.VisualSizePx);
-            if (_connectionData == null)
+            if (_objectData == null)
                 return;
-            _connectionData.X = coordinates.X;
-            _connectionData.Z = coordinates.Z;
+            _objectData.X = coordinates.X;
+            _objectData.Z = coordinates.Z;
             UpdateToolTip();
         }
         // Colors based on gate type and status
 
         private void UpdateToolTip()
         {
-            if (_connectionData == null)
+            if (_objectData == null)
                 ToolTip = "No connection data";
             string result = $"{char.ToUpper(Type[0])}{Type[1..]}";
             if (Type == "gate" || Type == "highway")
                 result += $": {Status} ({From})\n";
             if (Type == "gate")
             {
-                result += $"To: {_connectionData?.ToSector ?? ""}\n";
+                result += $"To: {_objectData?.ToSector ?? ""}\n";
             }
             else if (Type == "highway")
             {
                 if (Attributes.TryGetValue("PointType", out string? pointType))
                 {
                     string fromTo = pointType == "entry" ? "to" : "from";
-                    result += $"{char.ToUpper(pointType[0])}{pointType[1..]} point {fromTo} {_connectionData?.ToSector ?? ""}\n";
+                    result += $"{char.ToUpper(pointType[0])}{pointType[1..]} point {fromTo} {_objectData?.ToSector ?? ""}\n";
                 }
             }
             else if (Type == "station")
             {
                 result = $"{Id}\n";
             }
-            result += $"X: {_connectionData?.X ?? 0,4}, Y: {_connectionData?.Y ?? 0,4}, Z: {_connectionData?.Z ?? 0,4}";
+            result += $"X: {_objectData?.X ?? 0,4}, Y: {_objectData?.Y ?? 0,4}, Z: {_objectData?.Z ?? 0,4}";
             ToolTip = result;
         }
 
@@ -639,12 +639,12 @@ namespace ChemGateBuilder
                 }
                 imagePath += ".png";
                 BitmapSource image = new BitmapImage(new Uri(imagePath));
-                if (Type == "station" && ConnectionData?.Color != null)
+                if (Type == "station" && ObjectData?.Color != null)
                 {
                     WriteableBitmap writeableBitmap = new WriteableBitmap(image);
-                    if (ConnectionData.Color.HasValue)
+                    if (ObjectData.Color.HasValue)
                     {
-                        ReplaceColor(writeableBitmap, Colors.Black, ConnectionData.Color.Value);
+                        ReplaceColor(writeableBitmap, Colors.Black, ObjectData.Color.Value);
                         image = writeableBitmap;
                     }
                 }

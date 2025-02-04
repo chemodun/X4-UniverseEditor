@@ -440,8 +440,8 @@
                                                         Value="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, Mode=TwoWay}"
                                                 />
                                             </StackPanel>
-                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectConnections}"
-                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedConnection, Mode=TwoWay}"
+                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectObjects}"
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedObject, Mode=TwoWay}"
                                                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                       AutoGenerateColumns="False"
                                                       Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
@@ -646,8 +646,8 @@
                                                         Value="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, Mode=TwoWay}"
                                                 />
                                             </StackPanel>
-                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeConnections}"
-                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedConnection, Mode=TwoWay}"
+                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeObjects}"
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedObject, Mode=TwoWay}"
                                                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                       AutoGenerateColumns="False"
                                                       Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"

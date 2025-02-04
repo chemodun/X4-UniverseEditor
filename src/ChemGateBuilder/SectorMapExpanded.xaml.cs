@@ -64,14 +64,14 @@ namespace ChemGateBuilder
         {
             foreach (SectorMapItem item in mapItems)
             {
-                if (item.ConnectionData != null)
+                if (item.ObjectData != null)
                 {
-                    SectorMapExpanded.AddItem(item.ConnectionData);
+                    SectorMapExpanded.AddItem(item.ObjectData);
                     if (item.IsNew)
                     {
-                        NewGateCoordinates.X = item.ConnectionData.X;
-                        NewGateCoordinates.Y = item.ConnectionData.Y;
-                        NewGateCoordinates.Z = item.ConnectionData.Z;
+                        NewGateCoordinates.X = item.ObjectData.X;
+                        NewGateCoordinates.Y = item.ObjectData.Y;
+                        NewGateCoordinates.Z = item.ObjectData.Z;
                     }
                 }
             }
