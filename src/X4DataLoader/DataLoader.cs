@@ -429,7 +429,7 @@ namespace X4DataLoader
                     foreach (XElement stationElement in godElements)
                     {
                         Station? station = new Station();
-                        station.Load(stationElement, source, godFile.fileName, sectors, galaxy.StationCategories, galaxy.ConstructionPlans);
+                        station.Load(stationElement, source, godFile.fileName, sectors, galaxy.StationCategories, galaxy.ConstructionPlans, galaxy.Factions);
                     }
                     Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
                 }

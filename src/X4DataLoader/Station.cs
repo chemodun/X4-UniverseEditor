@@ -11,7 +11,8 @@ namespace X4DataLoader
         public string Id { get; private set; }
         public string Name { get; private set; }
         public string Race { get; private set; }
-        public string Owner { get; private set; }
+        public string OwnerId { get; private set; }
+        public string OwnerName { get; private set; }
         public string Type { get; private set; }
         public bool GameStartDependent { get; private set; } = false;
         public bool IsClaimCapable { get; private set; }
@@ -30,7 +31,8 @@ namespace X4DataLoader
             Id = "";
             Name = "";
             Race = "";
-            Owner = "";
+            OwnerId = "";
+            OwnerName = "";
             Type = "";
             IsClaimCapable = false;
             Sector = null;
@@ -42,11 +44,11 @@ namespace X4DataLoader
             Source = "";
             FileName = "";
         }
-        public void Load(XElement element, string source, string fileName, List<Sector> allSectors, List<StationCategory> allStationCategories, List<ConstructionPlan> allConstructionPlans)
+        public void Load(XElement element, string source, string fileName, List<Sector> allSectors, List<StationCategory> allStationCategories, List<ConstructionPlan> allConstructionPlans, List<Faction> allFactions)
         {
             Id = XmlHelper.GetAttribute(element, "id") ?? "";
             Race = XmlHelper.GetAttribute(element, "race") ?? "";
-            Owner = XmlHelper.GetAttribute(element, "owner") ?? "";
+            OwnerId = XmlHelper.GetAttribute(element, "owner") ?? "";
             Type = XmlHelper.GetAttribute(element, "type") ?? "";
             XElement? locationElement = element.Element("location");
             if (locationElement == null)
@@ -128,6 +130,16 @@ namespace X4DataLoader
             }
             IsClaimCapable = constructionPlan?.IsClaimCapable ?? false;
             Name = constructionPlan?.Name ?? "";
+            OwnerName = allFactions.FirstOrDefault(f => f.Id == OwnerId)?.Name ?? "";
+            if (!String.IsNullOrEmpty(Name) && String.IsNullOrEmpty(OwnerName))
+            {
+                string planPrefix = Name.Split(" ")[0];
+                if (allFactions.Any(f => f.Name.StartsWith(planPrefix)) && !OwnerName.StartsWith(planPrefix))
+                {
+                    Name = Name[planPrefix.Length..].Trim();
+                    Name = OwnerName + " " + Name;
+                }
+            }
             XElement? quotasElement = element.Element("quotas");
             if (quotasElement != null)
             {

@@ -140,18 +140,18 @@ namespace X4DataLoader
             {
                 if (station.IsClaimCapable && !station.GameStartDependent)
                 {
-                    Faction? stationOwner = allFactions.Find(faction => faction.Id == station.Owner);
+                    Faction? stationOwner = allFactions.Find(faction => faction.Id == station.OwnerId);
                     if (stationOwner == null || !stationOwner.IsContainsTag("claimspace")) continue;
-                    if (ownerStationCount.TryGetValue(station.Owner, out int countedValue))
+                    if (ownerStationCount.TryGetValue(station.OwnerId, out int countedValue))
                     {
-                        ownerStationCount[station.Owner] = ++countedValue;
+                        ownerStationCount[station.OwnerId] = ++countedValue;
                     }
                     else
                     {
-                        ownerStationCount[station.Owner] = 1;
+                        ownerStationCount[station.OwnerId] = 1;
                     }
                 }
-                Log.Debug($"Sector {Name}: Station {station.Id} Owner: {station.Owner}, isClaimCapable: {station.IsClaimCapable}");
+                Log.Debug($"Sector {Name}: Station {station.Id} Owner: {station.OwnerId}, isClaimCapable: {station.IsClaimCapable}");
             }
             if (ownerStationCount.Count > 0)
             {
