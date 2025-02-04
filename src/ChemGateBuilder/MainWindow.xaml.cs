@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using NLog;
 using Utilities.Logging;
+using System.Reflection;
 
 using System.Windows.Markup;
 
@@ -519,6 +520,9 @@ namespace ChemGateBuilder
             LoadConfiguration();
             InitializeComponent();
             DataContext = this;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            AssemblyName assemblyName = assembly.GetName();
+            Title = $"{Title} v{assemblyName.Version}";
             _chemGateKeeperMod.SetGameVersion(X4DataVersion);
             GatesConnectionCurrent.SetMapsCanvasAndHexagons(SectorDirectCanvas, SectorDirectHexagon, SectorOppositeCanvas, SectorOppositeHexagon);
             GatesConnectionCurrent.Reset();
@@ -1167,7 +1171,12 @@ namespace ChemGateBuilder
             }
         }
 
-
+        public void ButtonAbout_Click(object sender, RoutedEventArgs e)
+        {
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.Owner = this;
+            aboutWindow.ShowDialog();
+        }
         public void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

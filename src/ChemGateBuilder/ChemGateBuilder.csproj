@@ -7,6 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets/builder.ico</ApplicationIcon> <!-- Set Application Icon -->
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <Copyright>Developed by Chem O`Dun</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,4 +37,9 @@
     <Resource Include="Assets\mapob_wharf.png" />
   </ItemGroup>
 
+  <Target Name="ReadVersion" BeforeTargets="BeforeBuild">
+    <ReadLinesFromFile File="version.txt">
+      <Output TaskParameter="Lines" PropertyName="Version" />
+    </ReadLinesFromFile>
+  </Target>
 </Project>

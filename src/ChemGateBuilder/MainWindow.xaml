@@ -296,7 +296,8 @@
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Help">
                 <fluent:RibbonGroupBox Header="Help Actions">
-                    <fluent:Button Header="About" Style="{StaticResource FluentButtonStyle}">
+                    <fluent:Button Header="About" Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonAbout_Click">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="InfoCircle" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
