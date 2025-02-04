@@ -28,6 +28,10 @@
     <Resource Include="Assets\mapob_superhighway_default.png" />
     <Resource Include="Assets\mapob_superhighway_map_active.png" />
     <Resource Include="Assets\mapob_superhighway_map_inactive.png" />
+    <Resource Include="Assets\mapob_equipmentdock.png" />
+    <Resource Include="Assets\mapob_shipyard.png" />
+    <Resource Include="Assets\mapob_tradestation.png" />
+    <Resource Include="Assets\mapob_wharf.png" />
   </ItemGroup>
 
 </Project>
