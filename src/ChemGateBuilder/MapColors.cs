@@ -16,11 +16,13 @@ namespace ChemGateBuilder
 {
     public class FactionColors()
     {
-        private Dictionary<string,Color> MappedColors = new Dictionary<string, Color>();
+        private Dictionary<string, Color> MappedColors = new Dictionary<string, Color>();
         private Dictionary<string, SolidColorBrush> MappedBrushes = new Dictionary<string, SolidColorBrush>();
 
         public void Load(List<Faction> allFactions, List<X4MappedColor> mappedColors)
         {
+            MappedBrushes.Clear();
+            MappedColors.Clear();
             foreach (Faction faction in allFactions)
             {
                 X4MappedColor? mappedColor = mappedColors.FirstOrDefault(x => x.Id == faction.ColorId);
