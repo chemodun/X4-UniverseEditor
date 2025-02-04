@@ -5,18 +5,62 @@
   "include-v-in-tag": true,
   "tag-separator": "@",
   "separate-pull-requests": true,
-  "changelog-sections" : [
-      { "type": "feat", "section": "Features", "hidden": false },
-      { "type": "fix", "section": "Bug Fixes", "hidden": false },
-      { "type": "refactor", "section": "Code Refactoring", "hidden": false },
-      { "type": "build", "section": "Build System", "hidden": true },
-      { "type": "ci", "section": "Continuous Integration", "hidden": true },
-      { "type": "chore", "section": "Miscellaneous Chores", "hidden": false },
-      { "type": "docs", "section": "Documentation", "hidden": false },
-      { "type": "perf", "section": "Performance Improvements", "hidden": false },
-      { "type": "revert", "section": "Reverts", "hidden": false },
-      { "type": "style", "section": "Styles", "hidden": true },
-      { "type": "test", "section": "Tests", "hidden": true }
+  "changelog-sections": [
+    {
+      "type": "feat",
+      "section": "Features",
+      "hidden": false
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes",
+      "hidden": false
+    },
+    {
+      "type": "refactor",
+      "section": "Code Refactoring",
+      "hidden": false
+    },
+    {
+      "type": "build",
+      "section": "Build System",
+      "hidden": true
+    },
+    {
+      "type": "ci",
+      "section": "Continuous Integration",
+      "hidden": true
+    },
+    {
+      "type": "chore",
+      "section": "Miscellaneous Chores",
+      "hidden": false
+    },
+    {
+      "type": "docs",
+      "section": "Documentation",
+      "hidden": false
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements",
+      "hidden": false
+    },
+    {
+      "type": "revert",
+      "section": "Reverts",
+      "hidden": false
+    },
+    {
+      "type": "style",
+      "section": "Styles",
+      "hidden": true
+    },
+    {
+      "type": "test",
+      "section": "Tests",
+      "hidden": true
+    }
   ],
   "packages": {
     ".": {
@@ -25,24 +69,36 @@
         "src/X4DataLoader",
         "src/X4DataTestConsole",
         "src/ChemGateBuilder",
-	"src/Logger"
+        "src/Logger"
       ]
     },
     "src/X4DataLoader": {
       "package-name": "X4DataLoader",
-      "release-type": "simple"
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     },
     "src/X4DataTestConsole": {
       "package-name": "X4DataTestConsole",
-      "release-type": "simple"
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     },
     "src/ChemGateBuilder": {
       "package-name": "ChemGateBuilder",
-      "release-type": "simple"
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     },
     "src/Logger": {
       "package-name": "Logger",
-      "release-type": "simple"
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     }
   }
 }
