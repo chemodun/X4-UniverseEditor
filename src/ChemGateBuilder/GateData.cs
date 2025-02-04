@@ -316,7 +316,7 @@ namespace ChemGateBuilder
             ObjectInSector newObject = new()
             {
                 Active = gateCurrent.Active && sectorTo != null,
-                ToSector = sectorTo != null ? sectorTo.Name : "",
+                Info = sectorTo != null ? sectorTo.Name : "",
                 X = gateCurrent.Coordinates.X,
                 Y = gateCurrent.Coordinates.Y,
                 Z = gateCurrent.Coordinates.Z,
@@ -545,7 +545,7 @@ namespace ChemGateBuilder
 
     public class ObjectInSector : INotifyPropertyChanged
     {
-        private string? _toSector;
+        private string? _Info;
         private int _x;
         private int _y;
         private int _z;
@@ -554,15 +554,15 @@ namespace ChemGateBuilder
         private bool _active;
         private Color? _color = null;
 
-        public string? ToSector
+        public string? Info
         {
-            get => _toSector;
+            get => _Info;
             set
             {
-                if (_toSector != value)
+                if (_Info != value)
                 {
-                    _toSector = value;
-                    OnPropertyChanged(nameof(ToSector));
+                    _Info = value;
+                    OnPropertyChanged(nameof(Info));
                 }
             }
         }

@@ -163,7 +163,7 @@ namespace ChemGateBuilder
                             ObjectInSector newObject = new()
                             {
                                 Active = active && !string.IsNullOrEmpty(sectorTo),
-                                ToSector = sectorTo ?? "",
+                                Info = sectorTo ?? "",
                                 X = (int)((zoneCoordinates.X + gateCoordinates.X) / 1000),
                                 Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
                                 Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
@@ -183,7 +183,7 @@ namespace ChemGateBuilder
                     ObjectInSector newObject = new()
                     {
                         Active = true,
-                        ToSector = highwayPoint.SectorConnected?.Name ?? "",
+                        Info = highwayPoint.SectorConnected?.Name ?? "",
                         X = (int)(highwayPoint.Position.X / 1000),
                         Y = (int)(highwayPoint.Position.Y / 1000),
                         Z = (int)(highwayPoint.Position.Z / 1000),
@@ -202,13 +202,13 @@ namespace ChemGateBuilder
                     ObjectInSector newObject = new()
                     {
                         Active = true,
-                        ToSector = "",
+                        Info = station.Name,
                         X = (int)(station.Position.X / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.X / 1000) : 0),
                         Y = (int)(station.Position.Y / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Y / 1000) : 0),
                         Z = (int)(station.Position.Z / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Z / 1000) : 0),
                         Type = "station",
                         From = "map",
-                        Id = station.Name,
+                        Id = station.Id,
                         Color = FactionColors.GetColor(station.OwnerId)
                     };
                     string stationType = station.Tags.Count == 0 ? station.Type : station.Tags[0];
@@ -562,25 +562,25 @@ namespace ChemGateBuilder
         private void UpdateToolTip()
         {
             if (_objectData == null)
-                ToolTip = "No connection data";
+                ToolTip = "No data";
             string result = $"{char.ToUpper(Type[0])}{Type[1..]}";
             if (Type == "gate" || Type == "highway")
                 result += $": {Status} ({From})\n";
             if (Type == "gate")
             {
-                result += $"To: {_objectData?.ToSector ?? ""}\n";
+                result += $"To: {_objectData?.Info ?? ""}\n";
             }
             else if (Type == "highway")
             {
                 if (Attributes.TryGetValue("PointType", out string? pointType))
                 {
                     string fromTo = pointType == "entry" ? "to" : "from";
-                    result += $"{char.ToUpper(pointType[0])}{pointType[1..]} point {fromTo} {_objectData?.ToSector ?? ""}\n";
+                    result += $"{char.ToUpper(pointType[0])}{pointType[1..]} point {fromTo} {_objectData?.Info ?? ""}\n";
                 }
             }
             else if (Type == "station")
             {
-                result = $"{Id}\n";
+                result = $"{_objectData?.Info ?? ""}\n";
             }
             result += $"X: {_objectData?.X ?? 0,4}, Y: {_objectData?.Y ?? 0,4}, Z: {_objectData?.Z ?? 0,4}";
             ToolTip = result;

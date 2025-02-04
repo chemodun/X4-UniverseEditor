@@ -451,11 +451,11 @@
                                                       SelectionMode="Single"
                                                       MinHeight="160">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
+                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
                                                     <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
                                                     <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
                                                     <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
+                                                    <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="200"/>
                                                     <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="200"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
@@ -657,11 +657,11 @@
                                                       SelectionMode="Single"
                                                       MinHeight="160">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="To Sector" Binding="{Binding ToSector}" Width="200"/>
+                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
                                                     <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
                                                     <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
                                                     <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
+                                                    <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="200"/>
                                                     <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="200"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>

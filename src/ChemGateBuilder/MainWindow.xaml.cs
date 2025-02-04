@@ -831,7 +831,7 @@ namespace ChemGateBuilder
                     ObjectInSector newObject = new()
                     {
                         Active = isDirect ? connection.GateDirectActive : connection.GateOppositeActive,
-                        ToSector = isDirect ? connection.SectorOppositeName : connection.SectorDirectName,
+                        Info = isDirect ? connection.SectorOppositeName : connection.SectorDirectName,
                         X = isDirect ? connection.GateDirectX : connection.GateOppositeX,
                         Y = isDirect ? connection.GateDirectY : connection.GateOppositeY,
                         Z = isDirect ? connection.GateDirectZ : connection.GateOppositeZ,
