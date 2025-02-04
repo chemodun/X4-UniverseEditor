@@ -575,7 +575,7 @@ namespace ChemGateBuilder
             }
             else if (Type == "station")
             {
-                result += $" {Id}\n";
+                result = $"{Id}\n";
             }
             result += $"X: {_connectionData?.X ?? 0,4}, Y: {_connectionData?.Y ?? 0,4}, Z: {_connectionData?.Z ?? 0,4}";
             ToolTip = result;
