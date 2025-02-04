@@ -776,11 +776,6 @@ namespace ChemGateBuilder
                 Hexagon.Fill = brush;
                 Hexagon.Fill.Opacity = Map.MainWindowReference.MapColorsOpacity;
             }
-            // if (SectorMap.OwnerToColor.TryGetValue(Sector.DominantOwner, out (string ColorString, SolidColorBrush Brush) ownerColor))
-            // {
-            //     Hexagon.Fill = ownerColor.Brush;
-            //     Hexagon.Fill.Opacity = Map.MainWindowReference.MapColorsOpacity;
-            // }
             Grid = new()
             {
                 Width = Width,
@@ -793,7 +788,7 @@ namespace ChemGateBuilder
             Grid.SetColumn(Hexagon, 0);
             Grid.SetColumnSpan(Hexagon, 3);
             Grid.Children.Add(Hexagon);
-            // Create TextBox
+            // Create TextBlock
             TextBlock = new()
             {
                 Text = Sector.Name,
@@ -819,6 +814,7 @@ namespace ChemGateBuilder
             SectorMapHelper.VisualSizePx = Width;
             SectorMapHelper.InternalSizeKm = Map.MainWindowReference.SectorRadius;
             SectorMapHelper.ItemSizeMinPx = 4;
+            SectorMapHelper.SetColors(Map.MainWindowReference.FactionColors);
             SectorMapHelper.SetSector(Sector, Map.Galaxy);
             if (Map.MainWindowReference != null)
             {

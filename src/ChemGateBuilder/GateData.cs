@@ -5,6 +5,7 @@ using System.Windows;
 using X4DataLoader;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace ChemGateBuilder
 {
@@ -551,6 +552,7 @@ namespace ChemGateBuilder
         private string? _type;
         private string? _id;
         private bool _active;
+        private Color? _color = null;
 
         public string? ToSector
         {
@@ -642,6 +644,20 @@ namespace ChemGateBuilder
                 }
             }
         }
+
+        public Color? Color
+        {
+            get => _color;
+            set
+            {
+                if (_color != value)
+                {
+                    _color = value;
+                    OnPropertyChanged(nameof(Color));
+                }
+            }
+        }
+
         public Dictionary<string, string> Attributes = [];
         public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -208,7 +208,8 @@ namespace ChemGateBuilder
                         Z = (int)(station.Position.Z / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Z / 1000) : 0),
                         Type = "station",
                         From = "map",
-                        Id = station.Name
+                        Id = station.Name,
+                        Color = FactionColors.GetColor(station.OwnerId)
                     };
                     string stationType = station.Tags.Count == 0 ? station.Type : station.Tags[0];
                     if (stationType == "tradingstation")
@@ -526,6 +527,10 @@ namespace ChemGateBuilder
                 {
                     ItemSizePx = Math.Min(Math.Max(SectorMap.VisualSizePx * 0.1, 20), 50);
                 }
+                else
+                {
+                    ItemSizePx = 1.5 * ItemSizePx;
+                }
             }
         }
 
@@ -581,7 +586,7 @@ namespace ChemGateBuilder
             ToolTip = result;
         }
 
-        public BitmapImage ObjectImage
+        public BitmapSource ObjectImage
         {
             get
             {
@@ -633,8 +638,49 @@ namespace ChemGateBuilder
                         break;
                 }
                 imagePath += ".png";
-                return new BitmapImage(new Uri(imagePath));
+                BitmapSource image = new BitmapImage(new Uri(imagePath));
+                if (Type == "station" && ConnectionData?.Color != null)
+                {
+                    WriteableBitmap writeableBitmap = new WriteableBitmap(image);
+                    if (ConnectionData.Color.HasValue)
+                    {
+                        ReplaceColor(writeableBitmap, Colors.Black, ConnectionData.Color.Value);
+                        image = writeableBitmap;
+                    }
+                }
+                return image;
             }
+        }
+
+        private static void ReplaceColor(WriteableBitmap bitmap, Color targetColor, Color replacementColor)
+        {
+            int width = bitmap.PixelWidth;
+            int height = bitmap.PixelHeight;
+            int stride = width * ((bitmap.Format.BitsPerPixel + 7) / 8);
+            byte[] pixelData = new byte[height * stride];
+            bitmap.CopyPixels(pixelData, stride, 0);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int index = y * stride + 4 * x;
+                    byte b = pixelData[index];
+                    byte g = pixelData[index + 1];
+                    byte r = pixelData[index + 2];
+                    byte a = pixelData[index + 3];
+
+                    if (r == targetColor.R && g == targetColor.G && b == targetColor.B && a == targetColor.A)
+                    {
+                        pixelData[index] = replacementColor.B;
+                        pixelData[index + 1] = replacementColor.G;
+                        pixelData[index + 2] = replacementColor.R;
+                        pixelData[index + 3] = replacementColor.A;
+                    }
+                }
+            }
+
+            bitmap.WritePixels(new Int32Rect(0, 0, width, height), pixelData, stride, 0);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
