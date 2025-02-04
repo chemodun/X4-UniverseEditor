@@ -22,6 +22,10 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            if (_logger == null)
+            {
+                return;
+            }
             var className = GetClassName(filePath);
             var logEvent = new LogEventInfo(LogLevel.Info, _logger!.Name, message);
             logEvent.Properties["ClassName"] = className;
@@ -34,6 +38,10 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            if (_logger == null)
+            {
+                return;
+            }
             var className = GetClassName(filePath);
             var logEvent = new LogEventInfo(LogLevel.Debug, _logger!.Name, message);
             logEvent.Properties["ClassName"] = className;
@@ -46,6 +54,10 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            if (_logger == null)
+            {
+                return;
+            }
             var className = GetClassName(filePath);
             var logEvent = new LogEventInfo(LogLevel.Error, _logger!.Name, message)
             {
@@ -61,6 +73,10 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            if (_logger == null)
+            {
+                return;
+            }
             var className = GetClassName(filePath);
             var logEvent = new LogEventInfo(LogLevel.Warn, _logger!.Name, message);
             logEvent.Properties["ClassName"] = className;
@@ -73,6 +89,10 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            if (_logger == null)
+            {
+                return;
+            }
             var className = GetClassName(filePath);
             var logEvent = new LogEventInfo(LogLevel.Trace, _logger!.Name, message);
             logEvent.Properties["ClassName"] = className;
@@ -85,6 +105,10 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
+            if (_logger == null)
+            {
+                return;
+            }
             var className = GetClassName(filePath);
             var logEvent = new LogEventInfo(LogLevel.Fatal, _logger!.Name, message)
             {
