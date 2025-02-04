@@ -61,9 +61,9 @@ namespace X4DataLoader
                 string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
                 if (nameId != null && nameId != "" && descriptionId != null && descriptionId != "")
                 {
-                    Id = int.Parse(sectorIdMatch.Groups[4].Value, CultureInfo.InvariantCulture);
+                    Id = StringHelper.ParseInt(sectorIdMatch.Groups[4].Value);
                     IdPrefix = sectorIdMatch.Groups[3].Value;
-                    ClusterId = int.Parse(sectorIdMatch.Groups[2].Value, CultureInfo.InvariantCulture);
+                    ClusterId = StringHelper.ParseInt(sectorIdMatch.Groups[2].Value);
                     ClusterIdPrefix = sectorIdMatch.Groups[1].Value;
                     Name = translation.Translate(nameId ?? "");
                     Description = translation.Translate(descriptionId);
@@ -97,7 +97,7 @@ namespace X4DataLoader
             var match = SectorRegex.Match(macro);
             if (match.Success)
             {
-                return (match.Groups[1].Value, int.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture), match.Groups[3].Value, int.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture));
+                return (match.Groups[1].Value, StringHelper.ParseInt(match.Groups[2].Value), match.Groups[3].Value, StringHelper.ParseInt(match.Groups[4].Value));
             }
             throw new ArgumentException($"Invalid macro format: {macro}");
         }

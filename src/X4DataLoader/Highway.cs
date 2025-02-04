@@ -41,9 +41,9 @@ namespace X4DataLoader
                     if (positionElement != null)
                     {
                         var position = (
-                            double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
-                            double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
-                            double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
+                            StringHelper.ParseDouble(positionElement.Attribute("x")?.Value ?? "0"),
+                            StringHelper.ParseDouble(positionElement.Attribute("y")?.Value ?? "0"),
+                            StringHelper.ParseDouble(positionElement.Attribute("z")?.Value ?? "0")
                         );
 
                         if (reference == "entrypoint")
@@ -109,7 +109,7 @@ namespace X4DataLoader
                 string path = macro.Attribute("path")?.Value
                     ?? throw new ArgumentException("MacroReference must have a path attribute");
                 HighwayClusterConnectionPath? pointPath = null;
-               if (reference == "entrypoint")
+                if (reference == "entrypoint")
                 {
                     EntryPointPath = new HighwayClusterConnectionPath(cluster, macroReference);
                     EntryPointPath.Load(path);

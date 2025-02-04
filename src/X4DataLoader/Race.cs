@@ -43,7 +43,7 @@ namespace X4DataLoader
             PrefixName = translation.Translate(XmlHelper.GetAttribute(element, "prefixname") ?? "");
             SpaceName = translation.Translate(XmlHelper.GetAttribute(element, "spacename") ?? "");
             HomeSpaceName = translation.Translate(XmlHelper.GetAttribute(element, "homespacename") ?? "");
-            Names = int.TryParse(XmlHelper.GetAttribute(element, "names"), out int names) ? names : 0;
+            Names = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "names"));
             Tags = XmlHelper.GetAttributeAsList(element, "tags", " ");
             XML = element;
             Source = source;

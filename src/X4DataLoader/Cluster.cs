@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Utilities.Logging;
+using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {
@@ -57,10 +58,10 @@ namespace X4DataLoader
             {
                 var propertiesElement = element.Element("properties");
                 string nameId = propertiesElement?.Element("identification")?.Attribute("name")?.Value ?? "";
-                string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value?? "";
-                if (nameId != null && nameId != ""  && descriptionId != "")
+                string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
+                if (nameId != null && nameId != "" && descriptionId != "")
                 {
-                    Id = int.Parse(sectorIdMatch.Groups[2].Value);
+                    Id = StringHelper.ParseInt(sectorIdMatch.Groups[2].Value);
                     IdPrefix = sectorIdMatch.Groups[1].Value;
                     Name = translation.Translate(nameId);
                     Description = translation.Translate(descriptionId);
@@ -69,7 +70,8 @@ namespace X4DataLoader
                     XML = element;
                     Console.WriteLine($"Cluster Name: {Name}");
                 }
-                else {
+                else
+                {
                     throw new ArgumentException("Cluster must have name and description");
                 }
 
@@ -94,7 +96,7 @@ namespace X4DataLoader
             var match = ClusterRegex.Match(macro);
             if (match.Success)
             {
-                return (match.Groups[1].Value, int.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture));
+                return (match.Groups[1].Value, StringHelper.ParseInt(match.Groups[2].Value));
             }
             throw new ArgumentException($"Invalid macro format: {macro}");
         }

@@ -93,14 +93,14 @@ namespace X4DataLoader
             if (positionElement != null)
             {
                 Position = new(
-                    double.TryParse(XmlHelper.GetAttribute(positionElement, "x") ?? "0", System.Globalization.CultureInfo.InvariantCulture, out double x) ? x : 0,
-                    double.TryParse(XmlHelper.GetAttribute(positionElement, "y") ?? "0", System.Globalization.CultureInfo.InvariantCulture, out double y) ? y : 0,
-                    double.TryParse(XmlHelper.GetAttribute(positionElement, "z") ?? "0", System.Globalization.CultureInfo.InvariantCulture, out double z) ? z : 0
+                    StringHelper.ParseDouble(XmlHelper.GetAttribute(positionElement, "x")),
+                    StringHelper.ParseDouble(XmlHelper.GetAttribute(positionElement, "y")),
+                    StringHelper.ParseDouble(XmlHelper.GetAttribute(positionElement, "z"))
                 );
                 Rotation = new(
-                    double.TryParse(XmlHelper.GetAttribute(positionElement, "pitch") ?? "0", System.Globalization.CultureInfo.InvariantCulture, out double pitch) ? pitch : 0,
-                    double.TryParse(XmlHelper.GetAttribute(positionElement, "yaw") ?? "0", System.Globalization.CultureInfo.InvariantCulture, out double yaw) ? yaw : 0,
-                    double.TryParse(XmlHelper.GetAttribute(positionElement, "roll") ?? "0", System.Globalization.CultureInfo.InvariantCulture, out double roll) ? roll : 0
+                    StringHelper.ParseDouble(XmlHelper.GetAttribute(positionElement, "pitch")),
+                    StringHelper.ParseDouble(XmlHelper.GetAttribute(positionElement, "yaw")),
+                    StringHelper.ParseDouble(XmlHelper.GetAttribute(positionElement, "roll"))
                 );
                 PositionXML = positionElement;
             }

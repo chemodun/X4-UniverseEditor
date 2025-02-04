@@ -65,9 +65,9 @@ namespace X4DataLoader
                     var positionElement = offsetElement?.Element("position");
                     Position position = positionElement != null
                         ? new Position(
-                            double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
-                            double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
-                            double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
+                            StringHelper.ParseDouble(positionElement.Attribute("x")?.Value ?? "0"),
+                            StringHelper.ParseDouble(positionElement.Attribute("y")?.Value ?? "0"),
+                            StringHelper.ParseDouble(positionElement.Attribute("z")?.Value ?? "0")
                             )
                         : new Position(0, 0, 0);
 

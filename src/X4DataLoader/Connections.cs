@@ -50,19 +50,19 @@ namespace X4DataLoader
                 if (positionElement != null)
                 {
                     Position = new Position(
-                        double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
-                        double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
-                        double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
+                        StringHelper.ParseDouble(positionElement.Attribute("x")?.Value ?? "0"),
+                        StringHelper.ParseDouble(positionElement.Attribute("y")?.Value ?? "0"),
+                        StringHelper.ParseDouble(positionElement.Attribute("z")?.Value ?? "0")
                     );
                 }
                 XElement? quaternionElement = offsetElement.Element("quaternion");
                 if (quaternionElement != null)
                 {
                     Quaternion = new Quaternion(
-                        double.Parse(quaternionElement.Attribute("qx")?.Value ?? "0", CultureInfo.InvariantCulture),
-                        double.Parse(quaternionElement.Attribute("qy")?.Value ?? "0", CultureInfo.InvariantCulture),
-                        double.Parse(quaternionElement.Attribute("qz")?.Value ?? "0", CultureInfo.InvariantCulture),
-                        double.Parse(quaternionElement.Attribute("qw")?.Value ?? "0", CultureInfo.InvariantCulture)
+                        StringHelper.ParseDouble(quaternionElement.Attribute("qx")?.Value ?? "0"),
+                        StringHelper.ParseDouble(quaternionElement.Attribute("qy")?.Value ?? "0"),
+                        StringHelper.ParseDouble(quaternionElement.Attribute("qz")?.Value ?? "0"),
+                        StringHelper.ParseDouble(quaternionElement.Attribute("qw")?.Value ?? "0")
                     );
                 }
             }
@@ -186,9 +186,9 @@ namespace X4DataLoader
                             XElement? positionElement = connectionElement.Element("offset")?.Element("position");
                             Position position = positionElement != null
                                 ? new Position(
-                                    double.Parse(positionElement.Attribute("x")?.Value ?? "0", CultureInfo.InvariantCulture),
-                                    double.Parse(positionElement.Attribute("y")?.Value ?? "0", CultureInfo.InvariantCulture),
-                                    double.Parse(positionElement.Attribute("z")?.Value ?? "0", CultureInfo.InvariantCulture)
+                                    StringHelper.ParseDouble(positionElement.Attribute("x")?.Value ?? "0"),
+                                    StringHelper.ParseDouble(positionElement.Attribute("y")?.Value ?? "0"),
+                                    StringHelper.ParseDouble(positionElement.Attribute("z")?.Value ?? "0")
                                   )
                                 : new Position();
                             XElement? macroElement = connectionElement.Element("macro");

@@ -29,7 +29,7 @@ namespace X4DataLoader
             {
                 string constructionPlanId = XmlHelper.GetAttribute(selectElement, "constructionplan") ?? "";
                 ConstructionPlan? constructionPlan = allConstructionPlans.FirstOrDefault(cp => cp.Id == constructionPlanId);
-                int weight = int.Parse(XmlHelper.GetAttribute(selectElement, "weight") ?? "100");
+                int weight = StringHelper.ParseInt(XmlHelper.GetAttribute(selectElement, "weight"), 100);
                 if (constructionPlan != null)
                 {
                     ConstructionPlans.Add((constructionPlan, weight));

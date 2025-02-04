@@ -33,10 +33,10 @@ namespace X4DataLoader
         public void Load(XElement element, string source, string fileName)
         {
             Id = XmlHelper.GetAttribute(element, "id") ?? "";
-            Red = int.Parse(XmlHelper.GetAttribute(element, "r") ?? "0");
-            Green = int.Parse(XmlHelper.GetAttribute(element, "g") ?? "0");
-            Blue = int.Parse(XmlHelper.GetAttribute(element, "b") ?? "0");
-            Alpha = int.Parse(XmlHelper.GetAttribute(element, "a") ?? "0");
+            Red = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "r"));
+            Green = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "g"));
+            Blue = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "b"));
+            Alpha = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "a"));
             Color = Color.FromArgb(Alpha, Red, Green, Blue);
             Source = source;
             FileName = fileName;
@@ -55,7 +55,8 @@ namespace X4DataLoader
         }
     }
 
-    public class X4MappedColor : X4Color {
+    public class X4MappedColor : X4Color
+    {
         public string OriginalColorId { get; private set; } = "";
 
         public X4MappedColor()
