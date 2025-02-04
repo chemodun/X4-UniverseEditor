@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/chemodun/X4-UniverseEditor/compare/Logger@v0.0.1...Logger@v0.0.2) (2025-02-04)
+
+
+### Bug Fixes
+
+* **Logger:** Update logging method calls to use named arguments for clarity ([789d882](https://github.com/chemodun/X4-UniverseEditor/commit/789d8829c9cfdb8b7c41c1fdd5628438c0fc33b0))
+
 ## [0.0.1](https://github.com/chemodun/X4-UniverseEditor/compare/Logger-v0.0.1...Logger@v0.0.1) (2025-02-04)
 
 
