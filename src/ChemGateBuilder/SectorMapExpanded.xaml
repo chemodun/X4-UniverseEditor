@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:converters="clr-namespace:ChemGateBuilder.Core.Converters"
         Title="Sector Map" MinHeight="600" MinWidth="600"
-        WindowStartupLocation="Manual"
+        WindowStartupLocation="CenterOwner"
         Icon="{StaticResource BuilderIcon}"
         KeyDown="Window_KeyDown">
     <Window.Resources>

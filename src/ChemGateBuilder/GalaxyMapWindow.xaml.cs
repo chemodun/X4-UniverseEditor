@@ -107,9 +107,6 @@ namespace ChemGateBuilder
             Width = mainWindow.ActualWidth * 0.9;
             Height = mainWindow.ActualHeight * 0.9;
 
-            // Center the window relative to the main window
-            Left = WindowHelper.GetWindowLeft(mainWindow) + (mainWindow.Width - Width) / 2;
-            Top = WindowHelper.GetWindowTop(mainWindow) + (mainWindow.Height - Height) / 2;
             if (!PrepareGalaxyMap())
             {
                 Log.Error("Cluster map is not prepared.");

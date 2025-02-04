@@ -41,8 +41,6 @@ namespace ChemGateBuilder
             var minSize = Math.Min(Owner.ActualWidth, Owner.ActualHeight) * 0.9;
             Width = minSize;
             Height = minSize;
-            Left = WindowHelper.GetWindowLeft(Owner) + (Owner.ActualWidth - minSize) / 2;
-            Top = WindowHelper.GetWindowTop(Owner) + (Owner.ActualHeight - minSize) / 2;
             MapColorsOpacity = mapColorsOpacity;
             InitializeComponent();
             DataContext = this;
