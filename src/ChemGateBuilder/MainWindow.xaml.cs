@@ -141,6 +141,7 @@ namespace ChemGateBuilder
                     _x4DataVersion = value;
                     OnPropertyChanged(nameof(X4DataVersion));
                     OnPropertyChanged(nameof(X4DataVersionString));
+                    _chemGateKeeperMod.SetGameVersion(_x4DataVersion);
                     SaveConfiguration();
                 }
             }
