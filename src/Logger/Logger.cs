@@ -22,14 +22,14 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            LogMessage(LogLevel.Info, message, null, memberName, filePath);
+            LogMessage(LogLevel.Info, message, ex: null, memberName, filePath);
         }
 
         public static void Debug(string message,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            LogMessage(LogLevel.Debug, message, null, memberName, filePath);
+            LogMessage(LogLevel.Debug, message, ex: null, memberName, filePath);
         }
 
         public static void Error(string message, Exception? ex = null,
@@ -43,14 +43,14 @@ namespace Utilities.Logging
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            LogMessage(LogLevel.Warn, message, null, memberName, filePath);
+            LogMessage(LogLevel.Warn, message, ex: null, memberName, filePath);
         }
 
         public static void Trace(string message,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string filePath = "")
         {
-            LogMessage(LogLevel.Trace, message, null, memberName, filePath);
+            LogMessage(LogLevel.Trace, message, ex: null, memberName, filePath);
         }
 
         public static void Fatal(string message, Exception? ex = null,
@@ -80,9 +80,9 @@ namespace Utilities.Logging
             {
                 Exception = ex
             };
-            logEvent.Properties["ClassName"] = className;
-            logEvent.Properties["MemberName"] = memberName;
-            logEvent.Properties["FilePath"] = Path.GetFileName(filePath);
+            logEvent.Properties[key: "ClassName"] = className;
+            logEvent.Properties[key: "MemberName"] = memberName;
+            logEvent.Properties[key: "FilePath"] = Path.GetFileName(filePath);
             _logger.Log(logEvent);
         }
 
