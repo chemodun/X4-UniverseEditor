@@ -131,14 +131,14 @@ namespace X4DataLoader
             IsClaimCapable = constructionPlan?.IsClaimCapable ?? false;
             Name = constructionPlan?.Name ?? "";
             OwnerName = allFactions.FirstOrDefault(f => f.Id == OwnerId)?.Name ?? "";
-            if (!String.IsNullOrEmpty(Name) && String.IsNullOrEmpty(OwnerName))
+            if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(OwnerName))
             {
                 string planPrefix = Name.Split(" ")[0];
-                if (allFactions.Any(f => f.Name.StartsWith(planPrefix)) && !OwnerName.StartsWith(planPrefix))
+                if (allFactions.Any(f => f.Name.StartsWith(planPrefix)))
                 {
                     Name = Name[planPrefix.Length..].Trim();
-                    Name = OwnerName + " " + Name;
                 }
+                Name = OwnerName + " " + Name;
             }
             XElement? quotasElement = element.Element("quotas");
             if (quotasElement != null)
