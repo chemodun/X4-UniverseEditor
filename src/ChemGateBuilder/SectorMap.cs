@@ -28,8 +28,8 @@ namespace ChemGateBuilder
         private string _ownerColor = OwnerColorInitial;
         public static readonly string OwnerColorInitial = "#F0F0F0";
         private List<string> StationsToDisplay = new() { "equipmentdock", "tradestation", "tradingstation", "shipyard", "wharf" };
-
         private FactionColors FactionColors = new();
+        public bool MapMode = false;
 
         public double MinInternalSizeKm
         {
@@ -129,10 +129,11 @@ namespace ChemGateBuilder
             }
 
         }
-        public void Connect(Canvas canvas, Polygon hexagon)
+        public void Connect(Canvas canvas, Polygon hexagon, bool mapMode = false)
         {
             MapCanvas = canvas;
             MapHexagon = hexagon;
+            MapMode = mapMode;
         }
         public void ClearItems()
         {
@@ -517,6 +518,13 @@ namespace ChemGateBuilder
                 if (Attributes.TryGetValue("PointType", out string? pointType) && pointType == "exit")
                 {
                     ItemSizePx *= 0.7;
+                }
+            }
+            else if (Type == "station")
+            {
+                if (SectorMap.MapMode)
+                {
+                    ItemSizePx = Math.Min(Math.Max(SectorMap.VisualSizePx * 0.1, 20), 50);
                 }
             }
         }

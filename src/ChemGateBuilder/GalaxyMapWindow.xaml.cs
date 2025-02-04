@@ -813,7 +813,7 @@ namespace ChemGateBuilder
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
             Canvas.Children.Add(Grid);
-            SectorMapHelper.Connect(Canvas, Hexagon);
+            SectorMapHelper.Connect(Canvas, Hexagon, true);
             SectorMapHelper.VisualX = X;
             SectorMapHelper.VisualY = Y;
             SectorMapHelper.VisualSizePx = Width;
