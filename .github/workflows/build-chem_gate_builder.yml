@@ -1,0 +1,80 @@
+name: Build Chem Gate Builder
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    if: startsWith(github.event.release.tag_name, 'ChemGateBuilder@')
+    steps:
+      # Step 1: Checkout the repository
+      -
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set dotnet SDK
+      -
+        name: Setup dotnet SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      # Step 3: Install dependencies
+      -
+        name: Install dependencies
+        run: dotnet restore
+
+      # Step 4: Build Executables
+      -
+        name: Build
+        run: dotnet publish src/ChemGateBuilder/ChemGateBuilder.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+        shell: powershell
+
+      # Step 5: Compress to zip
+      -
+        name: Compress to zip
+        run: |
+          mkdir -p ChemGateBuilder
+          cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.exe XMLDiffAndPatch
+          cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.dll XMLDiffAndPatch
+          7z a -tzip ChemGateBuilder.zip ChemGateBuilder
+        shell: powershell
+
+      # Step 6: Upload Archive as Artifact
+      -
+        name: Upload Archive as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: executable-archive
+          path: |
+            ChemGateBuilder.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+
+      # Step 7: Attach ChemGateBuilder Archive to Release
+      -
+        name: Attach ChemGateBuilder Archive to Release
+        uses: softprops/action-gh-release@v2
+        if: ${{ github.event_name == 'release' }}
+        with:
+          files: ChemGateBuilder.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+
+      # Step 8: Add scan with VirusTotal
+      -
+        name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v4
+        with:
+          update_release_body: true
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          github_token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          request_rate: 4
+          files: |
+            ${{ github.event_name == 'release' && '.zip$' || '*.zip' }}
