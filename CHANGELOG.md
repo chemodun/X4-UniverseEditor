@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/v0.1.0...v0.1.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* **cspell:** add "netstandard" to the spell check dictionary ([1d8d68b](https://github.com/chemodun/X4-UniverseEditor/commit/1d8d68ba83b5bcbf6b43e82cf314126f52fd68c4))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/v0.0.2...v0.1.0) (2025-02-04)
 
 
