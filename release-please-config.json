@@ -65,6 +65,7 @@
   "packages": {
     ".": {
       "release-type": "simple",
+      "skip-github-release": true,
       "exclude-paths": [
         "src/X4DataLoader",
         "src/X4DataTestConsole",
