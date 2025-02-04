@@ -127,7 +127,7 @@ namespace X4DataLoader
                             stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, Tags[0], faction);
                         }
                     }
-                    else if (!String.IsNullOrEmpty(refId))
+                    else if (!String.IsNullOrEmpty(refId)) // There is only for tradestation_tel_ring, really not clear situation
                     {
                         stationCategory = StationCategory.GetByStationId(allStationCategories, refId);
                         if (stationCategory != null)
