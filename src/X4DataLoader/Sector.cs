@@ -133,9 +133,6 @@ namespace X4DataLoader
         public void CalculateOwnership(List<Faction> allFactions)
         {
             Dictionary<string, int> ownerStationCount = new();
-            List<string> toIgnoreOwners = ["player", "civilian", "khaak", "ownerless"];
-            List<string> toIgnoreTypes = ["piratebase"];
-            Dictionary<string, string> ownerReplacements = new() { ["alliance"] = "paranid", ["ministry"] = "teladi" };
             foreach (Station station in Stations)
             {
                 if (station.IsClaimCapable && !station.GameStartDependent)
