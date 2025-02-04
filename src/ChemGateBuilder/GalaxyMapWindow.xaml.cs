@@ -92,7 +92,7 @@ namespace ChemGateBuilder
         private double canvasToScrollHeightDelta = 0;
         private double scrollVerticalOffset = 0;
         private double canvasWidth = 0;
-        private readonly Sector? clickedSector = null;
+        // private readonly Sector? clickedSector = null;
         public List<SectorMapItem> SectorsItems = [];
 
         public GalaxyMapWindow(MainWindow mainWindow)
