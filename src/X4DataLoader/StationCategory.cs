@@ -12,6 +12,7 @@ namespace X4DataLoader
         public string StationId { get; private set; }
         public string StationGroupId { get; private set; }
         public StationGroup? StationGroup { get; private set; }
+        public string Macro { get; private set; }
         public List<string> Factions { get; private set; } = [];
         public string Source { get; private set; }
         public string FileName { get; private set; }
@@ -23,6 +24,7 @@ namespace X4DataLoader
             StationId = "";
             StationGroupId = "";
             StationGroup = null;
+            Macro = "";
             Source = "";
             FileName = "";
             XML = null;
@@ -39,6 +41,7 @@ namespace X4DataLoader
             Factions = XmlHelper.GetAttributeAsList(categoryElement, "faction");
             StationId = XmlHelper.GetAttribute(element, "id") ?? "";
             StationGroupId = XmlHelper.GetAttribute(element, "group") ?? "";
+            Macro = XmlHelper.GetAttribute(element, "macro") ?? "";
             StationGroup = allStationGroups.FirstOrDefault(sg => sg.Name == StationGroupId);
             Source = source;
             FileName = fileName;
@@ -48,6 +51,11 @@ namespace X4DataLoader
         public static StationCategory? GetByTagAndFaction(List<StationCategory> allStationCategories, string tag, string faction)
         {
             return allStationCategories.FirstOrDefault(sc => sc.Tag == tag && sc.Factions.Contains(faction));
+        }
+
+        public static StationCategory? GetByStationId(List<StationCategory> allStationCategories, string stationId)
+        {
+            return allStationCategories.FirstOrDefault(sc => sc.StationId == stationId);
         }
 
         public static void LoadElements(IEnumerable<XElement> elements, string source, string fileName, List<StationCategory> allStationCategories, List<StationGroup> allStationGroups)
@@ -61,9 +69,9 @@ namespace X4DataLoader
                     Log.Warn($"StationCategory {stationCategory.StationId} must have a category");
                     continue;
                 }
-                if (allStationCategories.Any(sc => sc.Tag == stationCategory.Tag && sc.Factions.SequenceEqual(stationCategory.Factions)))
+                if (allStationCategories.Any(sc => sc.StationId == stationCategory.StationId))
                 {
-                    Log.Warn($"StationCategory {stationCategory.StationId} has a duplicate tag and faction");
+                    Log.Warn($"Duplicate StationCategory id {stationCategory.StationId}");
                     continue;
                 }
                 allStationCategories.Add(stationCategory);

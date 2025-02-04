@@ -109,22 +109,40 @@ namespace X4DataLoader
             if (stationElement != null)
             {
                 string constructionPlanId = XmlHelper.GetAttribute(stationElement, "constructionplan")?.Trim('\'') ?? "";
+                string refId = XmlHelper.GetAttribute(stationElement, "ref") ?? "";
                 if (!String.IsNullOrEmpty(constructionPlanId))
                 {
                     constructionPlan = allConstructionPlans.FirstOrDefault(cp => cp.Id == constructionPlanId);
                 }
                 XElement? selectElement = stationElement.Element("select");
-                if (selectElement != null)
+                StationCategory? stationCategory = null;
+                if (String.IsNullOrEmpty(constructionPlanId))
                 {
-                    Tags = XmlHelper.GetAttributeAsList(selectElement, "tags");
-                    string faction = XmlHelper.GetAttribute(selectElement, "faction") ?? "";
-                    if (String.IsNullOrEmpty(constructionPlanId) && !String.IsNullOrEmpty(faction) && Tags.Count == 1)
+                    if (selectElement != null)
                     {
-                        StationCategory? stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, Tags[0], faction);
+                        Tags = XmlHelper.GetAttributeAsList(selectElement, "tags");
+                        string faction = XmlHelper.GetAttribute(selectElement, "faction") ?? "";
+                        if (!String.IsNullOrEmpty(faction) && Tags.Count == 1)
+                        {
+                            stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, Tags[0], faction);
+                        }
+                    }
+                    else if (!String.IsNullOrEmpty(refId))
+                    {
+                        stationCategory = StationCategory.GetByStationId(allStationCategories, refId);
                         if (stationCategory != null)
                         {
-                            constructionPlan = stationCategory.StationGroup?.GetMostWeightedConstructionPlan();
+                            string tag = stationCategory.Tag;
+                            string faction = OwnerId;
+                            stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, tag, faction);
                         }
+                    }
+                }
+                if (constructionPlan == null && stationCategory != null)
+                {
+                    if (stationCategory.StationGroup != null)
+                    {
+                        constructionPlan = stationCategory.StationGroup.GetMostWeightedConstructionPlan();
                     }
                 }
             }
