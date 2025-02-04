@@ -243,6 +243,10 @@ namespace ChemGateBuilder
                         Id = station.Id,
                         Color = FactionColors.GetColor(station.OwnerId)
                     };
+                    if (station.Zone == null && newObject.X == 0 && newObject.Y == 0 && newObject.Z == 0)
+                    {
+                        MakeRandomCoordinates(newObject);
+                    }
                     string stationType = station.Tags.Count == 0 ? station.Type : station.Tags[0];
                     if (stationType == "tradingstation")
                     {
@@ -254,6 +258,14 @@ namespace ChemGateBuilder
                 }
             }
             return sectorObjects;
+        }
+
+        private static void MakeRandomCoordinates(ObjectInSector objectData)
+        {
+            Random random = new();
+            objectData.X = random.Next(-30, 30);
+            objectData.Y = 0;
+            objectData.Z = random.Next(-30, 30);
         }
 
         public void AddItem(ObjectInSector objectData)
