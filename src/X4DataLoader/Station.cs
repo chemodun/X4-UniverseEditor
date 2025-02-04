@@ -134,7 +134,7 @@ namespace X4DataLoader
             if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(OwnerName))
             {
                 string planPrefix = Name.Split(" ")[0];
-                if (allFactions.Any(f => f.Name.StartsWith(planPrefix)))
+                if (allFactions.Any(f => f.Name.StartsWith(planPrefix)) || allFactions.Any(f => f.PrimaryRaceName.StartsWith(planPrefix)))
                 {
                     Name = Name[planPrefix.Length..].Trim();
                 }
