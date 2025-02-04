@@ -190,7 +190,7 @@ namespace ChemGateBuilder
             GalaxyCanvas.Children.Clear();
             foreach (var Z in AxisZ)
             {
-                Dictionary<string, Cluster> row = MapDict[Z.ToString("F1")];
+                Dictionary<string, Cluster> row = MapDict[Z.ToString(format: "F1")];
                 foreach (var X in AxisX)
                 {
                     if (!row.ContainsKey(X.ToString()))
@@ -661,7 +661,7 @@ namespace ChemGateBuilder
                     {
                     }
                 }
-                foreach (var pair in HorizontalPairs)
+                foreach ((HexagonCorner, HexagonCorner) pair in HorizontalPairs)
                 {
                     if (corners.Contains(pair.Item1) || corners.Contains(pair.Item2))
                     {
@@ -727,12 +727,12 @@ namespace ChemGateBuilder
         protected void UpdatePoints()
         {
             Points.Clear();
-            Points.Add(new Point(Width * 0.25, 0));
-            Points.Add(new Point(Width * 0.75, 0));
+            Points.Add(new Point(Width * 0.25, y: 0));
+            Points.Add(new Point(Width * 0.75, y: 0));
             Points.Add(new Point(Width, Height * 0.5));
             Points.Add(new Point(Width * 0.75, Height));
             Points.Add(new Point(Width * 0.25, Height));
-            Points.Add(new Point(0, Height * 0.5));
+            Points.Add(new Point(x: 0, Height * 0.5));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -782,11 +782,11 @@ namespace ChemGateBuilder
                 Height = Height,
                 DataContext = Sector
             };
-            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(25, GridUnitType.Star) });
-            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50, GridUnitType.Star) });
-            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(25, GridUnitType.Star) });
-            Grid.SetColumn(Hexagon, 0);
-            Grid.SetColumnSpan(Hexagon, 3);
+            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(value: 25, GridUnitType.Star) });
+            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(value: 50, GridUnitType.Star) });
+            Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(value: 25, GridUnitType.Star) });
+            Grid.SetColumn(Hexagon, value: 0);
+            Grid.SetColumnSpan(Hexagon, value: 3);
             Grid.Children.Add(Hexagon);
             // Create TextBlock
             TextBlock = new()
@@ -802,13 +802,13 @@ namespace ChemGateBuilder
                 DataContext = Sector,
                 FontWeight = FontWeights.DemiBold// Make the text bold
             };
-            Grid.SetColumn(TextBlock, 1);
+            Grid.SetColumn(TextBlock, value: 1);
             Grid.Children.Add(TextBlock);
             // Position the Hexagon on the Canvas
             Canvas.SetLeft(Grid, X);
             Canvas.SetTop(Grid, Y);
             Canvas.Children.Add(Grid);
-            SectorMapHelper.Connect(Canvas, Hexagon, true);
+            SectorMapHelper.Connect(Canvas, Hexagon, mapMode: true);
             SectorMapHelper.VisualX = X;
             SectorMapHelper.VisualY = Y;
             SectorMapHelper.VisualSizePx = Width;
@@ -843,20 +843,20 @@ namespace ChemGateBuilder
                     DataContext = item
                 };
                 // Binding for Width
-                Binding widthBinding = new("ItemSizePx")
+                Binding widthBinding = new(path: "ItemSizePx")
                 {
                     Source = item
                 };
                 image.SetBinding(Image.WidthProperty, widthBinding);
 
                 // Binding for Height
-                Binding heightBinding = new("ItemSizePx")
+                Binding heightBinding = new(path: "ItemSizePx")
                 {
                     Source = item
                 };
                 image.SetBinding(Image.HeightProperty, heightBinding);
                 // Binding for Source
-                Binding sourceBinding = new("ObjectImage")
+                Binding sourceBinding = new(path: "ObjectImage")
                 {
                     Source = item
                 };
@@ -865,14 +865,14 @@ namespace ChemGateBuilder
                 TranslateTransform translateTransform = new();
 
                 // Binding for TranslateTransform.X
-                Binding translateXBinding = new("X")
+                Binding translateXBinding = new(path: "X")
                 {
                     Source = item
                 };
                 BindingOperations.SetBinding(translateTransform, TranslateTransform.XProperty, translateXBinding);
 
                 // Binding for TranslateTransform.Y
-                Binding translateYBinding = new("Y")
+                Binding translateYBinding = new(path: "Y")
                 {
                     Source = item
                 };
@@ -881,7 +881,7 @@ namespace ChemGateBuilder
                 // Assign the transform to the Image
                 image.RenderTransform = translateTransform;
                 // Binding for ToolTip
-                Binding toolTipBinding = new("ToolTip")
+                Binding toolTipBinding = new(path: "ToolTip")
                 {
                     Source = item
                 };
@@ -983,22 +983,22 @@ namespace ChemGateBuilder
             {
                 line.Stroke = Brushes.SkyBlue;
             }
-            Binding x1Binding = new("CenterX")
+            Binding x1Binding = new(path: "CenterX")
             {
                 Source = Source
             };
             line.SetBinding(Line.X1Property, x1Binding);
-            Binding y1Binding = new("CenterY")
+            Binding y1Binding = new(path: "CenterY")
             {
                 Source = Source
             };
             line.SetBinding(Line.Y1Property, y1Binding);
-            Binding x2Binding = new("CenterX")
+            Binding x2Binding = new(path: "CenterX")
             {
                 Source = Destination
             };
             line.SetBinding(Line.X2Property, x2Binding);
-            Binding y2Binding = new("CenterY")
+            Binding y2Binding = new(path: "CenterY")
             {
                 Source = Destination
             };
