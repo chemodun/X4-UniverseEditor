@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.1.1...ChemGateBuilder@v0.2.0) (2025-02-04)
+
+
+### Features
+
+* **MainWindow:** enhance folder selection dialog with description and disable new folder option ([cb918ea](https://github.com/chemodun/X4-UniverseEditor/commit/cb918eaf578e67bac68713b5c0aeec3618a8ff87))
+
+
+### Bug Fixes
+
+* **AboutWindow:** add builder icon and adjust button margin ([743b054](https://github.com/chemodun/X4-UniverseEditor/commit/743b054ab522424fea64a9c83e2250f3b1e5336d))
+* **GalaxyMapWindow:** comment out unused clickedSector variable ([5ec4b13](https://github.com/chemodun/X4-UniverseEditor/commit/5ec4b132097b1506c83b6892edb90ba4d80ef4e2))
+
+
+### Miscellaneous Chores
+
+* **README:** add old documentation for X4 Chem Gate Builder tool from the Python version ([f9a47c3](https://github.com/chemodun/X4-UniverseEditor/commit/f9a47c361ef625cd4cb3aa987adf156ab680f61e))
+
 ## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.1.0...ChemGateBuilder@v0.1.1) (2025-02-04)
 
 
