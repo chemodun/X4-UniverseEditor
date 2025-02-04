@@ -108,8 +108,8 @@ namespace ChemGateBuilder
             Height = mainWindow.ActualHeight * 0.9;
 
             // Center the window relative to the main window
-            Left = mainWindow.Left + (mainWindow.Width - Width) / 2;
-            Top = mainWindow.Top + (mainWindow.Height - Height) / 2;
+            Left = WindowHelper.GetWindowLeft(mainWindow) + (mainWindow.Width - Width) / 2;
+            Top = WindowHelper.GetWindowTop(mainWindow) + (mainWindow.Height - Height) / 2;
             if (!PrepareGalaxyMap())
             {
                 Log.Error("Cluster map is not prepared.");
@@ -256,7 +256,7 @@ namespace ChemGateBuilder
                 }
                 if (MainWindowReference.GatesConnectionCurrent?.SectorDirect != null && MainWindowReference.GatesConnectionCurrent.SectorOpposite != null)
                 {
-                    List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == "New");
+                    List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == SectorMap.NewGateId);
                     if (newGatesItems.Count == 2)
                     {
                         GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);

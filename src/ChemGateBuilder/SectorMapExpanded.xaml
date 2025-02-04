@@ -4,10 +4,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:converters="clr-namespace:ChemGateBuilder.Core.Converters"
-        Title="Sector Map" Height="600" Width="600"
+        Title="Sector Map" MinHeight="600" MinWidth="600"
         WindowStartupLocation="Manual"
         Icon="{StaticResource BuilderIcon}"
-        ResizeMode="NoResize"
         KeyDown="Window_KeyDown">
     <Window.Resources>
         <converters:HexagonPointsConverter x:Key="HexagonPointsConverter" />
@@ -83,7 +82,7 @@
                     Canvas.Top="{Binding SectorMapExpanded.VisualY}"
                     >
                 <Polygon.Fill>
-                    <SolidColorBrush Color="{Binding SectorMapExpanded.OwnerColor}" Opacity="0.2"/>
+                    <SolidColorBrush Color="{Binding SectorMapExpanded.OwnerColor}" Opacity="{Binding MapColorsOpacity}"/>
                 </Polygon.Fill>
             </Polygon>
             <!-- Gates Representation -->

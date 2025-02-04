@@ -963,22 +963,8 @@ namespace ChemGateBuilder
             if (GatesConnectionCurrent != null)
             {
                 Log.Debug($"[ButtonSectorDirectMapExpand_Click] Direct: ");
-                SectorMapExpandedWindow sectorMapExpandedWindow = new(SectorRadius, FactionColors)
-                {
-                    // Set the owner to the main window for proper window behavior
-                    Owner = this
-                };
-                var minSize = Math.Min(this.ActualWidth, this.ActualHeight) * 0.9;
-                sectorMapExpandedWindow.Width = minSize;
-                sectorMapExpandedWindow.Height = minSize;
-                sectorMapExpandedWindow.Left = GetWindowLeft() + (this.ActualWidth - minSize) / 2;
-                sectorMapExpandedWindow.Top = GetWindowTop() + (this.ActualHeight - minSize) / 2;
-                SectorMap sectorMap = isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap;
-                sectorMapExpandedWindow.SetMapItems([.. sectorMap.Items]);
-                sectorMapExpandedWindow.SectorMapExpanded.OwnerColor = sectorMap.OwnerColor;
                 string sectorName = isDirect ? GatesConnectionCurrent.SectorDirect?.Name ?? "" : GatesConnectionCurrent.SectorOpposite?.Name ?? "";
-                sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm = isDirect ? GatesConnectionCurrent.SectorDirectMap.InternalSizeKm : GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm;
-                sectorMapExpandedWindow.Title = $"Map of {sectorName}";
+                SectorMapExpandedWindow sectorMapExpandedWindow = new(this, sectorName, SectorRadius, isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap, MapColorsOpacity);
                 sectorMapExpandedWindow.ShowDialog(); // Modal
                 if (isDirect)
                 {
@@ -1187,35 +1173,6 @@ namespace ChemGateBuilder
             Application.Current.Shutdown();
         }
 
-        public double GetWindowLeft()
-        {
-            if (WindowState == WindowState.Maximized)
-            {
-                var leftField = typeof(Window).GetField("_actualLeft", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (leftField?.GetValue(this) is double value)
-                {
-                    return value;
-                }
-                throw new InvalidOperationException("_actualLeft field is null or not a double.");
-            }
-            else
-                return Left;
-        }
-        public double GetWindowTop()
-        {
-            if (WindowState == WindowState.Maximized)
-            {
-                var topField = typeof(Window).GetField("_actualTop", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (topField?.GetValue(this) is double value)
-                {
-                    return value;
-                }
-                throw new InvalidOperationException("_actualTop field is null or not a double.");
-            }
-            else
-                return Top;
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -1229,5 +1186,37 @@ namespace ChemGateBuilder
         Info,
         Warning,
         Error
+    }
+
+    class WindowHelper
+    {
+        public static double GetWindowLeft(Window window)
+        {
+            if (window.WindowState == WindowState.Maximized)
+            {
+                var leftField = typeof(Window).GetField("_actualLeft", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (leftField?.GetValue(window) is double value)
+                {
+                    return value;
+                }
+                throw new InvalidOperationException("_actualLeft field is null or not a double.");
+            }
+            else
+                return window.Left;
+        }
+        public static double GetWindowTop(Window window)
+        {
+            if (window.WindowState == WindowState.Maximized)
+            {
+                var topField = typeof(Window).GetField("_actualTop", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (topField?.GetValue(window) is double value)
+                {
+                    return value;
+                }
+                throw new InvalidOperationException("_actualTop field is null or not a double.");
+            }
+            else
+                return window.Top;
+        }
     }
 }

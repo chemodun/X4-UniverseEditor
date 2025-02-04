@@ -31,13 +31,31 @@ namespace ChemGateBuilder
                 OnPropertyChanged(nameof(NewGateCoordinates));
             }
         }
-        public SectorMapExpandedWindow(int sectorRadius, FactionColors factionColors)
+
+        public double MapColorsOpacity { get; set; } = 0.5;
+
+        public SectorMapExpandedWindow(Window owner, string title, int sectorRadius, SectorMap sectorMap, double mapColorsOpacity)
         {
+            Owner = owner;
+            Title = title;
+            var minSize = Math.Min(Owner.ActualWidth, Owner.ActualHeight) * 0.9;
+            Width = minSize;
+            Height = minSize;
+            Left = WindowHelper.GetWindowLeft(Owner) + (Owner.ActualWidth - minSize) / 2;
+            Top = WindowHelper.GetWindowTop(Owner) + (Owner.ActualHeight - minSize) / 2;
+            MapColorsOpacity = mapColorsOpacity;
             InitializeComponent();
             DataContext = this;
             _sectorMapExpanded.InternalSizeKm = sectorRadius;
             _sectorMapExpanded.Connect(SectorMapExpandedCanvas, SectorHexagon);
-            _sectorMapExpanded.SetColors(factionColors);
+            _sectorMapExpanded.From(sectorMap);
+            SectorMapItem? newItem = _sectorMapExpanded.GetItem(SectorMap.NewGateId);
+            if (newItem != null && newItem.ObjectData != null)
+            {
+                NewGateCoordinates.X = newItem.ObjectData.X;
+                NewGateCoordinates.Y = newItem.ObjectData.Y;
+                NewGateCoordinates.Z = newItem.ObjectData.Z;
+            }
         }
 
         private void SectorMapExpandedCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -58,23 +76,6 @@ namespace ChemGateBuilder
         private void SectorMapExpandedItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             SectorMapExpanded.MouseLeftButtonUp(sender, e);
-        }
-
-        public void SetMapItems(List<SectorMapItem> mapItems)
-        {
-            foreach (SectorMapItem item in mapItems)
-            {
-                if (item.ObjectData != null)
-                {
-                    SectorMapExpanded.AddItem(item.ObjectData);
-                    if (item.IsNew)
-                    {
-                        NewGateCoordinates.X = item.ObjectData.X;
-                        NewGateCoordinates.Y = item.ObjectData.Y;
-                        NewGateCoordinates.Z = item.ObjectData.Z;
-                    }
-                }
-            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

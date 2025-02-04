@@ -99,6 +99,7 @@ namespace ChemGateBuilder
         public static readonly double ItemSizeMinDefaultPx = 10;
         public static readonly double MinVisualSectorSize = 50;
         public static readonly double MaxVisualSectorSize = 1200;
+        public static readonly string NewGateId = "NewGate";
 
         public double ItemSizeMinPx = ItemSizeMinDefaultPx;
 
@@ -135,15 +136,46 @@ namespace ChemGateBuilder
             MapHexagon = hexagon;
             MapMode = mapMode;
         }
+
+        public void UnsetSector()
+        {
+            Sector = null;
+            ClearItems();
+            OwnerColor = SectorMap.OwnerColorInitial;
+        }
         public void ClearItems()
         {
             Items.Clear();
+        }
+        public void From(SectorMap sectorMap)
+        {
+            InternalSizeKm = sectorMap.InternalSizeKm;
+            MinInternalSizeKm = sectorMap.MinInternalSizeKm;
+            MaxInternalSizeKm = sectorMap.MaxInternalSizeKm;
+            Sector = sectorMap.Sector;
+            FactionColors = sectorMap.FactionColors;
+            OwnerColor = sectorMap.OwnerColor;
+            ClearItems();
+            foreach (SectorMapItem item in sectorMap.Items)
+            {
+                if (item != null && item.ObjectData != null)
+                {
+                    AddItem(item.ObjectData);
+                }
+            }
+            SelectedItemId = sectorMap.SelectedItemId;
         }
 
         public List<ObjectInSector> SetSector(Sector? sector, Galaxy galaxy)
         {
             Sector = sector;
             ClearItems();
+            string sectorOwner = sector?.DominantOwner ?? "";
+            string color = FactionColors.GetColorString(sectorOwner);
+            if (!String.IsNullOrEmpty(color))
+            {
+                OwnerColor = color;
+            }
             List<ObjectInSector> sectorObjects = [];
             if (Sector != null && Sector.Zones != null && Sector.Zones.Count != 0)
             {
@@ -230,7 +262,7 @@ namespace ChemGateBuilder
             {
                 SectorMap = this,
                 ObjectData = objectData,
-                IsNew = objectData.Id == "New"
+                IsNew = objectData.Id == SectorMap.NewGateId
             };
             Items.Add(item);
             item.Update();

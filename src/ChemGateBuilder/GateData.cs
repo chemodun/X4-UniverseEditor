@@ -322,7 +322,7 @@ namespace ChemGateBuilder
                 Z = gateCurrent.Coordinates.Z,
                 Type = "gate",
                 From = "new",
-                Id = "New"
+                Id = SectorMap.NewGateId
             };
             sectorMap.UpdateItem(newObject);
         }
@@ -455,26 +455,23 @@ namespace ChemGateBuilder
             {
                 bool isDirect = propertyName == nameof(SectorDirect);
                 SectorsListItem? sectorCurrent = isDirect ? SectorDirect : SectorOpposite;
-                var sectorConnections = isDirect ? SectorDirectObjects : SectorOppositeObjects;
-                sectorConnections.Clear();
+                var sectorObjects = isDirect ? SectorDirectObjects : SectorOppositeObjects;
+                sectorObjects.Clear();
                 SectorMap sectorMap = isDirect ? SectorDirectMap : SectorOppositeMap;
                 if (sectorCurrent?.Macro == null)
                 {
-                    sectorMap.ClearItems();
-                    sectorMap.OwnerColor = SectorMap.OwnerColorInitial;
+                    sectorMap.UnsetSector();
                 }
                 else if (Application.Current.MainWindow is MainWindow mainWindow && mainWindow.Galaxy != null)
                 {
                     Galaxy galaxy = mainWindow.Galaxy;
                     Sector? sector = sectorCurrent != null ? galaxy.GetSectorByMacro(sectorCurrent.Macro) : null;
-                    string sectorOwner = sector?.DominantOwner ?? "";
-                    sectorMap.UpdateSectorColor(sectorOwner);
                     List<ObjectInSector> objectsInSectorList = sectorMap.SetSector(sector, galaxy);
                     if (sectorCurrent != null)
                     {
                         foreach (var connection in objectsInSectorList)
                         {
-                            sectorConnections.Add(connection);
+                            sectorObjects.Add(connection);
                         }
                         var sectorsViewSource = isDirect ? mainWindow.SectorsOppositeViewSource : mainWindow.SectorsDirectViewSource;
                         if (sectorsViewSource != null)
