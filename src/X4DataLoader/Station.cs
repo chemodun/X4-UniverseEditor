@@ -9,6 +9,7 @@ namespace X4DataLoader
     public class Station
     {
         public string Id { get; private set; }
+        public string Name { get; private set; }
         public string Race { get; private set; }
         public string Owner { get; private set; }
         public string Type { get; private set; }
@@ -27,6 +28,7 @@ namespace X4DataLoader
         public Station()
         {
             Id = "";
+            Name = "";
             Race = "";
             Owner = "";
             Type = "";
@@ -80,10 +82,10 @@ namespace X4DataLoader
                     }
                     break;
                 default:
-                {
-                    Log.Warn($"Invalid location class {locationClass} for station {Id}. Will not be loaded");
-                    return;
-                }
+                    {
+                        Log.Warn($"Invalid location class {locationClass} for station {Id}. Will not be loaded");
+                        return;
+                    }
             }
             XElement? positionElement = locationElement.Element("position");
             if (positionElement != null)
@@ -125,7 +127,8 @@ namespace X4DataLoader
                 }
             }
             IsClaimCapable = constructionPlan?.IsClaimCapable ?? false;
-            XElement?  quotasElement = element.Element("quotas");
+            Name = constructionPlan?.Name ?? "";
+            XElement? quotasElement = element.Element("quotas");
             if (quotasElement != null)
             {
                 foreach (XElement quotaElement in quotasElement.Elements("quota"))
