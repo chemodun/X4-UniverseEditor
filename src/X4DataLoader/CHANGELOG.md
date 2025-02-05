@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.1...X4DataLoader@v0.3.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* **Translation:** replace dictionary initialization with array and optimize regex usage ([3daddc4](https://github.com/chemodun/X4-UniverseEditor/commit/3daddc47093a3def65af7bb1ef965d2c0147d27c))
+
 ## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.0...X4DataLoader@v0.3.1) (2025-02-05)
 
 
