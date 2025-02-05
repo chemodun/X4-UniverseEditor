@@ -92,6 +92,10 @@ namespace X4DataLoader
                 offset.Add(positionElement);
                 PositionXML.Add(offset);
             }
+            XElement PositionMacroXML = new("macro");
+            PositionMacroXML.SetAttributeValue("ref", Name);
+            PositionMacroXML.SetAttributeValue("connection", "sector");
+            PositionXML.Add(PositionMacroXML);
             XML = new XElement("macro");
             XML.SetAttributeValue("name", Name);
             XML.SetAttributeValue("class", "zone");
