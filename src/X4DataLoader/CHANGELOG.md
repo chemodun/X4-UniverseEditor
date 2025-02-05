@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.0...X4DataLoader@v0.3.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* **DataLoader:** remove duplication of code for gathering a file sets. And fix real file name storing in set ([9b2f30f](https://github.com/chemodun/X4-UniverseEditor/commit/9b2f30fd809a268c07987ff8fab4bc5d1d8c63e8))
+* **Zone:** add macro element with reference and connection attributes to PositionXML ([37d6644](https://github.com/chemodun/X4-UniverseEditor/commit/37d6644194d77bc55c4d210f1938537b0e9a2bde))
+
+
+### Code Refactoring
+
+* **DataLoader:** replace Dictionary initializations with array literals ([b2aa20a](https://github.com/chemodun/X4-UniverseEditor/commit/b2aa20a1559edd03ed626b163c1cc180459470af))
+
 ## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.2.0...X4DataLoader@v0.3.0) (2025-02-05)
 
 
