@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.2.0...ChemGateBuilder@v0.3.0) (2025-02-05)
+
+
+### Features
+
+* **MainWindow:** enhance UI with tab names and data binding improvements; add window loaded event ([3a65a0a](https://github.com/chemodun/X4-UniverseEditor/commit/3a65a0af2464a26a46ec41835f71009d6b460298))
+
+
+### Bug Fixes
+
+* **DataLoader:** log warning instead of throwing exception for missing files ([3a65a0a](https://github.com/chemodun/X4-UniverseEditor/commit/3a65a0af2464a26a46ec41835f71009d6b460298))
+* **LoadX4Data:** Replace mandatory data load by warning and switching the ribbon on options tab ([3a65a0a](https://github.com/chemodun/X4-UniverseEditor/commit/3a65a0af2464a26a46ec41835f71009d6b460298))
+
 ## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.1.1...ChemGateBuilder@v0.2.0) (2025-02-04)
 
 
