@@ -81,7 +81,7 @@ namespace X4DataLoader
                             var cluster = allClusters.FirstOrDefault(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef));
                             if (cluster != null)
                             {
-                                cluster.SetPosition(position, name, connectionElement);
+                                cluster.SetPosition(position, name, connectionElement, source, fileName);
                                 Clusters.Add(cluster);
                                 cluster.Sectors.ForEach(s => Sectors.Add(s));
                             }

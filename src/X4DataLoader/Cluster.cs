@@ -21,6 +21,8 @@ namespace X4DataLoader
         public string Reference { get; set; }
         public Position Position { get; private set; }
         public string PositionId { get; private set; }
+        public string PositionSource { get; private set; }
+        public string PositionFileName { get; private set; }
         public string Source { get; private set; }
         public string FileName { get; private set; }
         public XElement? PositionXML { get; set; }
@@ -45,6 +47,8 @@ namespace X4DataLoader
             Position = new Position();
             PositionId = "";
             PositionXML = null;
+            PositionSource = "vanilla";
+            PositionFileName = "";
             Source = "vanilla";
             FileName = "";
         }
@@ -82,11 +86,13 @@ namespace X4DataLoader
             }
         }
 
-        public void SetPosition(Position position, string positionId, XElement positionXML)
+        public void SetPosition(Position position, string positionId, XElement positionXML, string source, string fileName)
         {
             Position = position;
             PositionId = positionId;
             PositionXML = positionXML;
+            PositionSource = source;
+            PositionFileName = fileName;
         }
 
         public static bool IsClusterMacro(string macro) => ClusterRegex.IsMatch(macro);

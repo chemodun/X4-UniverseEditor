@@ -199,7 +199,7 @@ namespace X4DataLoader
                                 if (macroConnection == "cluster" && string.IsNullOrEmpty(macroRef) == false)
                                 {
                                     Sector? sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
-                                    sector?.SetPosition(position, connectionName, connectionElement);
+                                    sector?.SetPosition(position, connectionName, connectionElement, source, fileName);
                                 }
                             }
                         }
