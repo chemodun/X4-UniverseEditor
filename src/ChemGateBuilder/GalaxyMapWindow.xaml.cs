@@ -513,8 +513,6 @@ namespace ChemGateBuilder
             (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
         ];
 
-        private static readonly SolidColorBrush FillColor = Brushes.LightGray;
-
         public virtual void Create()
         {
             if (Map == null || Cluster == null || Canvas == null)
