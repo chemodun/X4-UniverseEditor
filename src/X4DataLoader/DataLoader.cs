@@ -16,54 +16,7 @@ namespace X4DataLoader
         {
             Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> fileSets = GatherFiles(coreFolderPath, relativePaths);
 
-            Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
-            // Scan for vanilla files
-            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = [];
-            foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
-            {
-                string? filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
-                if (File.Exists(filePath))
-                {
-                    vanillaFiles[item.Key] = (filePath, item.Value.fileName);
-                }
-                else
-                {
-                    throw new FileNotFoundException($"File not found: {filePath}");
-                }
-            }
-            fileSets["vanilla"] = vanillaFiles;
-            Log.Debug($"Vanilla files identified.");
-
-            // Scan for extension files
-            string? extensionsFolder = Path.Combine(coreFolderPath, "extensions");
-            Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
-            if (Directory.Exists(extensionsFolder))
-            {
-                foreach (string extensionFolder in Directory.GetDirectories(extensionsFolder))
-                {
-                    string? extensionName = Path.GetFileName(extensionFolder);
-                    Dictionary<string, (string fullPath, string fileName)>? extensionFiles = [];
-
-                    foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
-                    {
-                        string? searchPath = Path.Combine(extensionFolder, item.Value.path);
-                        if (Directory.Exists(searchPath))
-                        {
-                            string[]? files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
-                            if (files.Length > 0)
-                            {
-                                extensionFiles[item.Key] = (files[0], item.Value.fileName);
-                            }
-                        }
-                    }
-
-                    if (extensionFiles.Count > 0)
-                    {
-                        fileSets[extensionName] = extensionFiles;
-                        Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extensionName}.");
-                    }
-                }
-            }
+            Dictionary<string, (string fullPath, string fileName)> vanillaFiles = fileSets["vanilla"];
 
             Translation? translation = new();
             translation.Load(fileSets["vanilla"]["translation"].fullPath);
@@ -586,9 +539,9 @@ namespace X4DataLoader
                     if (Directory.Exists(searchPath))
                     {
                         string[]? files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
-                        if (files.Length > 0)
+                        if (files.Length == 1)
                         {
-                            dlcFiles[item.Key] = (files[0], item.Value.fileName);
+                            dlcFiles[item.Key] = (files[0], Path.GetFileName(files[0]));
                         }
                     }
                 }
