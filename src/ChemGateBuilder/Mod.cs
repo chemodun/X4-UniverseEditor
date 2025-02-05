@@ -421,12 +421,13 @@ namespace ChemGateBuilder
                 string universePath = _modFolderPath;
                 if (path.Key != "vanilla")
                 {
-                    universePath = Path.Combine(universePath, path.Key);
+                    universePath = Path.Combine(universePath, "extensions", path.Key);
                 }
                 universePath = Path.Combine(universePath, "maps", "xu_ep2_universe");
                 Directory.CreateDirectory(universePath);
                 XElement sectors = new("diff");
                 XElement zones = new("diff");
+                string files_prefix = "";
                 foreach (GalaxyConnectionPath connectionPath in path.Value)
                 {
                     if (connectionPath.Sector != null && connectionPath.Zone != null)
@@ -437,12 +438,20 @@ namespace ChemGateBuilder
                         XElement zone = new("add", new XAttribute("sel", $"/macros"));
                         zone.Add(connectionPath.Zone.XML);
                         zones.Add(zone);
+                        if (path.Key != "vanilla" && files_prefix == "")
+                        {
+                            Zone? zoneItem = connectionPath.Sector.Zones.FirstOrDefault();
+                            if (zoneItem != null)
+                            {
+                                files_prefix = zoneItem.FileName.Replace("zones.xml", "");
+                            }
+                        }
                     }
                 }
                 XDocument docSectors = new(new XDeclaration("1.0", "utf-8", null), sectors);
-                docSectors.Save(Path.Combine(universePath, "sectors.xml"));
+                docSectors.Save(Path.Combine(universePath, $"{files_prefix}sectors.xml"));
                 XDocument docZones = new(new XDeclaration("1.0", "utf-8", null), zones);
-                docZones.Save(Path.Combine(universePath, "zones.xml"));
+                docZones.Save(Path.Combine(universePath, $"{files_prefix}zones.xml"));
             }
         }
 
