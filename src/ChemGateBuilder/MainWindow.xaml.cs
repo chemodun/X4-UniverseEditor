@@ -1049,7 +1049,7 @@ namespace ChemGateBuilder
                 Coordinates position = gateData.Position;
                 Position gatePosition = new(position.X, position.Y, position.Z);
                 Coordinates coordinates = gateData.Coordinates;
-                Position zonePosition = new(coordinates.X, coordinates.Y, coordinates.Z);
+                Position zonePosition = new(coordinates.X * 1000, coordinates.Y * 1000, coordinates.Z * 1000);
                 gateDirect.Create(gateDirectId, gatePosition, gateData.Rotation.ToQuaternion(), new Dictionary<string, string>
                 {
                     ["gateMacro"] = gateData.GateMacro,
@@ -1065,7 +1065,7 @@ namespace ChemGateBuilder
                 position = gateData.Position;
                 gatePosition = new Position(position.X, position.Y, position.Z);
                 coordinates = gateData.Coordinates;
-                zonePosition = new Position(coordinates.X, coordinates.Y, coordinates.Z);
+                zonePosition = new Position(coordinates.X * 1000, coordinates.Y * 1000, coordinates.Z * 1000);
                 gateOpposite.Create(gateOppositeId, gatePosition, gateData.Rotation.ToQuaternion(), new Dictionary<string, string>
                 {
                     ["gateMacro"] = gateData.GateMacro,

@@ -15,14 +15,14 @@ namespace ChemGateBuilder
         public Coordinates OppositePosition;
         public Rotation OppositeRotation;
         public string SectorDirectName => _connection?.PathDirect?.Sector?.Name ?? string.Empty;
-        public int GateDirectX => (int)(_connection?.PathDirect?.Zone?.Position?.X ?? 0);
-        public int GateDirectY => (int)(_connection?.PathDirect?.Zone?.Position?.Y ?? 0);
-        public int GateDirectZ => (int)(_connection?.PathDirect?.Zone?.Position?.Z ?? 0);
+        public int GateDirectX => (int)(_connection?.PathDirect?.Zone?.Position?.X / 1000 ?? 0);
+        public int GateDirectY => (int)(_connection?.PathDirect?.Zone?.Position?.Y / 1000 ?? 0);
+        public int GateDirectZ => (int)(_connection?.PathDirect?.Zone?.Position?.Z / 1000 ?? 0);
         public bool GateDirectActive => _connection?.PathDirect?.Gate?.IsActive ?? false;
         public string SectorOppositeName => _connection?.PathOpposite?.Sector?.Name ?? string.Empty;
-        public int GateOppositeX => (int)(_connection?.PathOpposite?.Zone?.Position?.X ?? 0);
-        public int GateOppositeY => (int)(_connection?.PathOpposite?.Zone?.Position?.Y ?? 0);
-        public int GateOppositeZ => (int)(_connection?.PathOpposite?.Zone?.Position?.Z ?? 0);
+        public int GateOppositeX => (int)(_connection?.PathOpposite?.Zone?.Position?.X / 1000 ?? 0);
+        public int GateOppositeY => (int)(_connection?.PathOpposite?.Zone?.Position?.Y / 1000 ?? 0);
+        public int GateOppositeZ => (int)(_connection?.PathOpposite?.Zone?.Position?.Z / 1000 ?? 0);
         public bool GateOppositeActive => _connection?.PathOpposite?.Gate?.IsActive ?? false;
 
         public GalaxyConnection Connection
@@ -45,28 +45,32 @@ namespace ChemGateBuilder
                 {
                     DirectPosition = new Coordinates((int)(connection?.PathDirect?.Gate?.Position.X ?? 0), (int)(connection?.PathDirect?.Gate?.Position.Y ?? 0), (int)(connection?.PathDirect?.Gate?.Position.Z ?? 0));
                 }
-                else {
+                else
+                {
                     DirectPosition = new Coordinates(0, 0, 0);
                 }
                 if (connection?.PathDirect?.Gate?.Quaternion != null)
                 {
                     DirectRotation = Rotation.FromQuaternion(connection.PathDirect.Gate.Quaternion);
                 }
-                else {
+                else
+                {
                     DirectRotation = new Rotation(0, 0, 0);
                 }
                 if (connection?.PathOpposite?.Gate?.Position != null)
                 {
                     OppositePosition = new Coordinates((int)(connection?.PathOpposite?.Gate?.Position.X ?? 0), (int)(connection?.PathOpposite?.Gate?.Position.Y ?? 0), (int)(connection?.PathOpposite?.Gate?.Position.Z ?? 0));
                 }
-                else {
+                else
+                {
                     OppositePosition = new Coordinates(0, 0, 0);
                 }
                 if (connection?.PathOpposite?.Gate?.Quaternion != null)
                 {
                     OppositeRotation = Rotation.FromQuaternion(connection.PathOpposite.Gate.Quaternion);
                 }
-                else {
+                else
+                {
                     OppositeRotation = new Rotation(0, 0, 0);
                 }
             }
