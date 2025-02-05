@@ -235,9 +235,9 @@ namespace ChemGateBuilder
                         galaxyMapGateConnection.Create(GalaxyCanvas);
                     }
                 }
-                if (MainWindowReference.GalaxyConnections != null && MainWindowReference.GalaxyConnections.Count > 0)
+                if (MainWindowReference.ChemGateKeeperMod.GalaxyConnections != null && MainWindowReference.ChemGateKeeperMod.GalaxyConnections.Count > 0)
                 {
-                    foreach (GalaxyConnectionData connection in MainWindowReference.GalaxyConnections)
+                    foreach (GalaxyConnectionData connection in MainWindowReference.ChemGateKeeperMod.GalaxyConnections)
                     {
                         if (connection.Connection.Name == null)
                         {

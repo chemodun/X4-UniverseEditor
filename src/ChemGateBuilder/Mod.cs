@@ -56,6 +56,7 @@ namespace ChemGateBuilder
         }
         private bool _isModChanged = false;
         public List<GalaxyConnection> Connections = [];
+        public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = [];
         public XElement? XML = null;
 
         public ChemGateKeeper()
@@ -267,6 +268,11 @@ namespace ChemGateBuilder
                 _description = contentElement.Attribute("description")?.Value ?? _description;
                 GameVersion = int.Parse(contentElement.Element("dependency")?.Attribute("version")?.Value ?? "710", System.Globalization.CultureInfo.InvariantCulture);
                 Connections = modGalaxy.Connections;
+                foreach (var connection in Connections)
+                {
+                    GalaxyConnectionData newConnection = new(connection);
+                    GalaxyConnections.Add(newConnection);
+                }
                 _versionInitial = _version;
             }
             catch (Exception e)
@@ -277,7 +283,7 @@ namespace ChemGateBuilder
             return true;
         }
 
-        public bool SaveData(ObservableCollection<GalaxyConnectionData> GalaxyConnections)
+        public bool SaveData()
         {
             string currentPath = _modFolderPath;
             if (string.IsNullOrEmpty(currentPath))
@@ -328,7 +334,7 @@ namespace ChemGateBuilder
             Date = DateTime.Now.ToString("yyyy-MM-dd");
             _versionInitial = _version;
             SaveModXMLs();
-            bool result = !IsModChanged(GalaxyConnections);
+            bool result = !IsModChanged();
             OnPropertyChanged(nameof(Title));
             return result;
         }
@@ -452,7 +458,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public bool IsModChanged(ObservableCollection<GalaxyConnectionData> GalaxyConnections)
+        public bool IsModChanged()
         {
             bool result = false;
             if (Connections.Count != GalaxyConnections.Count)

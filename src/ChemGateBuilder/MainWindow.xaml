@@ -750,7 +750,7 @@
                                 <ColumnDefinition Width="120" />
                             </Grid.ColumnDefinitions>
                             <DataGrid x:Name="DataGridGalaxyConnections"
-                                    ItemsSource="{Binding GalaxyConnections}"
+                                    ItemsSource="{Binding ChemGateKeeperMod.GalaxyConnections}"
                                     SelectedItem="{Binding CurrentGalaxyConnection, Mode=TwoWay}"
                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                     AutoGenerateColumns="False"

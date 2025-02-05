@@ -351,7 +351,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = [];
+
 
         private ChemGateKeeper _chemGateKeeperMod = new();
         public ChemGateKeeper ChemGateKeeperMod
@@ -467,8 +467,8 @@ namespace ChemGateBuilder
                 }
             }
         }
-        public bool IsNowGateCanBeDeleted => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
-        public bool IsNowGateCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsNowGateCanBeDeleted => IsDataLoaded & ChemGateKeeperMod.GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
+        public bool IsNowGateCanBeCreated => IsDataLoaded & ChemGateKeeperMod.GalaxyConnections.Count > 0 && CurrentGalaxyConnection != null;
 
         bool _changingGalaxyConnectionIsPossible = false;
         public bool ChangingGalaxyConnectionIsPossible
@@ -483,7 +483,7 @@ namespace ChemGateBuilder
                     IsGateCanBeDeleted = IsNowGateCanBeDeleted && value;
                     OnPropertyChanged(nameof(ChangingGalaxyConnectionIsPossible));
                 }
-                bool isModChanged = ChemGateKeeperMod.IsModChanged(GalaxyConnections);
+                bool isModChanged = ChemGateKeeperMod.IsModChanged();
                 if (value && IsGateCanBeDeleted)
                 {
                     IsModCanBeSaved = isModChanged;
@@ -495,7 +495,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public bool IsModCanBeCreated => IsDataLoaded & GalaxyConnections.Count > 0;
+        public bool IsModCanBeCreated => IsDataLoaded & ChemGateKeeperMod.GalaxyConnections.Count > 0;
 
         private string _buttonSaveContent = "Add";
         public string ButtonSaveContent
@@ -829,7 +829,7 @@ namespace ChemGateBuilder
         private List<string> GetOppositeSectorsMacrosFromMod(string sectorMacro)
         {
             List<string> oppositeSectorsMacros = [];
-            foreach (var connection in GalaxyConnections)
+            foreach (var connection in ChemGateKeeperMod.GalaxyConnections)
             {
                 if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
                 {
@@ -854,7 +854,7 @@ namespace ChemGateBuilder
         public List<ObjectInSector> GetObjectsInSectorFromMod(string sectorMacro)
         {
             List<ObjectInSector> sectorObjects = [];
-            foreach (var connection in GalaxyConnections)
+            foreach (var connection in ChemGateKeeperMod.GalaxyConnections)
             {
                 if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
                 {
@@ -1099,7 +1099,7 @@ namespace ChemGateBuilder
                 else
                 {
                     GalaxyConnectionData newConnection = new(galaxyConnection, GatesConnectionCurrent);
-                    GalaxyConnections.Add(newConnection);
+                    ChemGateKeeperMod.GalaxyConnections.Add(newConnection);
                     CurrentGalaxyConnection = newConnection;
                 }
             }
@@ -1136,15 +1136,15 @@ namespace ChemGateBuilder
             {
                 if (CurrentGalaxyConnection != null)
                 {
-                    int index = GalaxyConnections.IndexOf(CurrentGalaxyConnection);
-                    GalaxyConnections.Remove(CurrentGalaxyConnection);
-                    if (GalaxyConnections.Count > 0)
+                    int index = ChemGateKeeperMod.GalaxyConnections.IndexOf(CurrentGalaxyConnection);
+                    ChemGateKeeperMod.GalaxyConnections.Remove(CurrentGalaxyConnection);
+                    if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
                     {
-                        if (index >= GalaxyConnections.Count)
+                        if (index >= ChemGateKeeperMod.GalaxyConnections.Count)
                         {
-                            index = GalaxyConnections.Count - 1;
+                            index = ChemGateKeeperMod.GalaxyConnections.Count - 1;
                         }
-                        CurrentGalaxyConnection = GalaxyConnections[index];
+                        CurrentGalaxyConnection = ChemGateKeeperMod.GalaxyConnections[index];
                     }
                     else
                     {
@@ -1159,7 +1159,7 @@ namespace ChemGateBuilder
         {
             ChemGateKeeperMod = new();
             _chemGateKeeperMod.SetGameVersion(X4DataVersion);
-            GalaxyConnections.Clear();
+            ChemGateKeeperMod.GalaxyConnections.Clear();
             GatesConnectionCurrent?.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
             SectorsDirectViewSource.View.Refresh();
             SectorsOppositeViewSource.View.Refresh();
@@ -1179,17 +1179,11 @@ namespace ChemGateBuilder
             if (newMod.LoadData(Galaxy))
             {
                 ChemGateKeeperMod = newMod;
-                GalaxyConnections.Clear();
-                foreach (var connection in ChemGateKeeperMod.Connections)
-                {
-                    GalaxyConnectionData newConnection = new(connection);
-                    GalaxyConnections.Add(newConnection);
-                }
                 SectorsDirectViewSource.View.Refresh();
                 SectorsOppositeViewSource.View.Refresh();
-                if (GalaxyConnections.Count > 0)
+                if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
                 {
-                    CurrentGalaxyConnection = GalaxyConnections[0];
+                    CurrentGalaxyConnection = ChemGateKeeperMod.GalaxyConnections[0];
                 }
                 else
                 {
@@ -1206,9 +1200,9 @@ namespace ChemGateBuilder
 
         public void ButtonSaveMod_Click(object sender, RoutedEventArgs e)
         {
-            if (GalaxyConnections.Count > 0)
+            if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
             {
-                IsModCanBeSaved = !ChemGateKeeperMod.SaveData(GalaxyConnections);
+                IsModCanBeSaved = !ChemGateKeeperMod.SaveData();
             }
         }
 

@@ -372,7 +372,7 @@ namespace ChemGateBuilder
                         return false;
                     }
                 }
-                foreach (var connection in mainWindow.GalaxyConnections)
+                foreach (var connection in mainWindow.ChemGateKeeperMod.GalaxyConnections)
                 {
                     if (connection == null || connection.Connection == null ||
                         connection.Connection.PathDirect == null || connection.Connection.PathOpposite == null ||
