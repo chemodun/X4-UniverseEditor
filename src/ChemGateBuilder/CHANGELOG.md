@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.3.1...ChemGateBuilder@v0.4.0) (2025-02-05)
+
+
+### Features
+
+* **MainWindow:** remove separate X4 load ribbon tab with button (feat used to reach the python version) ([918f977](https://github.com/chemodun/X4-UniverseEditor/commit/918f9772b02702cf826e401d8ba84c55bab1fdfb))
+
+
+### Code Refactoring
+
+* **MainWindow:** update Options tab to Configuration and improve user prompts ([918f977](https://github.com/chemodun/X4-UniverseEditor/commit/918f9772b02702cf826e401d8ba84c55bab1fdfb))
+
 ## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.3.0...ChemGateBuilder@v0.3.1) (2025-02-05)
 
 
