@@ -90,3 +90,5 @@ jobs:
           gh release delete ${{ github.event.release.tag_name }} --yes
         env:
           GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
