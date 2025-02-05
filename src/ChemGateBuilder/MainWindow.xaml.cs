@@ -1169,8 +1169,11 @@ namespace ChemGateBuilder
                 SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
                 return;
             }
-            if (ChemGateKeeperMod.LoadData(Galaxy))
+            ChemGateKeeper newMod = new();
+            newMod.SetGameVersion(_x4DataVersion);
+            if (newMod.LoadData(Galaxy))
             {
+                ChemGateKeeperMod = newMod;
                 GalaxyConnections.Clear();
                 foreach (var connection in ChemGateKeeperMod.Connections)
                 {
