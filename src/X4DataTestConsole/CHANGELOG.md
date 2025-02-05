@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.0...X4DataTestConsole@v0.2.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* **X4DataTest:** enhance sector output and remove owner station calculations ([6b6f494](https://github.com/chemodun/X4-UniverseEditor/commit/6b6f49431dc948ad5cd875b94b83e47f208ce15c))
+
 ## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.1.1...X4DataTestConsole@v0.2.0) (2025-02-04)
 
 
