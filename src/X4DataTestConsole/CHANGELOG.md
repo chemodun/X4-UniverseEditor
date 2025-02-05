@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.1...X4DataTestConsole@v0.2.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* **X4DataTest:** remove unused namespaces for cleaner code ([941a088](https://github.com/chemodun/X4-UniverseEditor/commit/941a0886320568cb43b5e92622e9491d28323264))
+
 ## [0.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.0...X4DataTestConsole@v0.2.1) (2025-02-05)
 
 
