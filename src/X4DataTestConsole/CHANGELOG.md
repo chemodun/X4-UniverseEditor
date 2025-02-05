@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.2...X4DataTestConsole@v0.2.3) (2025-02-05)
+
+
+### Bug Fixes
+
+* **X4DataTest:** replace Log.Info with Console.WriteLine for improved output ([88b88f2](https://github.com/chemodun/X4-UniverseEditor/commit/88b88f223bcec507ecef95244909f6f9c1a393d6))
+
 ## [0.2.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.1...X4DataTestConsole@v0.2.2) (2025-02-05)
 
 
