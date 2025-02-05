@@ -21,7 +21,7 @@ namespace X4DataTestConsole
 
             var coreFolderPath = args[0];
 
-            Log.Info("Starting to load galaxy data.");
+            Console.WriteLine("Starting to load galaxy data.");
 
             var galaxy = X4Galaxy.LoadData(coreFolderPath);
 
