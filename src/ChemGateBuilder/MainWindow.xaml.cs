@@ -647,13 +647,13 @@ namespace ChemGateBuilder
                 SetStatusMessage(errorMessage, StatusMessageType.Error);
                 // Prompt the user to select a valid folder
                 MessageBoxResult result = MessageBox.Show(
-                    "The X4 Data folder is not set. Please set it via Options!",
+                    "The X4 Data folder is not set. Please set it via Configuration -> X4 Data Folder!",
                     "Invalid or missing X4 Data Folder",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
                 SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
                 // Show the ribbon tab options
-                SelectedTabIndex = 2;
+                SelectedTabIndex = 1;
             }
         }
 
@@ -676,11 +676,29 @@ namespace ChemGateBuilder
 
         private void SelectX4DataFolder_Click(object? sender, RoutedEventArgs? e)
         {
+            if (AllSectors.Count > 0)
+            {
+                MessageBoxResult confirm = MessageBox.Show("Are you really want to reload the X4 Data?\n\nAny unsaved changes will be lost!", "Reload X4 Data", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (confirm == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+
             var dialog = new System.Windows.Forms.FolderBrowserDialog
             {
                 Description = "Please select the folder where the X4 extracted data files are located.",
-                ShowNewFolderButton = false
+                ShowNewFolderButton = false,
             };
+            if (AllSectors.Count > 0)
+            {
+                dialog.SelectedPath = $"{X4DataFolder}\\";
+            }
+            else
+            {
+                dialog.SelectedPath = "";
+                dialog.RootFolder = Environment.SpecialFolder.MyComputer;  // Set the root folder to MyComputer
+            }
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
             if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
@@ -709,19 +727,6 @@ namespace ChemGateBuilder
         private void SelectX4DataFolder()
         {
             SelectX4DataFolder_Click(null, null);
-        }
-
-        private void ButtonLoadX4Data_Click(object sender, RoutedEventArgs e)
-        {
-            if (AllSectors.Count > 0)
-            {
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to reload the X4 data? Any unsaved changes will be lost.", "Reload X4 Data", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.No)
-                {
-                    return;
-                }
-            }
-            LoadX4Data();
         }
 
         private void LoadX4Data()

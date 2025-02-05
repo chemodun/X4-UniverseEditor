@@ -146,19 +146,8 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="X4 Data" x:Name="X4DataTab">
-                <fluent:RibbonGroupBox Header="X4 Data">
-                    <fluent:Button Header="Load"
-                                    Style="{StaticResource FluentButtonStyle}"
-                                    Click="ButtonLoadX4Data_Click">
-                        <fluent:Button.Icon>
-                            <StaticResource ResourceKey="XIcon"/>
-                        </fluent:Button.Icon>
-                    </fluent:Button>
-                </fluent:RibbonGroupBox>
-            </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Options" x:Name="OptionsTab">
-                <fluent:RibbonGroupBox Header="X4 Data Options">
+            <fluent:RibbonTabItem Header="Configuration" x:Name="ConfigurationTab">
+                <fluent:RibbonGroupBox Header="X4 Data related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -174,10 +163,11 @@
                         <fluent:Button Header="{Binding X4DataFolderPath}"
                                         Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
                                         Click="SelectX4DataFolder_Click" SizeDefinition="Middle"
+                                        MinWidth= "100"
                                         MaxWidth="200" HorizontalAlignment="Left"
                                         ToolTip="{Binding X4DataFolderPath}">
                             <fluent:Button.Icon>
-                                <fa:IconBlock Icon="FolderOpen"/>
+                                <StaticResource ResourceKey="XIcon"/>
                             </fluent:Button.Icon>
                         </fluent:Button>
                         <Label Content="X4 Data Version:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
@@ -186,7 +176,8 @@
                                     HorizontalAlignment="Center"
                                     Grid.Row="1"
                                     Grid.Column="1"
-                                    IsChecked="{Binding X4DataVersionOverride}"/>
+                                    IsChecked="{Binding X4DataVersionOverride}"
+                                    ToolTip="Override the detected version"/>
                         <ComboBox x:Name="X4DataVersionComboBox"
                                     Grid.Row="1" Grid.Column="2"
                                     Margin="5"
@@ -195,7 +186,7 @@
                         </ComboBox>
                     </Grid>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Edit Options">
+                <fluent:RibbonGroupBox Header="Edit related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -229,7 +220,7 @@
                                 />
                     </Grid>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Map Options">
+                <fluent:RibbonGroupBox Header="Map related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
