@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using X4DataLoader;
 using Utilities.Logging;
 using NLog;
-using System.IO;
-using System.Text;
 
 namespace X4DataTestConsole
 {
