@@ -11,9 +11,11 @@ namespace X4DataLoader
 
         public Translation()
         {
-            Translations = new Dictionary<string, Dictionary<string, string>>();
+            Translations = [];
         }
 
+        private static Regex ReferenceRegex = new(@"\{(\d+),(\d+)\}");
+        private static Regex CommentRegex = new(@"\([^)]*\)");
         public void Load(string filePath)
         {
             var doc = XDocument.Load(filePath);
@@ -29,11 +31,13 @@ namespace X4DataLoader
 
                         if (id != null)
                         {
-                            if (!Translations.ContainsKey(pageId))
+                            if (!Translations.TryGetValue(pageId, out Dictionary<string, string>? value))
                             {
-                                Translations[pageId] = new Dictionary<string, string>();
+                                value = [];
+                                Translations[pageId] = value;
                             }
-                            Translations[pageId][id] = RemoveComments(text);
+
+                            value[id] = RemoveComments(text);
                         }
                     }
                 }
@@ -42,7 +46,7 @@ namespace X4DataLoader
 
         public string Translate(string reference)
         {
-            var match = Regex.Match(reference, @"\{(\d+),(\d+)\}");
+            var match = ReferenceRegex.Match(reference);
             if (match.Success)
             {
                 var page = match.Groups[1].Value;
@@ -56,14 +60,14 @@ namespace X4DataLoader
             return reference;
         }
 
-        private string RemoveComments(string text)
+        private static string RemoveComments(string text)
         {
-            return Regex.Replace(text, @"\([^)]*\)", "").Trim();
+            return CommentRegex.Replace(text, "").Trim();
         }
 
         private string ResolveNestedReferences(string text)
         {
-            return Regex.Replace(text, @"\{(\d+),(\d+)\}", match =>
+            return ReferenceRegex.Replace(text, match =>
             {
                 var page = match.Groups[1].Value;
                 var id = match.Groups[2].Value;
