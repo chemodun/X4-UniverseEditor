@@ -560,7 +560,7 @@ namespace X4DataLoader
                 }
                 else
                 {
-                    throw new FileNotFoundException($"File not found: {filePath}");
+                    Log.Warn($"File not found: {filePath}");
                 }
             }
             result["vanilla"] = vanillaFiles;

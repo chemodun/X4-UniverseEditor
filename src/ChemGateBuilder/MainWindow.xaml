@@ -11,6 +11,7 @@
         Title="Chem Gate Builder" MinWidth="1200" MinHeight="940"
         Icon="{StaticResource BuilderIcon}"
         WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
         Name="ChemGateBuilder">
         <!-- DataContext="{Binding Main, Source={StaticResource Locator}}" -->
     <Window.Resources>
@@ -108,8 +109,8 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <fluent:Ribbon DockPanel.Dock="Top">
-            <fluent:RibbonTabItem Header="Mod">
+        <fluent:Ribbon DockPanel.Dock="Top" x:Name="MainRibbon" SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+            <fluent:RibbonTabItem Header="Mod" x:Name="ModTab">
                 <fluent:RibbonGroupBox Header="Mod Actions">
                     <fluent:Button Header="New"
                                     IsEnabled="{Binding IsGateCanBeCreated}"
@@ -146,7 +147,7 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="X4 Data">
+            <fluent:RibbonTabItem Header="X4 Data" x:Name="X4DataTab">
                 <fluent:RibbonGroupBox Header="X4 Data">
                     <fluent:Button Header="Load"
                                     Style="{StaticResource FluentButtonStyle}"
@@ -157,7 +158,7 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Options">
+            <fluent:RibbonTabItem Header="Options" x:Name="OptionsTab">
                 <fluent:RibbonGroupBox Header="X4 Data Options">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
@@ -171,11 +172,11 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Label Content="X4 Data Folder:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <fluent:Button Header="{Binding X4DataFolderStatus}"
+                        <fluent:Button Header="{Binding X4DataFolderPath}"
                                         Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
                                         Click="SelectX4DataFolder_Click" SizeDefinition="Middle"
                                         MaxWidth="200" HorizontalAlignment="Left"
-                                        ToolTip="{Binding X4DataFolderStatus}">
+                                        ToolTip="{Binding X4DataFolderPath}">
                             <fluent:Button.Icon>
                                 <fa:IconBlock Icon="FolderOpen"/>
                             </fluent:Button.Icon>
@@ -294,7 +295,7 @@
                     </StackPanel>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Help">
+            <fluent:RibbonTabItem Header="Help" x:Name="HelpTab">
                 <fluent:RibbonGroupBox Header="Help Actions">
                     <fluent:Button Header="About" Style="{StaticResource FluentButtonStyle}"
                                     Click="ButtonAbout_Click">

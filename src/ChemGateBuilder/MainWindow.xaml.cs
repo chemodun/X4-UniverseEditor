@@ -105,7 +105,7 @@ namespace ChemGateBuilder
                 {
                     _x4DataFolder = value;
                     OnPropertyChanged(nameof(X4DataFolder));
-                    OnPropertyChanged(nameof(X4DataFolderStatus));
+                    OnPropertyChanged(nameof(X4DataFolderPath));
                     SaveConfiguration();
                 }
             }
@@ -345,7 +345,7 @@ namespace ChemGateBuilder
                     if (value != null && GatesConnectionCurrent != null)
                     {
                         GatesConnectionCurrent.SetDefaultsFromReference(value, AllSectors);
-                        GatesConnectionCurrent.Reset();
+                        GateConnectionReset();
                     }
                 }
             }
@@ -405,7 +405,7 @@ namespace ChemGateBuilder
         }
         // Other properties
 
-        public string X4DataFolderStatus
+        public string X4DataFolderPath
         {
             get
             {
@@ -417,12 +417,12 @@ namespace ChemGateBuilder
                     }
                     else
                     {
-                        return errorMessage;
+                        return "Please set it!";
                     }
                 }
                 else
                 {
-                    return $"Error: Folder does not exist ({X4DataFolder})";
+                    return "Please set it!";
                 }
             }
         }
@@ -439,7 +439,7 @@ namespace ChemGateBuilder
         // Galaxy and Sectors
         public Galaxy? Galaxy { get; private set; }
 
-        public bool IsDataLoaded => AllSectors.Count > 0;
+        public bool IsDataLoaded { get => AllSectors.Count > 0; }
 
         private bool _isGateCanBeDeleted = false;
         public bool IsGateCanBeDeleted
@@ -511,6 +511,21 @@ namespace ChemGateBuilder
             }
         }
 
+        private int _selectedTabIndex = -1;
+        public int SelectedTabIndex
+        {
+            get => _selectedTabIndex;
+            set
+            {
+                if (_selectedTabIndex != value)
+                {
+                    _selectedTabIndex = value;
+                    OnPropertyChanged(nameof(SelectedTabIndex));
+                }
+            }
+        }
+
+
         public FactionColors FactionColors = new();
 
         // Constructor
@@ -526,7 +541,7 @@ namespace ChemGateBuilder
             Title = $"{Title} v{assemblyName.Version}";
             _chemGateKeeperMod.SetGameVersion(X4DataVersion);
             GatesConnectionCurrent.SetMapsCanvasAndHexagons(SectorDirectCanvas, SectorDirectHexagon, SectorOppositeCanvas, SectorOppositeHexagon);
-            GatesConnectionCurrent.Reset();
+
 
             // Initialize CollectionViewSource filters
             SectorsDirectViewSource.Filter += SectorsDirect_Filter;
@@ -538,31 +553,37 @@ namespace ChemGateBuilder
             // Subscribe to Validation Errors
             TextBoxExtensions.OnValidationError += HandleValidationError;
 
-            // Validate the loaded X4DataFolder
-            if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
-            {
-                SetStatusMessage(errorMessage, StatusMessageType.Error);
-                // Prompt the user to select a valid folder
-                SelectX4DataFolder();
-            }
-
             // Load sectors if the folder is valid
-            if (ValidateX4DataFolder(X4DataFolder, out errorMessage))
+            if (ValidateX4DataFolder(X4DataFolder, out string errorMessage))
             {
                 SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
                 LoadX4Data();
-                GateMacros.Add(_gateMacroDefault);
-            }
 
-            // Optionally, set default selections
-            if (AllSectors.Count > 0)
-            {
-                GatesConnectionCurrent.SectorDirect = null;
             }
-            if (AllSectors.Count > 1)
+            GateMacros.Add(_gateMacroDefault);
+
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
-                GatesConnectionCurrent.SectorOpposite = null;
-            }
+                // Validate the loaded X4DataFolder
+                if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
+                {
+                    SetStatusMessage(errorMessage, StatusMessageType.Error);
+                    // Prompt the user to select a valid folder
+                    MessageBoxResult result = MessageBox.Show(
+                        "The X4 Data folder is not set. Please set it via Options!",
+                        "Invalid or missing X4 Data Folder",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
+                    // Show the ribbon tab options
+                    SelectedTabIndex = 2;
+                }
+            }));
+
         }
 
         private void LoadConfiguration()
@@ -727,6 +748,8 @@ namespace ChemGateBuilder
             }
             FactionColors.Load(Galaxy.Factions, Galaxy.MappedColors);
             GatesConnectionCurrent?.SetColors(FactionColors);
+            OnPropertyChanged(nameof(IsDataLoaded));
+            GateConnectionReset();
             SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
         }
 
@@ -1064,7 +1087,7 @@ namespace ChemGateBuilder
                 {
                     CurrentGalaxyConnection.Update(galaxyConnection, GatesConnectionCurrent);
                     GatesConnectionCurrent.SetDefaultsFromReference(CurrentGalaxyConnection, AllSectors);
-                    GatesConnectionCurrent.Reset();
+                    GateConnectionReset();
                 }
                 else
                 {
@@ -1075,7 +1098,7 @@ namespace ChemGateBuilder
             }
         }
 
-        public void ButtonReset_Click(object sender, RoutedEventArgs e)
+        public void GateConnectionReset()
         {
             if (GatesConnectionCurrent != null)
             {
@@ -1085,14 +1108,18 @@ namespace ChemGateBuilder
             }
         }
 
+        public void ButtonReset_Click(object sender, RoutedEventArgs e)
+        {
+            GateConnectionReset();
+        }
+
         public void ButtonGateNew_Click(object sender, RoutedEventArgs e)
         {
             if (GatesConnectionCurrent != null)
             {
                 GatesConnectionCurrent.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
                 CurrentGalaxyConnection = null;
-                SectorsDirectViewSource.View.Refresh();
-                SectorsOppositeViewSource.View.Refresh();
+                GateConnectionReset();
             }
         }
 
