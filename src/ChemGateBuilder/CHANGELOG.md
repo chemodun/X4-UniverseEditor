@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.0...ChemGateBuilder@v0.4.1) (2025-02-05)
+
+
+### Miscellaneous Chores
+
+* move GalaxyConnections to the ChemGateKeeperMod ([b4493ae](https://github.com/chemodun/X4-UniverseEditor/commit/b4493aeec71c2ff98d29ffc83f37118fd0af6ba6))
+
 ## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.3.1...ChemGateBuilder@v0.4.0) (2025-02-05)
 
 
