@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.3.0...ChemGateBuilder@v0.3.1) (2025-02-05)
+
+
+### Bug Fixes
+
+* **ChemGateBuilder:** simplify SaveData logic, to take a file prefix from Sector PositionSourceFile and improve version handling ([0ebdebd](https://github.com/chemodun/X4-UniverseEditor/commit/0ebdebd9495b3c133ca0af32833b7d782e8ee33b))
+* **GalaxyConnectionData:** adjust gate position calculations to account for scaling factor ([5a94443](https://github.com/chemodun/X4-UniverseEditor/commit/5a9444350354f3326078bc0f56769f6d7d39fc12))
+* **MainWindow:** add error handling on the mod load ([046471e](https://github.com/chemodun/X4-UniverseEditor/commit/046471eb52bc559c4c3fd5edf662190ea6b85996))
+* **Mod:** update file saving logic to include right file prefix for non-vanilla paths ([1ae4900](https://github.com/chemodun/X4-UniverseEditor/commit/1ae490027e501d477dcdb9a372808f4c13863c13))
+
+
+### Code Refactoring
+
+* **GalaxyMapWindow:** remove unused FillColor variable ([ffb12e2](https://github.com/chemodun/X4-UniverseEditor/commit/ffb12e26550dc11070b033de3f12bedd4d059f90))
+* **MainWindow:** remove Window_Loaded event and encapsulate validation logic in X4DataNotLoadedCheckAndWarning method ([f294347](https://github.com/chemodun/X4-UniverseEditor/commit/f294347599914413f9904190d2c9115cf8b058bd))
+
 ## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.2.0...ChemGateBuilder@v0.3.0) (2025-02-05)
 
 
