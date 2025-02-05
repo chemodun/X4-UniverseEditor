@@ -18,7 +18,7 @@ namespace X4DataLoader
 
             Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
             // Scan for vanilla files
-            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
+            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = [];
             foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
             {
                 string? filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
@@ -42,7 +42,7 @@ namespace X4DataLoader
                 foreach (string extensionFolder in Directory.GetDirectories(extensionsFolder))
                 {
                     string? extensionName = Path.GetFileName(extensionFolder);
-                    Dictionary<string, (string fullPath, string fileName)>? extensionFiles = new Dictionary<string, (string fullPath, string fileName)>();
+                    Dictionary<string, (string fullPath, string fileName)>? extensionFiles = [];
 
                     foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
                     {
@@ -65,13 +65,13 @@ namespace X4DataLoader
                 }
             }
 
-            Translation? translation = new Translation();
+            Translation? translation = new();
             translation.Load(fileSets["vanilla"]["translation"].fullPath);
             Log.Debug("Translation loaded.");
 
-            List<Cluster>? clusters = new List<Cluster>();
-            List<Sector>? sectors = new List<Sector>();
-            Galaxy? galaxy = new Galaxy();
+            List<Cluster>? clusters = [];
+            List<Sector>? sectors = [];
+            Galaxy? galaxy = new();
             // Process each file set
             foreach (KeyValuePair<string, Dictionary<string, (string fullPath, string fileName)>> fileSet in fileSets)
             {
@@ -97,7 +97,7 @@ namespace X4DataLoader
                         {
                             if (Cluster.IsClusterMacro(macro))
                             {
-                                Cluster? cluster = new Cluster();
+                                Cluster? cluster = new();
                                 try
                                 {
                                     cluster.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
@@ -111,7 +111,7 @@ namespace X4DataLoader
                             }
                             else if (Sector.IsSectorMacro(macro))
                             {
-                                Sector? sector = new Sector();
+                                Sector? sector = new();
                                 try
                                 {
                                     sector.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
@@ -203,7 +203,7 @@ namespace X4DataLoader
                     }
                     foreach (XElement macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
                     {
-                        Zone? zone = new Zone();
+                        Zone? zone = new();
                         zone.Load(macroElement, source, zonesFile.fileName);
                         Sector? sector = sectors
                             .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name)));
@@ -235,7 +235,7 @@ namespace X4DataLoader
                     }
                     foreach (XElement macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
                     {
-                        HighwayClusterLevel? highway = new HighwayClusterLevel(macroElement, source, sechighwaysFile.fileName);
+                        HighwayClusterLevel? highway = new(macroElement, source, sechighwaysFile.fileName);
                         Cluster? cluster = clusters
                             .FirstOrDefault(c => c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro)));
                         if (cluster != null)
@@ -267,7 +267,7 @@ namespace X4DataLoader
                     }
                     foreach (XElement macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
                     {
-                        HighwaySectorLevel? highway = new HighwaySectorLevel(macroElement, source, zonehighwaysFile.fileName);
+                        HighwaySectorLevel? highway = new(macroElement, source, zonehighwaysFile.fileName);
                         Sector? sector = sectors
                             .FirstOrDefault(s => s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro)));
                         if (sector != null)
@@ -448,7 +448,7 @@ namespace X4DataLoader
                     }
                     foreach (XElement stationElement in godElements)
                     {
-                        Station? station = new Station();
+                        Station? station = new();
                         station.Load(stationElement, source, godFile.fileName, sectors, galaxy.StationCategories, galaxy.ConstructionPlans, galaxy.Factions);
                     }
                     Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
@@ -550,7 +550,7 @@ namespace X4DataLoader
 
             Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
             // Scan for vanilla files
-            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = new Dictionary<string, (string fullPath, string fileName)>();
+            Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = [];
             foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
             {
                 string? filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
@@ -578,7 +578,7 @@ namespace X4DataLoader
             foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, "ego_dlc_*"))
             {
                 string? dlcName = Path.GetFileName(dlcFolder);
-                Dictionary<string, (string fullPath, string fileName)>? dlcFiles = new Dictionary<string, (string fullPath, string fileName)>();
+                Dictionary<string, (string fullPath, string fileName)>? dlcFiles = [];
 
                 foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
                 {
