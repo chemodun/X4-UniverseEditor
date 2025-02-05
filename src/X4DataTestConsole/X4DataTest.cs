@@ -39,7 +39,7 @@ namespace X4DataTestConsole
                 }
                 foreach (var sector in cluster.Sectors)
                 {
-                    Console.WriteLine($"  Sector: {sector.Name}, Id: {sector.Id}, Macro: {sector.Macro}, Reference: {sector.Reference}, Source: {sector.Source}, FileName: {sector.FileName}");
+                    Console.WriteLine($"  Sector: {sector.Name}, Id: {sector.Id}, Macro: {sector.Macro}, Reference: {sector.Reference}, DominantFaction: {sector.DominantOwner}, Source: {sector.Source}, FileName: {sector.FileName}");
                     foreach (var connection in sector.Connections.Values)
                     {
                         Console.WriteLine($"    Sector Connection: {connection.Name}, Reference: {connection.Reference}, MacroReference: {connection.MacroReference}, MacroConnection: {connection.MacroConnection}, Source: {connection.Source}, FileName: {connection.FileName}");
@@ -56,49 +56,6 @@ namespace X4DataTestConsole
                     {
                         Console.WriteLine($"    Highway Point: {highwayPoint.Name}, Level: {highwayPoint.HighwayLevel}, Type: {highwayPoint.Type}, Position: {highwayPoint.Position}, Source: {highwayPoint.Source}, FileName: {highwayPoint.FileName}, ConnectedSector: {highwayPoint.SectorConnected?.Name}");
                     }
-                    var ownerStationCount = new Dictionary<string, int>();
-                    List<string> toIgnoreOwners = ["player", "civilian", "khaak", "ownerless"];
-                    List<string> toIgnoreTypes = ["piratebase"];
-                    Dictionary<string, string> ownerReplacements = new Dictionary<string, string> { ["alliance"] = "paranid", ["ministry"] = "teladi" };
-                    foreach (Station station in sector.Stations)
-                    {
-                        Console.WriteLine($"    Station: Id: {station.Id}, Type: {station.Type}, Race: {station.Race}, Owner: {station.OwnerId}, Position: {station.Position}, Rotation: {station.Rotation}, Source: {station.Source}, FileName: {station.FileName}");
-                        if (toIgnoreOwners.Contains(station.OwnerId))
-                        {
-                            continue;
-                        }
-                        if (toIgnoreTypes.Contains(station.Type))
-                        {
-                            continue;
-                        }
-                        string owner = ownerReplacements.ContainsKey(station.OwnerId) ? ownerReplacements[station.OwnerId] : station.OwnerId;
-                        if (ownerStationCount.ContainsKey(owner))
-                        {
-                            ownerStationCount[owner]++;
-                        }
-                        else
-                        {
-                            ownerStationCount[owner] = 1;
-                        }
-                    }
-
-                    int totalCalculableStations = ownerStationCount.Values.Sum();
-
-                    foreach (var owner in ownerStationCount.Keys)
-                    {
-                        double percentage = (ownerStationCount[owner] / (double)totalCalculableStations) * 100;
-                        Console.WriteLine($"    Owner: {owner}, Percentage of Stations: {percentage:F2}% in Sector {sector.Name}");
-                    }
-                    if (ownerStationCount.Count > 0)
-                    {
-                        string dominantOwner = ownerStationCount.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-                        Console.WriteLine($"    Dominant Owner: {dominantOwner} with Percentage: {ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100}% stations in sector {sector.Name}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"    No dominant owner in sector {sector.Name}");
-                    }
-
                 }
             }
 
