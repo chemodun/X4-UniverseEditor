@@ -562,28 +562,11 @@ namespace ChemGateBuilder
             }
             GateMacros.Add(_gateMacroDefault);
 
-        }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
             {
-                // Validate the loaded X4DataFolder
-                if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
-                {
-                    SetStatusMessage(errorMessage, StatusMessageType.Error);
-                    // Prompt the user to select a valid folder
-                    MessageBoxResult result = MessageBox.Show(
-                        "The X4 Data folder is not set. Please set it via Options!",
-                        "Invalid or missing X4 Data Folder",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-                    SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
-                    // Show the ribbon tab options
-                    SelectedTabIndex = 2;
-                }
+                X4DataNotLoadedCheckAndWarning();
             }));
-
         }
 
         private void LoadConfiguration()
@@ -653,6 +636,25 @@ namespace ChemGateBuilder
 
             var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
             File.WriteAllText(_configFileName, jsonString);
+        }
+
+
+        private void X4DataNotLoadedCheckAndWarning()
+        {
+            // Validate the loaded X4DataFolder
+            if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
+            {
+                SetStatusMessage(errorMessage, StatusMessageType.Error);
+                // Prompt the user to select a valid folder
+                MessageBoxResult result = MessageBox.Show(
+                    "The X4 Data folder is not set. Please set it via Options!",
+                    "Invalid or missing X4 Data Folder",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
+                // Show the ribbon tab options
+                SelectedTabIndex = 2;
+            }
         }
 
         private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
