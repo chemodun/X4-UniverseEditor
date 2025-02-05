@@ -328,8 +328,9 @@ namespace ChemGateBuilder
             Date = DateTime.Now.ToString("yyyy-MM-dd");
             _versionInitial = _version;
             SaveModXMLs();
-            Version = _versionInitial;
-            return true;
+            bool result = !IsModChanged(GalaxyConnections);
+            OnPropertyChanged(nameof(Title));
+            return result;
         }
 
         private void SaveModXMLs()
@@ -440,11 +441,7 @@ namespace ChemGateBuilder
                         zones.Add(zone);
                         if (path.Key != "vanilla" && files_prefix == "")
                         {
-                            Zone? zoneItem = connectionPath.Sector.Zones.FirstOrDefault();
-                            if (zoneItem != null)
-                            {
-                                files_prefix = zoneItem.FileName.Replace("zones.xml", "");
-                            }
+                            files_prefix = connectionPath.Sector.PositionFileName.Replace("clusters.xml", "");
                         }
                     }
                 }
