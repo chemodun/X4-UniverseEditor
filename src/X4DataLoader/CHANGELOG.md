@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.2...X4DataLoader@v0.3.3) (2025-02-05)
+
+
+### Bug Fixes
+
+* **X4DataLoader:** extend SetPosition method to include source and filename parameters, as it differ from cluster and sector source file ([a5ec477](https://github.com/chemodun/X4-UniverseEditor/commit/a5ec477ed3fe1512af868f6592bb8a1735d2eb68))
+
 ## [0.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.1...X4DataLoader@v0.3.2) (2025-02-05)
 
 
