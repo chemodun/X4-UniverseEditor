@@ -83,7 +83,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name  == 'release' && ! startsWith(github.event.release.tag_name, 'ChemGateBuilder@')
     steps:
-      # Step 1: Delete Release
+      # Step 1: Checkout the repository
+      -
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Delete Release
       -
         name: Delete Release
         run: |
