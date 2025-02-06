@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.1...ChemGateBuilder@v0.4.2) (2025-02-06)
+
+
+### Documentation
+
+* **ChemGateBuilder:** draft update of the README to be comply with the current tool version ([161d483](https://github.com/chemodun/X4-UniverseEditor/commit/161d483f4de6a66212599cbc0ba1fcd7a1e3d767))
+
 ## [0.4.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.0...ChemGateBuilder@v0.4.1) (2025-02-05)
 
 
