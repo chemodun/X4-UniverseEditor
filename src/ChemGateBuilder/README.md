@@ -34,7 +34,7 @@ You can start building your connections right away.
 
 ### First Start
 
-On the first start, the tool will inform you that you need to select the extracted game folder.
+On the first start, the tool will inform you that you need to select the folder with the [extracted](#requirements) game files.
 
 After selecting the folder, the tool will start loading the game data.
 
