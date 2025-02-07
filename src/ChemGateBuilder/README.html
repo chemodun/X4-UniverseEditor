@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="x4-chem-gate-builder">X4 Chem Gate Builder</h1>
+<p>There is a tool to build gate connections for the game X4
+Foundations. This tool has been created to help players to build
+connection between any sectors in the game. This tool creates a mod
+(extension) for the game, which can be installed and uninstalled
+easily.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Build gate connections between any sectors in the game.</li>
+<li>Select the sector from the list of the sectors or from the Galaxy
+map.</li>
+<li>You can build any number of connections, where the connection - it
+is a pair of the gates in two sectors.</li>
+<li>You can easily arrange the location of the gates in the sectors by
+moving them on the map using the mouse.</li>
+</ul>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>Anybody can use built gate connections in his own mods. With
+appropriate credits to the tool and the author.</p>
+<h2 id="requirements">Requirements</h2>
+<pre><code>You have to have the extracted game files in your computer by the [X Catalog Tool](https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/)</code></pre>
+<h2 id="installation">Installation</h2>
+<p>Simple download the latest version of the tool from the <a
+href="https://www.nexusmods.com/x4foundations/mods/1587/">Nexus</a> and
+extract it to any folder.</p>
+<p>You can start to build your connections right away.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="first-start">First start</h3>
+<p>On first start, the tool will inform you that you have to select the
+extracted game folder.</p>
+<figure>
+<img src="docs/images/select_extracted_folder_alert.png"
+alt="Select extracted folder alert" />
+<figcaption aria-hidden="true">Select extracted folder
+alert</figcaption>
+</figure>
+<p>After you will select the folder, the tool will start to load the
+game data.</p>
+<figure>
+<img src="docs/images/select_extracted_folder.png"
+alt="Selection of the extracted folder" />
+<figcaption aria-hidden="true">Selection of the extracted
+folder</figcaption>
+</figure>
+<h3 id="main-window">Main window</h3>
+<p>After you start you will see the main window with the list of the
+connections and area to define a gate connection - i.e. two areas to
+define the gate in the two sectors. The new gates already shown on the
+map int he default position in the sector center. <img
+src="docs/images/gui_main_window.png" alt="Main window" /></p>
+<h4 id="connection-editing-area">Connection editing area</h4>
+<h5 id="first-sector-selection-and-simple-map">First sector selection
+and simple map</h5>
+<p>To start, simple select any sector from the list in the
+<code>Direct Sector</code> group. Then the items from the selected
+sector will be displayed on the raw and simple sector map and as a list
+on the right side from the map</p>
+<figure>
+<img src="docs/images/first_sector_selected.png" alt="Select sector" />
+<figcaption aria-hidden="true">Select sector</figcaption>
+</figure>
+<p>Existing gates displayed as a yellow gate icons from the game. Gold
+ones - from th currently edited mod. Green - the currently edited gate.
+In addition the SuperHighway gate and stations from the god.xml will be
+displayed. Background of the sector map is equal to the color of sector
+owner in the game.</p>
+<h5 id="define-gate-location">Define gate location</h5>
+<p>Then you can define the gate location. Simplest way - to press the
+left mouse button on the gate and move it to the desired location. More
+strict position can be set by entering the coordinates and rotation
+angles. Please take in account that the coordinates are split into two
+parts: [list] - coordinates itself, in km. (De facto it is the
+appropriate zone position in the sector), - position - the position of
+from the coordinates point in meters. (De facto it is the position of
+the gate in the zone). [/list] To simplify the editing the position part
+is randomly prefilled on the sector selection.</p>
+<figure>
+<img src="docs/images/define_gate_location.gif"
+alt="Define gate’s location" />
+<figcaption aria-hidden="true">Define gate’s location</figcaption>
+</figure>
+<h5 id="extended-sector-map">Extended sector map</h5>
+<p>If current sector map size is too small for you, you can press the
+appropriate button to open the extended sector map. On this map you can
+set the gate location in the same way as on the simple map, but more
+precisely.</p>
+<figure>
+<img src="docs/images/extended_sector_map.gif"
+alt="Extended sector map" />
+<figcaption aria-hidden="true">Extended sector map</figcaption>
+</figure>
+<h5 id="sector-real-size-slider">Sector “real” size slider</h5>
+<p>Under the sector map there is a slider to change the sector map
+“real” size. De facto it is the scale of the sector map.</p>
+<figure>
+<img src="docs/images/sector_scale_slider.gif"
+alt="Sector scale slider" />
+<figcaption aria-hidden="true">Sector scale slider</figcaption>
+</figure>
+<h5 id="other-gate-data">Other gate data</h5>
+<p>Then you can define a rotation angles for the gate.</p>
+<p>And set the status of the gate - for some reason you can deactivate
+it (if you plan to use it in your own scenarios).</p>
+<h4 id="second-sector-selection">Second sector selection</h4>
+<p>Now you can select the second sector and define the gate location in
+it.</p>
+<p>Please take in account that the in selection list for the second
+(<code>Opposite Sector</code>) some sectors will be grayed out and not
+available for the selection. It’s because the sector is already selected
+as a first sector or they already have a connection with the
+<code>Direct Sector</code>.</p>
+<figure>
+<img src="docs/images/select_opposite_sector.gif"
+alt="Select opposite sector" />
+<figcaption aria-hidden="true">Select opposite sector</figcaption>
+</figure>
+<p>After you will define the gate in the second sector, you can add the
+connection to the list.</p>
+<h4 id="add-gates-connection">Add gates connection</h4>
+<p>Simple press the <code>Add</code> button.</p>
+<figure>
+<img src="docs/images/add_gates_connection.gif"
+alt="Add gates connection" />
+<figcaption aria-hidden="true">Add gates connection</figcaption>
+</figure>
+<p>The connection will be added to the list. You can see the connection
+in the list and still can edit it.</p>
+<h4 id="modify-existing-connection">Modify existing connection</h4>
+<p>If you will move the gate in the sector for the existing connection -
+you will see two “identical” gates on the map. One (<code>gold</code>) -
+is the gate from the connection, another (<code>green</code>) - is the
+gate in the new location.</p>
+<figure>
+<img src="docs/images/gate_from_connection_moved.gif"
+alt="Gate from connection moved on the new position" />
+<figcaption aria-hidden="true">Gate from connection moved on the new
+position</figcaption>
+</figure>
+<p>Additionally, as you can see, each gate have a tooltip on the map
+with the sector name, to which it connects current sector, source (from
+<code>map</code> or from <code>mod</code>) and the X,Y,Z
+coordinates.</p>
+<h4 id="connection-editing-area-buttons">Connection editing area
+buttons</h4>
+<p>As you can see, there are two buttons on the bottom of the window:
+[list] - <code>Add/Update</code> - to add the gate connection to the
+list. We already discussed it. - <code>Reset</code> - to reset the gate
+data fields to the default values. See below for more information.
+[/list]</p>
+<h5 id="reset-button">Reset button</h5>
+<p>If you have no selected gate connection in the list - reset button
+will reset all gate connection related information to the defaults,
+mostly empty or zero values.</p>
+<p>Otherwise, it will reset the gate data fields to the values of the
+selected connection.</p>
+<h3 id="save-the-mod">Save the mod</h3>
+<p>When you will finish with the connections, you can save te mod via
+<code>Mod</code> -&gt; <code>Save</code> menu item.</p>
+<p>Please take in account - you you not finished yet editing the
+connections, this menu item will be disabled. Save current connection or
+reset it to have the ability to save the mod.</p>
+<figure>
+<img src="docs/images/save_mod_disabled.gif" alt="Save mod disabled" />
+<figcaption aria-hidden="true">Save mod disabled</figcaption>
+</figure>
+<p>After you will go to the <code>Save</code> menu item, the tool will
+ask you to select the output folder for the mod.</p>
+<figure>
+<img src="docs/images/saving_the_mod.gif" alt="Saving the mod" />
+<figcaption aria-hidden="true">Saving the mod</figcaption>
+</figure>
+<p>After that the mod is ready to be installed in the game.</p>
+<h3 id="load-the-mod">Load the mod</h3>
+<p>If you have a previously saved mod, you can load it via
+<code>Mod</code> -&gt; <code>Load</code> menu item. Difference from the
+saving mod - you have to select not a mod folder, but the
+<code>content.xml</code> file in the mod root folder. It was made to
+avoid selecting not a mod folder, but the mod itself.</p>
+<figure>
+<img src="docs/images/loading_the_mod.gif" alt="Loading the mod" />
+<figcaption aria-hidden="true">Loading the mod</figcaption>
+</figure>
+<p>After loading the mod, you will see the connections in the list and
+the gates on the map. But no current connection will be selected.</p>
+<h3 id="overview-mod-in-a-tool-and-in-the-game">Overview mod in a tool
+and in the game</h3>
+<p>There a gif to display the mod gates and compare it with a
+screenshots from the game.</p>
+<figure>
+<img src="docs/images/mod_gates_overview.gif" alt="Mod overview" />
+<figcaption aria-hidden="true">Mod overview</figcaption>
+</figure>
+<p>And there a several screenshots from the game with the mod gates in
+the <code>Asteroid Belt</code> sector.</p>
+<figure>
+<img src="docs/images/X4-AsteroidBelt-new-thee-gates.png"
+alt="Three new gates with connections" />
+<figcaption aria-hidden="true">Three new gates with
+connections</figcaption>
+</figure>
+<figure>
+<img src="docs/images/X4-AsteroidBelt-to-ArgonPrime.png"
+alt="Gate to Argon Prime" />
+<figcaption aria-hidden="true">Gate to Argon Prime</figcaption>
+</figure>
+<figure>
+<img src="docs/images/X4-AsteroidBelt-to-BarrenShores.png"
+alt="Gate to Barren Shores" />
+<figcaption aria-hidden="true">Gate to Barren Shores</figcaption>
+</figure>
+<figure>
+<img src="docs/images/X4-AsteroidBelt-to-AtreusClouds.png"
+alt="Gate to Atreus’ Clouds" />
+<figcaption aria-hidden="true">Gate to Atreus’ Clouds</figcaption>
+</figure>
+<h2 id="additional-links">Additional links</h2>
+<p>There is a topic on the <a
+href="https://forum.egosoft.com/viewtopic.php?p=5262362">Egosoft
+forum</a> about the tool.</p>
+</body>
+</html>
