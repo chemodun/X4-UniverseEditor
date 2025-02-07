@@ -145,11 +145,11 @@ After that, the mod is ready to be installed in the game.
 
 If you have a previously saved mod, you can load it via the `Mod` -> `Load` menu item.
 The difference from saving the mod is that you have to select the `content.xml` file in the mod root folder in contrast to selecting the output folder.
-This was done to avoid selecting the wrong folder.
+This was made to avoid selecting the wrong folder.
 
 ![Loading the mod](docs/images/loading_the_mod.gif)
 
-After loading the mod, you will see the connections in the list and the gates on the map. However, no current connection will be selected.
+After loading the mod, you will see the connections in the list and the gates on the map for the first connection. This visibility confirms the successful loading of the mod and aids in verifying the gate configurations.
 
 ### Overview New Gates in the Tool and in the Game
 
