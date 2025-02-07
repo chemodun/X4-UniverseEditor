@@ -29,9 +29,10 @@ jobs:
         if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
           while IFS= read -r readme; do
-            output_dir=$(dirname "$readme")/docs
-            mkdir -p "$output_dir"
-            docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="${output_dir}/README.html" "$readme"
+            output_file="${readme%.md}.html"
+            echo "Converting $readme to $output_file"
+            echo docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+            docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
           done < changed_readmes.txt
 
       - name: Commit and push changes
@@ -39,7 +40,7 @@ jobs:
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          git add $(awk '{print $0 "/docs/README.html"}' changed_readmes.txt)
+          git add $(awk '{print $0 ".html"}' changed_readmes.txt)
           git commit -m 'chore(docs): Update README.html files'
           git push
         env:
