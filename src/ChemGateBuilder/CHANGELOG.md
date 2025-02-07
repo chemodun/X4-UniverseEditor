@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.3...ChemGateBuilder@v0.5.0) (2025-02-07)
+
+
+### Features
+
+* **MainWindow:** add "Readme" button to Help tab for easy access to README.html ([bf9a4d3](https://github.com/chemodun/X4-UniverseEditor/commit/bf9a4d333fb2e6fcd006286da4c3494f90b0fd03))
+
+
+### Bug Fixes
+
+* **ChemGateBuilder:** add SetFrom methods for Coordinates and Rotation classes and fix the defaults change after SectorMapExpandedWindow usage ([fbbcaa4](https://github.com/chemodun/X4-UniverseEditor/commit/fbbcaa4273a2b03b8f725bd2f6f1c5d64c551044))
+* **README:** to test workflow ([fc4994a](https://github.com/chemodun/X4-UniverseEditor/commit/fc4994a79903c144422048a66feb4a90c8f09060))
+
+
+### Code Refactoring
+
+* **docs:** update images and videos in documentation, remove obsolete files ([f7342e0](https://github.com/chemodun/X4-UniverseEditor/commit/f7342e08188518fa46a2d65eb2f51479e1a5185d))
+* **docs:** update README and appropriate image and video files ([ba49527](https://github.com/chemodun/X4-UniverseEditor/commit/ba49527cfe56bea12ad6b3c6e5e1c2c45e745bcd))
+* **README:** remove unnecessary question mark in README.md ([d241a3f](https://github.com/chemodun/X4-UniverseEditor/commit/d241a3fbe2dc50a10d9b01ae16cc9f155766d939))
+* **README:** update feature list to use gerund form for consistency ([455ef91](https://github.com/chemodun/X4-UniverseEditor/commit/455ef91b38033e8ee4cef9c13cac23b864b7f21e))
+
+
+### Miscellaneous Chores
+
+* **docs:** Update README.html files ([7752677](https://github.com/chemodun/X4-UniverseEditor/commit/775267777c379f08abd6882bcf1cf540f78bfd6b))
+
+
+### Documentation
+
+* **README:** clarify instructions for loading the mod by specifying the selection of content.xml ([b4a38d5](https://github.com/chemodun/X4-UniverseEditor/commit/b4a38d59a2f7ed48b39be74a2d8c5332746f7dd5))
+* **README:** clarify instructions for selecting the extracted game folder ([724400e](https://github.com/chemodun/X4-UniverseEditor/commit/724400e04219545f0dc71c5da466a2f648e6ee90))
+* **README:** enhance clarity on loading the mod by specifying content.xml selection and confirming successful loading ([a97f083](https://github.com/chemodun/X4-UniverseEditor/commit/a97f08394991017f8f70dc9f063a624f63388786))
+* **README:** update forum reference to use consistent capitalization for EGOSOFT ([8ce3bf9](https://github.com/chemodun/X4-UniverseEditor/commit/8ce3bf9df23246945656d7bb4a06418e692be560))
+
 ## [0.4.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.2...ChemGateBuilder@v0.4.3) (2025-02-07)
 
 
