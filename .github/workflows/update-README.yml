@@ -23,10 +23,10 @@ jobs:
         id: identify-changes
         run: |
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep 'src/.*/README.md' > changed_readmes.txt
-          cat changed_readmes.txt
+          echo "changed_readmes=$(wc -l < changed_readmes.txt)" >> $GITHUB_OUTPUT
 
       - name: Convert README.md files to HTML
-        if: ${{ steps.identify-changes.outputs.changed_readmes != '' }}
+        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
           while IFS= read -r readme; do
             output_dir=$(dirname "$readme")/docs
@@ -35,7 +35,7 @@ jobs:
           done < changed_readmes.txt
 
       - name: Commit and push changes
-        if: ${{ steps.identify-changes.outputs.changed_readmes != '' }}
+        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
