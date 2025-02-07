@@ -120,7 +120,7 @@ There are two buttons at the bottom of the window:
 ##### Reset Button
 
 If you have no selected gate connection in the list, the reset button will reset all gate connection-related information to the defaults, mostly empty or zero values.
-
+?
 Otherwise, it will reset the gate data fields to the values of the selected connection.
 
 #### Map Objects Tool-tip
