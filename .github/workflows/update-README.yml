@@ -51,7 +51,7 @@ jobs:
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          git add $(awk '{print $0 ".html"}' changed_readmes.txt)
+          git add $(awk '{gsub(/\.md$/, ".html"); print}' changed_readmes.txt)
           git commit -m 'chore(docs): Update README.html files'
           git push
         env:
