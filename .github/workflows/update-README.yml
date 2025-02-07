@@ -16,26 +16,37 @@ jobs:
   react-on-readme:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      -
+        name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Identify changed README.md files
+      -
+        name: Identify changed README.md files
         id: identify-changes
         run: |
           git show --name-status | grep 'src/.*/README.md' | awk '{print $2}' > changed_readmes.txt
           echo "changed_readmes=$(wc -l < changed_readmes.txt)" >> $GITHUB_OUTPUT
 
-      - name: Convert README.md files to HTML
+      -
+        name: Install pandoc
+        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
+        uses: pandoc/actions/setup@v1
+        with:
+          version: 3.5
+
+      -
+        name: Convert README.md files to HTML
         if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
           while IFS= read -r readme; do
             output_file="${readme%.md}.html"
             echo "Converting $readme to $output_file"
-            echo docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
-            docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+            echo pandoc --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+            pandoc --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
           done < changed_readmes.txt
 
-      - name: Commit and push changes
+      -
+        name: Commit and push changes
         if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
           git config user.name "Chem O'Dun"
