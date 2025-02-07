@@ -15,18 +15,18 @@ namespace ChemGateBuilder
 {
     public class ChemGateKeeper : INotifyPropertyChanged
     {
-        private string _modFolderPath = "";
-        private string _id = "chem_gate_keeper";
-        private string _name = "Chem Gate Keeper";
-        private string _description = "This extension adds new gate connections between sectors";
-        private string _author = "Chem O`Dun";
+        private string ModFolderPath = "";
+        private string Id = "chem_gate_keeper";
+        private string Name = "Chem Gate Keeper";
+        private string Description = "This extension adds new gate connections between sectors";
+        private string Author = "Chem O`Dun";
         private int _version = 100;
-        private int _versionInitial = 0;
+        private int VersionInitial = 0;
         private string _date = "2021-09-01";
         private int _gameVersion = 710;
-        private readonly string _save = "false";
-        private readonly string _sync = "false";
-        private readonly List<string> _dlcRequired = [];
+        private readonly string Save = "false";
+        private readonly string Sync = "false";
+        private readonly List<string> DlcsRequired = [];
         private readonly Dictionary<string, List<GalaxyConnectionPath>> _paths = [];
         private static readonly Regex _regex = new(@"/macros/macro\[@name='([^']+)'\]/connections");
         public int Version
@@ -51,7 +51,7 @@ namespace ChemGateBuilder
                 string versionString = $" {_version / 100.0:F2}".Replace(',', '.');
                 versionString += _isModChanged ? "*" : "";
                 string gameVersion = $"{_gameVersion / 100.0:F2}".Replace(',', '.');
-                return $"{_name} v.{versionString} built {_date} for X4: Foundations v.{gameVersion}";
+                return $"{Name} v.{versionString} built {_date} for X4: Foundations v.{gameVersion}";
             }
         }
         private bool _isModChanged = false;
@@ -70,9 +70,9 @@ namespace ChemGateBuilder
             GameVersion = version;
         }
 
-        public bool LoadData(Galaxy galaxy)
+        public bool LoadData(Galaxy galaxy, ChemGateKeeper? previousMod = null)
         {
-            string currentPath = _modFolderPath;
+            string currentPath = previousMod != null ? previousMod.ModFolderPath : "";
 
             System.Windows.Forms.OpenFileDialog dialog = new()
             {
@@ -101,6 +101,7 @@ namespace ChemGateBuilder
                     MessageBox.Show("The selected folder does not contain a valid mod", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
                 }
+                ModFolderPath = currentPath;
                 List<ZoneConnection> zonesConnections = [];
                 List<Zone> zones = [];
                 foreach (var filesGroup in files)
@@ -260,12 +261,12 @@ namespace ChemGateBuilder
                     Log.Error("No content element found in content file");
                     return false;
                 }
-                _id = contentElement.Attribute("id")?.Value ?? _id;
-                _name = contentElement.Attribute("name")?.Value ?? _name;
+                Id = contentElement.Attribute("id")?.Value ?? Id;
+                Name = contentElement.Attribute("name")?.Value ?? Name;
                 Version = int.Parse(contentElement.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture);
-                _author = contentElement.Attribute("author")?.Value ?? _author;
+                Author = contentElement.Attribute("author")?.Value ?? Author;
                 Date = contentElement.Attribute("date")?.Value ?? _date;
-                _description = contentElement.Attribute("description")?.Value ?? _description;
+                Description = contentElement.Attribute("description")?.Value ?? Description;
                 GameVersion = int.Parse(contentElement.Element("dependency")?.Attribute("version")?.Value ?? "710", System.Globalization.CultureInfo.InvariantCulture);
                 Connections = modGalaxy.Connections;
                 foreach (var connection in Connections)
@@ -273,7 +274,7 @@ namespace ChemGateBuilder
                     GalaxyConnectionData newConnection = new(connection);
                     GalaxyConnections.Add(newConnection);
                 }
-                _versionInitial = _version;
+                VersionInitial = _version;
             }
             catch (Exception e)
             {
@@ -285,7 +286,7 @@ namespace ChemGateBuilder
 
         public bool SaveData()
         {
-            string currentPath = _modFolderPath;
+            string currentPath = ModFolderPath;
             if (string.IsNullOrEmpty(currentPath))
             {
                 System.Windows.Forms.FolderBrowserDialog dialog = new();
@@ -293,7 +294,7 @@ namespace ChemGateBuilder
 
                 if (folderSelect == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
                 {
-                    currentPath = Path.Combine(dialog.SelectedPath, _id);
+                    currentPath = Path.Combine(dialog.SelectedPath, Id);
                 }
             }
             if (Directory.Exists(currentPath))
@@ -329,10 +330,10 @@ namespace ChemGateBuilder
             {
                 Directory.CreateDirectory(currentPath);
             }
-            _modFolderPath = currentPath;
+            ModFolderPath = currentPath;
             Connections = GalaxyConnections.Select(gc => gc.Connection).Where(c => c != null).ToList();
             Date = DateTime.Now.ToString("yyyy-MM-dd");
-            _versionInitial = _version;
+            VersionInitial = _version;
             SaveModXMLs();
             bool result = !IsModChanged();
             OnPropertyChanged(nameof(Title));
@@ -341,7 +342,7 @@ namespace ChemGateBuilder
 
         private void SaveModXMLs()
         {
-            _dlcRequired.Clear();
+            DlcsRequired.Clear();
             _paths.Clear();
             string connectionsText = "";
             XElement diffElement = new("diff");
@@ -355,9 +356,9 @@ namespace ChemGateBuilder
                 }
                 if (connection.PathDirect != null && connection.PathDirect.Sector != null)
                 {
-                    if (!_dlcRequired.Contains(connection.PathDirect.Sector.Source))
+                    if (!DlcsRequired.Contains(connection.PathDirect.Sector.Source))
                     {
-                        _dlcRequired.Add(connection.PathDirect.Sector.Source);
+                        DlcsRequired.Add(connection.PathDirect.Sector.Source);
                     }
                     connectionsText += $"\n - {connection.PathDirect.Sector.Name} and";
                     if (!_paths.TryGetValue(connection.PathDirect.Sector.Source, out List<GalaxyConnectionPath>? pathItems))
@@ -370,9 +371,9 @@ namespace ChemGateBuilder
                 }
                 if (connection.PathOpposite != null && connection.PathOpposite.Sector != null)
                 {
-                    if (!_dlcRequired.Contains(connection.PathOpposite.Sector.Source))
+                    if (!DlcsRequired.Contains(connection.PathOpposite.Sector.Source))
                     {
-                        _dlcRequired.Add(connection.PathOpposite.Sector.Source);
+                        DlcsRequired.Add(connection.PathOpposite.Sector.Source);
                     }
                     connectionsText += $" {connection.PathOpposite.Sector.Name}";
                     if (!_paths.TryGetValue(connection.PathOpposite.Sector.Source, out List<GalaxyConnectionPath>? pathItems))
@@ -386,25 +387,25 @@ namespace ChemGateBuilder
                 addElement.Add(connection.XML);
             }
             XElement content = new("content");
-            content.SetAttributeValue("id", _id);
-            content.SetAttributeValue("name", _name);
+            content.SetAttributeValue("id", Id);
+            content.SetAttributeValue("name", Name);
             content.SetAttributeValue("version", _version);
-            content.SetAttributeValue("author", _author);
+            content.SetAttributeValue("author", Author);
             content.SetAttributeValue("date", _date);
-            content.SetAttributeValue("save", _save);
-            content.SetAttributeValue("sync", _sync);
-            content.SetAttributeValue("description", _description + connectionsText);
+            content.SetAttributeValue("save", Save);
+            content.SetAttributeValue("sync", Sync);
+            content.SetAttributeValue("description", Description + connectionsText);
             List<int> languages = [7, 33, 37, 39, 44, 49, 55, 81, 82, 86, 88, 380];
             foreach (int language in languages)
             {
                 XElement text = new("text");
                 text.SetAttributeValue("language", $"{language}");
-                text.SetAttributeValue("description", _description + connectionsText);
+                text.SetAttributeValue("description", Description + connectionsText);
                 content.Add(text);
             }
             content.Add(new XElement("dependency", new XAttribute("version", $"{GameVersion}")));
-            _dlcRequired.Sort();
-            foreach (string dlc in _dlcRequired)
+            DlcsRequired.Sort();
+            foreach (string dlc in DlcsRequired)
             {
                 if (dlc == "vanilla")
                 {
@@ -413,9 +414,9 @@ namespace ChemGateBuilder
                 content.Add(new XElement("dependency", new XAttribute("id", dlc), new XAttribute("optional", "false")));
             }
             XDocument docContent = new(new XDeclaration("1.0", "utf-8", null), content);
-            docContent.Save(Path.Combine(_modFolderPath, "content.xml"));
+            docContent.Save(Path.Combine(ModFolderPath, "content.xml"));
             XDocument docGalaxy = new(new XDeclaration("1.0", "utf-8", null), diffElement);
-            string galaxyPath = Path.Combine(_modFolderPath, "maps", "xu_ep2_universe");
+            string galaxyPath = Path.Combine(ModFolderPath, "maps", "xu_ep2_universe");
             Directory.CreateDirectory(galaxyPath);
             docGalaxy.Save(Path.Combine(galaxyPath, "galaxy.xml"));
             SaveModSectorsAndZones();
@@ -425,7 +426,7 @@ namespace ChemGateBuilder
         {
             foreach (KeyValuePair<string, List<GalaxyConnectionPath>> path in _paths)
             {
-                string universePath = _modFolderPath;
+                string universePath = ModFolderPath;
                 if (path.Key != "vanilla")
                 {
                     universePath = Path.Combine(universePath, "extensions", path.Key);
@@ -517,12 +518,12 @@ namespace ChemGateBuilder
             if (result)
             {
                 Log.Debug("Mod has been changed");
-                Version = _versionInitial == 0 ? 100 : (_versionInitial + 1);
+                Version = VersionInitial == 0 ? 100 : (VersionInitial + 1);
             }
             else
             {
                 Log.Debug("Mod has not been changed");
-                Version = _versionInitial == 0 ? 100 : _versionInitial;
+                Version = VersionInitial == 0 ? 100 : VersionInitial;
             }
             _isModChanged = result;
             return result;

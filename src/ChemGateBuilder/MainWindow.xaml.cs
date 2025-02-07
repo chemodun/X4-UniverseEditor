@@ -1176,7 +1176,7 @@ namespace ChemGateBuilder
             }
             ChemGateKeeper newMod = new();
             newMod.SetGameVersion(_x4DataVersion);
-            if (newMod.LoadData(Galaxy))
+            if (newMod.LoadData(Galaxy, ChemGateKeeperMod))
             {
                 ChemGateKeeperMod = newMod;
                 SectorsDirectViewSource.View.Refresh();
