@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/ChemGateBuilder/README.md'
+      - 'src/**/README.md'
   workflow_dispatch:
 
 permissions:
@@ -19,20 +19,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Convert ChemGateBuilder README.md to HTML
-        if: contains(github.event.head_commit.message, 'src/ChemGateBuilder/README.md') || github.event_name == 'workflow_dispatch'
-        uses: docker://pandoc/core:3.5
-        with:
-          args: |
-            src/ChemGateBuilder/README.md --from=markdown --to=html --standalone=true --output=src/ChemGateBuilder/README.html
+      - name: Identify changed README.md files
+        id: identify-changes
+        run: |
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep 'src/.*/README.md' > changed_readmes.txt
+          cat changed_readmes.txt
+
+      - name: Convert README.md files to HTML
+        if: ${{ steps.identify-changes.outputs.changed_readmes != '' }}
+        run: |
+          while IFS= read -r readme; do
+            output_dir=$(dirname "$readme")/docs
+            mkdir -p "$output_dir"
+            docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="${output_dir}/README.html" "$readme"
+          done < changed_readmes.txt
 
       - name: Commit and push changes
-        if: contains(github.event.head_commit.message, 'src/ChemGateBuilder/README.md') || github.event_name == 'workflow_dispatch'
+        if: ${{ steps.identify-changes.outputs.changed_readmes != '' }}
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          git add src/ChemGateBuilder/README.html
-          git commit -m 'Update README.html file for ChemGateBuilder'
+          git add $(awk '{print $0 "/docs/README.html"}' changed_readmes.txt)
+          git commit -m 'chore(docs): Update README.html files'
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
