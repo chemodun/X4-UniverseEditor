@@ -173,4 +173,4 @@ Please report any issues or bugs encountered while using the tool. You can submi
 
 ## Additional Links
 
-There is a topic on the [Egosoft forum](https://forum.egosoft.com/viewtopic.php?p=5262362) about the tool.
+There is a topic on the [EGOSOFT forum](https://forum.egosoft.com/viewtopic.php?p=5262362) about the tool.
