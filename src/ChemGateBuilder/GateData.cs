@@ -880,6 +880,16 @@ namespace ChemGateBuilder
             _zDefault = zDefault;
         }
 
+        public void SetFrom(Coordinates coordinates)
+        {
+            _x = coordinates.X;
+            _y = coordinates.Y;
+            _z = coordinates.Z;
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+            OnPropertyChanged(nameof(Z));
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
@@ -952,6 +962,16 @@ namespace ChemGateBuilder
             _rollDefault = rollDefault;
             _pitchDefault = pitchDefault;
             _yawDefault = yawDefault;
+        }
+
+        public void SetFrom(Rotation rotation)
+        {
+            _roll = rotation.Roll;
+            _pitch = rotation.Pitch;
+            _yaw = rotation.Yaw;
+            OnPropertyChanged(nameof(Roll));
+            OnPropertyChanged(nameof(Pitch));
+            OnPropertyChanged(nameof(Yaw));
         }
 
         public Quaternion ToQuaternion()

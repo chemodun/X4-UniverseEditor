@@ -1008,12 +1008,12 @@ namespace ChemGateBuilder
                 if (isDirect)
                 {
                     GatesConnectionCurrent.SectorDirectMap.InternalSizeKm = sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm;
-                    GatesConnectionCurrent.GateDirect.Coordinates = sectorMapExpandedWindow.NewGateCoordinates;
+                    GatesConnectionCurrent.GateDirect.Coordinates.SetFrom(sectorMapExpandedWindow.NewGateCoordinates);
                 }
                 else
                 {
                     GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm = sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm;
-                    GatesConnectionCurrent.GateOpposite.Coordinates = sectorMapExpandedWindow.NewGateCoordinates;
+                    GatesConnectionCurrent.GateOpposite.Coordinates.SetFrom(sectorMapExpandedWindow.NewGateCoordinates);
                 }
             }
         }
