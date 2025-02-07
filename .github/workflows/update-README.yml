@@ -24,7 +24,7 @@ jobs:
         uses: docker://pandoc/core:3.5
         with:
           args: |
-            src/ChemGateBuilder/README.md -o src/ChemGateBuilder/docs/README.html
+            src/ChemGateBuilder/README.md -f markdown -t html -s -o src/ChemGateBuilder/docs/README.html
 
       - name: Commit and push changes
         if: contains(github.event.head_commit.message, 'src/ChemGateBuilder/README.md') || github.event_name == 'workflow_dispatch'
