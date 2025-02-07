@@ -24,7 +24,7 @@ jobs:
         name: Identify changed README.md files
         id: identify-changes
         run: |
-          git show --name-status | grep 'src/.*/README.md' | awk '{print $2}' > changed_readmes.txt
+          git show --name-status HEAD | grep 'src/.*/README.md' > changed_readmes.txt
           echo "changed_readmes=$(wc -l < changed_readmes.txt)" >> $GITHUB_OUTPUT
 
       -
@@ -35,14 +35,18 @@ jobs:
           version: 3.5
 
       -
-        name: Convert README.md files to HTML
+        name: Process README.md changes
         if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
-          while IFS= read -r readme; do
+          while IFS=$'\t' read -r status readme; do
             output_file="${readme%.md}.html"
-            echo "Converting $readme to $output_file"
-            echo pandoc --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
-            pandoc --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+            if [[ "$status" == "A" || "$status" == "M" ]]; then
+              echo "Converting $readme to $output_file"
+              pandoc --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+            elif [[ "$status" == "D" ]]; then
+              echo "Deleting $output_file"
+              git rm "$output_file"
+            fi
           done < changed_readmes.txt
 
       -
@@ -51,7 +55,7 @@ jobs:
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          git add $(awk '{gsub(/\.md$/, ".html"); print}' changed_readmes.txt)
+          git add $(awk '{gsub(/\.md$/, ".html", $2); print $2}' changed_readmes.txt)
           git commit -m 'chore(docs): Update README.html files'
           git push
         env:
