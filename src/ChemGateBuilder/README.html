@@ -170,199 +170,194 @@
 </head>
 <body>
 <h1 id="x4-chem-gate-builder">X4 Chem Gate Builder</h1>
-<p>There is a tool to build gate connections for the game X4
-Foundations. This tool has been created to help players to build
-connection between any sectors in the game. This tool creates a mod
-(extension) for the game, which can be installed and uninstalled
-easily.</p>
+<p>This tool allows you to build gate connections for the game X4
+Foundations. It helps players create connections between any sectors in
+the game. The tool generates a mod (extension) for the game, which can
+be easily installed and uninstalled.</p>
 <h2 id="features">Features</h2>
 <ul>
-<li>Build gate connections between any sectors in the game.</li>
-<li>Select the sector from the list of the sectors or from the Galaxy
-map.</li>
-<li>You can build any number of connections, where the connection - it
-is a pair of the gates in two sectors.</li>
-<li>You can easily arrange the location of the gates in the sectors by
-moving them on the map using the mouse.</li>
+<li>Building gate connections between any sectors in the game.</li>
+<li>Selecting sectors from a list or from the Galaxy map.</li>
+<li>Creating any number of connections, where a connection is a pair of
+gates in two sectors.</li>
+<li>Easily arranging the location of gates in sectors by moving them on
+the map using the mouse.</li>
 </ul>
 <h2 id="disclaimer">Disclaimer</h2>
-<p>Anybody can use built gate connections in his own mods. With
-appropriate credits to the tool and the author.</p>
+<p>Anyone can use the gate connections built by this tool in their mods
+or simply in the game. If you use the connections in mods, please
+mention the author and the tool in the mod description.</p>
 <h2 id="requirements">Requirements</h2>
-<pre><code>You have to have the extracted game files in your computer by the [X Catalog Tool](https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/)</code></pre>
+<p>You need to have the extracted game files on your computer using the
+<a
+href="https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/">X
+Catalog Tool</a>.</p>
+<h2 id="download">Download</h2>
+<p>You can download the tool from the following locations: - <a
+href="https://github.com/chemodun/X4-UniverseEditor/releases">Releases
+on GitHub</a> - <a
+href="https://www.nexusmods.com/x4foundations/mods/1587/">Nexus</a></p>
 <h2 id="installation">Installation</h2>
-<p>Simple download the latest version of the tool from the <a
-href="https://www.nexusmods.com/x4foundations/mods/1587/">Nexus</a> and
+<p>Simply <a href="#download">download</a> the latest version and
 extract it to any folder.</p>
-<p>You can start to build your connections right away.</p>
+<p>You can start building your connections right away.</p>
 <h2 id="usage">Usage</h2>
-<h3 id="first-start">First start</h3>
-<p>On first start, the tool will inform you that you have to select the
-extracted game folder.</p>
+<h3 id="first-start">First Start</h3>
+<p>On the first start, the tool will inform you that you need to select
+the folder with the <a href="#requirements">extracted</a> game
+files.</p>
+<p>After selecting the folder, the tool will start loading the game
+data.</p>
 <figure>
-<img src="docs/images/select_extracted_folder_alert.png"
-alt="Select extracted folder alert" />
-<figcaption aria-hidden="true">Select extracted folder
-alert</figcaption>
+<img src="docs/images/first_start.gif" alt="First start" />
+<figcaption aria-hidden="true">First start</figcaption>
 </figure>
-<p>After you will select the folder, the tool will start to load the
-game data.</p>
-<figure>
-<img src="docs/images/select_extracted_folder.png"
-alt="Selection of the extracted folder" />
-<figcaption aria-hidden="true">Selection of the extracted
-folder</figcaption>
-</figure>
-<h3 id="main-window">Main window</h3>
-<p>After you start you will see the main window with the list of the
-connections and area to define a gate connection - i.e. two areas to
-define the gate in the two sectors. The new gates already shown on the
-map int he default position in the sector center. <img
-src="docs/images/gui_main_window.png" alt="Main window" /></p>
-<h4 id="connection-editing-area">Connection editing area</h4>
-<h5 id="first-sector-selection-and-simple-map">First sector selection
-and simple map</h5>
-<p>To start, simple select any sector from the list in the
+<h3 id="main-window">Main Window</h3>
+<p>After starting, you will see the main window with a list of
+connections and an area to define a gate connection, i.e., two areas to
+define the gates in the two sectors. The new gates are already shown on
+the map in the default position in the sector center. <img
+src="docs/images/main_window.png" alt="Main window" /></p>
+<h4 id="connection-editing-area">Connection Editing Area</h4>
+<h5 id="first-sector-selection-and-simple-map">First Sector Selection
+and Simple Map</h5>
+<p>To start, simply select any sector from the list in the
 <code>Direct Sector</code> group. Then the items from the selected
 sector will be displayed on the raw and simple sector map and as a list
-on the right side from the map</p>
+on the right side of the map.</p>
+<p>Existing gates are displayed as yellow gate icons from the game. Gold
+ones are from the currently edited mod. Green represents the currently
+edited gate. In addition, the SuperHighway gate and stations from the
+god.xml will be displayed. The background of the sector map matches the
+color of the sector owner in the game.</p>
+<h5 id="define-gate-location">Define Gate Location</h5>
+<p>You can define the gate location by pressing the left mouse button on
+the gate and moving it to the desired location. A more precise position
+can be set by entering the coordinates and rotation angles. Please note
+that the coordinates are split into two parts: - Coordinates themselves,
+in km (this is the appropriate zone position in the sector). - Position
+- the position from the coordinates point in meters (this is the
+position of the gate in the zone).</p>
+<p>To simplify editing, the position part is randomly prefilled on
+sector selection.</p>
 <figure>
-<img src="docs/images/first_sector_selected.png" alt="Select sector" />
-<figcaption aria-hidden="true">Select sector</figcaption>
+<img src="docs/images/define_direct_sector.gif"
+alt="Define Direct sector" />
+<figcaption aria-hidden="true">Define Direct sector</figcaption>
 </figure>
-<p>Existing gates displayed as a yellow gate icons from the game. Gold
-ones - from th currently edited mod. Green - the currently edited gate.
-In addition the SuperHighway gate and stations from the god.xml will be
-displayed. Background of the sector map is equal to the color of sector
-owner in the game.</p>
-<h5 id="define-gate-location">Define gate location</h5>
-<p>Then you can define the gate location. Simplest way - to press the
-left mouse button on the gate and move it to the desired location. More
-strict position can be set by entering the coordinates and rotation
-angles. Please take in account that the coordinates are split into two
-parts: [list] - coordinates itself, in km. (De facto it is the
-appropriate zone position in the sector), - position - the position of
-from the coordinates point in meters. (De facto it is the position of
-the gate in the zone). [/list] To simplify the editing the position part
-is randomly prefilled on the sector selection.</p>
-<figure>
-<img src="docs/images/define_gate_location.gif"
-alt="Define gate’s location" />
-<figcaption aria-hidden="true">Define gate’s location</figcaption>
-</figure>
-<h5 id="extended-sector-map">Extended sector map</h5>
-<p>If current sector map size is too small for you, you can press the
-appropriate button to open the extended sector map. On this map you can
-set the gate location in the same way as on the simple map, but more
+<h5 id="extended-sector-map">Extended Sector Map</h5>
+<p>If the current sector map size is too small for you, you can press
+the appropriate button to open the extended sector map. On this map, you
+can set the gate location in the same way as on the simple map, but more
 precisely.</p>
 <figure>
 <img src="docs/images/extended_sector_map.gif"
 alt="Extended sector map" />
 <figcaption aria-hidden="true">Extended sector map</figcaption>
 </figure>
-<h5 id="sector-real-size-slider">Sector “real” size slider</h5>
-<p>Under the sector map there is a slider to change the sector map
-“real” size. De facto it is the scale of the sector map.</p>
+<h5 id="sector-real-size-slider">Sector “Real” Size Slider</h5>
+<p>Under the sector map, there is a slider to change the sector map
+“real” size. This is effectively the scale of the sector map.</p>
 <figure>
 <img src="docs/images/sector_scale_slider.gif"
 alt="Sector scale slider" />
 <figcaption aria-hidden="true">Sector scale slider</figcaption>
 </figure>
-<h5 id="other-gate-data">Other gate data</h5>
-<p>Then you can define a rotation angles for the gate.</p>
-<p>And set the status of the gate - for some reason you can deactivate
-it (if you plan to use it in your own scenarios).</p>
-<h4 id="second-sector-selection">Second sector selection</h4>
+<h5 id="other-gate-data">Other Gate Data</h5>
+<p>You can define rotation angles for the gate and set the status of the
+gate. For some reason, you can deactivate it (if you plan to use it in
+your own scenarios).</p>
+<h4 id="second-sector-selection">Second Sector Selection</h4>
 <p>Now you can select the second sector and define the gate location in
 it.</p>
-<p>Please take in account that the in selection list for the second
-(<code>Opposite Sector</code>) some sectors will be grayed out and not
-available for the selection. It’s because the sector is already selected
-as a first sector or they already have a connection with the
+<p>Please note that in the selection list for the second
+(<code>Opposite Sector</code>), some sectors will be grayed out and not
+available for selection. This is because the sector is already selected
+as the first sector or they already have a connection with the
 <code>Direct Sector</code>.</p>
 <figure>
-<img src="docs/images/select_opposite_sector.gif"
+<img src="docs/images/define_opposite_sector.gif"
 alt="Select opposite sector" />
 <figcaption aria-hidden="true">Select opposite sector</figcaption>
 </figure>
-<p>After you will define the gate in the second sector, you can add the
+<p>After defining the gate in the second sector, you can add the
 connection to the list.</p>
-<h4 id="add-gates-connection">Add gates connection</h4>
-<p>Simple press the <code>Add</code> button.</p>
+<h4 id="add-gates-connection">Add Gates Connection</h4>
+<p>Simply press the <code>Add</code> button.</p>
 <figure>
 <img src="docs/images/add_gates_connection.gif"
 alt="Add gates connection" />
 <figcaption aria-hidden="true">Add gates connection</figcaption>
 </figure>
 <p>The connection will be added to the list. You can see the connection
-in the list and still can edit it.</p>
-<h4 id="modify-existing-connection">Modify existing connection</h4>
-<p>If you will move the gate in the sector for the existing connection -
-you will see two “identical” gates on the map. One (<code>gold</code>) -
-is the gate from the connection, another (<code>green</code>) - is the
+in the list and still edit it.</p>
+<h4 id="modify-existing-connection">Modify Existing Connection</h4>
+<p>If you move the gate in the sector for the existing connection, you
+will see two “identical” gates on the map. One (<code>gold</code>) is
+the gate from the connection, and the other (<code>green</code>) is the
 gate in the new location.</p>
 <figure>
-<img src="docs/images/gate_from_connection_moved.gif"
-alt="Gate from connection moved on the new position" />
-<figcaption aria-hidden="true">Gate from connection moved on the new
+<img src="docs/images/update_gates_connection.gif"
+alt="Gate from connection moved to the new position" />
+<figcaption aria-hidden="true">Gate from connection moved to the new
 position</figcaption>
 </figure>
-<p>Additionally, as you can see, each gate have a tooltip on the map
-with the sector name, to which it connects current sector, source (from
-<code>map</code> or from <code>mod</code>) and the X,Y,Z
-coordinates.</p>
-<h4 id="connection-editing-area-buttons">Connection editing area
-buttons</h4>
-<p>As you can see, there are two buttons on the bottom of the window:
-[list] - <code>Add/Update</code> - to add the gate connection to the
-list. We already discussed it. - <code>Reset</code> - to reset the gate
-data fields to the default values. See below for more information.
-[/list]</p>
-<h5 id="reset-button">Reset button</h5>
-<p>If you have no selected gate connection in the list - reset button
-will reset all gate connection related information to the defaults,
+<h4 id="connection-editing-area-buttons">Connection Editing Area
+Buttons</h4>
+<p>There are two buttons at the bottom of the window: -
+<code>Add/Update</code> - to add the gate connection to the list. We
+already discussed it. - <code>Reset</code> - to reset the gate data
+fields to the default values. See below for more information.</p>
+<h5 id="reset-button">Reset Button</h5>
+<p>If you have no selected gate connection in the list, the reset button
+will reset all gate connection-related information to the defaults,
 mostly empty or zero values.</p>
 <p>Otherwise, it will reset the gate data fields to the values of the
 selected connection.</p>
-<h3 id="save-the-mod">Save the mod</h3>
-<p>When you will finish with the connections, you can save te mod via
+<h4 id="map-objects-tool-tip">Map Objects Tool-tip</h4>
+<p>You can hover over the map objects to view additional information
+about them, such as their status, coordinates, and related connections.
+This feature helps in better understanding the relationships between
+different gates and sectors. <img
+src="docs/images/map_objects_tooltips.gif"
+alt="Map objects tool-tip" /></p>
+<h3 id="save-the-mod">Save the Mod</h3>
+<p>When you finish with the connections, you can save the mod via the
 <code>Mod</code> -&gt; <code>Save</code> menu item.</p>
-<p>Please take in account - you you not finished yet editing the
-connections, this menu item will be disabled. Save current connection or
-reset it to have the ability to save the mod.</p>
-<figure>
-<img src="docs/images/save_mod_disabled.gif" alt="Save mod disabled" />
-<figcaption aria-hidden="true">Save mod disabled</figcaption>
-</figure>
-<p>After you will go to the <code>Save</code> menu item, the tool will
-ask you to select the output folder for the mod.</p>
+<p>Please note that if you have not finished editing the connections,
+this menu item will be disabled. Save the current connection or reset it
+to have the ability to save the mod.</p>
+<p>After selecting the <code>Save</code> menu item, the tool will ask
+you to select the output folder for the mod.</p>
 <figure>
 <img src="docs/images/saving_the_mod.gif" alt="Saving the mod" />
 <figcaption aria-hidden="true">Saving the mod</figcaption>
 </figure>
-<p>After that the mod is ready to be installed in the game.</p>
-<h3 id="load-the-mod">Load the mod</h3>
-<p>If you have a previously saved mod, you can load it via
-<code>Mod</code> -&gt; <code>Load</code> menu item. Difference from the
-saving mod - you have to select not a mod folder, but the
-<code>content.xml</code> file in the mod root folder. It was made to
-avoid selecting not a mod folder, but the mod itself.</p>
+<p>After that, the mod is ready to be installed in the game.</p>
+<h3 id="load-the-mod">Load the Mod</h3>
+<p>If you have a previously saved mod, you can load it via the
+<code>Mod</code> -&gt; <code>Load</code> menu item. The difference from
+saving the mod is that you have to select the <code>content.xml</code>
+file in the mod root folder in contrast to selecting the output folder.
+This was made to avoid selecting the wrong folder.</p>
 <figure>
 <img src="docs/images/loading_the_mod.gif" alt="Loading the mod" />
 <figcaption aria-hidden="true">Loading the mod</figcaption>
 </figure>
 <p>After loading the mod, you will see the connections in the list and
-the gates on the map. But no current connection will be selected.</p>
-<h3 id="overview-mod-in-a-tool-and-in-the-game">Overview mod in a tool
-and in the game</h3>
-<p>There a gif to display the mod gates and compare it with a
-screenshots from the game.</p>
+the gates on the map for the first connection. This visibility confirms
+the successful loading of the mod and aids in verifying the gate
+configurations.</p>
+<h3 id="overview-new-gates-in-the-tool-and-in-the-game">Overview New
+Gates in the Tool and in the Game</h3>
+<p>There is a short overview of the mod in the tool to see the gate
+locations.</p>
 <figure>
 <img src="docs/images/mod_gates_overview.gif" alt="Mod overview" />
 <figcaption aria-hidden="true">Mod overview</figcaption>
 </figure>
-<p>And there a several screenshots from the game with the mod gates in
-the <code>Asteroid Belt</code> sector.</p>
+<p>Here are several screenshots from the game with the mod gates in the
+<code>Asteroid Belt</code> sector.</p>
 <figure>
 <img src="docs/images/X4-AsteroidBelt-new-thee-gates.png"
 alt="Three new gates with connections" />
@@ -384,9 +379,15 @@ alt="Gate to Barren Shores" />
 alt="Gate to Atreus’ Clouds" />
 <figcaption aria-hidden="true">Gate to Atreus’ Clouds</figcaption>
 </figure>
-<h2 id="additional-links">Additional links</h2>
+<h2 id="issues-reporting">Issues Reporting</h2>
+<p>Please report any issues or bugs encountered while using the tool.
+You can submit your reports through the <a
+href="https://github.com/chemodun/X4-UniverseEditor/issues">GitHub
+repository</a>. Your contributions help improve the tool for
+everyone!</p>
+<h2 id="additional-links">Additional Links</h2>
 <p>There is a topic on the <a
-href="https://forum.egosoft.com/viewtopic.php?p=5262362">Egosoft
+href="https://forum.egosoft.com/viewtopic.php?p=5262362">EGOSOFT
 forum</a> about the tool.</p>
 </body>
 </html>
