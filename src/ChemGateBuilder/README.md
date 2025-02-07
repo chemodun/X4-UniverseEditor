@@ -144,7 +144,7 @@ After that, the mod is ready to be installed in the game.
 ### Load the Mod
 
 If you have a previously saved mod, you can load it via the `Mod` -> `Load` menu item.
-The difference from saving the mod is that you have to select the `content.xml` file in the mod root folder instead of the mod folder.
+The difference from saving the mod is that you have to select the `content.xml` file in the mod root folder in contrast to selecting the output folder.
 This was done to avoid selecting the wrong folder.
 
 ![Loading the mod](docs/images/loading_the_mod.gif)
