@@ -44,7 +44,7 @@ After selecting the folder, the tool will start loading the game data.
 
 After starting, you will see the main window with a list of connections and an area to define a gate connection, i.e., two areas to define the gates in the two sectors.
 The new gates are already shown on the map in the default position in the sector center.
-![Main window](docs/images/gui_main_window.png)
+![Main window](docs/images/main_window.png)
 
 #### Connection Editing Area
 
