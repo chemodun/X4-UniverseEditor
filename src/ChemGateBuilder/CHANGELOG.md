@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.2...ChemGateBuilder@v0.4.3) (2025-02-07)
+
+
+### Bug Fixes
+
+* **ChemGateKeeper:** fix ModFolderPath operations and improve variable naming ([3cd0934](https://github.com/chemodun/X4-UniverseEditor/commit/3cd0934652ada1c669afe10e77826c1ff7ef753d))
+
 ## [0.4.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.1...ChemGateBuilder@v0.4.2) (2025-02-06)
 
 
