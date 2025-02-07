@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Threading;
 using System.IO;
+using System.Windows;
 using System.Linq;
 using System.Text.Json;
-using System.Windows;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Shapes;
@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using NLog;
 using Utilities.Logging;
 using System.Reflection;
+using System.Diagnostics;
 
 using System.Windows.Markup;
 
@@ -1212,6 +1213,22 @@ namespace ChemGateBuilder
             aboutWindow.Owner = this;
             aboutWindow.ShowDialog();
         }
+
+        public void ButtonReadme_Click(object sender, RoutedEventArgs e)
+        {
+            string readmePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "README.html");
+            string imagesPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "docs", "images");
+            if (File.Exists(readmePath) && Directory.Exists(imagesPath))
+            {
+                Process.Start(new ProcessStartInfo(readmePath) { UseShellExecute = true });
+            }
+            else
+            {
+                Log.Error("Documentation file not found.");
+                SetStatusMessage("Error: Documentation file not found.", StatusMessageType.Error);
+            }
+        }
+
         public void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

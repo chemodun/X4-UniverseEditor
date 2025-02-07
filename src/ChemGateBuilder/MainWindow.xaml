@@ -287,6 +287,12 @@
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Help" x:Name="HelpTab">
                 <fluent:RibbonGroupBox Header="Help Actions">
+                    <fluent:Button Header="Readme" Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonReadme_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="Readme" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
                     <fluent:Button Header="About" Style="{StaticResource FluentButtonStyle}"
                                     Click="ButtonAbout_Click">
                         <fluent:Button.Icon>
