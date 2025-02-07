@@ -4,10 +4,10 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 
 ## Features
 
-- Build gate connections between any sectors in the game.
-- Select sectors from a list or from the Galaxy map.
-- Create any number of connections, where a connection is a pair of gates in two sectors.
-- Easily arrange the location of gates in sectors by moving them on the map using the mouse.
+- Building gate connections between any sectors in the game.
+- Selecting sectors from a list or from the Galaxy map.
+- Creating any number of connections, where a connection is a pair of gates in two sectors.
+- Easily arranging the location of gates in sectors by moving them on the map using the mouse.
 
 ## Disclaimer
 
