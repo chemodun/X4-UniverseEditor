@@ -1,0 +1,38 @@
+name: React on README.md Updates
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/ChemGateBuilder/README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  react-on-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Convert ChemGateBuilder README.md to HTML
+        if: contains(github.event.head_commit.message, 'src/ChemGateBuilder/README.md') || github.event_name == 'workflow_dispatch'
+        uses: docker://pandoc/core:3.5
+        with:
+          args: |
+            src/ChemGateBuilder/README.md -o src/ChemGateBuilder/docs/README.html
+
+      - name: Commit and push changes
+        if: contains(github.event.head_commit.message, 'src/ChemGateBuilder/README.md') || github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "Chem O'Dun"
+          git config user.email "chemodun@gmail.com"
+          git add src/ChemGateBuilder/docs/README.html
+          git commit -m 'Update README.html file for ChemGateBuilder'
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
