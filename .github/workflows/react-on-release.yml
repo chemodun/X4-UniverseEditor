@@ -43,6 +43,9 @@ jobs:
           mkdir -p ChemGateBuilder
           cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.exe ChemGateBuilder
           cp -r src/ChemGateBuilder/bin/Release/net8.0-windows/win-x64/publish/*.dll ChemGateBuilder
+          cp src/ChemGateBuilder/README.html ChemGateBuilder
+          mkdir -p ChemGateBuilder/docs
+          cp -r src/ChemGateBuilder/docs/images ChemGateBuilder/docs/
           7z a -tzip ChemGateBuilder.zip ChemGateBuilder
         shell: powershell
 
