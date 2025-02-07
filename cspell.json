@@ -35,6 +35,7 @@
         "mapob",
         "modulegroups",
         "netstandard",
+        "pandoc",
         "paranid",
         "patchactions",
         "piratebase",
