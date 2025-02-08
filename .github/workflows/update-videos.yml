@@ -33,7 +33,7 @@ jobs:
       - name: Process MP4 changes
         if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
         run: |
-          while IFS=$'\t' read -u 10 -r status video; do
+          while IFS=$'\t' read -u 9 -r status video; do
             gif_file="${video/videos/images}"
             gif_file="${gif_file%.mp4}.gif"
             if [[ "$status" == "A" || "$status" == "M" ]]; then
@@ -51,7 +51,7 @@ jobs:
                 git rm "$gif_file"
               fi
             fi
-          done 10< changed_videos.txt
+          done 9< changed_videos.txt
 
       - name: Commit and push changes
         if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
