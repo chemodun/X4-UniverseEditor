@@ -47,7 +47,7 @@ jobs:
               else
                 echo "Converted $video to $gif_file"
                 echo "git add \"$gif_file\""
-                git add "$gif_file"
+                git add --force "$gif_file"
                 if [[ $? -ne 0 ]]; then
                   echo "Error adding $gif_file to git" >&2
                 else
@@ -58,7 +58,7 @@ jobs:
             elif [[ "$status" == "D" ]]; then
               if [[ -f "$gif_file" ]]; then
                 echo "Deleting $gif_file"
-                git rm "$gif_file"
+                git rm --force "$gif_file"
                 if [[ $? -ne 0 ]]; then
                   echo "Error deleting $gif_file" >&2
                 else
