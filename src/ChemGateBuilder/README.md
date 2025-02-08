@@ -185,10 +185,12 @@ Here are several screenshots from the game with the mod gates in the `Asteroid B
 
 ![Gate to Atreus' Clouds](docs/images/X4-AsteroidBelt-to-AtreusClouds.png)
 
-## Issues Reporting
+## Useful links
 
-Please report any issues or bugs encountered while using the tool. You can submit your reports through the [GitHub repository](https://github.com/chemodun/X4-UniverseEditor/issues). Your contributions help improve the tool for everyone!
-
-## Additional Links
+### EGOSOFT Forum
 
 There is a topic on the [EGOSOFT forum](https://forum.egosoft.com/viewtopic.php?p=5262362) about the tool. You can ask questions, share your thoughts, or provide feedback there.
+
+### GitHub Repository Issues Reporting
+
+Please report any issues or bugs encountered while using the tool. You can submit your reports through the [GitHub repository Issues](https://github.com/chemodun/X4-UniverseEditor/issues). Your contributions help improve the tool for everyone!
