@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.5.1...ChemGateBuilder@v0.5.2) (2025-02-08)
+
+
+### Code Refactoring
+
+* improve code readability by using 'readonly' and simplifying variable assignments ([0eb87a0](https://github.com/chemodun/X4-UniverseEditor/commit/0eb87a0b144b7f1a5b007f308b0f07262c2df10d))
+
+
+### Documentation
+
+* **README:** enhance forum link description for user engagement ([a21e1f1](https://github.com/chemodun/X4-UniverseEditor/commit/a21e1f10845526afc8f017662032b44283d00024))
+* **README:** reorganize links section for clarity and user guidance ([792ecb2](https://github.com/chemodun/X4-UniverseEditor/commit/792ecb222942b3f211c56085600548658c5d0128))
+* **README:** update feature descriptions for consistency and clarity; remove obsolete image ([88d5bc3](https://github.com/chemodun/X4-UniverseEditor/commit/88d5bc330ab95c06aad11cff16dd6bb17a0150d2))
+* **README:** Update README's files ([5c8272a](https://github.com/chemodun/X4-UniverseEditor/commit/5c8272ac0db93913958b731b06aa412405aac740))
+
 ## [0.5.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.5.0...ChemGateBuilder@v0.5.1) (2025-02-08)
 
 
