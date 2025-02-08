@@ -126,10 +126,10 @@ If you have no selected gate connection in the list, the reset button will reset
 
 Otherwise, it will reset the gate data fields to the values of the selected connection.
 
-#### Map Objects Tool-tip
+#### Map Objects Tool-tips
 
 You can hover over the map objects to view additional information about them, such as their status, coordinates, and related connections. This feature helps in better understanding the relationships between different gates and sectors.
-![Map objects tool-tip](docs/images/map_objects_tooltips.gif)
+![Map objects tool-tips](docs/images/map_objects_tooltips.gif)
 
 #### Galaxy Map
 
