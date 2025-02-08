@@ -24,22 +24,14 @@ jobs:
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
-          echo "test 0"
-          git log -1 --name-status
-          git log -1 --name-status | grep 'src/.*/docs/videos/.*mp4' || true ?
-          echo "test 1"
+          git log -1 --name-status | grep 'src/.*/docs/videos/.*mp4' > changed_videos.txt || true
           if [[ -s changed_videos.txt ]]; then
-            echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
-            echo "test 2"
-            echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
-            echo "test 3"
+            echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT || true
+            echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT || true
           else
             echo "changed_videos=0" >> $GITHUB_OUTPUT
             echo "new_or_updated_videos=0" >> $GITHUB_OUTPUT
-            echo "test 4"
           fi
-          echo "test 5"
-          exit 0
         shell: bash
 
       - name: Install ffmpeg
