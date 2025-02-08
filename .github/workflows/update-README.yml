@@ -43,7 +43,7 @@ jobs:
             output_file="${readme%.md}.html"
             if [[ "$status" == "A" || "$status" == "M" ]]; then
               echo "Converting $readme to $output_file"
-              docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+              docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="/workspace/$output_file" "/workspace/$readme"
               if [[ $? -ne 0 ]]; then
                 echo "Error converting $readme to $output_file" >&2
               else
