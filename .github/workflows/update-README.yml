@@ -34,6 +34,10 @@ jobs:
           fi
         shell: bash
 
+      - name: Install python3
+        if: ${{ steps.identify-changes.outputs.new_or_updated_readmes != '0' }}
+        run: sudo apt-get update && sudo apt-get install -y python3
+
       - name: Process README.md changes
         if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
@@ -55,6 +59,22 @@ jobs:
                   echo "Added $output_file to git"
                 fi
               fi
+              relative_path=$(dirname $readme)
+              for conversion_type in egosoft nexus; do
+                echo "Converting $readme to $conversion_type"
+                python3 .utils/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
+                if [[ $? -ne 0 ]]; then
+                  echo "Error converting $readme to $conversion_type" >&2
+                else
+                  echo "Converted $readme to $conversion_type"
+                  git add "$relative_path/docs/README.$conversion_type"
+                  if [[ $? -ne 0 ]]; then
+                    echo "Error adding $relative_path/docs/README.$conversion_type to git" >&2
+                  else
+                    echo "Added $relative_path/docs/README.$conversion_type to git"
+                  fi
+                fi
+              done
             elif [[ "$status" == "D" ]]; then
               if [[ -f "$output_file" ]]; then
                 echo "Deleting $output_file"
@@ -73,7 +93,7 @@ jobs:
         run: |
           rm changed_readmes.txt
           if [[ -n $(git status -uno --porcelain) ]]; then
-            git commit -m 'docs(README): Update README.html files'
+            git commit -m 'docs(README): Update README's files'
             git push
           else
             echo "No changes to commit"
