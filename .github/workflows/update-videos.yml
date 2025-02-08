@@ -22,7 +22,8 @@ jobs:
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
-          git show --name-status HEAD | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
+          git show --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
+          cat changed_videos.txt
           echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
           echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
 
@@ -39,7 +40,7 @@ jobs:
             if [[ "$status" == "A" || "$status" == "M" ]]; then
               echo "Converting $video to $gif_file"
               echo "ffmpeg -y -i \"$video\" -vf \"fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\" -c:v gif \"$gif_file\""
-              ffmpeg -y -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"
+              ffmpeg -y -loglevel repeat+level+verbose -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"
               if [[ $? -ne 0 ]]; then
                 echo "Error converting $video to $gif_file" >&2
               fi
