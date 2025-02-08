@@ -19,14 +19,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
           git show --name-status HEAD | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
+          echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Install ffmpeg
+        if: ${{ steps.identify-changes.outputs.new_or_updated_videos != '0' }}
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Process MP4 changes
         if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
@@ -36,6 +38,7 @@ jobs:
             gif_file="${gif_file%.mp4}.gif"
             if [[ "$status" == "A" || "$status" == "M" ]]; then
               echo "Converting $video to $gif_file"
+              echo "ffmpeg -y -i \"$video\" -vf \"fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\" -c:v gif \"$gif_file\""
               ffmpeg -y -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"
               if [[ $? -ne 0 ]]; then
                 echo "Error converting $video to $gif_file" >&2
