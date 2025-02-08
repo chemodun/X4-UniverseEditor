@@ -72,6 +72,7 @@ jobs:
       - name: Commit and push changes
         if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
         run: |
+          rm changed_videos.txt
           git status
           git commit -m 'docs(images): Update GIF files'
           git log -1
