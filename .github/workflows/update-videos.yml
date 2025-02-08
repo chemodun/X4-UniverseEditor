@@ -25,7 +25,7 @@ jobs:
         id: identify-changes
         run: |
           echo "test 0"
-          git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
+          git log -1 --name-status
           echo "test 1"
           if [[ -s changed_videos.txt ]]; then
             echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
