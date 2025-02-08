@@ -1,0 +1,60 @@
+name: React on MP4 Updates
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**/docs/videos/*.mp4'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  react-on-mp4:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Identify changed MP4 files
+        id: identify-changes
+        run: |
+          git show --name-status HEAD | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
+          echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
+
+      - name: Process MP4 changes
+        if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
+        run: |
+          while IFS=$'\t' read -r status video; do
+            gif_file="${video/videos/images}"
+            gif_file="${gif_file%.mp4}.gif"
+            if [[ "$status" == "A" || "$status" == "M" ]]; then
+              echo "Converting $video to $gif_file"
+              ffmpeg -y -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"
+              if [[ $? -ne 0 ]]; then
+                echo "Error converting $video to $gif_file" >&2
+              fi
+            elif [[ "$status" == "D" ]]; then
+              if [[ -f "$gif_file" ]]; then
+                echo "Deleting $gif_file"
+                git rm "$gif_file"
+              fi
+            fi
+          done < changed_videos.txt
+
+      - name: Commit and push changes
+        if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
+        run: |
+          git config user.name "Chem O'Dun"
+          git config user.email "chemodun@gmail.com"
+          git add $(awk '{gsub(/videos/, "images", $2); gsub(/\.mp4$/, ".gif", $2); print $2}' changed_videos.txt)
+          git commit -m 'docs(images): Update GIF files'
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
