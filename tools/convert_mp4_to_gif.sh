@@ -8,6 +8,8 @@ if [[ "$status" == "A" || "$status" == "M" ]]; then
     ffmpeg -y -loglevel repeat+level+verbose -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"
     if [[ $? -ne 0 ]]; then
       echo "Error converting $video to $gif_file" >&2
+    else
+      echo "Successfully converted $video to $gif_file"
     fi
 elif [[ "$status" == "D" ]]; then
     if [[ -f "$gif_file" ]]; then
@@ -17,4 +19,5 @@ elif [[ "$status" == "D" ]]; then
         echo "$gif_file does not exist, no action taken."
     fi
 fi
+sleep 1
 done < changed_videos.txt
