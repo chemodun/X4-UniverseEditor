@@ -24,8 +24,6 @@ jobs:
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
-          git show --name-status HEAD
-          git log -1 --name-status
           git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
           if [[ -s changed_videos.txt ]]; then
@@ -33,7 +31,7 @@ jobs:
           else
             echo "new_or_updated_videos=0" >> $GITHUB_OUTPUT
           fi
-          echo "Check the contents of changed_videos.txt is finished"
+          exit 0
 
       - name: Install ffmpeg
         if: ${{ steps.identify-changes.outputs.new_or_updated_videos != '0' }}
