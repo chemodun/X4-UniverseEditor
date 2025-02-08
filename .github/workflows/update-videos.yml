@@ -24,6 +24,7 @@ jobs:
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
+          echo "test 0"
           git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "test 1"
           if [[ -s changed_videos.txt ]]; then
@@ -38,6 +39,7 @@ jobs:
           fi
           echo "test 5"
           exit 0
+        shell: bash
 
       - name: Install ffmpeg
         if: ${{ steps.identify-changes.outputs.new_or_updated_videos != '0' }}
