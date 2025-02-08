@@ -131,6 +131,22 @@ Otherwise, it will reset the gate data fields to the values of the selected conn
 You can hover over the map objects to view additional information about them, such as their status, coordinates, and related connections. This feature helps in better understanding the relationships between different gates and sectors.
 ![Map objects tool-tip](docs/images/map_objects_tooltips.gif)
 
+#### Galaxy Map
+
+The Galaxy Map allows you to navigate through various sectors in the game. You can zoom in and out to view details about each sector and the gates within them. Using the map, it is possible to select sectors to use them in the gate connections.
+
+![Galaxy map](docs/images/galaxy_map.gif)
+
+For zooming there are two options available:
+
+- You can do it using the slider on the top of the map.
+- You can use the mouse wheel with pressed `Ctrl` key.
+
+Additionally, you can drag the map with the left mouse button pressed when it is zoomed in.
+
+When you click by the left mouse button on the sector, the sector will be selected as the direct or opposite sector in the connection.
+If the selected sector is not available for the connection, like grayed sectors in the dropdown lists, the tool will do nothing.
+
 ### Save the Mod
 
 When you finish with the connections, you can save the mod via the `Mod` -> `Save` menu item.
