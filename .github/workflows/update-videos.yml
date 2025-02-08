@@ -19,10 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          sparse-checkout: |
-            src/**/docs/videos/*.mp4
-            src/**/docs/images/*.gif
+          fetch-depth: 2
 
       - name: Identify changed MP4 files
         id: identify-changes
