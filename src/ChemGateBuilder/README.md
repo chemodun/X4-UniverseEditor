@@ -21,6 +21,7 @@ You need to have the extracted game files on your computer using the [X Catalog 
 ## Download
 
 You can download the tool from the following locations:
+
 - [Releases on GitHub](https://github.com/chemodun/X4-UniverseEditor/releases)
 - [Nexus](https://www.nexusmods.com/x4foundations/mods/1587/)
 
@@ -62,6 +63,7 @@ The background of the sector map matches the color of the sector owner in the ga
 You can define the gate location by pressing the left mouse button on the gate and moving it to the desired location.
 A more precise position can be set by entering the coordinates and rotation angles.
 Please note that the coordinates are split into two parts:
+
 - Coordinates themselves, in km (this is the appropriate zone position in the sector).
 - Position - the position from the coordinates point in meters (this is the position of the gate in the zone).
 
@@ -114,6 +116,7 @@ One (`gold`) is the gate from the connection, and the other (`green`) is the gat
 #### Connection Editing Area Buttons
 
 There are two buttons at the bottom of the window:
+
 - `Add/Update` - to add the gate connection to the list. We already discussed it.
 - `Reset` - to reset the gate data fields to the default values. See below for more information.
 
