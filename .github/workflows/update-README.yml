@@ -16,47 +16,67 @@ jobs:
   react-on-readme:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      -
-        name: Identify changed README.md files
+      - name: Identify changed README.md files
         id: identify-changes
         run: |
-          git show --name-status HEAD | grep 'src/.*/README.md' > changed_readmes.txt
-          echo "changed_readmes=$(wc -l < changed_readmes.txt)" >> $GITHUB_OUTPUT
+          git log -1 --name-status | grep 'src/.*/README.md' > changed_readmes.txt || true
+          if [[ -s changed_readmes.txt ]]; then
+            echo "changed_readmes=$(wc -l < changed_readmes.txt)" >> $GITHUB_OUTPUT || true
+            echo "new_or_updated_readmes=$(grep -v '^D' changed_readmes.txt | wc -l)" >> $GITHUB_OUTPUT || true
+          else
+            echo "changed_readmes=0" >> $GITHUB_OUTPUT
+            echo "new_or_updated_readmes=0" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
-      -
-        name: Install pandoc
-        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
-        uses: pandoc/actions/setup@v1
-        with:
-          version: 3.5
-
-      -
-        name: Process README.md changes
-        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
-        run: |
-          while IFS=$'\t' read -r status readme; do
-            output_file="${readme%.md}.html"
-            if [[ "$status" == "A" || "$status" == "M" ]]; then
-              echo "Converting $readme to $output_file"
-              pandoc --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
-            elif [[ "$status" == "D" ]]; then
-              echo "Deleting $output_file"
-              git rm "$output_file"
-            fi
-          done < changed_readmes.txt
-
-      -
-        name: Commit and push changes
+      - name: Process README.md changes
         if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          git add $(awk '{gsub(/\.md$/, ".html", $2); print $2}' changed_readmes.txt)
-          git commit -m 'docs(README): Update README.html files'
-          git push
+          while IFS=$'\t' read -u 9 -r status readme; do
+            output_file="${readme%.md}.html"
+            if [[ "$status" == "A" || "$status" == "M" ]]; then
+              echo "Converting $readme to $output_file"
+              docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="$output_file" "$readme"
+              if [[ $? -ne 0 ]]; then
+                echo "Error converting $readme to $output_file" >&2
+              else
+                echo "Converted $readme to $output_file"
+                git add "$output_file"
+                if [[ $? -ne 0 ]]; then
+                  echo "Error adding $output_file to git" >&2
+                else
+                  echo "Added $output_file to git"
+                fi
+              fi
+            elif [[ "$status" == "D" ]]; then
+              if [[ -f "$output_file" ]]; then
+                echo "Deleting $output_file"
+                git rm "$output_file"
+                if [[ $? -ne 0 ]]; then
+                  echo "Error deleting $output_file" >&2
+                else
+                  echo "Deleted $output_file"
+                fi
+              fi
+            fi
+          done 9< changed_readmes.txt
+
+      - name: Commit and push changes
+        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
+        run: |
+          rm changed_readmes.txt
+          if [[ -n $(git status -uno --porcelain) ]]; then
+            git commit -m 'docs(README): Update README.html files'
+            git push
+          else
+            echo "No changes to commit"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
