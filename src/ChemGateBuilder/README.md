@@ -4,10 +4,10 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 
 ## Features
 
-- Building gate connections between any sectors in the game.
-- Selecting sectors from a list or from the Galaxy map.
-- Creating any number of connections, where a connection is a pair of gates in two sectors.
-- Easily arranging the location of gates in sectors by moving them on the map using the mouse.
+- Build gate connections between any sectors in the game.
+- Select sectors from a list or from the Galaxy map.
+- Create any number of connections, where a connection is a pair of gates in two sectors.
+- Easily arrange the location of gates in sectors by moving them on the map using the mouse.
 
 ## Disclaimer
 
@@ -45,6 +45,7 @@ After selecting the folder, the tool will start loading the game data.
 
 After starting, you will see the main window with a list of connections and an area to define a gate connection, i.e., two areas to define the gates in the two sectors.
 The new gates are already shown on the map in the default position in the sector center.
+
 ![Main window](docs/images/main_window.png)
 
 #### Connection Editing Area
@@ -126,10 +127,11 @@ If you have no selected gate connection in the list, the reset button will reset
 
 Otherwise, it will reset the gate data fields to the values of the selected connection.
 
-#### Map Objects Tool-tips
+#### Map Objects Tooltips
 
 You can hover over the map objects to view additional information about them, such as their status, coordinates, and related connections. This feature helps in better understanding the relationships between different gates and sectors.
-![Map objects tool-tips](docs/images/map_objects_tooltips.gif)
+
+![Map objects tooltips](docs/images/map_objects_tooltips.gif)
 
 #### Galaxy Map
 
@@ -177,7 +179,7 @@ There is a short overview of the mod in the tool to see the gate locations.
 
 Here are several screenshots from the game with the mod gates in the `Asteroid Belt` sector.
 
-![Three new gates with connections](docs/images/X4-AsteroidBelt-new-thee-gates.png)
+![Three new gates with connections](docs/images/X4-AsteroidBelt-new-three-gates.png)
 
 ![Gate to Argon Prime](docs/images/X4-AsteroidBelt-to-ArgonPrime.png)
 
@@ -185,7 +187,7 @@ Here are several screenshots from the game with the mod gates in the `Asteroid B
 
 ![Gate to Atreus' Clouds](docs/images/X4-AsteroidBelt-to-AtreusClouds.png)
 
-## Useful links
+## Useful Links
 
 ### EGOSOFT Forum
 
