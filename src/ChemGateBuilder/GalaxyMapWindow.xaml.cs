@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.DirectoryServices.ActiveDirectory;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.Windows.Themes;
 using Utilities.Logging;
 using X4DataLoader;
 
@@ -75,6 +69,7 @@ namespace ChemGateBuilder
     private readonly List<int> AxisX = [];
     private int MinCol = 0;
     private double MaxRow = 0;
+    private CollectionViewSource? SectorsList = null;
 
     // Reference to the main window's size (assumed to be passed or accessible)
     public readonly MainWindow MainWindowReference;
@@ -96,11 +91,12 @@ namespace ChemGateBuilder
     // private readonly Sector? clickedSector = null;
     public List<SectorMapItem> SectorsItems = [];
 
-    public GalaxyMapWindow(MainWindow mainWindow)
+    public GalaxyMapWindow(MainWindow mainWindow, CollectionViewSource sectorsViewSource)
     {
       InitializeComponent();
       DataContext = this;
       Owner = mainWindow;
+      SectorsList = sectorsViewSource;
       MainWindowReference = mainWindow;
       Galaxy = MainWindowReference.Galaxy;
 
@@ -365,6 +361,18 @@ namespace ChemGateBuilder
       else if (clickedElement is Grid grid && grid.DataContext is Sector _sectorFromGrid)
       {
         SelectedSector = _sectorFromGrid;
+      }
+      if (SectorsList != null && !String.IsNullOrEmpty(SelectedSector?.Macro))
+      {
+        if (SectorsList.View is CollectionView collectionView)
+        {
+          SectorsListItem? sector = collectionView.Cast<SectorsListItem>().FirstOrDefault(sector => sector.Macro == SelectedSector?.Macro);
+          if (sector != null && !sector.Selectable)
+          {
+            SelectedSector = null;
+            Log.Debug($"Sector {sector.Name} is not selectable. Skipping.");
+          }
+        }
       }
       isPanning = true;
       panStartPoint = e.GetPosition(this);

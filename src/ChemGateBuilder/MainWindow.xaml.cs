@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using NLog;
 using Utilities.Logging;
 using X4DataLoader;
 
@@ -880,7 +873,7 @@ namespace ChemGateBuilder
 
     private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
     {
-      GalaxyMapWindow clusterMapWindow = new(this);
+      GalaxyMapWindow clusterMapWindow = new(this, SectorsDirectViewSource);
       clusterMapWindow.ShowDialog();
       if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
       {
@@ -890,7 +883,7 @@ namespace ChemGateBuilder
 
     private void ButtonSectorOppositeSelectFromMap_Click(object sender, RoutedEventArgs e)
     {
-      GalaxyMapWindow clusterMapWindow = new(this);
+      GalaxyMapWindow clusterMapWindow = new(this, SectorsOppositeViewSource);
       clusterMapWindow.ShowDialog();
       if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
       {
