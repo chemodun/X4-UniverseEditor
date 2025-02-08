@@ -22,7 +22,7 @@ jobs:
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
-          git show --name-status HEAD | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
+          git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
           echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
 
@@ -35,7 +35,6 @@ jobs:
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          git status
           while IFS=$'\t' read -u 9 -r status video; do
             gif_file="${video/videos/images}"
             gif_file="${gif_file%.mp4}.gif"
@@ -47,24 +46,22 @@ jobs:
               else
                 echo "Converted $video to $gif_file"
                 echo "git add \"$gif_file\""
-                git add --force "$gif_file"
+                git add "$gif_file"
                 if [[ $? -ne 0 ]]; then
                   echo "Error adding $gif_file to git" >&2
                 else
                   echo "Added $gif_file to git"
                 fi
-                git status
               fi
             elif [[ "$status" == "D" ]]; then
               if [[ -f "$gif_file" ]]; then
                 echo "Deleting $gif_file"
-                git rm --force "$gif_file"
+                git rm "$gif_file"
                 if [[ $? -ne 0 ]]; then
                   echo "Error deleting $gif_file" >&2
                 else
                   echo "Deleted $gif_file"
                 fi
-                git status
               fi
             fi
           done 9< changed_videos.txt
@@ -73,8 +70,11 @@ jobs:
         if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
         run: |
           rm changed_videos.txt
-          git status
-          git commit -m 'docs(images): Update GIF files'
-          git log -1
+          if [[ -n $(git status -uno --porcelain) ]]; then
+            git commit -m 'docs(images): Update GIF files'
+            git push
+          else
+            echo "No changes to commit"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
