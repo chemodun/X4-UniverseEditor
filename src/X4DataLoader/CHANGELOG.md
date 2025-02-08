@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.3...X4DataLoader@v0.3.4) (2025-02-08)
+
+
+### Code Refactoring
+
+* **X4DataLoader:** improve formatting and consistency in logging methods ([1d068f1](https://github.com/chemodun/X4-UniverseEditor/commit/1d068f1aab528438be8f12ea9e6ad0e91ba69b2f))
+
 ## [0.3.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.2...X4DataLoader@v0.3.3) (2025-02-05)
 
 
