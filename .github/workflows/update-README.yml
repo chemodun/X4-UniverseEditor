@@ -93,8 +93,13 @@ jobs:
         run: |
           rm changed_readmes.txt
           if [[ -n $(git status -uno --porcelain) ]]; then
-            git commit -m 'docs(README): Update README's files'
+            git commit -m 'docs(README): Update README\'s files'
             git push
+            if [[ $? -ne 0 ]]; then
+              echo "Error pushing changes" >&2
+            else
+              echo "Changes pushed successfully"
+            fi
           else
             echo "No changes to commit"
           fi
