@@ -84,7 +84,7 @@ namespace ChemGateBuilder
     public static event Action<string>? OnValidationError;
 
     // Updated regex to allow optional leading minus sign for negative integers
-    private static readonly Regex _regex = new Regex(@"^-?[0-9]*$");
+    private static readonly Regex _regex = new(@"^-?[0-9]*$");
 
     private static void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
     {
