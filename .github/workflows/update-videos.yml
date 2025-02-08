@@ -20,6 +20,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          sparse-checkout: |
+            src/**/docs/videos/*.mp4
+            src/**/docs/images/*.gif
 
       - name: Identify changed MP4 files
         id: identify-changes
@@ -28,7 +31,12 @@ jobs:
           git log -1 --name-status
           git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
-          echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
+          if [[ -s changed_videos.txt ]]; then
+            echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
+          else
+            echo "new_or_updated_videos=0" >> $GITHUB_OUTPUT
+          fi
+          echo "Check the contents of changed_videos.txt is finished"
 
       - name: Install ffmpeg
         if: ${{ steps.identify-changes.outputs.new_or_updated_videos != '0' }}
