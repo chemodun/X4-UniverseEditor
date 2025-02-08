@@ -23,33 +23,40 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
 
     # 1. Headers
     # Define size mapping based on BBCode type
-    size_mapping = {
+    header_level_mapping = {
         'egosoft': {
-            1: 150,
-            2: 120,
-            3: 100,
-            4: 90,
-            5: 80,
-            6: 75
+            1: {'size': 140, 'underline': True, 'italic': False, 'bold': False},
+            2: {'size': 130, 'underline': True, 'italic': False, 'bold': False},
+            3: {'size': 125, 'underline': True, 'italic': False, 'bold': False},
+            4: {'size': 120, 'underline': True, 'italic': False, 'bold': False},
+            5: {'size': 115, 'underline': True, 'italic': False, 'bold': False},
+            6: {'size': 110, 'underline': True, 'italic': False, 'bold': False}
         },
         'nexus': {
-            1: 4,
-            2: 3,
-            3: 2,
-            4: 1,
-            5: 1,
-            6: 1
+            1: {'size': 4, 'underline': True, 'italic': False, 'bold': False},
+            2: {'size': 3, 'underline': True, 'italic': False, 'bold': True},
+            3: {'size': 3, 'underline': True, 'italic': True, 'bold': False},
+            4: {'size': 3, 'underline': True, 'italic': False, 'bold': False},
+            5: {'size': 2, 'underline': True, 'italic': True, 'bold': False},
+            6: {'size': 2, 'underline': True, 'italic': False, 'bold': False}
         }
     }
 
-    current_size_mapping = size_mapping.get(bbcode_type, size_mapping['egosoft'])
+    current_header_level_mapping = header_level_mapping.get(bbcode_type, header_level_mapping['egosoft'])
 
-    # Convert Markdown headers to BBCode with size and bold
+    # Convert Markdown headers to BBCode with size, bold, underline, and italic
     def replace_headers(match):
         hashes, header_text = match.groups()
         level = len(hashes)
-        size = current_size_mapping.get(level, 100)
-        return f"[size={size}][b]{header_text.strip()}[/b][/size]"
+        header_attrs = current_header_level_mapping.get(level, {'size': 100, 'underline': True, 'italic': False, 'bold': True})
+        size = header_attrs['size']
+        underline = '[u]' if header_attrs['underline'] else ''
+        italic = '[i]' if header_attrs['italic'] else ''
+        bold = '[b]' if header_attrs['bold'] else ''
+        underline_close = '[/u]' if header_attrs['underline'] else ''
+        italic_close = '[/i]' if header_attrs['italic'] else ''
+        bold_close = '[/b]' if header_attrs['bold'] else ''
+        return f"[size={size}]{underline}{italic}{bold}{header_text.strip()}{bold_close}{italic_close}{underline_close}[/size]"
 
     bbcode_text = re.sub(r'^(#{1,6})\s+(.*)', replace_headers, bbcode_text, flags=re.MULTILINE)
 
@@ -102,10 +109,16 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
     bbcode_text = re.sub(r'\[(.*?)\]\((.*?)\)', r'[url=\2]\1[/url]', bbcode_text)
 
     # 8. Lists
-    # Convert unordered lists: - Item or * Item to [*] Item
-    bbcode_text = re.sub(r'^\s*[-*]\s+(.*)', r'[*] \1', bbcode_text, flags=re.MULTILINE)
+    # Convert unordered lists: - Item or * Item to [list][*] Item [/list]
+    def replace_unordered_lists(match):
+        list_content = match.group(0)
+        items = re.findall(r'^\s*[-*]\s+(.*)', list_content, flags=re.MULTILINE)
+        bbcode_list = "[list]\n" + "\n".join([f"[*] {item}" for item in items]) + "\n[/list]"
+        return bbcode_list
 
-    # Convert ordered lists: 1. Item to [list=1][*] Item [*] Item [/list]
+    bbcode_text = re.sub(r'(?:^\s*[-*]\s+.*\n?)+', replace_unordered_lists, bbcode_text, flags=re.MULTILINE)
+
+    # Convert ordered lists: 1. Item to [list=1][*] Item [/list]
     def replace_ordered_lists(match):
         list_content = match.group(0)
         items = re.findall(r'^\s*\d+\.\s+(.*)', list_content, flags=re.MULTILINE)
