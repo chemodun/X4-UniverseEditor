@@ -18,10 +18,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Identify changed MP4 files
         id: identify-changes
         run: |
+          git show --name-status HEAD
+          git log -1 --name-status
           git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
           echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
