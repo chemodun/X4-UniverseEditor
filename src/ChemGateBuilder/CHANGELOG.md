@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.5.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.5.0...ChemGateBuilder@v0.5.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* **GalaxyMapWindow:** avoid doubling the gate connection on selection sectors from the map ([c4214fc](https://github.com/chemodun/X4-UniverseEditor/commit/c4214fc97b82a3409e46ad82c467664fd595d6a8))
+
+
+### Code Refactoring
+
+* **ChemGateBuilder:** improve code formatting and structure across multiple files ([822d8c3](https://github.com/chemodun/X4-UniverseEditor/commit/822d8c3c25da01c9709918e6b8bc162fe5bead18))
+* **TextBoxExtensions:** update regex initialization for improved readability ([b548617](https://github.com/chemodun/X4-UniverseEditor/commit/b5486177b80a44262d7112afe6e71649ccc3b5ce))
+
+
+### Documentation
+
+* **images:** Update GIF files ([7ad0fb1](https://github.com/chemodun/X4-UniverseEditor/commit/7ad0fb1933a8ff06bc6c91d9e39f3f65d5451d98))
+* **images:** update main_window.png for improved visuals ([124c2db](https://github.com/chemodun/X4-UniverseEditor/commit/124c2dbdefa632c243f2819a4e32b47d7897fd68))
+* **README:** add Galaxy Map section with navigation details and usage instructions ([44408bb](https://github.com/chemodun/X4-UniverseEditor/commit/44408bb40a225fbcd3251cac56e0b3165f6d5d64))
+* **README:** add new lines for improved readability ([69e7a8a](https://github.com/chemodun/X4-UniverseEditor/commit/69e7a8ab0ccbd88514737c9e96e5f37bbc954966))
+* **README:** correct spelling in Map Objects section header ([6ce973a](https://github.com/chemodun/X4-UniverseEditor/commit/6ce973ac7ae575d61dce61c3aa7fd051cc5e8dcc))
+* **README:** refine Galaxy Map section for clarity and readability ([3582da2](https://github.com/chemodun/X4-UniverseEditor/commit/3582da22d0d58834dbda6a2f0a4eb87b35db2c0d))
+* **README:** Update README.html files ([134912f](https://github.com/chemodun/X4-UniverseEditor/commit/134912fa478c75b48ad9c97abbebfdbffa99977c))
+* **README:** Update README.html files ([83b6a56](https://github.com/chemodun/X4-UniverseEditor/commit/83b6a56e158481e9c6bc89699709601f19af6df9))
+* **README:** Update README.html files ([57c0892](https://github.com/chemodun/X4-UniverseEditor/commit/57c0892a13f20faf53faa59b7f33805a0df9125d))
+* **videos:** add galaxy_map.mp4 ([bb8dece](https://github.com/chemodun/X4-UniverseEditor/commit/bb8dece9b268d9b34ad5a082f2c35938f2281760))
+
 ## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.3...ChemGateBuilder@v0.5.0) (2025-02-07)
 
 
