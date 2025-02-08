@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.3...X4DataTestConsole@v0.2.4) (2025-02-08)
+
+
+### Code Refactoring
+
+* **X4DataTestConsole:** improve code formatting and structure in Main method ([4851ddc](https://github.com/chemodun/X4-UniverseEditor/commit/4851ddca142deb1eeafc9cccfb971a44295f8951))
+
 ## [0.2.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.2...X4DataTestConsole@v0.2.3) (2025-02-05)
 
 
