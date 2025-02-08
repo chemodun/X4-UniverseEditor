@@ -26,12 +26,13 @@ jobs:
         run: |
           git log -1 --name-status | grep 'src/.*/docs/videos/.*\.mp4' > changed_videos.txt
           echo "test 1"
-          echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
-          echo "test 2"
           if [[ -s changed_videos.txt ]]; then
+            echo "changed_videos=$(wc -l < changed_videos.txt)" >> $GITHUB_OUTPUT
+            echo "test 2"
             echo "new_or_updated_videos=$(grep -v '^D' changed_videos.txt | wc -l)" >> $GITHUB_OUTPUT
             echo "test 3"
           else
+            echo "changed_videos=0" >> $GITHUB_OUTPUT
             echo "new_or_updated_videos=0" >> $GITHUB_OUTPUT
             echo "test 4"
           fi
