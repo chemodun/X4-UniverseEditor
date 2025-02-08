@@ -26,10 +26,6 @@
 * **README:** Update README.html files ([83b6a56](https://github.com/chemodun/X4-UniverseEditor/commit/83b6a56e158481e9c6bc89699709601f19af6df9))
 * **README:** Update README.html files ([57c0892](https://github.com/chemodun/X4-UniverseEditor/commit/57c0892a13f20faf53faa59b7f33805a0df9125d))
 * **videos:** add galaxy_map.mp4 ([bb8dece](https://github.com/chemodun/X4-UniverseEditor/commit/bb8dece9b268d9b34ad5a082f2c35938f2281760))
-* **videos:** add galaxy_map.mp4 ([bf1cc3e](https://github.com/chemodun/X4-UniverseEditor/commit/bf1cc3ed6fc259af9f300282eb6b4fd9e633732d))
-* **videos:** add galaxy_map.mp4 ([879616f](https://github.com/chemodun/X4-UniverseEditor/commit/879616f61e6e0af0a151b2c6ae307f5ad6014634))
-* **videos:** remove galaxy_map.mp4 from the repository ([96b2220](https://github.com/chemodun/X4-UniverseEditor/commit/96b22207626a26038c0d1feb7500902c47edd5dc))
-* **videos:** remove galaxy_map.mp4 from the repository ([7c66221](https://github.com/chemodun/X4-UniverseEditor/commit/7c662214f9f085f633f25d4552d86b71a1ac9268))
 
 ## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.4.3...ChemGateBuilder@v0.5.0) (2025-02-07)
 
