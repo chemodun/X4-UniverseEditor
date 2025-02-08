@@ -401,7 +401,7 @@ namespace ChemGateBuilder
       {
         if (Directory.Exists(X4DataFolder))
         {
-          if (ValidateX4DataFolder(X4DataFolder, out string errorMessage))
+          if (ValidateX4DataFolder(X4DataFolder, out _))
           {
             return System.IO.Path.GetFullPath(X4DataFolder);
           }
@@ -621,7 +621,7 @@ namespace ChemGateBuilder
       {
         SetStatusMessage(errorMessage, StatusMessageType.Error);
         // Prompt the user to select a valid folder
-        MessageBoxResult result = MessageBox.Show(
+        _ = MessageBox.Show(
           "The X4 Data folder is not set. Please set it via Configuration -> X4 Data Folder!",
           "Invalid or missing X4 Data Folder",
           MessageBoxButton.OK,
@@ -702,12 +702,6 @@ namespace ChemGateBuilder
       {
         SetStatusMessage("Folder selection was canceled or invalid.", StatusMessageType.Warning);
       }
-    }
-
-    // Method to programmatically invoke folder selection
-    private void SelectX4DataFolder()
-    {
-      SelectX4DataFolder_Click(null, null);
     }
 
     private void LoadX4Data()
@@ -986,7 +980,7 @@ namespace ChemGateBuilder
       ButtonSectorMapExpand_Click(sender, e, false);
     }
 
-    public void ButtonSectorMapExpand_Click(object sender, RoutedEventArgs e, bool isDirect)
+    public void ButtonSectorMapExpand_Click(object _, RoutedEventArgs e, bool isDirect)
     {
       if (GatesConnectionCurrent != null)
       {
@@ -1220,8 +1214,7 @@ namespace ChemGateBuilder
 
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
     {
-      AboutWindow aboutWindow = new AboutWindow();
-      aboutWindow.Owner = this;
+      AboutWindow aboutWindow = new() { Owner = this };
       aboutWindow.ShowDialog();
     }
 

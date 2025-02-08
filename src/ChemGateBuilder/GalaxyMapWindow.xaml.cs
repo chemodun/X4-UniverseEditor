@@ -69,7 +69,7 @@ namespace ChemGateBuilder
     private readonly List<int> AxisX = [];
     private int MinCol = 0;
     private double MaxRow = 0;
-    private CollectionViewSource? SectorsList = null;
+    private readonly CollectionViewSource? SectorsList = null;
 
     // Reference to the main window's size (assumed to be passed or accessible)
     public readonly MainWindow MainWindowReference;
