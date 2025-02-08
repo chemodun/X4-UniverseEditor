@@ -5,11 +5,11 @@ while IFS=$'\t' read -r status video; do
     if [[ "$status" == "A" || "$status" == "M" ]]; then
         echo "Converting $video to $gif_file"
         echo "ffmpeg -y -i \"$video\" -vf \"fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\" -c:v gif \"$gif_file\""
-        ffmpeg -y -loglevel repeat+level+verbose -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"
+        ffmpeg -y -loglevel repeat+level+verbose -i "$video" -vf "fps=10,scale=iw:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -c:v gif "$gif_file"; sleep 1
         if [[ $? -ne 0 ]]; then
-        echo "Error converting $video to $gif_file" >&2
+            echo "Error converting $video to $gif_file" >&2
         else
-        echo "Successfully converted $video to $gif_file"
+            echo "Successfully converted $video to $gif_file"
         fi
     elif [[ "$status" == "D" ]]; then
         if [[ -f "$gif_file" ]]; then
