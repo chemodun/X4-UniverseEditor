@@ -665,7 +665,19 @@ namespace ChemGateBuilder
           return;
         }
       }
-
+      else
+      {
+        MessageBoxResult confirm = MessageBox.Show(
+          "Do you have an extracted X4 data folder?\n\nIf not, you can cancel and extract the data first.",
+          "Select X4 Data Folder",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (confirm == MessageBoxResult.No)
+        {
+          return;
+        }
+      }
       var dialog = new System.Windows.Forms.FolderBrowserDialog
       {
         Description = "Please select the folder where the X4 extracted data files are located.",
