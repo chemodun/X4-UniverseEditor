@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.5...X4DataLoader@v0.3.6) (2025-02-10)
+
+
+### Code Refactoring
+
+* **X4DataLoader:** add reading version from version.dat ([143b684](https://github.com/chemodun/X4-UniverseEditor/commit/143b684cd862ca849692cc8a4dadcb7601b15d9d))
+
 ## [0.3.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.4...X4DataLoader@v0.3.5) (2025-02-10)
 
 
