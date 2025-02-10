@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.0.1...X4Unpack@v0.1.0) (2025-02-10)
+
+
+### Features
+
+* enhance ContentExtractor with required properties and improved catalog management ([5596f8d](https://github.com/chemodun/X4-UniverseEditor/commit/5596f8d498d528e410dadff372d10f73fff0c618))
+
 ## [0.0.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack-v0.0.1...X4Unpack@v0.0.1) (2025-02-09)
 
 
