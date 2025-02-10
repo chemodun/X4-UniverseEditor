@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.1.0...X4Unpack@v0.2.0) (2025-02-10)
+
+
+### Features
+
+* enhance file extraction with overwrite and hash check options ([c8fbc6c](https://github.com/chemodun/X4-UniverseEditor/commit/c8fbc6cfb1128025558ad95d166f6faa45bef533))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.0.1...X4Unpack@v0.1.0) (2025-02-10)
 
 
