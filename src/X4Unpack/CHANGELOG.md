@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.2.0...X4Unpack@v0.3.0) (2025-02-10)
+
+
+### Features
+
+* **ContentExtractor:** add FileDate property and update file handling logic on file writing ([f4aa49d](https://github.com/chemodun/X4-UniverseEditor/commit/f4aa49d498364ff5de430634d1ffc730f6928ca9))
+
 ## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.1.0...X4Unpack@v0.2.0) (2025-02-10)
 
 
