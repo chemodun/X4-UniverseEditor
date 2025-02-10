@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.5.2...ChemGateBuilder@v0.6.0) (2025-02-10)
+
+
+### Features
+
+* add X4 Data extraction functionality with UI integration ([ab0d84a](https://github.com/chemodun/X4-UniverseEditor/commit/ab0d84a2510b7fb105ab1393ded920f8c3a449d8))
+* integrate X4Unpack project and enhance folder selection dialog as preparation to in-tool extraction of X4 data ([5201cf2](https://github.com/chemodun/X4-UniverseEditor/commit/5201cf202d12b07d916ed66da416b05635222ad3))
+* **X4DataExtraction:** add extraction progress text binding and update reporting in background worker ([9f5feff](https://github.com/chemodun/X4-UniverseEditor/commit/9f5feffc0fa3258dfbcc88167293d3f9c4d9d448))
+* **X4DataExtraction:** add file copy functionality for version data with error logging ([e26c2f4](https://github.com/chemodun/X4-UniverseEditor/commit/e26c2f4c3d1a03d8f22d228207ab97ecbfede74f))
+
+
+### Bug Fixes
+
+* **MainWindow:** apply logging changes on the fly ([2ca2dbd](https://github.com/chemodun/X4-UniverseEditor/commit/2ca2dbd9268599bf961c7b3aca2ae4a93c788f35))
+
+
+### Code Refactoring
+
+* **AboutWindow:** enhance UI layout and add version display; sort component list ([13935a9](https://github.com/chemodun/X4-UniverseEditor/commit/13935a93d055e8c427088d4adc6941671b0cb84c))
+* **App:** streamline configuration loading and integrate NLog setup ([2ca2dbd](https://github.com/chemodun/X4-UniverseEditor/commit/2ca2dbd9268599bf961c7b3aca2ae4a93c788f35))
+* replace array initializations with collection initializers for clarity ([a5242bc](https://github.com/chemodun/X4-UniverseEditor/commit/a5242bcf55d9720fd65db6f4d8f8f1a9eb621866))
+* **X4DataExtraction:** add data extraction options for verification and overwrite settings ([229c84a](https://github.com/chemodun/X4-UniverseEditor/commit/229c84aeb3442a30638c8865cdd7173b3077788f))
+
+
+### Documentation
+
+* **ChemGateBuilder:** update README to enhance formatting and improve readability ([b213ab2](https://github.com/chemodun/X4-UniverseEditor/commit/b213ab261093a8b7d636ba91c744c276702e113c))
+* **images:** Update GIF files ([c6a91a2](https://github.com/chemodun/X4-UniverseEditor/commit/c6a91a2e20477fa94e1193963308ac9b93c76198))
+* **README:** Update first start instructions and add extraction options ([f2658bc](https://github.com/chemodun/X4-UniverseEditor/commit/f2658bcd9035639de17a66b5266f5a2c37920db1))
+* **README:** update license information and add changelog with version history ([2a7dd86](https://github.com/chemodun/X4-UniverseEditor/commit/2a7dd869c65a7330a307aafb17a997873e0ec5fc))
+* **README:** Update README's files ([4bcccf4](https://github.com/chemodun/X4-UniverseEditor/commit/4bcccf42c67e3e844c2ca238d077539b63c1c5aa))
+* **README:** Update README's files ([7751dea](https://github.com/chemodun/X4-UniverseEditor/commit/7751deaff9ca42496fad34413a263dc13a2f7435))
+* **videos:** added first_start_with_extraction.mp4 ([f93dac6](https://github.com/chemodun/X4-UniverseEditor/commit/f93dac6232031226a3de2af86c6c7ff187f4ced7))
+
 ## [0.5.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.5.1...ChemGateBuilder@v0.5.2) (2025-02-08)
 
 
