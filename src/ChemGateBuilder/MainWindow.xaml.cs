@@ -625,6 +625,7 @@ namespace ChemGateBuilder
         Map = new MapConfig { MapColorsOpacity = MapColorsOpacity, SectorRadius = SectorRadius },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
       };
+      App.ConfigureNLog(config.Logging);
       if (X4DataVersionOverride)
       {
         config.Data.X4DataVersion = X4DataVersion;

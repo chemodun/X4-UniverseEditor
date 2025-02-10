@@ -14,17 +14,11 @@ namespace ChemGateBuilder
       base.OnStartup(e);
       var configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
       AppConfig config = LoadConfiguration(configFileName);
-
-      // var services = new ServiceCollection();
-      // ConfigureServices(services);
-
-      // ServiceProvider = services.BuildServiceProvider();
-
-      // var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-      // mainWindow.Show();
+      LoggingConfig loggingConfig = config.Logging;
+      ConfigureNLog(loggingConfig);
     }
 
-    private AppConfig LoadConfiguration(string configFileName)
+    private static AppConfig LoadConfiguration(string configFileName)
     {
       if (File.Exists(configFileName))
       {
