@@ -82,12 +82,12 @@ namespace X4Unpack
       }
     }
 
-    public void ExtractFile(string filePath, string outputDirectory)
+    public void ExtractFile(string filePath, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
       var entry = _catalog.FirstOrDefault(e => e.Value.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase)).Value;
       if (entry != null)
       {
-        ExtractEntry(entry, outputDirectory);
+        ExtractEntry(entry, outputDirectory, overwrite, skipHashCheck);
       }
       else
       {
@@ -100,12 +100,12 @@ namespace X4Unpack
       return _catalog.Where(e => e.Key.StartsWith(folderPath, StringComparison.OrdinalIgnoreCase)).Select(e => e.Value).ToList();
     }
 
-    public void ExtractFolder(string folderPath, string outputDirectory)
+    public void ExtractFolder(string folderPath, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
       var entries = GetFolderEntries(folderPath);
       foreach (var entry in entries)
       {
-        ExtractEntry(entry, outputDirectory);
+        ExtractEntry(entry, outputDirectory, overwrite, skipHashCheck);
       }
     }
 
@@ -117,17 +117,23 @@ namespace X4Unpack
       return _catalog.Where(e => regex.IsMatch(e.Key)).Select(e => e.Value).ToList();
     }
 
-    public void ExtractFilesByMask(string mask, string outputDirectory)
+    public void ExtractFilesByMask(string mask, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
       var entries = GetFilesByMask(mask);
       foreach (var entry in entries)
       {
-        ExtractEntry(entry, outputDirectory);
+        ExtractEntry(entry, outputDirectory, overwrite, skipHashCheck);
       }
     }
 
-    private void ExtractEntry(CatEntry entry, string outputDirectory)
+    public void ExtractEntry(CatEntry entry, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
+      string outputFilePath = Path.Combine(outputDirectory, entry.FilePath);
+      if (File.Exists(outputFilePath) && !overwrite)
+      {
+        Log.Warn($"File {entry.FilePath} already exists in output directory. Skipping extraction.");
+        return;
+      }
       using (var datFileStream = new FileStream(entry.DatFilePath, FileMode.Open, FileAccess.Read))
       {
         datFileStream.Seek(entry.FileOffset, SeekOrigin.Begin);
@@ -135,19 +141,21 @@ namespace X4Unpack
         byte[] buffer = new byte[entry.FileSize];
         datFileStream.Read(buffer, 0, buffer.Length);
 
-        string outputFilePath = Path.Combine(outputDirectory, entry.FilePath);
+        if (!skipHashCheck)
+        {
+          string extractedFileHash = CalculateMD5Hash(buffer);
+          if (extractedFileHash != entry.FileHash)
+          {
+            Log.Warn($"Warning: Hash mismatch for file {entry.FilePath}. Skipping extraction.");
+            return;
+          }
+        }
         var directoryPath = Path.GetDirectoryName(outputFilePath);
         if (directoryPath != null)
         {
           Directory.CreateDirectory(directoryPath);
         }
         File.WriteAllBytes(outputFilePath, buffer);
-
-        string extractedFileHash = CalculateMD5Hash(buffer);
-        if (extractedFileHash != entry.FileHash)
-        {
-          Log.Warn($"Warning: Hash mismatch for file {entry.FilePath}");
-        }
       }
     }
 
