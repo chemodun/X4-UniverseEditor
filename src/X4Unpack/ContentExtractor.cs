@@ -10,69 +10,81 @@ namespace X4Unpack
 {
   public class CatEntry
   {
-    public string FilePath { get; set; }
+    public required string FilePath { get; set; }
     public long FileSize { get; set; }
     public long FileOffset { get; set; }
-    public string FileHash { get; set; }
-    public string DatFilePath { get; set; }
+    public required string FileHash { get; set; }
+    public required string DatFilePath { get; set; }
   }
 
   public class ContentExtractor
   {
     private readonly string _folderPath;
-    private readonly List<CatEntry> _catalog;
+    private readonly Dictionary<string, CatEntry> _catalog;
 
-    public ContentExtractor(string folderPath)
+    public ContentExtractor(string folderPath, string pattern = "*.cat", bool excludeSignatures = true)
     {
       _folderPath = folderPath;
-      _catalog = new List<CatEntry>();
-      InitializeCatalog();
+      _catalog = new Dictionary<string, CatEntry>();
+      InitializeCatalog(pattern, excludeSignatures);
     }
 
-    private void InitializeCatalog()
+    private void InitializeCatalog(string pattern = "*.cat", bool excludeSignatures = true)
     {
-      var catFiles = Directory.GetFiles(_folderPath, "*.cat");
-
+      List<string> catFiles = Directory.GetFiles(_folderPath, pattern).ToList();
+      if (excludeSignatures)
+      {
+        catFiles = catFiles.Where(f => !f.EndsWith("_sig.cat")).ToList();
+      }
+      catFiles.Sort();
       foreach (var catFilePath in catFiles)
       {
         string datFilePath = Path.ChangeExtension(catFilePath, ".dat");
         if (File.Exists(datFilePath))
         {
-          var catEntries = ParseCatFile(catFilePath, datFilePath);
-          _catalog.AddRange(catEntries);
+          ParseCatFile(catFilePath, datFilePath);
         }
       }
     }
 
-    private List<CatEntry> ParseCatFile(string catFilePath, string datFilePath)
+    private void ParseCatFile(string catFilePath, string datFilePath)
     {
-      var catEntries = new List<CatEntry>();
       long offset = 0;
       foreach (var line in File.ReadLines(catFilePath))
       {
         var parts = line.Split(' ');
-        if (parts.Length == 4)
+        if (parts.Length >= 4)
         {
-          catEntries.Add(
-            new CatEntry
+          if (parts.Length > 4)
+          {
+            Log.Warn($"Warning: Unexpected number of parts in line: {line}");
+            string[] newParts =
             {
-              FilePath = parts[0],
-              FileSize = long.Parse(parts[1]),
-              FileOffset = offset,
-              FileHash = parts[3],
-              DatFilePath = datFilePath,
-            }
-          );
-          offset += long.Parse(parts[1]);
+              string.Join(" ", parts[0..(parts.Length - 3)]),
+              parts[parts.Length - 3],
+              parts[parts.Length - 2],
+              parts[parts.Length - 1],
+            };
+            parts = newParts;
+          }
+          long fileSize = long.Parse(parts[1]);
+          string filePath = parts[0];
+          _catalog[filePath] = new CatEntry
+          {
+            FilePath = filePath,
+            FileSize = fileSize,
+            FileOffset = offset,
+            FileHash = parts[3],
+            DatFilePath = datFilePath,
+          };
+          offset += fileSize;
         }
       }
-
-      return catEntries;
     }
 
     public void ExtractFile(string filePath, string outputDirectory)
     {
-      var entry = _catalog.FirstOrDefault(e => e.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase));
+      var entry = _catalog.FirstOrDefault(e => e.Value.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase)).Value;
       if (entry != null)
       {
         ExtractEntry(entry, outputDirectory);
@@ -83,21 +95,31 @@ namespace X4Unpack
       }
     }
 
+    public List<CatEntry> GetFolderEntries(string folderPath)
+    {
+      return _catalog.Where(e => e.Key.StartsWith(folderPath, StringComparison.OrdinalIgnoreCase)).Select(e => e.Value).ToList();
+    }
+
     public void ExtractFolder(string folderPath, string outputDirectory)
     {
-      var entries = _catalog.Where(e => e.FilePath.StartsWith(folderPath, StringComparison.OrdinalIgnoreCase)).ToList();
+      var entries = GetFolderEntries(folderPath);
       foreach (var entry in entries)
       {
         ExtractEntry(entry, outputDirectory);
       }
     }
 
-    public void ExtractFilesByMask(string mask, string outputDirectory)
+    public List<CatEntry> GetFilesByMask(string mask)
     {
       var regexPattern = "^" + Regex.Escape(mask).Replace("\\*", ".*").Replace("\\?", ".") + "$";
       var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
 
-      var entries = _catalog.Where(e => regex.IsMatch(e.FilePath)).ToList();
+      return _catalog.Where(e => regex.IsMatch(e.Key)).Select(e => e.Value).ToList();
+    }
+
+    public void ExtractFilesByMask(string mask, string outputDirectory)
+    {
+      var entries = GetFilesByMask(mask);
       foreach (var entry in entries)
       {
         ExtractEntry(entry, outputDirectory);
@@ -114,7 +136,11 @@ namespace X4Unpack
         datFileStream.Read(buffer, 0, buffer.Length);
 
         string outputFilePath = Path.Combine(outputDirectory, entry.FilePath);
-        Directory.CreateDirectory(Path.GetDirectoryName(outputFilePath));
+        var directoryPath = Path.GetDirectoryName(outputFilePath);
+        if (directoryPath != null)
+        {
+          Directory.CreateDirectory(directoryPath);
+        }
         File.WriteAllBytes(outputFilePath, buffer);
 
         string extractedFileHash = CalculateMD5Hash(buffer);
