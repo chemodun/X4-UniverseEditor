@@ -90,7 +90,7 @@ namespace ChemGateBuilder
     }
 
     public bool ExtractOnlyNeededData { get; set; } = true;
-    public ObservableCollection<DlcOption> DlcOptions { get; set; } = new ObservableCollection<DlcOption>();
+    public ObservableCollection<DlcOption> DlcOptions { get; set; } = [];
 
     public bool IsExtractionPossible { get; set; } = false;
 

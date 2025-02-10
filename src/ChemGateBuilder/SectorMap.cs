@@ -27,7 +27,7 @@ namespace ChemGateBuilder
     private string? _selectedItemId = "";
     private string _ownerColor = OwnerColorInitial;
     public static readonly string OwnerColorInitial = "#F0F0F0";
-    private List<string> StationsToDisplay = new() { "equipmentdock", "tradestation", "tradingstation", "shipyard", "wharf" };
+    private readonly List<string> StationsToDisplay = ["equipmentdock", "tradestation", "tradingstation", "shipyard", "wharf"];
     private FactionColors FactionColors = new();
     public bool MapMode = false;
 
@@ -756,7 +756,7 @@ namespace ChemGateBuilder
         BitmapSource image = new BitmapImage(new Uri(imagePath));
         if (Type == "station" && ObjectData?.Color != null)
         {
-          WriteableBitmap writeableBitmap = new WriteableBitmap(image);
+          WriteableBitmap writeableBitmap = new(image);
           if (ObjectData.Color.HasValue)
           {
             ReplaceColor(writeableBitmap, Colors.Black, ObjectData.Color.Value);

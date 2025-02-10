@@ -15,8 +15,8 @@ namespace ChemGateBuilder
 {
   public class FactionColors()
   {
-    private Dictionary<string, Color> MappedColors = new Dictionary<string, Color>();
-    private Dictionary<string, SolidColorBrush> MappedBrushes = new Dictionary<string, SolidColorBrush>();
+    private readonly Dictionary<string, Color> MappedColors = [];
+    private readonly Dictionary<string, SolidColorBrush> MappedBrushes = [];
 
     public void Load(List<Faction> allFactions, List<X4MappedColor> mappedColors)
     {
@@ -39,27 +39,27 @@ namespace ChemGateBuilder
 
     public SolidColorBrush? GetBrush(string id)
     {
-      if (MappedBrushes.ContainsKey(id))
+      if (MappedBrushes.TryGetValue(id, out SolidColorBrush? value))
       {
-        return MappedBrushes[id];
+        return value;
       }
       return null;
     }
 
     public Color? GetColor(string id)
     {
-      if (MappedColors.ContainsKey(id))
+      if (MappedColors.TryGetValue(id, out Color value))
       {
-        return MappedColors[id];
+        return value;
       }
       return null;
     }
 
     public string GetColorString(string id)
     {
-      if (MappedColors.ContainsKey(id))
+      if (MappedColors.TryGetValue(id, out Color value))
       {
-        Color color = MappedColors[id];
+        Color color = value;
         return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
       }
       return string.Empty;
