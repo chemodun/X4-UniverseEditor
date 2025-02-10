@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Utilities.Logging;
 
@@ -6,6 +7,8 @@ namespace X4DataLoader.Helpers
 {
   public static class XmlHelper
   {
+    private static Regex DiffSelAttributeAndValueRegex = new(@"\[@(\w+)='([^']+)'\]");
+
     public static string? GetAttribute(XElement element, string attributeName)
     {
       string? attribute = element.Attribute(attributeName)?.Value;
@@ -33,6 +36,16 @@ namespace X4DataLoader.Helpers
       }
 
       return tags;
+    }
+
+    public static string[] GetDiffSelAttributeAndValue(string value)
+    {
+      var match = DiffSelAttributeAndValueRegex.Match(value);
+      if (match.Success)
+      {
+        return [match.Groups[1].Value, match.Groups[2].Value];
+      }
+      return ["", ""];
     }
   }
 }
