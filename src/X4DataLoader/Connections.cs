@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -139,12 +140,55 @@ namespace X4DataLoader
       }
     }
 
-    public static void LoadConnections(XElement element, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
+    public static void LoadFromXML(XDocument doc, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
     {
-      string name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
-      string connectionClass =
-        XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
-      string reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
+      IEnumerable<XElement> elements = doc.XPathSelectElements("/macros/macro");
+      bool modeDiff = false;
+      if (!elements.Any())
+      {
+        elements = doc.XPathSelectElements("/diff/add");
+        modeDiff = true;
+      }
+      foreach (XElement element in elements)
+      {
+        LoadConnections(element, allClusters, allSectors, source, fileName, modeDiff);
+      }
+    }
+
+    private static void LoadConnections(
+      XElement element,
+      List<Cluster> allClusters,
+      List<Sector> allSectors,
+      string source,
+      string fileName,
+      bool modeDiff
+    )
+    {
+      bool modeFull = true;
+      string name = string.Empty;
+      string connectionClass = string.Empty;
+      string reference = string.Empty;
+      if (modeDiff)
+      {
+        string selStr = XmlHelper.GetAttribute(element, "sel") ?? "";
+        modeFull = selStr == "/macros" || selStr == "//macros" || selStr.StartsWith("/macros/macro") && !selStr.EndsWith("/connections");
+        if (!modeFull)
+        {
+          string[] parts = XmlHelper.GetDiffSelAttributeAndValue(selStr.Replace("/macros/macro", "").Replace("/connection", ""));
+          if (parts.Length == 2 && parts[0] == "name")
+            name = parts[1];
+        }
+      }
+      if (modeFull)
+      {
+        name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
+        connectionClass = XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
+        reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
+      }
+      else if (string.IsNullOrEmpty(name))
+      {
+        throw new ArgumentException("Connections list must have a name");
+      }
       int sectorId = 0;
       int clusterId = 0;
       List<Connection>? connections = [];
@@ -162,7 +206,7 @@ namespace X4DataLoader
         {
           throw new ArgumentException("Invalid macro format");
         }
-        if (ConnectionOwnerClasses.Contains(connectionClass) == false)
+        if (modeFull && ConnectionOwnerClasses.Contains(connectionClass) == false)
         {
           throw new ArgumentException("Connection must have a valid class: {string.Join(", ", ConnectionOwnerClasses)}");
         }
@@ -178,7 +222,7 @@ namespace X4DataLoader
         {
           throw new ArgumentException("Sector connection must have both cluster and sector id");
         }
-        XElement? connectionsElement = element.Element("connections");
+        XElement connectionsElement = modeFull ? element.Element("connections") ?? new XElement("connections") : element;
         if (connectionsElement != null)
         {
           foreach (XElement connectionElement in connectionsElement.Elements("connection"))
@@ -233,7 +277,10 @@ namespace X4DataLoader
           Sector? sector = allSectors.Find(s => s.Id == sectorId && s.ClusterId == clusterId);
           if (sector != null)
           {
-            sector.Reference = reference;
+            if (modeFull)
+            {
+              sector.Reference = reference;
+            }
             foreach (Connection connection in connections)
             {
               sector.Connections[connection.Name] = connection;
@@ -245,7 +292,10 @@ namespace X4DataLoader
           Cluster? cluster = allClusters.Find(c => c.Id == clusterId);
           if (cluster != null)
           {
-            cluster.Reference = reference;
+            if (modeFull)
+            {
+              cluster.Reference = reference;
+            }
             foreach (Connection connection in connections)
             {
               cluster.Connections[connection.Name] = connection;
