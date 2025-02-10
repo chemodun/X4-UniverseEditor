@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.4...X4DataLoader@v0.3.5) (2025-02-10)
+
+
+### Code Refactoring
+
+* simplify XElement instantiation and initialize connections list ([b42b2bc](https://github.com/chemodun/X4-UniverseEditor/commit/b42b2bc8f574a1104f06b1b406122b494d2db689))
+
 ## [0.3.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.3...X4DataLoader@v0.3.4) (2025-02-08)
 
 
