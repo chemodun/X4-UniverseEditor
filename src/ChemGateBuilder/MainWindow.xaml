@@ -146,6 +146,17 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="X4 Data">
+                <fluent:RibbonGroupBox Header="X4 Data">
+                    <fluent:Button Header="Extract"
+                                    Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonExtractX4Data_Click">
+                        <fluent:Button.Icon>
+                            <StaticResource ResourceKey="XIcon"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Configuration" x:Name="ConfigurationTab">
                 <fluent:RibbonGroupBox Header="X4 Data related">
                     <Grid Margin="0">

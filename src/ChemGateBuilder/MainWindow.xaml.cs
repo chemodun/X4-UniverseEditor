@@ -35,6 +35,7 @@ namespace ChemGateBuilder
 
   public class DataConfig
   {
+    public string X4GameFolder { get; set; } = "";
     public string X4DataExtractedPath { get; set; } = ".";
     public bool X4DataVersionOverride { get; set; } = false;
     public int X4DataVersion { get; set; } = 710;
@@ -87,6 +88,21 @@ namespace ChemGateBuilder
   public partial class MainWindow : Window, INotifyPropertyChanged
   {
     private readonly string _configFileName;
+
+    private string _x4GameFolder = "";
+    public string X4GameFolder
+    {
+      get => _x4GameFolder;
+      set
+      {
+        if (_x4GameFolder != value)
+        {
+          _x4GameFolder = value;
+          OnPropertyChanged(nameof(X4GameFolder));
+          SaveConfiguration();
+        }
+      }
+    }
 
     private string _x4DataFolder = ".";
     public string X4DataFolder
@@ -575,6 +591,10 @@ namespace ChemGateBuilder
           {
             X4DataVersion = config.Data.X4DataVersion;
           }
+          if (!String.IsNullOrEmpty(config.Data.X4GameFolder))
+          {
+            X4GameFolder = config.Data.X4GameFolder;
+          }
           GatesActiveByDefault = config.Edit.GatesActiveByDefault;
           GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
           MapColorsOpacity = config.Map.MapColorsOpacity;
@@ -609,7 +629,10 @@ namespace ChemGateBuilder
       {
         config.Data.X4DataVersion = X4DataVersion;
       }
-
+      if (!String.IsNullOrEmpty(X4GameFolder))
+      {
+        config.Data.X4GameFolder = X4GameFolder;
+      }
       var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
       File.WriteAllText(_configFileName, jsonString);
     }
@@ -629,7 +652,7 @@ namespace ChemGateBuilder
         );
         SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
         // Show the ribbon tab options
-        SelectedTabIndex = 1;
+        SelectedTabIndex = 2;
       }
     }
 
@@ -675,6 +698,7 @@ namespace ChemGateBuilder
         );
         if (confirm == MessageBoxResult.No)
         {
+          SelectedTabIndex = 1;
           return;
         }
       }
@@ -1222,6 +1246,13 @@ namespace ChemGateBuilder
       {
         IsModCanBeSaved = !ChemGateKeeperMod.SaveData();
       }
+    }
+
+    public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e)
+    {
+      X4DataExtractionWindow extractionWindow = new() { Owner = this };
+      extractionWindow.Connect();
+      extractionWindow.ShowDialog();
     }
 
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
