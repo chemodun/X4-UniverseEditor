@@ -62,7 +62,7 @@ namespace ChemGateBuilder
 
         componentList.Add(item: $"{name.Name} - Version {name.Version}");
       }
-
+      componentList.Sort();
       return componentList;
     }
 
