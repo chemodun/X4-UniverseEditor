@@ -555,6 +555,18 @@ namespace X4DataLoader
         {
           vanillaFiles[item.Key] = (filePath, item.Value.fileName);
         }
+        else if (item.Key == "translation")
+        {
+          filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName.Replace("-l044", ""));
+          if (File.Exists(filePath))
+          {
+            vanillaFiles[item.Key] = (filePath, item.Value.fileName);
+          }
+          else
+          {
+            Log.Warn($"File not found: {filePath}");
+          }
+        }
         else
         {
           Log.Warn($"File not found: {filePath}");
