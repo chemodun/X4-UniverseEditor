@@ -508,6 +508,21 @@ namespace ChemGateBuilder
           Extractor.ExtractEntry(catEntry, ExtractToFolder, OverwriteExistingFiles, !VerifyExtractedData);
         }
       }
+      if (File.Exists(Path.Combine(GameFolder, VersionDat)))
+      {
+        try
+        {
+          File.Copy(
+            Path.Combine(GameFolder, VersionDat),
+            Path.Combine(ExtractedDataLocationFolder, DataFolder, VersionDat),
+            OverwriteExistingFiles
+          );
+        }
+        catch (Exception ex)
+        {
+          Log.Error($"Error copying {VersionDat}", ex);
+        }
+      }
     }
 
     private (ContentExtractor Extractor, List<CatEntry> Entries, string ExtractToFolder) GetCatEntries(string category = "Vanilla")
