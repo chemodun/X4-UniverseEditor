@@ -13,6 +13,7 @@ namespace X4Unpack
     public required string FilePath { get; set; }
     public long FileSize { get; set; }
     public long FileOffset { get; set; }
+    public DateTime FileDate { get; set; }
     public required string FileHash { get; set; }
     public required string DatFilePath { get; set; }
   }
@@ -67,13 +68,15 @@ namespace X4Unpack
             };
             parts = newParts;
           }
-          long fileSize = long.Parse(parts[1]);
+          long fileSize = long.TryParse(parts[1], out long sizeValue) ? sizeValue : 0;
+          long unixTime = long.TryParse(parts[2], out long timeValue) ? timeValue : 0;
           string filePath = parts[0];
           _catalog[filePath] = new CatEntry
           {
             FilePath = filePath,
             FileSize = fileSize,
             FileOffset = offset,
+            FileDate = DateTimeOffset.FromUnixTimeSeconds(unixTime).DateTime,
             FileHash = parts[3],
             DatFilePath = datFilePath,
           };
@@ -156,6 +159,7 @@ namespace X4Unpack
           Directory.CreateDirectory(directoryPath);
         }
         File.WriteAllBytes(outputFilePath, buffer);
+        File.SetLastWriteTime(outputFilePath, entry.FileDate);
       }
     }
 
