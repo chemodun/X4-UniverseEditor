@@ -196,3 +196,31 @@ There is a topic on the [EGOSOFT forum](https://forum.egosoft.com/viewtopic.php?
 ### GitHub Repository Issues Reporting
 
 Please report any issues or bugs encountered while using the tool. You can submit your reports through the [GitHub repository Issues](https://github.com/chemodun/X4-UniverseEditor/issues). Your contributions help improve the tool for everyone!
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
+
+## Changelog
+
+### [0.6.0] - 2025-02-10
+
+- Added
+  - Extraction game files
+
+### [0.5.2] - 2025-02-08
+
+- Added
+  - Galaxy Map
+  - A lot all other small stuff...
+
+- Refactor
+  - Rewritten from Python to C# to avoid false positive virus detection
+
+- Removed
+  - Console version is gone
+
+### [0.4.3] - 2025-01-14
+
+- Added
+  - Initial public version
