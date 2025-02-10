@@ -14,10 +14,6 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 Anyone can use the gate connections built by this tool in their mods or simply in the game.
 If you use the connections in mods, please mention the author and the tool in the mod description.
 
-## Requirements
-
-You need to have the extracted game files on your computer using the [X Catalog Tool](https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/).
-
 ## Download
 
 You can download the tool from the following locations:
@@ -35,11 +31,40 @@ You can start building your connections right away.
 
 ### First Start
 
-On the first start, the tool will inform you that you need to select the folder with the [extracted](#requirements) game files.
+On the first start, the tool will inform you that you need to select the folder with the extracted game files.
+
+And when you press a button to select the folder, the tool will propose two ways to do it:
+
+- Select the extracted game folder. If you already have it - simply press the "Yes" button.
+- Extract the game files. If you don't have the game files extracted, you can press the "No" button to initiate the extraction.
+
+### With Extracted Game Files
 
 After selecting the folder, the tool will start loading the game data.
 
 ![First start](docs/images/first_start.gif)
+
+There is a link on wiki related to the tool for the extraction - [X Catalog Tool](https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/).
+
+### Without Extracted Game Files
+
+You will be forwarded to the menu containing the button to start the extraction. Please press it to start the extraction.
+Now everything is simple:
+
+- Select the folder with the game files.
+- Select the folder where will be placed new folder with the extracted game files. It will be created automatically with a name containing the current game version. Like "X4v710-extracted".
+- Press the "Extract Data" button.
+
+![First start with Extraction](docs/images/first_start_with_extraction.gif)
+
+There are several options to extract the game files:
+
+- Extract only needed data - this will extract only the data needed for the tool to work. It will be faster than the full extraction.
+- Verify extracted data - this will check the consistency of the extracted data. Recommended to use it every time you extract the data.
+- Overwrite existing files - this will overwrite the existing files in the output folder. Again, recommended to use it every time you extract the data.
+- Set as source and load after extraction - this will set the extracted folder as the source for the game data and load it after the extraction.
+
+Additionally, you can see unselect some DLC's, if you don't want to extract them.
 
 ### Main Window
 
