@@ -1252,7 +1252,15 @@ namespace ChemGateBuilder
     {
       X4DataExtractionWindow extractionWindow = new() { Owner = this };
       extractionWindow.Connect();
-      extractionWindow.ShowDialog();
+      if (extractionWindow.ShowDialog() == true)
+      {
+        string extractedDataFolder = extractionWindow.ExtractedDataFolder;
+        if (!string.IsNullOrEmpty(extractedDataFolder))
+        {
+          X4DataFolder = extractedDataFolder;
+          LoadX4Data();
+        }
+      }
     }
 
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)

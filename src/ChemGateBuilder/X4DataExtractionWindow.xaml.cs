@@ -70,6 +70,10 @@ namespace ChemGateBuilder
         }
       }
     }
+    public string GameInfo
+    {
+      get => $"X4: Foundations {GameVersion}";
+    }
 
     private string _dataFolder = string.Empty;
     public string DataFolder
@@ -81,15 +85,75 @@ namespace ChemGateBuilder
         {
           _dataFolder = value;
           OnPropertyChanged(nameof(DataFolder));
+          OnPropertyChanged(nameof(DataFolderOptionsHeader));
         }
       }
     }
-    public string GameInfo
+    public string DataFolderOptionsHeader
     {
-      get => $"X4: Foundations {GameVersion}";
+      get => $"Data Extraction Options to \"{DataFolder}\"";
     }
 
-    public bool ExtractOnlyNeededData { get; set; } = true;
+    private bool _extractOnlyNeededData = true;
+    public bool ExtractOnlyNeededData
+    {
+      get => _extractOnlyNeededData;
+      set
+      {
+        if (_extractOnlyNeededData != value)
+        {
+          _extractOnlyNeededData = value;
+          OnPropertyChanged(nameof(ExtractOnlyNeededData));
+          if (!_extractOnlyNeededData)
+          {
+            LoadExtractedDataAfterExtraction = false;
+          }
+        }
+      }
+    }
+
+    private bool _verifyExtractedData = true;
+    public bool VerifyExtractedData
+    {
+      get => _verifyExtractedData;
+      set
+      {
+        if (_verifyExtractedData != value)
+        {
+          _verifyExtractedData = value;
+          OnPropertyChanged(nameof(VerifyExtractedData));
+        }
+      }
+    }
+
+    private bool _overwriteExistingFiles = true;
+    public bool OverwriteExistingFiles
+    {
+      get => _overwriteExistingFiles;
+      set
+      {
+        if (_overwriteExistingFiles != value)
+        {
+          _overwriteExistingFiles = value;
+          OnPropertyChanged(nameof(OverwriteExistingFiles));
+        }
+      }
+    }
+
+    private bool _loadExtractedDataAfterExtraction = true;
+    public bool LoadExtractedDataAfterExtraction
+    {
+      get => _loadExtractedDataAfterExtraction;
+      set
+      {
+        if (_loadExtractedDataAfterExtraction != value)
+        {
+          _loadExtractedDataAfterExtraction = value;
+          OnPropertyChanged(nameof(LoadExtractedDataAfterExtraction));
+        }
+      }
+    }
+
     public ObservableCollection<DlcOption> DlcOptions { get; set; } = [];
 
     public bool IsExtractionPossible { get; set; } = false;
@@ -109,6 +173,11 @@ namespace ChemGateBuilder
     }
 
     private readonly BackgroundWorker _backgroundWorker;
+
+    public string ExtractedDataFolder
+    {
+      get => LoadExtractedDataAfterExtraction ? Path.Combine(ExtractedDataLocationFolder, DataFolder) : string.Empty;
+    }
 
     public X4DataExtractionWindow()
     {
@@ -134,6 +203,10 @@ namespace ChemGateBuilder
         if (!string.IsNullOrEmpty(MainWindowReference.X4DataFolder) && Directory.Exists(MainWindowReference.X4DataFolder))
         {
           ExtractedDataLocationFolder = Path.GetDirectoryName(MainWindowReference.X4DataFolder)?.ToString() ?? string.Empty;
+        }
+        else
+        {
+          LoadExtractedDataAfterExtraction = true;
         }
         ExtractionIsPossibleCheck();
       }
@@ -288,6 +361,7 @@ namespace ChemGateBuilder
       }
       else
       {
+        DialogResult = false;
         Close();
       }
     }
@@ -320,18 +394,19 @@ namespace ChemGateBuilder
       if (e.Cancelled)
       {
         Log.Debug("Extraction cancelled.");
+        DialogResult = false;
+        LoadExtractedDataAfterExtraction = false;
       }
       else if (e.Error != null)
       {
         Log.Error("Error during extraction.", e.Error);
+        DialogResult = false;
+        LoadExtractedDataAfterExtraction = false;
       }
       else
       {
+        DialogResult = true;
         Log.Debug("Extraction completed successfully.");
-        if (MainWindowReference != null && string.IsNullOrEmpty(MainWindowReference.X4DataFolder) && !string.IsNullOrEmpty(DataFolder))
-        {
-          MainWindowReference.X4DataFolder = Path.Combine(ExtractedDataLocationFolder, DataFolder);
-        }
       }
       Close();
     }
@@ -412,7 +487,7 @@ namespace ChemGateBuilder
           {
             _backgroundWorker.ReportProgress(progressInt);
           }
-          Extractor.ExtractFile(catEntry.FilePath, ExtractToFolder);
+          Extractor.ExtractEntry(catEntry, ExtractToFolder, OverwriteExistingFiles, !VerifyExtractedData);
         }
       }
     }

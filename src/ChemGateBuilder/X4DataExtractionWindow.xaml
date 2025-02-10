@@ -36,13 +36,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="Data Extraction Options:" VerticalAlignment="Stretch"  IsEnabled="{Binding IsExtractionPossible}">
+                <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="{Binding DataFolderOptionsHeader, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch"  IsEnabled="{Binding IsExtractionPossible}">
                     <StackPanel Margin="5" Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="5" VerticalAlignment="Center">Extract Data folder Name:</TextBlock>
-                            <TextBlock Margin="5" Width="100" Text="{Binding DataFolder, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <CheckBox Margin="5" Content="Extract only needed data" IsChecked="{Binding ExtractOnlyNeededData}"/>
+                        <CheckBox Content="Extract only needed data" IsChecked="{Binding ExtractOnlyNeededData}"/>
+                        <CheckBox Content="Verify extracted data" IsChecked="{Binding VerifyExtractedData}"/> <!-- New option for data verification -->
+                        <CheckBox Content="Overwrite existing files" IsChecked="{Binding OverwriteExistingFiles}"/>
+                        <CheckBox Content="Set as source and load after extraction" IsChecked="{Binding LoadExtractedDataAfterExtraction}"/>
                     </StackPanel>
                 </GroupBox>
 
