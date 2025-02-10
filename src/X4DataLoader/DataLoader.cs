@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -12,7 +13,66 @@ namespace X4DataLoader
 {
   public static class DataLoader
   {
-    public static Galaxy LoadAllData(Galaxy galaxy, string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
+    public static void LoadAllData(
+      Galaxy galaxy,
+      string coreFolderPath,
+      Dictionary<string, (string path, string fileName)> relativePaths,
+      bool loadMods = false
+    )
+    {
+      LoadData(galaxy, coreFolderPath, relativePaths);
+      if (loadMods)
+      {
+        if (Directory.Exists(Path.Combine(coreFolderPath, "extensions")))
+        {
+          foreach (var extensionFolder in Directory.GetDirectories(Path.Combine(coreFolderPath, "extensions")))
+          {
+            if (!Path.GetFileName(extensionFolder).StartsWith("ego_dlc_") && File.Exists(Path.Combine(extensionFolder, "content.xml")))
+            {
+              XDocument contentDoc = XDocument.Load(Path.Combine(extensionFolder, "content.xml"));
+              bool acceptableMod = true;
+              foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
+              {
+                string? versionStr = dependencyElement.Attribute("version")?.Value;
+                string? idStr = dependencyElement.Attribute("id")?.Value;
+                if (!string.IsNullOrEmpty(versionStr) && int.TryParse(versionStr, out int gameVersion))
+                {
+                  if (gameVersion > galaxy.Version)
+                  {
+                    acceptableMod = false;
+                    break;
+                  }
+                }
+                else if (!string.IsNullOrEmpty(idStr) && idStr.StartsWith("ego_dlc_"))
+                {
+                  string optionalStr = dependencyElement.Attribute("optional")?.Value ?? "";
+                  if (optionalStr == "true" && !galaxy.DLCs.Contains(idStr))
+                  {
+                    acceptableMod = false;
+                    break;
+                  }
+                }
+              }
+              if (acceptableMod)
+              {
+                LoadData(galaxy, extensionFolder, relativePaths, false);
+              }
+            }
+          }
+        }
+      }
+      foreach (Sector sector in galaxy.Sectors)
+      {
+        sector.CalculateOwnership(galaxy.Factions);
+      }
+    }
+
+    private static void LoadData(
+      Galaxy galaxy,
+      string coreFolderPath,
+      Dictionary<string, (string path, string fileName)> relativePaths,
+      bool isMainData = true
+    )
     {
       Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> fileSets = GatherFiles(coreFolderPath, relativePaths);
 
@@ -23,7 +83,10 @@ namespace X4DataLoader
       foreach (KeyValuePair<string, Dictionary<string, (string fullPath, string fileName)>> fileSet in fileSets)
       {
         string? source = fileSet.Key;
-
+        if (isMainData && source != "vanilla")
+        {
+          galaxy.DLCs.Add(source);
+        }
         // Process mapDefaults
         if (fileSet.Value.TryGetValue("mapDefaults", out (string fullPath, string fileName) mapDefaultsFile))
         {
@@ -94,17 +157,7 @@ namespace X4DataLoader
             Log.Error($"Error loading clusters {clustersFile.fullPath}: {e.Message}");
             continue;
           }
-          foreach (XElement macroElement in clustersDoc.XPathSelectElements("/macros/macro"))
-          {
-            try
-            {
-              Connection.LoadConnections(macroElement, galaxy.Clusters, galaxy.Sectors, source, clustersFile.fileName);
-            }
-            catch (ArgumentException e)
-            {
-              Log.Error($"Error loading Cluster Connections: {e.Message}");
-            }
-          }
+          Connection.LoadFromXML(clustersDoc, galaxy.Clusters, galaxy.Sectors, source, clustersFile.fileName);
           Log.Debug($"Clusters loaded from: {clustersFile.fileName} for {source}");
         }
 
@@ -121,17 +174,7 @@ namespace X4DataLoader
             Log.Error($"Error loading sectors {sectorsFile.fullPath}: {e.Message}");
             continue;
           }
-          foreach (XElement macroElement in sectorsDoc.XPathSelectElements("/macros/macro"))
-          {
-            try
-            {
-              Connection.LoadConnections(macroElement, galaxy.Clusters, galaxy.Sectors, source, sectorsFile.fileName);
-            }
-            catch (ArgumentException e)
-            {
-              Log.Error($"Error loading Sector Connections: {e.Message}");
-            }
-          }
+          Connection.LoadFromXML(sectorsDoc, galaxy.Clusters, galaxy.Sectors, source, sectorsFile.fileName);
           Log.Debug($"Sectors loaded from: {sectorsFile.fileName} for {source}");
         }
 
@@ -148,23 +191,7 @@ namespace X4DataLoader
             Log.Error($"Error loading zones {zonesFile.fullPath}: {e.Message}");
             continue;
           }
-          foreach (XElement macroElement in zonesDoc.XPathSelectElements("/macros/macro"))
-          {
-            Zone? zone = new();
-            zone.Load(macroElement, source, zonesFile.fileName);
-            Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
-              s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
-            );
-            if (sector != null)
-            {
-              sector.AddZone(zone);
-              Log.Debug($"Zone loaded for Sector: {sector.Name}");
-            }
-            else
-            {
-              Log.Warn($"No matching sector found for Zone: {zone.Name}");
-            }
-          }
+          Zone.LoadFromXML(zonesDoc, galaxy.Sectors, source, zonesFile.fileName);
           Log.Debug($"Zones loaded from: {zonesFile.fileName} for {source}");
         }
 
@@ -437,6 +464,10 @@ namespace X4DataLoader
           Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
         }
 
+        if (!isMainData)
+        {
+          continue;
+        }
         // Process galaxy
         if (fileSet.Value.TryGetValue("galaxy", out (string fullPath, string fileName) galaxyFile))
         {
@@ -450,92 +481,69 @@ namespace X4DataLoader
             Log.Error($"Error loading galaxy {galaxyFile.fullPath}: {e.Message}");
             continue;
           }
-          XElement? galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
-          if (galaxyElement != null)
+          galaxy.LoadXML(galaxyDoc, galaxy.Clusters, source, galaxyFile.fileName);
+        }
+      }
+      if (!isMainData)
+      {
+        Dictionary<string, (string fullPath, string fileName)> fileSet = fileSets["vanilla"];
+        if (fileSet.TryGetValue("galaxy", out (string fullPath, string fileName) galaxyFile))
+        {
+          XDocument galaxyDoc;
+          try
           {
-            galaxy.Load(galaxyElement, galaxy.Clusters, source, galaxyFile.fileName);
-            Log.Debug($"Galaxy loaded from: {galaxyFile.fileName} for {source}");
+            galaxyDoc = XDocument.Load(galaxyFile.fullPath);
+            galaxy.LoadXML(galaxyDoc, galaxy.Clusters, "vanilla", galaxyFile.fileName);
           }
-          else
+          catch (ArgumentException e)
           {
-            XElement? galaxyDiffElement = galaxyDoc.XPathSelectElement("/diff");
-            if (galaxyDiffElement != null)
-            {
-              IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();
-              foreach (XElement galaxyElementDiff in galaxyDiffElements)
-              {
-                if (
-                  galaxyElementDiff.Name == "add"
-                  && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections"
-                )
-                {
-                  galaxy.LoadConnections(galaxyElementDiff, galaxy.Clusters, source, galaxyFile.fileName);
-                  Log.Debug($"Galaxy connections loaded from: {galaxyFile.fileName} for {source}");
-                }
-              }
-            }
-            else
-            {
-              Log.Error("Invalid galaxy file format");
-              throw new ArgumentException("Invalid galaxy file format");
-            }
+            Log.Error($"Error loading galaxy {galaxyFile.fullPath}: {e.Message}");
           }
         }
       }
-      if (File.Exists(Path.Combine(coreFolderPath, "version.dat")))
+      else
       {
-        string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, "version.dat")).Trim();
-        if (int.TryParse(versionStr, out int version))
+        if (File.Exists(Path.Combine(coreFolderPath, "version.dat")))
         {
-          galaxy.Version = version;
-        }
-      }
-      if (galaxy.Version == 0 && vanillaFiles.TryGetValue("patchactions", out (string fullPath, string fileName) patchActionsFile))
-      {
-        XDocument? patchActionsDoc = null;
-        try
-        {
-          patchActionsDoc = XDocument.Load(patchActionsFile.fullPath);
-        }
-        catch (ArgumentException e)
-        {
-          Log.Warn($"Error loading patch actions {patchActionsFile.fullPath}: {e.Message}");
-        }
-        int version = 0;
-        if (patchActionsDoc != null)
-        {
-          foreach (XElement actionElement in patchActionsDoc.XPathSelectElements("/actions/action"))
-          {
-            string versionStr = actionElement.Attribute("version")?.Value ?? "0";
-            if (int.TryParse(versionStr, out int actionVersion))
-            {
-              if (actionVersion > version)
-              {
-                version = actionVersion;
-              }
-            }
-          }
-          Log.Debug($"Patch actions loaded from: {patchActionsFile.fileName} for vanilla. Version: {version}");
-          if (version > 0)
+          string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, "version.dat")).Trim();
+          if (int.TryParse(versionStr, out int version))
           {
             galaxy.Version = version;
           }
         }
+        if (galaxy.Version == 0 && vanillaFiles.TryGetValue("patchactions", out (string fullPath, string fileName) patchActionsFile))
+        {
+          XDocument? patchActionsDoc = null;
+          try
+          {
+            patchActionsDoc = XDocument.Load(patchActionsFile.fullPath);
+          }
+          catch (ArgumentException e)
+          {
+            Log.Warn($"Error loading patch actions {patchActionsFile.fullPath}: {e.Message}");
+          }
+          int version = 0;
+          if (patchActionsDoc != null)
+          {
+            foreach (XElement actionElement in patchActionsDoc.XPathSelectElements("/actions/action"))
+            {
+              string versionStr = actionElement.Attribute("version")?.Value ?? "0";
+              if (int.TryParse(versionStr, out int actionVersion))
+              {
+                if (actionVersion > version)
+                {
+                  version = actionVersion;
+                }
+              }
+            }
+            Log.Debug($"Patch actions loaded from: {patchActionsFile.fileName} for vanilla. Version: {version}");
+            if (version > 0)
+            {
+              galaxy.Version = version;
+            }
+          }
+        }
       }
-
-      foreach (Sector sector in galaxy.Sectors)
-      {
-        sector.CalculateOwnership(galaxy.Factions);
-      }
-
-      // foreach (Faction faction in galaxy.Factions)
-      // {
-      //     Log.Debug($"Faction: {faction.Name}, color: {faction.ColorId}, hex: {galaxy.MappedColors.FirstOrDefault(c => c.Id == faction.ColorId)?.Hex}");
-      // }
-      // Load other data files (galaxy, clusters, sectors, zones, highways) similarly
-      // and populate the respective properties in clusters, sectors, and zones.
-
-      return galaxy;
     }
 
     public static Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> GatherFiles(

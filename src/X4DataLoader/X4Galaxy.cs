@@ -4,7 +4,7 @@ namespace X4DataLoader
 {
   public class X4Galaxy
   {
-    public static Galaxy LoadData(string coreFolderPath)
+    public static Galaxy LoadData(string coreFolderPath, bool loadMods = false)
     {
       var relativePaths = new Dictionary<string, (string path, string fileName)>
       {
@@ -31,7 +31,8 @@ namespace X4DataLoader
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
 
       Galaxy galaxy = new();
-      return DataLoader.LoadAllData(galaxy, coreFolderPath, relativePaths);
+      DataLoader.LoadAllData(galaxy, coreFolderPath, relativePaths, loadMods);
+      return galaxy;
     }
   }
 }
