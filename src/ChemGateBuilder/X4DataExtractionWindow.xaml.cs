@@ -172,6 +172,20 @@ namespace ChemGateBuilder
       }
     }
 
+    private string _extractionProgressText = "";
+    public string ExtractionProgressText
+    {
+      get => _extractionProgressText;
+      set
+      {
+        if (_extractionProgressText != value)
+        {
+          _extractionProgressText = value;
+          OnPropertyChanged(nameof(ExtractionProgressText));
+        }
+      }
+    }
+
     private readonly BackgroundWorker _backgroundWorker;
 
     public string ExtractedDataFolder
@@ -386,7 +400,14 @@ namespace ChemGateBuilder
 
     private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
     {
-      ExtractionProgress = e.ProgressPercentage;
+      if (e.ProgressPercentage != ExtractionProgress)
+      {
+        ExtractionProgress = e.ProgressPercentage;
+      }
+      if (e.UserState is string progressText && progressText != ExtractionProgressText)
+      {
+        ExtractionProgressText = progressText;
+      }
     }
 
     private void BackgroundWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
@@ -421,7 +442,7 @@ namespace ChemGateBuilder
       extractors.Add(GetCatEntries());
       progressInt += 1;
       totalCount += extractors.Last().Entries.Count;
-      _backgroundWorker.ReportProgress(progressInt);
+      _backgroundWorker.ReportProgress(progressInt, $"Reading catalog files of Vanilla");
       foreach (var dlc in DlcOptions)
       {
         Log.Debug($"DLC {dlc.Name}: {(dlc.IsChecked ? "Included" : "Excluded")}");
@@ -430,7 +451,7 @@ namespace ChemGateBuilder
           extractors.Add(GetCatEntries(dlc.Name));
         }
         progressInt += 1;
-        _backgroundWorker.ReportProgress(progressInt);
+        _backgroundWorker.ReportProgress(progressInt, $"Reading catalog files of {dlc.Name}");
         totalCount += extractors.Last().Entries.Count;
       }
 
@@ -483,10 +504,7 @@ namespace ChemGateBuilder
           Log.Debug($"Extracting {catEntry.FilePath}");
           progress += step;
           progressInt = (int)progress;
-          if (progressInt > ExtractionProgress)
-          {
-            _backgroundWorker.ReportProgress(progressInt);
-          }
+          _backgroundWorker.ReportProgress(progressInt, $"Extracting {ExtractToFolder}/{catEntry.FilePath}");
           Extractor.ExtractEntry(catEntry, ExtractToFolder, OverwriteExistingFiles, !VerifyExtractedData);
         }
       }

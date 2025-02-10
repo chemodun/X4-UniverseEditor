@@ -59,6 +59,7 @@
                     </ScrollViewer>
                 </GroupBox> <!-- Fixed closing tag for GroupBox -->
                 <ProgressBar x:Name="ProgressBarOfExtraction" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Height="20" Value="{Binding ExtractionProgress}" Maximum="100" HorizontalAlignment="Stretch"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding ExtractionProgressText}" Background="Transparent" TextAlignment="Left"/>
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Margin="5" Width="100" Content="Cancel" Click="ButtonCancel_Click"/>
                     <Button Margin="5" Width="100" Content="Extract Data" Click="ButtonStartExtraction_Click" IsEnabled="{Binding IsExtractionPossible}"/>
