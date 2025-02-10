@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4UnpackTestConsole-v0.0.1...X4UnpackTestConsole@v0.0.1) (2025-02-09)
+## [0.0.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4UnpackTestConsole-v0.0.1...X4UnpackTestConsole@v0.0.1) (2025-02-10)
 
 
 ### Features
