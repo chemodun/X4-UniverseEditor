@@ -488,7 +488,15 @@ namespace X4DataLoader
           }
         }
       }
-      if (vanillaFiles.TryGetValue("patchactions", out (string fullPath, string fileName) patchActionsFile))
+      if (File.Exists(Path.Combine(coreFolderPath, "version.dat")))
+      {
+        string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, "version.dat")).Trim();
+        if (int.TryParse(versionStr, out int version))
+        {
+          galaxy.Version = version;
+        }
+      }
+      if (galaxy.Version == 0 && vanillaFiles.TryGetValue("patchactions", out (string fullPath, string fileName) patchActionsFile))
       {
         XDocument? patchActionsDoc = null;
         try
