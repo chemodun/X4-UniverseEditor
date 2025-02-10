@@ -1,5 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -27,6 +28,53 @@ namespace X4DataLoader
       Position = new Position();
       PositionXML = null;
       Connections = [];
+    }
+
+    public static void LoadFromXML(XDocument doc, List<Sector> allSectors, string source, string fileName)
+    {
+      IEnumerable<XElement> elements = doc.XPathSelectElements("/macros/macro");
+      bool modeDiff = false;
+      if (!elements.Any())
+      {
+        elements = doc.XPathSelectElements("/diff/add");
+        modeDiff = true;
+      }
+      foreach (XElement element in elements)
+      {
+        bool modeFull = true;
+        if (modeDiff)
+        {
+          string selStr = XmlHelper.GetAttribute(element, "sel") ?? "";
+          modeFull = selStr == "/macros" || selStr == "//macros" || selStr.StartsWith("/macros/macro") && !selStr.EndsWith("/connections");
+        }
+        if (!modeFull)
+        {
+          Log.Warn("Skipping element in diff mode: " + element);
+          continue;
+        }
+        XElement zonesElement = modeDiff ? element : new XElement("zones");
+        if (!modeDiff)
+        {
+          zonesElement.Add(element);
+        }
+        foreach (XElement zoneElement in zonesElement.Elements("macro"))
+        {
+          Zone? zone = new();
+          zone.Load(zoneElement, source, fileName);
+          Sector? sector = allSectors.FirstOrDefault(s =>
+            s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
+          );
+          if (sector != null)
+          {
+            sector.AddZone(zone);
+            Log.Debug($"Zone loaded for Sector: {sector.Name}");
+          }
+          else
+          {
+            Log.Warn($"No matching sector found for Zone: {zone.Name}");
+          }
+        }
+      }
     }
 
     public void Load(XElement element, string source, string fileName)
