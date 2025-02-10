@@ -4,10 +4,12 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 
 [size=3][u][b]Features[/b][/u][/size]
 [list]
+
 [*] Build gate connections between any sectors in the game.
 [*] Select sectors from a list or from the Galaxy map.
 [*] Create any number of connections, where a connection is a pair of gates in two sectors.
 [*] Easily arrange the location of gates in sectors by moving them on the map using the mouse.
+
 [/list]
 [size=3][u][b]Disclaimer[/b][/u][/size]
 
@@ -22,12 +24,14 @@ You need to have the extracted game files on your computer using the [url=https:
 
 You can download the tool from the following locations:
 [list]
+
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/releases]Releases on GitHub[/url]
 [*] [url=https://www.nexusmods.com/x4foundations/mods/1587/]Nexus[/url]
+
 [/list]
 [size=3][u][b]Installation[/b][/u][/size]
 
-Simply [url=#download]download[/url] the latest version and extract it to any folder.
+Simply [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#download]download[/url] the latest version and extract it to any folder.
 
 You can start building your connections right away.
 
@@ -35,7 +39,7 @@ You can start building your connections right away.
 
 [size=3][u][i]First Start[/i][/u][/size]
 
-On the first start, the tool will inform you that you need to select the folder with the [url=#requirements]extracted[/url] game files.
+On the first start, the tool will inform you that you need to select the folder with the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#requirements]extracted[/url] game files.
 
 After selecting the folder, the tool will start loading the game data.
 
@@ -65,8 +69,10 @@ You can define the gate location by pressing the left mouse button on the gate a
 A more precise position can be set by entering the coordinates and rotation angles.
 Please note that the coordinates are split into two parts:
 [list]
+
 [*] Coordinates themselves, in km (this is the appropriate zone position in the sector).
 [*] Position - the position from the coordinates point in meters (this is the position of the gate in the zone).
+
 [/list]
 To simplify editing, the position part is randomly prefilled on sector selection.
 
@@ -118,8 +124,10 @@ One ([b]gold[/b]) is the gate from the connection, and the other ([b]green[/b]) 
 
 There are two buttons at the bottom of the window:
 [list]
+
 [*] [b]Add/Update[/b] - to add the gate connection to the list. We already discussed it.
 [*] [b]Reset[/b] - to reset the gate data fields to the default values. See below for more information.
+
 [/list]
 [size=2][u][i]Reset Button[/i][/u][/size]
 
@@ -141,8 +149,10 @@ The Galaxy Map allows you to navigate through various sectors in the game. You c
 
 For zooming, there are two options available:
 [list]
+
 [*] Use the slider at the top of the map.
 [*] Use the mouse wheel while holding the [b]Ctrl[/b] key.
+
 [/list]
 Additionally, you can drag the map with the left mouse button when it is zoomed in.
 
@@ -196,3 +206,48 @@ There is a topic on the [url=https://forum.egosoft.com/viewtopic.php?p=5262362]E
 [size=3][u][i]GitHub Repository Issues Reporting[/i][/u][/size]
 
 Please report any issues or bugs encountered while using the tool. You can submit your reports through the [url=https://github.com/chemodun/X4-UniverseEditor/issues]GitHub repository Issues[/url]. Your contributions help improve the tool for everyone!
+
+[size=3][u][b]License[/b][/u][/size]
+
+This project is licensed under the Apache License 2.0 - see the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/../../LICENSE]LICENSE[/url] file for details.
+
+[size=3][u][b]Changelog[/b][/u][/size]
+
+[size=3][u][i][0.6.0] - 2025-02-10[/i][/u][/size]
+[list]
+
+[*] Added
+[list]
+[*] Extraction game files
+
+[/list]
+[/list]
+[size=3][u][i][0.5.2] - 2025-02-08[/i][/u][/size]
+[list]
+
+[*] Added
+[list]
+[*] Galaxy Map
+[*] A lot all other small stuff...
+
+[/list]
+[*] Refactor
+[list]
+[*] Rewritten from Python to C# to avoid false positive virus detection
+
+[/list]
+[*] Removed
+[list]
+[*] Console version is gone
+
+[/list]
+[/list]
+[size=3][u][i][0.4.3] - 2025-01-14[/i][/u][/size]
+[list]
+
+[*] Added
+[list]
+[*] Initial public version
+
+[/list]
+[/list]
