@@ -11,7 +11,7 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
     Args:
         markdown_text (str): The Markdown text to be converted.
         repo_name (str, optional): GitHub repository name in the format 'username/repo'.
-                                   Used to generate absolute URLs for images.
+                                   Used to generate absolute URLs for images and links.
         bbcode_type (str): Type of BBCode format ('egosoft' or 'nexus').
         relative_path (str, optional): Relative path of the input file.
 
@@ -106,26 +106,86 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
 
     # 7. Links
     # Convert [text](url) to [url=url]text[/url]
-    bbcode_text = re.sub(r'\[(.*?)\]\((.*?)\)', r'[url=\2]\1[/url]', bbcode_text)
+    def replace_links(match):
+        link_text, link_url = match.groups()
+        if repo_name and not re.match(r'^https?://', link_url):
+            absolute_url = f"https://github.com/{repo_name}/raw/main/{relative_path}/{link_url}"
+            return f"[url={absolute_url}]{link_text}[/url]"
+        else:
+            return f"[url={link_url}]{link_text}[/url]"
+
+    bbcode_text = re.sub(r'\[(.*?)\]\((.*?)\)', replace_links, bbcode_text)
 
     # 8. Lists
-    # Convert unordered lists: - Item or * Item to [list][*] Item [/list]
-    def replace_unordered_lists(match):
+    # Convert unordered and ordered lists to BBCode
+    def parse_list_items(lines):
+        list_stack = []
+        current_list = []
+        current_indent = 0
+        list_type = 'unordered'
+
+        for line in lines:
+            stripped_line = line.lstrip()
+            indent = len(line) - len(stripped_line)
+            if stripped_line.startswith(('-', '*', '+')):
+                item = stripped_line[1:].strip()
+                if indent > current_indent:
+                    list_stack.append((current_list, current_indent, list_type))
+                    current_list = []
+                    current_indent = indent
+                elif indent < current_indent:
+                    while list_stack and indent < current_indent:
+                        parent_list, parent_indent, parent_type = list_stack.pop()
+                        if parent_type == 'ordered':
+                            parent_list.append(f"[list=1]\n" + "\n".join(current_list) + "\n[/list]")
+                        else:
+                            parent_list.append(f"[list]\n" + "\n".join(current_list) + "\n[/list]")
+                        current_list = parent_list
+                        current_indent = parent_indent
+                        list_type = parent_type
+                current_list.append(f"[*] {item}")
+                list_type = 'unordered'
+            elif re.match(r'^\s*\d+\.\s+', stripped_line):
+                item = re.sub(r'^\s*\d+\.\s+', '', stripped_line)
+                if indent > current_indent:
+                    list_stack.append((current_list, current_indent, list_type))
+                    current_list = []
+                    current_indent = indent
+                elif indent < current_indent:
+                    while list_stack and indent < current_indent:
+                        parent_list, parent_indent, parent_type = list_stack.pop()
+                        if parent_type == 'ordered':
+                            parent_list.append(f"[list=1]\n" + "\n".join(current_list) + "\n[/list]")
+                        else:
+                            parent_list.append(f"[list]\n" + "\n".join(current_list) + "\n[/list]")
+                        current_list = parent_list
+                        current_indent = parent_indent
+                        list_type = parent_type
+                current_list.append(f"[*] {item}")
+                list_type = 'ordered'
+            else:
+                current_list.append(line)
+
+        while list_stack:
+            parent_list, parent_indent, parent_type = list_stack.pop()
+            if parent_type == 'ordered':
+                parent_list.append(f"[list=1]\n" + "\n".join(current_list) + "\n[/list]")
+            else:
+                parent_list.append(f"[list]\n" + "\n".join(current_list) + "\n[/list]")
+            current_list = parent_list
+
+        if list_type == 'ordered':
+            return "[list=1]\n" + "\n".join(current_list) + "\n[/list]"
+        else:
+            return "[list]\n" + "\n".join(current_list) + "\n[/list]"
+
+    def replace_lists(match):
         list_content = match.group(0)
-        items = re.findall(r'^\s*[-*]\s+(.*)', list_content, flags=re.MULTILINE)
-        bbcode_list = "[list]\n" + "\n".join([f"[*] {item}" for item in items]) + "\n[/list]"
-        return bbcode_list
+        lines = list_content.split('\n')
+        return parse_list_items(lines)
 
-    bbcode_text = re.sub(r'(?:^\s*[-*]\s+.*\n?)+', replace_unordered_lists, bbcode_text, flags=re.MULTILINE)
-
-    # Convert ordered lists: 1. Item to [list=1][*] Item [/list]
-    def replace_ordered_lists(match):
-        list_content = match.group(0)
-        items = re.findall(r'^\s*\d+\.\s+(.*)', list_content, flags=re.MULTILINE)
-        bbcode_list = "[list=1]\n" + "\n".join([f"[*] {item}" for item in items]) + "\n[/list]"
-        return bbcode_list
-
-    bbcode_text = re.sub(r'(?:^\s*\d+\.\s+.*\n?)+', replace_ordered_lists, bbcode_text, flags=re.MULTILINE)
+    bbcode_text = re.sub(r'(?:^\s*[-*+]\s+.*\n?)+', replace_lists, bbcode_text, flags=re.MULTILINE)
+    bbcode_text = re.sub(r'(?:^\s*\d+\.\s+.*\n?)+', replace_lists, bbcode_text, flags=re.MULTILINE)
 
     # 9. Blockquotes
     # Convert > Quote to [quote]Quote[/quote]
@@ -190,11 +250,11 @@ def get_repo_name():
     try:
         repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'], encoding='utf-8').strip()
         if repo_url.startswith('https://github.com/'):
-            repo_name = repo_url[len('https://github.com/'):].rstrip('.git')
-            return repo_name
+            repo_name = repo_url[len('https://github.com/'):]
+            return repo_name.rstrip('.git')
         elif repo_url.startswith('git@github.com:'):
-            repo_name = repo_url[len('git@github.com:'):].rstrip('.git')
-            return repo_name
+            repo_name = repo_url[len('git@github.com:'):]
+            return repo_name.rstrip('.git')
         else:
             print(f"Error: Unsupported repository URL format: {repo_url}")
             sys.exit(1)
