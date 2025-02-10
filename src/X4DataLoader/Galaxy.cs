@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -11,6 +12,7 @@ namespace X4DataLoader
     public string Name { get; private set; }
     public string Reference { get; private set; }
     public int Version { get; set; } = 0;
+    public List<string> DLCs { get; private set; } = [];
     public Translation Translation { get; set; } = new();
     public List<Cluster> Clusters { get; private set; }
     public List<Sector> Sectors { get; private set; }
@@ -32,6 +34,40 @@ namespace X4DataLoader
       Clusters = [];
       Sectors = [];
       Connections = [];
+    }
+
+    public void LoadXML(XDocument doc, List<Cluster> allClusters, string source, string fileName)
+    {
+      XElement? galaxyElement = doc.XPathSelectElement("/macros/macro");
+      if (galaxyElement != null)
+      {
+        Load(galaxyElement, allClusters, source, fileName);
+        Log.Debug($"Galaxy loaded from: {fileName} for {source}");
+      }
+      else
+      {
+        XElement? galaxyDiffElement = doc.XPathSelectElement("/diff");
+        if (galaxyDiffElement != null)
+        {
+          IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();
+          foreach (XElement galaxyElementDiff in galaxyDiffElements)
+          {
+            if (
+              galaxyElementDiff.Name == "add"
+              && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections"
+            )
+            {
+              LoadConnections(galaxyElementDiff, allClusters, source, fileName);
+              Log.Debug($"Galaxy connections loaded from: {fileName} for {source}");
+            }
+          }
+        }
+        else
+        {
+          Log.Error("Invalid galaxy file format");
+          throw new ArgumentException("Invalid galaxy file format");
+        }
+      }
     }
 
     public void Load(XElement element, List<Cluster> allClusters, string source, string fileName)
