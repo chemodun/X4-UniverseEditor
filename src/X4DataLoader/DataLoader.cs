@@ -12,19 +12,13 @@ namespace X4DataLoader
 {
   public static class DataLoader
   {
-    public static Galaxy LoadAllData(string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
+    public static Galaxy LoadAllData(Galaxy galaxy, string coreFolderPath, Dictionary<string, (string path, string fileName)> relativePaths)
     {
       Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> fileSets = GatherFiles(coreFolderPath, relativePaths);
 
       Dictionary<string, (string fullPath, string fileName)> vanillaFiles = fileSets["vanilla"];
-
-      Translation? translation = new();
-      translation.Load(fileSets["vanilla"]["translation"].fullPath);
+      galaxy.Translation.Load(fileSets["vanilla"]["translation"].fullPath);
       Log.Debug("Translation loaded.");
-
-      List<Cluster>? clusters = [];
-      List<Sector>? sectors = [];
-      Galaxy? galaxy = new();
       // Process each file set
       foreach (KeyValuePair<string, Dictionary<string, (string fullPath, string fileName)>> fileSet in fileSets)
       {
@@ -53,8 +47,8 @@ namespace X4DataLoader
                 Cluster? cluster = new();
                 try
                 {
-                  cluster.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
-                  clusters.Add(cluster);
+                  cluster.Load(datasetElement, galaxy.Translation, source, mapDefaultsFile.fileName);
+                  galaxy.Clusters.Add(cluster);
                   Log.Debug($"Cluster loaded: {cluster.Name}");
                 }
                 catch (ArgumentException e)
@@ -67,9 +61,9 @@ namespace X4DataLoader
                 Sector? sector = new();
                 try
                 {
-                  sector.Load(datasetElement, translation, source, mapDefaultsFile.fileName);
-                  sectors.Add(sector);
-                  Cluster? cluster = clusters.Find(c => c.Id == sector.ClusterId);
+                  sector.Load(datasetElement, galaxy.Translation, source, mapDefaultsFile.fileName);
+                  galaxy.Sectors.Add(sector);
+                  Cluster? cluster = galaxy.Clusters.Find(c => c.Id == sector.ClusterId);
                   if (cluster != null)
                   {
                     cluster.Sectors.Add(sector);
@@ -104,7 +98,7 @@ namespace X4DataLoader
           {
             try
             {
-              Connection.LoadConnections(macroElement, clusters, sectors, source, clustersFile.fileName);
+              Connection.LoadConnections(macroElement, galaxy.Clusters, galaxy.Sectors, source, clustersFile.fileName);
             }
             catch (ArgumentException e)
             {
@@ -131,7 +125,7 @@ namespace X4DataLoader
           {
             try
             {
-              Connection.LoadConnections(macroElement, clusters, sectors, source, sectorsFile.fileName);
+              Connection.LoadConnections(macroElement, galaxy.Clusters, galaxy.Sectors, source, sectorsFile.fileName);
             }
             catch (ArgumentException e)
             {
@@ -158,7 +152,7 @@ namespace X4DataLoader
           {
             Zone? zone = new();
             zone.Load(macroElement, source, zonesFile.fileName);
-            Sector? sector = sectors.FirstOrDefault(s =>
+            Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
               s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
             );
             if (sector != null)
@@ -190,7 +184,7 @@ namespace X4DataLoader
           foreach (XElement macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
           {
             HighwayClusterLevel? highway = new(macroElement, source, sechighwaysFile.fileName);
-            Cluster? cluster = clusters.FirstOrDefault(c =>
+            Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
               c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
             );
             if (cluster != null)
@@ -223,7 +217,7 @@ namespace X4DataLoader
           foreach (XElement macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
           {
             HighwaySectorLevel? highway = new(macroElement, source, zonehighwaysFile.fileName);
-            Sector? sector = sectors.FirstOrDefault(s =>
+            Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
               s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
             );
             if (sector != null)
@@ -277,7 +271,7 @@ namespace X4DataLoader
           {
             races = racesDoc.XPathSelectElements("/diff/add[@sel='/races']/race");
           }
-          Race.LoadElements(races, source, racesFile.fileName, galaxy.Races, translation);
+          Race.LoadElements(races, source, racesFile.fileName, galaxy.Races, galaxy.Translation);
           Log.Debug($"Races loaded from: {racesFile.fileName} for {source}");
         }
         if (fileSet.Value.TryGetValue("factions", out (string fullPath, string fileName) factionsFile))
@@ -297,7 +291,7 @@ namespace X4DataLoader
           {
             factions = factionsDoc.XPathSelectElements("/diff/add[@sel='/factions']/faction");
           }
-          Faction.LoadElements(factions, source, factionsFile.fileName, galaxy.Factions, translation, galaxy.Races);
+          Faction.LoadElements(factions, source, factionsFile.fileName, galaxy.Factions, galaxy.Translation, galaxy.Races);
           Log.Debug($"Factions loaded from: {factionsFile.fileName} for {source}");
         }
         if (fileSet.Value.TryGetValue("modules", out (string fullPath, string fileName) modulesFile))
@@ -357,7 +351,7 @@ namespace X4DataLoader
             source,
             constructionPlansFile.fileName,
             galaxy.ConstructionPlans,
-            translation,
+            galaxy.Translation,
             galaxy.StationModules,
             galaxy.StationModuleGroups
           );
@@ -434,7 +428,7 @@ namespace X4DataLoader
               stationElement,
               source,
               godFile.fileName,
-              sectors,
+              galaxy.Sectors,
               galaxy.StationCategories,
               galaxy.ConstructionPlans,
               galaxy.Factions
@@ -459,7 +453,7 @@ namespace X4DataLoader
           XElement? galaxyElement = galaxyDoc.XPathSelectElement("/macros/macro");
           if (galaxyElement != null)
           {
-            galaxy.Load(galaxyElement, clusters, source, galaxyFile.fileName);
+            galaxy.Load(galaxyElement, galaxy.Clusters, source, galaxyFile.fileName);
             Log.Debug($"Galaxy loaded from: {galaxyFile.fileName} for {source}");
           }
           else
@@ -475,7 +469,7 @@ namespace X4DataLoader
                   && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections"
                 )
                 {
-                  galaxy.LoadConnections(galaxyElementDiff, clusters, source, galaxyFile.fileName);
+                  galaxy.LoadConnections(galaxyElementDiff, galaxy.Clusters, source, galaxyFile.fileName);
                   Log.Debug($"Galaxy connections loaded from: {galaxyFile.fileName} for {source}");
                 }
               }

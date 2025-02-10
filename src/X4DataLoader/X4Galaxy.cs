@@ -30,7 +30,8 @@ namespace X4DataLoader
 
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
 
-      return DataLoader.LoadAllData(coreFolderPath, relativePaths);
+      Galaxy galaxy = new();
+      return DataLoader.LoadAllData(galaxy, coreFolderPath, relativePaths);
     }
   }
 }

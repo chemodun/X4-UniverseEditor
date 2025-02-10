@@ -11,6 +11,7 @@ namespace X4DataLoader
     public string Name { get; private set; }
     public string Reference { get; private set; }
     public int Version { get; set; } = 0;
+    public Translation Translation { get; set; } = new();
     public List<Cluster> Clusters { get; private set; }
     public List<Sector> Sectors { get; private set; }
     public List<X4Color> Colors { get; private set; } = [];
