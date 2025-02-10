@@ -101,8 +101,8 @@ namespace X4DataLoader
       XML.SetAttributeValue("ref", Reference);
       if (!(Position.X == 0 && Position.Y == 0 && Position.Z == 0))
       {
-        XElement? offsetElement = new XElement("offset");
-        XElement? positionElement = new XElement("position");
+        XElement? offsetElement = new("offset");
+        XElement? positionElement = new("position");
         positionElement.SetAttributeValue("x", Position.X);
         positionElement.SetAttributeValue("y", Position.Y);
         positionElement.SetAttributeValue("z", Position.Z);
@@ -112,7 +112,7 @@ namespace X4DataLoader
       if (!(Quaternion.QX == 0 && Quaternion.QY == 0 && Quaternion.QZ == 0 && Quaternion.QW == 0))
       {
         XElement? offsetElement = XML.Element("offset") ?? new XElement("offset");
-        XElement? quaternionElement = new XElement("quaternion");
+        XElement? quaternionElement = new("quaternion");
         quaternionElement.SetAttributeValue("qx", Quaternion.QX);
         quaternionElement.SetAttributeValue("qy", Quaternion.QY);
         quaternionElement.SetAttributeValue("qz", Quaternion.QZ);
@@ -130,7 +130,7 @@ namespace X4DataLoader
         && properties.TryGetValue("macroConnection", out string? macroConnection)
       )
       {
-        XElement? macroElement = new XElement("macro");
+        XElement? macroElement = new("macro");
         MacroConnection = macroConnection;
         MacroReference = macroReference;
         macroElement.SetAttributeValue("ref", MacroReference);
@@ -147,7 +147,7 @@ namespace X4DataLoader
       string reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
       int sectorId = 0;
       int clusterId = 0;
-      List<Connection>? connections = new List<Connection>();
+      List<Connection>? connections = [];
       try
       {
         if (Cluster.IsClusterMacro(name))
