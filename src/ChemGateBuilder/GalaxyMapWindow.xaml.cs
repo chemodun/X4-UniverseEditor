@@ -976,12 +976,19 @@ namespace ChemGateBuilder
       Line line = new() { DataContext = this, StrokeThickness = IsGate ? 2 : 1 };
       if (IsGate)
       {
-        line.Stroke = Source.From switch
+        if (Source.Status == "active" && Destination.Status == "active")
         {
-          "new" => Brushes.Green,
-          "mod" => Brushes.DarkOrange,
-          _ => Brushes.Gold,
-        };
+          line.Stroke = Source.From switch
+          {
+            "new" => Brushes.Green,
+            "mod" => Brushes.DarkOrange,
+            _ => Brushes.Gold,
+          };
+        }
+        else
+        {
+          line.Stroke = Brushes.DarkGray;
+        }
       }
       else
       {
