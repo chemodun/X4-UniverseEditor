@@ -39,6 +39,7 @@ namespace ChemGateBuilder
     public string X4DataExtractedPath { get; set; } = ".";
     public bool X4DataVersionOverride { get; set; } = false;
     public int X4DataVersion { get; set; } = 710;
+    public bool LoadModsData { get; set; } = false;
   }
 
   public class LoggingConfig : INotifyPropertyChanged
@@ -169,6 +170,21 @@ namespace ChemGateBuilder
           {
             X4DataVersion = version;
           }
+        }
+      }
+    }
+
+    private bool _loadModsData = false;
+    public bool LoadModsData
+    {
+      get => _loadModsData;
+      set
+      {
+        if (_loadModsData != value)
+        {
+          _loadModsData = value;
+          OnPropertyChanged(nameof(LoadModsData));
+          SaveConfiguration();
         }
       }
     }
@@ -595,6 +611,7 @@ namespace ChemGateBuilder
           {
             X4GameFolder = config.Data.X4GameFolder;
           }
+          LoadModsData = config.Data.LoadModsData;
           GatesActiveByDefault = config.Edit.GatesActiveByDefault;
           GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
           MapColorsOpacity = config.Map.MapColorsOpacity;
@@ -620,7 +637,12 @@ namespace ChemGateBuilder
     {
       var config = new AppConfig
       {
-        Data = new DataConfig { X4DataExtractedPath = X4DataFolder, X4DataVersionOverride = X4DataVersionOverride },
+        Data = new DataConfig
+        {
+          X4DataExtractedPath = X4DataFolder,
+          X4DataVersionOverride = X4DataVersionOverride,
+          LoadModsData = LoadModsData,
+        },
         Edit = new EditConfig { GatesActiveByDefault = GatesActiveByDefault, GatesMinimalDistanceBetween = GatesMinimalDistanceBetween },
         Map = new MapConfig { MapColorsOpacity = MapColorsOpacity, SectorRadius = SectorRadius },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
@@ -745,7 +767,7 @@ namespace ChemGateBuilder
     {
       AllSectors.Clear();
 
-      Galaxy = X4Galaxy.LoadData(X4DataFolder);
+      Galaxy = X4Galaxy.LoadData(X4DataFolder, LoadModsData);
       var sectors = Galaxy.GetSectors();
 
       foreach (var sector in sectors.Values.OrderBy(s => s.Name))

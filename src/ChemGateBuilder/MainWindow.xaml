@@ -161,14 +161,14 @@
                 <fluent:RibbonGroupBox Header="X4 Data related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label Content="X4 Data Folder:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
                         <fluent:Button Header="{Binding X4DataFolderPath}"
@@ -191,10 +191,18 @@
                                     ToolTip="Override the detected version"/>
                         <ComboBox x:Name="X4DataVersionComboBox"
                                     Grid.Row="1" Grid.Column="2"
-                                    Margin="5"
+                                    Margin="0"
                                     SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
                                     ItemsSource="{Binding X4DataVersions}">
                         </ComboBox>
+                        <Label Content="Load Mods Data:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                IsChecked="{Binding LoadModsData}"
+                                ToolTip="Load Mods data, not only official DLC's"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Edit related">
