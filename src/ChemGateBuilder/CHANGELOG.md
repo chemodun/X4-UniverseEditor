@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.6.0...ChemGateBuilder@v0.7.0) (2025-02-11)
+
+
+### Features
+
+* **MainWindow:** add option to load mods data in X4 data processing ([7b032f3](https://github.com/chemodun/X4-UniverseEditor/commit/7b032f3cd2b9054f9f16636d49ca4789349f6c80))
+
+
+### Code Refactoring
+
+* **GalaxyMapWindow:** update line stroke color based on source and destination status. DarkGray for inactive connected gates ([1bc1c06](https://github.com/chemodun/X4-UniverseEditor/commit/1bc1c06a29f7b587569d3354cb51a2800534695d))
+* **MainWindow:** simplify ID generation for sectors and connections, enhancing readability and consistency ([1e8799d](https://github.com/chemodun/X4-UniverseEditor/commit/1e8799d443ef50f1fb5b5c19d38afc5f260afc14))
+* **MainWindow:** update SaveData call to include Galaxy parameter for improved functionality ([7206ff7](https://github.com/chemodun/X4-UniverseEditor/commit/7206ff7d35f24e422fb75878bed01a96314c0034))
+* **Mod:** Align mod loading to the new game structure loading principles ([f6da896](https://github.com/chemodun/X4-UniverseEditor/commit/f6da896040f00c5ae3d67374805bb3918068f98b))
+* **Mod:** enhance SaveData and SaveModXMLs methods to write more detailed dependencies ([1674e72](https://github.com/chemodun/X4-UniverseEditor/commit/1674e72c247bc32c3245a921857ce4c0c99c8ffc))
+* **Mod:** update connection retrieval to use FirstOrDefault for safer null handling ([a4da014](https://github.com/chemodun/X4-UniverseEditor/commit/a4da014d755a6242f0133ca28d191b4d96c1a44b))
+* **X4DataExtractionWindow:** replace hardcoded paths with DataLoader constants for improved maintainability and add content.xml copying on extraction ([45b929f](https://github.com/chemodun/X4-UniverseEditor/commit/45b929fb5496cf9f83c184fb04d2b0fd5377da77))
+
+
+### Documentation
+
+* **README:** clarify extraction process and add warning for existing game files ([8d54284](https://github.com/chemodun/X4-UniverseEditor/commit/8d5428499c32554b7554bded35919dd37de163d8))
+* **README:** update changelog for version 0.7.0 with new mod support and extraction requirements ([6f56ca2](https://github.com/chemodun/X4-UniverseEditor/commit/6f56ca2742b197dd5c82e09f84a8176e2b5a2b00))
+* **README:** Update README's files ([17e495d](https://github.com/chemodun/X4-UniverseEditor/commit/17e495d0c2d4b7a8fb29cc022f3aa7ee8ead03e2))
+
 ## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.5.2...ChemGateBuilder@v0.6.0) (2025-02-10)
 
 
