@@ -113,7 +113,7 @@ namespace X4DataLoader
                     {
                       sector.Load(datasetElement, galaxy.Translation, source, file.FileName);
                       galaxy.Sectors.Add(sector);
-                      Cluster? cluster = galaxy.Clusters.Find(c => c.Id == sector.ClusterId);
+                      Cluster? cluster = Cluster.GetClusterById(galaxy.Clusters, sector.ClusterId);
                       if (cluster != null)
                       {
                         cluster.Sectors.Add(sector);
@@ -329,10 +329,11 @@ namespace X4DataLoader
 
     private static void LoadMods(Galaxy galaxy, string coreFolderPath, List<GameFilesStructureItem> relativePaths)
     {
-      if (Directory.Exists(Path.Combine(coreFolderPath, "extensions")))
+      string extensionsFolder = Path.Combine(coreFolderPath, ExtensionsFolder);
+      if (Directory.Exists(extensionsFolder))
       {
         Dictionary<string, ExtensionInfo> mods = [];
-        foreach (var extensionFolder in Directory.GetDirectories(Path.Combine(coreFolderPath, "extensions")))
+        foreach (var extensionFolder in Directory.GetDirectories(extensionsFolder))
         {
           string contentPath = Path.Combine(extensionFolder, ContentXml);
           if (!Path.GetFileName(extensionFolder).StartsWith(DlcPrefix) && File.Exists(contentPath))
@@ -401,7 +402,7 @@ namespace X4DataLoader
           Log.Debug($"Loading mods in the following order: {string.Join(", ", modsOrder)}");
           foreach (string modId in modsOrder)
           {
-            LoadData(galaxy, mods[modId].Folder, relativePaths, modId);
+            LoadData(galaxy, Path.Combine(extensionsFolder, mods[modId].Folder), relativePaths, modId);
           }
         }
       }
@@ -474,17 +475,12 @@ namespace X4DataLoader
       Log.Debug($"Vanilla files identified.");
 
       // Scan for extension files
-      string extensionsFolder = Path.Combine(coreFolderPath, "extensions");
+      string extensionsFolder = Path.Combine(coreFolderPath, ExtensionsFolder);
       Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
-      if (!Directory.Exists(extensionsFolder))
-      {
-        extensionsFolder = coreFolderPath;
-        Log.Debug($"No extensions folder found. Will check if the dlc folders is in the {coreFolderPath}.");
-      }
 
       if (string.IsNullOrEmpty(source))
       {
-        foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, $"{DataLoader.DlcPrefix}*"))
+        foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, $"{DlcPrefix}*"))
         {
           ExtensionInfo? dlc = null;
           string contentPath = Path.Combine(dlcFolder, ContentXml);

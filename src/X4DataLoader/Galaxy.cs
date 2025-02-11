@@ -163,13 +163,13 @@ namespace X4DataLoader
       return sectors;
     }
 
-    public Cluster? GetClusterById(int? id)
+    public Cluster? GetClusterById(string? id)
     {
       if (id == null)
       {
         return null;
       }
-      return Clusters.FirstOrDefault(c => c.Id == id);
+      return Cluster.GetClusterById(Clusters, id);
     }
 
     public Sector? GetSectorByMacro(string? macro)
@@ -178,7 +178,7 @@ namespace X4DataLoader
       {
         return null;
       }
-      return Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macro));
+      return Sector.GetSectorByMacro(Sectors, macro);
     }
 
     public Sector? GetOppositeSectorForGateConnection(GateConnection gateConnection)

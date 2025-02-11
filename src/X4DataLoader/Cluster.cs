@@ -12,12 +12,8 @@ namespace X4DataLoader
   {
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public int Id { get; private set; }
-
-    public string IdPrefix { get; private set; }
-
-    public string FullId => $"Cluster_{Id:D2}";
-    public string Macro => $"Cluster_{Id:D2}_macro";
+    public string Id { get; private set; }
+    public string Macro { get; private set; }
     public string Reference { get; set; }
     public Position Position { get; private set; }
     public string PositionId { get; private set; }
@@ -31,15 +27,13 @@ namespace X4DataLoader
     public Dictionary<string, Connection> Connections { get; private set; }
     public List<Highway> Highways { get; private set; }
 
-    private static readonly Regex ClusterRegex = new(@"^(Cluster)_(\d+)_macro", RegexOptions.IgnoreCase);
-
     public Cluster()
     {
       Sectors = [];
       Name = "";
       Description = "";
-      Id = 0;
-      IdPrefix = "Cluster";
+      Id = "";
+      Macro = "";
       Reference = "";
       Connections = [];
       Highways = [];
@@ -56,16 +50,15 @@ namespace X4DataLoader
     {
       Log.Debug($"Loading cluster data for {source} from {fileName}");
       var macro = element.Attribute("macro")?.Value;
-      var sectorIdMatch = ClusterRegex.Match(macro ?? "");
-      if (sectorIdMatch.Success)
+      if (!string.IsNullOrEmpty(macro) && IsClusterMacro(macro))
       {
         var propertiesElement = element.Element("properties");
         string nameId = propertiesElement?.Element("identification")?.Attribute("name")?.Value ?? "";
         string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
         if (nameId != null && nameId != "" && descriptionId != "")
         {
-          Id = StringHelper.ParseInt(sectorIdMatch.Groups[2].Value);
-          IdPrefix = sectorIdMatch.Groups[1].Value;
+          Id = macro.Replace("_macro", "");
+          Macro = macro;
           Name = translation.Translate(nameId);
           Description = translation.Translate(descriptionId);
           Source = source;
@@ -93,16 +86,32 @@ namespace X4DataLoader
       PositionFileName = fileName;
     }
 
-    public static bool IsClusterMacro(string macro) => ClusterRegex.IsMatch(macro);
-
-    public static (string, int) GetClusterIdData(string macro)
+    public static bool IsClusterMacro(string macro)
     {
-      var match = ClusterRegex.Match(macro);
-      if (match.Success)
-      {
-        return (match.Groups[1].Value, StringHelper.ParseInt(match.Groups[2].Value));
-      }
-      throw new ArgumentException($"Invalid macro format: {macro}");
+      string macroLower = macro.ToLower(CultureInfo.InvariantCulture);
+      return macroLower.Contains("cluster") && macroLower.EndsWith("_macro") && !macroLower.Contains("sector");
+    }
+
+    public static Cluster? GetClusterByMacro(List<Cluster> clusters, string macro)
+    {
+      return clusters.Find(cluster => StringHelper.EqualsIgnoreCase(cluster.Macro, macro));
+    }
+
+    public static Cluster? GetClusterById(List<Cluster> clusters, string clusterId)
+    {
+      return clusters.Find(cluster => StringHelper.EqualsIgnoreCase(cluster.Id, clusterId));
+    }
+
+    public static string GetClusterIdByMacro(List<Cluster> clusters, string macro)
+    {
+      Cluster? cluster = GetClusterByMacro(clusters, macro);
+      return cluster?.Id ?? "";
+    }
+
+    public static string GetClusterByMacroById(List<Cluster> clusters, string clusterId)
+    {
+      Cluster? cluster = GetClusterByMacro(clusters, clusterId);
+      return cluster?.Id ?? "";
     }
   }
 }

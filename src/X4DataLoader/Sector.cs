@@ -13,12 +13,9 @@ namespace X4DataLoader
   {
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public int Id { get; private set; }
-    public string IdPrefix { get; private set; }
-    public int ClusterId { get; private set; }
-    public string ClusterIdPrefix { get; private set; }
-    public string FullId => $"Cluster_{ClusterId:D2}_Sector{Id:D3}";
-    public string Macro => $"Cluster_{ClusterId:D2}_Sector{Id:D3}_macro";
+    public string Id { get; private set; }
+    public string ClusterId { get; private set; }
+    public string Macro { get; private set; }
     public string Reference { get; set; }
     public Position Position { get; private set; }
     public string PositionId { get; private set; }
@@ -36,16 +33,14 @@ namespace X4DataLoader
     public List<Station> Stations { get; private set; } = [];
 
     public string DominantOwner { get; private set; } = "";
-    private static readonly Regex SectorRegex = new(@"^(Cluster)_(\d+)_(Sector)(\d+)_macro", RegexOptions.IgnoreCase);
 
     public Sector()
     {
       Name = "";
       Description = "";
-      Id = 0;
-      ClusterId = 0;
-      IdPrefix = "Sector";
-      ClusterIdPrefix = "Cluster";
+      Id = "";
+      Macro = "";
+      ClusterId = "";
       Reference = "";
       Position = new Position();
       PositionId = "";
@@ -58,19 +53,19 @@ namespace X4DataLoader
     public void Load(XElement element, Translation translation, string source, string fileName)
     {
       var macro = element.Attribute("macro")?.Value;
-      var sectorIdMatch = SectorRegex.Match(macro ?? "");
-      if (sectorIdMatch.Success)
+      if (!string.IsNullOrEmpty(macro) && IsSectorMacro(macro))
       {
         var propertiesElement = element.Element("properties");
         string nameId = propertiesElement?.Element("identification")?.Attribute("name")?.Value ?? "";
         string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
         if (nameId != null && nameId != "" && descriptionId != null && descriptionId != "")
         {
-          Id = StringHelper.ParseInt(sectorIdMatch.Groups[4].Value);
-          IdPrefix = sectorIdMatch.Groups[3].Value;
-          ClusterId = StringHelper.ParseInt(sectorIdMatch.Groups[2].Value);
-          ClusterIdPrefix = sectorIdMatch.Groups[1].Value;
+          Id = macro.Replace("_macro", "");
+          Macro = macro;
           Name = translation.Translate(nameId ?? "");
+          string lowerId = Id.ToLower(CultureInfo.InvariantCulture);
+          int sectorPosition = lowerId.IndexOf("_sector", StringComparison.Ordinal);
+          ClusterId = Id[..sectorPosition];
           Description = translation.Translate(descriptionId);
           XML = element;
           Console.WriteLine($"Sector Name: {Name}");
@@ -97,21 +92,10 @@ namespace X4DataLoader
       PositionFileName = fileName;
     }
 
-    public static bool IsSectorMacro(string macro) => SectorRegex.IsMatch(macro);
-
-    public static (string, int, string, int) GetSectorIdData(string macro)
+    public static bool IsSectorMacro(string macro)
     {
-      var match = SectorRegex.Match(macro);
-      if (match.Success)
-      {
-        return (
-          match.Groups[1].Value,
-          StringHelper.ParseInt(match.Groups[2].Value),
-          match.Groups[3].Value,
-          StringHelper.ParseInt(match.Groups[4].Value)
-        );
-      }
-      throw new ArgumentException($"Invalid macro format: {macro}");
+      string macroLower = macro.ToLower(CultureInfo.InvariantCulture);
+      return macroLower.Contains("cluster") && macroLower.EndsWith("_macro") && macroLower.Contains("sector");
     }
 
     public Connection? GetConnection(string connectionId)
@@ -191,6 +175,28 @@ namespace X4DataLoader
     public List<Station> GetStationsByTagsOrTypes(List<string> tags)
     {
       return Stations.FindAll(station => station.Tags.Intersect(tags).Any() || station.Tags.Count == 0 && tags.Contains(station.Type));
+    }
+
+    public static Sector? GetSectorById(List<Sector> sectors, string sectorId)
+    {
+      return sectors.Find(sector => StringHelper.EqualsIgnoreCase(sector.Id, sectorId));
+    }
+
+    public static Sector? GetSectorByMacro(List<Sector> sectors, string sectorMacro)
+    {
+      return sectors.Find(sector => StringHelper.EqualsIgnoreCase(sector.Macro, sectorMacro));
+    }
+
+    public static string GetSectorIdByMacro(List<Sector> sectors, string sectorMacro)
+    {
+      Sector? sector = GetSectorByMacro(sectors, sectorMacro);
+      return sector?.Id ?? "";
+    }
+
+    public static string GetSectorMacroById(List<Sector> sectors, string sectorId)
+    {
+      Sector? sector = GetSectorById(sectors, sectorId);
+      return sector?.Macro ?? "";
     }
   }
 }

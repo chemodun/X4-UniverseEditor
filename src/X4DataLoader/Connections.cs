@@ -189,18 +189,18 @@ namespace X4DataLoader
       {
         throw new ArgumentException("Connections list must have a name");
       }
-      int sectorId = 0;
-      int clusterId = 0;
+      string sectorId = string.Empty;
+      string clusterId = string.Empty;
       List<Connection>? connections = [];
       try
       {
         if (Cluster.IsClusterMacro(name))
         {
-          (string clusterIdPrefix, clusterId) = Cluster.GetClusterIdData(name);
+          clusterId = Cluster.GetClusterIdByMacro(allClusters, name);
         }
         else if (Sector.IsSectorMacro(name))
         {
-          (string clusterIdPrefix, clusterId, string sectorIdPrefix, sectorId) = Sector.GetSectorIdData(name);
+          sectorId = Sector.GetSectorIdByMacro(allSectors, name);
         }
         else
         {
@@ -210,15 +210,15 @@ namespace X4DataLoader
         {
           throw new ArgumentException("Connection must have a valid class: {string.Join(", ", ConnectionOwnerClasses)}");
         }
-        else if (clusterId == 0 && sectorId == 0)
+        else if (string.IsNullOrEmpty(clusterId) && string.IsNullOrEmpty(sectorId))
         {
           throw new ArgumentException("Connection macro must have a cluster or sector id");
         }
-        else if (connectionClass == "cluster" && clusterId == 0)
+        else if (connectionClass == "cluster" && string.IsNullOrEmpty(clusterId))
         {
           throw new ArgumentException("Cluster connection must have a cluster id");
         }
-        else if (connectionClass == "sector" && clusterId == 00 && sectorId == 0)
+        else if (connectionClass == "sector" && string.IsNullOrEmpty(sectorId))
         {
           throw new ArgumentException("Sector connection must have both cluster and sector id");
         }
@@ -248,7 +248,7 @@ namespace X4DataLoader
                 string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
                 if (macroConnection == "cluster" && string.IsNullOrEmpty(macroRef) == false)
                 {
-                  Sector? sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, macroRef));
+                  Sector? sector = Sector.GetSectorByMacro(allSectors, macroRef);
                   sector?.SetPosition(position, connectionName, connectionElement, source, fileName);
                 }
               }
@@ -272,9 +272,9 @@ namespace X4DataLoader
             }
           }
         }
-        if (sectorId > 0 && clusterId > 0)
+        if (!string.IsNullOrEmpty(sectorId))
         {
-          Sector? sector = allSectors.Find(s => s.Id == sectorId && s.ClusterId == clusterId);
+          Sector? sector = Sector.GetSectorById(allSectors, sectorId);
           if (sector != null)
           {
             if (modeFull)
@@ -287,9 +287,9 @@ namespace X4DataLoader
             }
           }
         }
-        else if (clusterId > 0)
+        else if (!string.IsNullOrEmpty(clusterId))
         {
-          Cluster? cluster = allClusters.Find(c => c.Id == clusterId);
+          Cluster? cluster = Cluster.GetClusterById(allClusters, clusterId);
           if (cluster != null)
           {
             if (modeFull)
