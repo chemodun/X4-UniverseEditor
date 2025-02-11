@@ -105,14 +105,14 @@ namespace ChemGateBuilder
       try
       {
         currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
-        Dictionary<string, (string path, string fileName)> relativePaths = new()
-        {
-          { "galaxy", ("maps/xu_ep2_universe", "galaxy.xml") },
-          { "sectors", ("maps/xu_ep2_universe", "sectors.xml") },
-          { "zones", ("maps/xu_ep2_universe", "zones.xml") },
-        };
-        var files = DataLoader.GatherFiles(currentPath, relativePaths);
-        if (files.Count == 0)
+        List<GameFilesStructureItem> gameFilesStructure =
+        [
+          new GameFilesStructureItem(id: "sectors", folder: "maps/xu_ep2_universe", ["sectors.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "zones", folder: "maps/xu_ep2_universe", ["zones.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
+        ];
+        List<GameFile> modFiles = DataLoader.GatherFiles(currentPath, gameFilesStructure, galaxy.DLCs, "chem_gate_keeper");
+        if (modFiles.Count == 0)
         {
           MessageBox.Show("The selected folder does not contain a valid mod", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
           return false;
@@ -120,151 +120,120 @@ namespace ChemGateBuilder
         ModFolderPath = currentPath;
         List<ZoneConnection> zonesConnections = [];
         List<Zone> zones = [];
-        foreach (var filesGroup in files)
+        List<string> sources = GameFile.GetRelatedExtensions(modFiles, "chem_gate_keeper");
+        foreach (string source in sources)
         {
-          string source = filesGroup.Key;
-          Log.Debug($"Loading {source} files");
-          if (filesGroup.Value.TryGetValue("sectors", out var sectorsFile))
+          List<GameFile> sourceFiles = modFiles.Where(f => f.RelatedExtensionId == source).ToList();
+          foreach (GameFile file in sourceFiles)
           {
-            XDocument sectorsDoc;
-            try
+            Log.Debug($"Loading {file.FileName} for {source}");
+            switch (file.Id)
             {
-              sectorsDoc = XDocument.Load(sectorsFile.fullPath);
-            }
-            catch (ArgumentException e)
-            {
-              Log.Warn($"Error loading sectors file {sectorsFile.fullPath}: {e.Message}");
-              continue;
-            }
-            foreach (var macroElement in sectorsDoc.XPathSelectElements("/diff/add"))
-            {
-              string sel = macroElement.Attribute("sel")?.Value ?? "";
-              if (_regex.IsMatch(sel))
-              {
-                string sectorMacro = _regex.Match(sel).Groups[1].Value;
-                var sector = galaxy.GetSectorByMacro(sectorMacro);
-                if (sector == null)
+              case "sectors":
+                foreach (var macroElement in file.XML.XPathSelectElements("/diff/add"))
                 {
-                  Log.Error($"Sector not found: {sectorMacro}");
-                  continue;
-                }
-                var connections = macroElement.Elements("connection");
-                if (connections == null || !connections.Any())
-                {
-                  Log.Error($"Sector {sector.Name} has no added connection");
-                  continue;
-                }
-                foreach (XElement connectionElement in connections)
-                {
-                  string reference = connectionElement.Attribute("ref")?.Value ?? "";
-                  string connectionName = connectionElement.Attribute("name")?.Value ?? "";
-                  if (reference == "zones" && !string.IsNullOrEmpty(connectionName))
+                  string sel = macroElement.Attribute("sel")?.Value ?? "";
+                  if (_regex.IsMatch(sel))
                   {
-                    ZoneConnection zoneConnection = new();
+                    string sectorMacro = _regex.Match(sel).Groups[1].Value;
+                    var sector = galaxy.GetSectorByMacro(sectorMacro);
+                    if (sector == null)
+                    {
+                      Log.Error($"Sector not found: {sectorMacro}");
+                      continue;
+                    }
+                    var connections = macroElement.Elements("connection");
+                    if (connections == null || !connections.Any())
+                    {
+                      Log.Error($"Sector {sector.Name} has no added connection");
+                      continue;
+                    }
+                    foreach (XElement connectionElement in connections)
+                    {
+                      string reference = connectionElement.Attribute("ref")?.Value ?? "";
+                      string connectionName = connectionElement.Attribute("name")?.Value ?? "";
+                      if (reference == "zones" && !string.IsNullOrEmpty(connectionName))
+                      {
+                        ZoneConnection zoneConnection = new();
+                        try
+                        {
+                          zoneConnection.Load(connectionElement, source, file.FileName);
+                        }
+                        catch (ArgumentException e)
+                        {
+                          Log.Error($"Error loading zone connection: {e.Message}");
+                          continue;
+                        }
+                        zonesConnections.Add(zoneConnection);
+                      }
+                    }
+                  }
+                }
+                Log.Debug($"Sectors loaded from: {file.FileName} for {source}");
+                break;
+              case "zones":
+                foreach (XElement addElement in file.XML.XPathSelectElements("/diff/add"))
+                {
+                  var zoneElements = addElement.Elements("macro");
+                  if (zoneElements == null || !zoneElements.Any())
+                  {
+                    Log.Warn($"No Zone macro is found in this Add element");
+                    continue;
+                  }
+                  foreach (XElement zoneElement in zoneElements)
+                  {
+                    Zone newZone = new();
                     try
                     {
-                      zoneConnection.Load(connectionElement, source, sectorsFile.fileName);
+                      newZone.Load(zoneElement, source, file.FileName);
                     }
                     catch (ArgumentException e)
                     {
-                      Log.Error($"Error loading zone connection: {e.Message}");
+                      Log.Error($"Error loading zone: {e.Message}");
                       continue;
                     }
-                    zonesConnections.Add(zoneConnection);
+                    string zoneId = newZone.Name.Replace("_macro", "_connection");
+                    ZoneConnection? zoneConnection = zonesConnections.FirstOrDefault(zc => zc.Name == zoneId);
+                    if (zoneConnection != null)
+                    {
+                      newZone.SetPosition(zoneConnection.Position, zoneConnection.Name, zoneConnection.XML);
+                      zones.Add(newZone);
+                    }
+                    else
+                    {
+                      Log.Warn($"Zone connection not found for {newZone.Name}");
+                    }
                   }
                 }
-              }
-            }
-            Log.Debug($"Sectors loaded from: {sectorsFile.fileName} for {source}");
-          }
-          if (filesGroup.Value.TryGetValue("zones", out var zoneFileInfo))
-          {
-            Log.Debug($"Loading zone file {zoneFileInfo.fileName} from {zoneFileInfo.fullPath}");
-            XDocument docZones;
-            try
-            {
-              docZones = XDocument.Load(zoneFileInfo.fullPath);
-            }
-            catch (ArgumentException e)
-            {
-              Log.Warn($"Error loading zone file {zoneFileInfo.fullPath}: {e.Message}");
-              continue;
-            }
-            foreach (XElement addElement in docZones.XPathSelectElements("/diff/add"))
-            {
-              var zoneElements = addElement.Elements("macro");
-              if (zoneElements == null || !zoneElements.Any())
-              {
-                Log.Warn($"No Zone macro is found in this Add element");
-                continue;
-              }
-              foreach (XElement zoneElement in zoneElements)
-              {
-                Zone newZone = new();
-                try
+                if (zones.Count == 0)
                 {
-                  newZone.Load(zoneElement, source, zoneFileInfo.fileName);
+                  Log.Error("No zones loaded");
+                  return false;
                 }
-                catch (ArgumentException e)
-                {
-                  Log.Error($"Error loading zone: {e.Message}");
-                  continue;
-                }
-                string zoneId = newZone.Name.Replace("_macro", "_connection");
-                ZoneConnection? zoneConnection = zonesConnections.FirstOrDefault(zc => zc.Name == zoneId);
-                if (zoneConnection != null)
-                {
-                  newZone.SetPosition(zoneConnection.Position, zoneConnection.Name, zoneConnection.XML);
-                  zones.Add(newZone);
-                }
-                else
-                {
-                  Log.Warn($"Zone connection not found for {newZone.Name}");
-                }
-              }
+                break;
             }
           }
         }
-        if (zones.Count == 0)
+        GameFile? galaxyFile = GameFile.GetFromList(modFiles, "galaxy", "chem_gate_keeper", "vanilla");
+        if (galaxyFile == null)
         {
-          Log.Error("No zones loaded");
-          return false;
-        }
-        var vanillaFiles = files["vanilla"];
-        if (vanillaFiles == null || !vanillaFiles.TryGetValue("galaxy", out var galaxyFile))
-        {
-          Log.Error("Vanilla galaxy file not found");
+          Log.Warn("No galaxy file found for vanilla.");
           return false;
         }
         Galaxy modGalaxy = new();
-        XDocument? docGalaxy;
-        try
-        {
-          docGalaxy = XDocument.Load(galaxyFile.fullPath);
-        }
-        catch (ArgumentException e)
-        {
-          Log.Error($"Error loading galaxy file {galaxyFile.fullPath}: {e.Message}");
-          return false;
-        }
-        foreach (XElement addElement in docGalaxy.XPathSelectElements("/diff/add"))
+        foreach (XElement addElement in galaxyFile.XML.XPathSelectElements("/diff/add"))
         {
           if (addElement.Attribute("sel")?.Value != "/macros/macro[@name='XU_EP2_universe_macro']/connections")
           {
-            Log.Warn("No connections found in thi Add element");
+            Log.Warn("No connections found in this Add element");
             continue;
           }
-          modGalaxy.LoadConnections(addElement, galaxy.Clusters, "vanilla", galaxyFile.fileName, zones);
-        }
-        if (modGalaxy.Connections.Count == 0)
-        {
-          Log.Error("No Galaxy Connections loaded");
-          return false;
+          modGalaxy.LoadConnections(addElement, galaxy.Clusters, "vanilla", galaxyFile.FileName, zones);
         }
         XDocument? docContent;
         try
         {
-          docContent = XDocument.Load(Path.Combine(currentPath, "content.xml"));
+          docContent = XDocument.Load(Path.Combine(currentPath, DataLoader.ContentXml));
         }
         catch (ArgumentException e)
         {
@@ -318,7 +287,7 @@ namespace ChemGateBuilder
       }
       if (Directory.Exists(currentPath))
       {
-        string pathToContext = Path.Combine(currentPath, "content.xml");
+        string pathToContext = Path.Combine(currentPath, DataLoader.ContentXml);
         if (File.Exists(pathToContext))
         {
           var confirmOverwrite = MessageBox.Show(
@@ -438,7 +407,7 @@ namespace ChemGateBuilder
         content.Add(new XElement("dependency", new XAttribute("id", dlc), new XAttribute("optional", "false")));
       }
       XDocument docContent = new(new XDeclaration("1.0", "utf-8", null), content);
-      docContent.Save(Path.Combine(ModFolderPath, "content.xml"));
+      docContent.Save(Path.Combine(ModFolderPath, DataLoader.ContentXml));
       XDocument docGalaxy = new(new XDeclaration("1.0", "utf-8", null), diffElement);
       string galaxyPath = Path.Combine(ModFolderPath, "maps", "xu_ep2_universe");
       Directory.CreateDirectory(galaxyPath);
@@ -453,7 +422,7 @@ namespace ChemGateBuilder
         string universePath = ModFolderPath;
         if (path.Key != "vanilla")
         {
-          universePath = Path.Combine(universePath, "extensions", path.Key);
+          universePath = Path.Combine(universePath, DataLoader.ExtensionsFolder, path.Key);
         }
         universePath = Path.Combine(universePath, "maps", "xu_ep2_universe");
         Directory.CreateDirectory(universePath);
