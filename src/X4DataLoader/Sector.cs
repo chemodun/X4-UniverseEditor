@@ -144,7 +144,7 @@ namespace X4DataLoader
 
     public void CalculateOwnership(List<Faction> allFactions)
     {
-      Dictionary<string, int> ownerStationCount = new();
+      Dictionary<string, int> ownerStationCount = [];
       foreach (Station station in Stations)
       {
         if (station.IsClaimCapable && !station.GameStartDependent)
