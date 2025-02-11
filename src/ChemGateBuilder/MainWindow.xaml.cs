@@ -1089,15 +1089,14 @@ namespace ChemGateBuilder
           SetStatusMessage("Error: Sectors not found.", StatusMessageType.Error);
           return;
         }
-        string uniqueId = $"{sectorDirect.ClusterId:D3}{sectorDirect.Id:D3}{sectorOpposite.ClusterId:D3}{sectorOpposite.Id:D3}";
-        string sectorDirectId = $"cl_{sectorDirect.ClusterId:D3}_sect_{sectorDirect.Id:D3}";
-        string sectorOppositeId = $"cl_{sectorOpposite.ClusterId:D3}_sect_{sectorOpposite.Id:D3}";
+        string sectorDirectId = sectorDirect.Id;
+        string sectorOppositeId = sectorOpposite.Id;
+        string uniqueId = $"c_{sectorDirectId}_g_{sectorOppositeId}_b";
         string galaxyConnectionId = $"{GalaxyConnectionPrefix}_{sectorDirectId}_to_{sectorOppositeId}";
         string gateDirectId = $"connection_{GalaxyConnectionPrefix}_{sectorDirectId}_to_{sectorOppositeId}";
         string gateOppositeId = $"connection_{GalaxyConnectionPrefix}_{sectorOppositeId}_to_{sectorDirectId}";
-        string zoneDirectId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_Cluster_{sectorDirect.ClusterId:D2}_Sector_{sectorDirect.Id:D3}";
-        string zoneOppositeId =
-          $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_Cluster_{sectorOpposite.ClusterId:D2}_Sector_{sectorOpposite.Id:D3}";
+        string zoneDirectId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_{sectorDirect.Id}";
+        string zoneOppositeId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_{sectorOpposite.Id}";
         GateConnection gateDirect = new();
         GateData gateData = GatesConnectionCurrent.GateDirect;
         Coordinates position = gateData.Position;
