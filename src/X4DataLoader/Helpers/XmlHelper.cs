@@ -7,7 +7,7 @@ namespace X4DataLoader.Helpers
 {
   public static class XmlHelper
   {
-    private static Regex DiffSelAttributeAndValueRegex = new(@"\[@(\w+)='([^']+)'\]");
+    private static readonly Regex DiffSelAttributeAndValueRegex = new(@"\[@(\w+)='([^']+)'\]");
 
     public static string? GetAttribute(XElement element, string attributeName)
     {
@@ -28,7 +28,7 @@ namespace X4DataLoader.Helpers
 
     public static List<string> GetAttributeAsList(XElement element, string attributeName, string separator = ",")
     {
-      List<string>? tags = new List<string>();
+      List<string>? tags = [];
       string? tagsAttribute = element.Attribute(attributeName)?.Value;
       if (!string.IsNullOrEmpty(tagsAttribute))
       {
