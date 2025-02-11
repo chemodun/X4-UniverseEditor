@@ -49,26 +49,25 @@ namespace X4DataLoader
       }
       else
       {
-        List<ExtensionInfo> allExtensions = [];
-        allExtensions.AddRange(galaxy.DLCs);
-        allExtensions.AddRange(galaxy.Mods);
-        gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, allExtensions, loadFor);
+        gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.Extensions, loadFor);
         sources = GameFile.GetRelatedExtensions(gameFiles, loadFor);
       }
       foreach (string source in sources)
       {
+        string sourceStr = source;
         List<GameFile> sourceFiles = [];
         if (isMainData)
         {
-          sourceFiles = gameFiles.Where(f => f.ExtensionId == source).ToList();
+          sourceFiles = gameFiles.Where(f => f.ExtensionId == sourceStr).ToList();
         }
         else
         {
-          sourceFiles = gameFiles.Where(f => f.RelatedExtensionId == source).ToList();
+          sourceFiles = gameFiles.Where(f => f.RelatedExtensionId == sourceStr).ToList();
+          sourceStr = source == "vanilla" ? loadFor : source;
         }
         foreach (GameFile file in sourceFiles)
         {
-          Log.Debug($"Loading {file.FileName} for {source}");
+          Log.Debug($"Loading {file.FileName} for {sourceStr}");
           switch (file.Id)
           {
             case "translations":
@@ -76,15 +75,15 @@ namespace X4DataLoader
               Log.Debug("Translation loaded.");
               break;
             case "colors":
-              X4Color.LoadElements(file.XML.XPathSelectElements("/colormap/colors/color"), source, file.FileName, galaxy.Colors);
+              X4Color.LoadElements(file.XML.XPathSelectElements("/colormap/colors/color"), sourceStr, file.FileName, galaxy.Colors);
               X4MappedColor.LoadElements(
                 file.XML.XPathSelectElements("/colormap/mappings/mapping"),
-                source,
+                sourceStr,
                 file.FileName,
                 galaxy.MappedColors,
                 galaxy.Colors
               );
-              Log.Debug($"Colors loaded from: {file.FileName} for {source}");
+              Log.Debug($"Colors loaded from: {file.FileName} for {sourceStr}");
               break;
             case "mapDefaults":
               foreach (XElement datasetElement in file.XML.XPathSelectElements("/defaults/dataset"))
@@ -97,7 +96,7 @@ namespace X4DataLoader
                     Cluster? cluster = new();
                     try
                     {
-                      cluster.Load(datasetElement, galaxy.Translation, source, file.FileName);
+                      cluster.Load(datasetElement, galaxy.Translation, sourceStr, file.FileName);
                       galaxy.Clusters.Add(cluster);
                       Log.Debug($"Cluster loaded: {cluster.Name}");
                     }
@@ -111,7 +110,7 @@ namespace X4DataLoader
                     Sector? sector = new();
                     try
                     {
-                      sector.Load(datasetElement, galaxy.Translation, source, file.FileName);
+                      sector.Load(datasetElement, galaxy.Translation, sourceStr, file.FileName);
                       galaxy.Sectors.Add(sector);
                       Cluster? cluster = Cluster.GetClusterById(galaxy.Clusters, sector.ClusterId);
                       if (cluster != null)
@@ -128,24 +127,24 @@ namespace X4DataLoader
                   }
                 }
               }
-              Log.Debug($"Map Defaults loaded from: {file.FileName} for {source}");
+              Log.Debug($"Map Defaults loaded from: {file.FileName} for {sourceStr}");
               break;
             case "clusters":
-              Connection.LoadFromXML(file.XML, galaxy.Clusters, galaxy.Sectors, source, file.FileName);
-              Log.Debug($"Clusters loaded from: {file.FileName} for {source}");
+              Connection.LoadFromXML(file.XML, galaxy.Clusters, galaxy.Sectors, sourceStr, file.FileName);
+              Log.Debug($"Clusters loaded from: {file.FileName} for {sourceStr}");
               break;
             case "sectors":
-              Connection.LoadFromXML(file.XML, galaxy.Clusters, galaxy.Sectors, source, file.FileName);
-              Log.Debug($"Sectors loaded from: {file.FileName} for {source}");
+              Connection.LoadFromXML(file.XML, galaxy.Clusters, galaxy.Sectors, sourceStr, file.FileName);
+              Log.Debug($"Sectors loaded from: {file.FileName} for {sourceStr}");
               break;
             case "zones":
-              Zone.LoadFromXML(file.XML, galaxy.Sectors, source, file.FileName);
-              Log.Debug($"Zones loaded from: {file.FileName} for {source}");
+              Zone.LoadFromXML(file.XML, galaxy.Sectors, sourceStr, file.FileName);
+              Log.Debug($"Zones loaded from: {file.FileName} for {sourceStr}");
               break;
             case "sechighways":
               foreach (XElement macroElement in file.XML.XPathSelectElements("/macros/macro"))
               {
-                HighwayClusterLevel? highway = new(macroElement, source, file.FileName);
+                HighwayClusterLevel? highway = new(macroElement, sourceStr, file.FileName);
                 Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
                   c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
                 );
@@ -160,12 +159,12 @@ namespace X4DataLoader
                   Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
                 }
               }
-              Log.Debug($"Sector Highways loaded from: {file.FileName} for {source}");
+              Log.Debug($"Sector Highways loaded from: {file.FileName} for {sourceStr}");
               break;
             case "zonehighways":
               foreach (XElement macroElement in file.XML.XPathSelectElements("/macros/macro"))
               {
-                HighwaySectorLevel? highway = new(macroElement, source, file.FileName);
+                HighwaySectorLevel? highway = new(macroElement, sourceStr, file.FileName);
                 Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
                   s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
                 );
@@ -179,7 +178,7 @@ namespace X4DataLoader
                   Log.Warn($"No matching sector found for Zone Highway: {highway.Macro}");
                 }
               }
-              Log.Debug($"Zone Highways loaded from: {file.FileName} for {source}");
+              Log.Debug($"Zone Highways loaded from: {file.FileName} for {sourceStr}");
               break;
             case "races":
               IEnumerable<XElement> races = file.XML.XPathSelectElements("/races/race");
@@ -187,8 +186,8 @@ namespace X4DataLoader
               {
                 races = file.XML.XPathSelectElements("/diff/add[@sel='/races']/race");
               }
-              Race.LoadElements(races, source, file.FileName, galaxy.Races, galaxy.Translation);
-              Log.Debug($"Races loaded from: {file.FileName} for {source}");
+              Race.LoadElements(races, sourceStr, file.FileName, galaxy.Races, galaxy.Translation);
+              Log.Debug($"Races loaded from: {file.FileName} for {sourceStr}");
               break;
             case "factions":
               IEnumerable<XElement> factions = file.XML.XPathSelectElements("/factions/faction");
@@ -196,8 +195,8 @@ namespace X4DataLoader
               {
                 factions = file.XML.XPathSelectElements("/diff/add[@sel='/factions']/faction");
               }
-              Faction.LoadElements(factions, source, file.FileName, galaxy.Factions, galaxy.Translation, galaxy.Races);
-              Log.Debug($"Factions loaded from: {file.FileName} for {source}");
+              Faction.LoadElements(factions, sourceStr, file.FileName, galaxy.Factions, galaxy.Translation, galaxy.Races);
+              Log.Debug($"Factions loaded from: {file.FileName} for {sourceStr}");
               break;
             case "modules":
               IEnumerable<XElement> modules = file.XML.XPathSelectElements("/modules/module");
@@ -205,8 +204,8 @@ namespace X4DataLoader
               {
                 modules = file.XML.XPathSelectElements("/diff/add[@sel='/modules']/module");
               }
-              StationModule.LoadElements(modules, source, file.FileName, galaxy.StationModules);
-              Log.Debug($"Modules loaded from: {file.FileName} for {source}");
+              StationModule.LoadElements(modules, sourceStr, file.FileName, galaxy.StationModules);
+              Log.Debug($"Modules loaded from: {file.FileName} for {sourceStr}");
               break;
             case "modulegroups":
               IEnumerable<XElement> moduleGroups = file.XML.XPathSelectElements("/groups/group");
@@ -214,20 +213,20 @@ namespace X4DataLoader
               {
                 moduleGroups = file.XML.XPathSelectElements("/diff/add[@sel='/groups']/group");
               }
-              StationModuleGroup.LoadElements(moduleGroups, source, file.FileName, galaxy.StationModuleGroups);
-              Log.Debug($"Module groups loaded from: {file.FileName} for {source}");
+              StationModuleGroup.LoadElements(moduleGroups, sourceStr, file.FileName, galaxy.StationModuleGroups);
+              Log.Debug($"Module groups loaded from: {file.FileName} for {sourceStr}");
               break;
             case "constructionplans":
               ConstructionPlan.LoadElements(
                 file.XML.XPathSelectElements("/plans/plan"),
-                source,
+                sourceStr,
                 file.FileName,
                 galaxy.ConstructionPlans,
                 galaxy.Translation,
                 galaxy.StationModules,
                 galaxy.StationModuleGroups
               );
-              Log.Debug($"Construction plans loaded from: {file.FileName} for {source}");
+              Log.Debug($"Construction plans loaded from: {file.FileName} for {sourceStr}");
               break;
             case "stationgroups":
               IEnumerable<XElement> stationGroups = file.XML.XPathSelectElements("/groups/group");
@@ -235,8 +234,8 @@ namespace X4DataLoader
               {
                 stationGroups = file.XML.XPathSelectElements("/diff/add[@sel='/groups']/group");
               }
-              StationGroup.LoadElements(stationGroups, source, file.FileName, galaxy.StationGroups, galaxy.ConstructionPlans);
-              Log.Debug($"Station groups loaded from: {file.FileName} for {source}");
+              StationGroup.LoadElements(stationGroups, sourceStr, file.FileName, galaxy.StationGroups, galaxy.ConstructionPlans);
+              Log.Debug($"Station groups loaded from: {file.FileName} for {sourceStr}");
               break;
             case "stations":
               IEnumerable<XElement> stationCategories = file.XML.XPathSelectElements("/stations/station");
@@ -244,8 +243,8 @@ namespace X4DataLoader
               {
                 stationCategories = file.XML.XPathSelectElements("/diff/add[@sel='/stations']/station");
               }
-              StationCategory.LoadElements(stationCategories, source, file.FileName, galaxy.StationCategories, galaxy.StationGroups);
-              Log.Debug($"Station categories loaded from: {file.FileName} for {source}");
+              StationCategory.LoadElements(stationCategories, sourceStr, file.FileName, galaxy.StationCategories, galaxy.StationGroups);
+              Log.Debug($"Station categories loaded from: {file.FileName} for {sourceStr}");
               break;
             case "god":
               IEnumerable<XElement> godElements = file.XML.XPathSelectElements("/god/stations/station");
@@ -253,12 +252,16 @@ namespace X4DataLoader
               {
                 godElements = file.XML.XPathSelectElements("/diff/add[@sel='/god/stations']/station");
               }
+              if (!godElements.Any())
+              {
+                godElements = file.XML.XPathSelectElements("/diff/add[@sel='//god/stations']/station");
+              }
               foreach (XElement stationElement in godElements)
               {
                 Station? station = new();
                 station.Load(
                   stationElement,
-                  source,
+                  sourceStr,
                   file.FileName,
                   galaxy.Sectors,
                   galaxy.StationCategories,
@@ -266,13 +269,13 @@ namespace X4DataLoader
                   galaxy.Factions
                 );
               }
-              Log.Debug($"Stations loaded from: {file.FileName} for {source}");
+              Log.Debug($"Stations loaded from: {file.FileName} for {sourceStr}");
               break;
             case "galaxy":
               if (isMainData)
               {
-                galaxy.LoadXML(file.XML, galaxy.Clusters, source, file.FileName);
-                Log.Debug($"Galaxy loaded from: {file.FileName} for {source}");
+                galaxy.LoadXML(file.XML, galaxy.Clusters, sourceStr, file.FileName);
+                Log.Debug($"Galaxy loaded from: {file.FileName} for {sourceStr}");
               }
               break;
           }
@@ -280,7 +283,7 @@ namespace X4DataLoader
       }
       if (!isMainData)
       {
-        GameFile? galaxyFile = GameFile.GetFromList(gameFiles, "galaxy", "vanilla");
+        GameFile? galaxyFile = GameFile.GetFromList(gameFiles, "galaxy", loadFor, "vanilla");
         if (galaxyFile == null)
         {
           Log.Warn("No galaxy file found for vanilla.");
@@ -402,7 +405,9 @@ namespace X4DataLoader
           Log.Debug($"Loading mods in the following order: {string.Join(", ", modsOrder)}");
           foreach (string modId in modsOrder)
           {
-            LoadData(galaxy, Path.Combine(extensionsFolder, mods[modId].Folder), relativePaths, modId);
+            ExtensionInfo mod = mods[modId];
+            LoadData(galaxy, Path.Combine(extensionsFolder, mod.Folder), relativePaths, mod.Id);
+            galaxy.Mods.Add(mod);
           }
         }
       }
@@ -482,7 +487,7 @@ namespace X4DataLoader
       {
         foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, $"{DlcPrefix}*"))
         {
-          ExtensionInfo? dlc = null;
+          ExtensionInfo? dlc;
           string contentPath = Path.Combine(dlcFolder, ContentXml);
           if (File.Exists(contentPath))
           {
@@ -497,8 +502,7 @@ namespace X4DataLoader
             }
             extensions.Add(dlc);
             Log.Debug($"DLC identified: {dlc.Name}");
-            sourceStr = dlc.Id;
-            List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, sourceStr, relatedExtensionId);
+            List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, dlc.Id, relatedExtensionId);
             if (dlcFiles.Count > 0)
             {
               result.AddRange(dlcFiles);
@@ -539,6 +543,7 @@ namespace X4DataLoader
     public string Name { get; set; }
     public string Folder { get; set; }
     public int GameVersion { get; set; }
+    public int Version { get; set; }
     public List<ModDependency> Dependencies { get; set; } = [];
 
     public ExtensionInfo(string path)
@@ -548,13 +553,15 @@ namespace X4DataLoader
       XElement? contentElement = contentDoc.XPathSelectElement("/content") ?? throw new ArgumentException("Invalid content.xml file");
       Id = contentElement.Attribute("id")?.Value ?? "";
       Name = contentElement.Attribute("name")?.Value ?? "";
-      if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name))
+      string? versionStr = contentElement.Attribute("version")?.Value;
+      if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(versionStr))
       {
         throw new ArgumentException("Invalid content.xml file");
       }
+      Version = StringHelper.ParseInt(contentElement.Attribute("version")?.Value, 0);
       foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
       {
-        string? versionStr = dependencyElement.Attribute("version")?.Value;
+        versionStr = dependencyElement.Attribute("version")?.Value;
         if (!string.IsNullOrEmpty(versionStr) && int.TryParse(versionStr, out int gameVersion))
         {
           GameVersion = gameVersion;
