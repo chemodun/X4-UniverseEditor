@@ -14,6 +14,7 @@ namespace X4DataLoader
     public int Version { get; set; } = 0;
     public List<ExtensionInfo> DLCs { get; private set; } = [];
     public List<ExtensionInfo> Mods { get; private set; } = [];
+    public List<ExtensionInfo> Extensions => [.. DLCs, .. Mods];
     public Translation Translation { get; set; } = new();
     public List<Cluster> Clusters { get; private set; }
     public List<Sector> Sectors { get; private set; }
@@ -100,45 +101,53 @@ namespace X4DataLoader
       List<Zone>? additionalZones = null
     )
     {
-      foreach (var connectionElement in connectionsElement.Elements("connection"))
+      string[] connectionRefs = ["clusters", "destination"];
+      foreach (var connectionRef in connectionRefs)
       {
-        var reference = connectionElement.Attribute("ref")?.Value;
-        if (reference == "clusters")
+        foreach (var connectionElement in connectionsElement.Elements("connection"))
         {
-          var name = XmlHelper.GetAttribute(connectionElement, "name") ?? "";
-          var offsetElement = connectionElement.Element("offset");
-          var positionElement = offsetElement?.Element("position");
-          Position position =
-            positionElement != null
-              ? new Position(
-                StringHelper.ParseDouble(positionElement.Attribute("x")?.Value ?? "0"),
-                StringHelper.ParseDouble(positionElement.Attribute("y")?.Value ?? "0"),
-                StringHelper.ParseDouble(positionElement.Attribute("z")?.Value ?? "0")
-              )
-              : new Position(0, 0, 0);
-
-          var macroElement = connectionElement.Element("macro");
-          if (macroElement != null)
+          var reference = connectionElement.Attribute("ref")?.Value;
+          if (reference == null || reference != connectionRef)
           {
-            string macroRef = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
-            string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
-            if (macroConnection == "galaxy" && string.IsNullOrEmpty(macroRef) == false)
+            continue;
+          }
+          if (reference == "clusters")
+          {
+            var name = XmlHelper.GetAttribute(connectionElement, "name") ?? "";
+            var offsetElement = connectionElement.Element("offset");
+            var positionElement = offsetElement?.Element("position");
+            Position position =
+              positionElement != null
+                ? new Position(
+                  StringHelper.ParseDouble(positionElement.Attribute("x")?.Value ?? "0"),
+                  StringHelper.ParseDouble(positionElement.Attribute("y")?.Value ?? "0"),
+                  StringHelper.ParseDouble(positionElement.Attribute("z")?.Value ?? "0")
+                )
+                : new Position(0, 0, 0);
+
+            var macroElement = connectionElement.Element("macro");
+            if (macroElement != null)
             {
-              var cluster = allClusters.FirstOrDefault(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef));
-              if (cluster != null)
+              string macroRef = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
+              string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
+              if (macroConnection == "galaxy" && string.IsNullOrEmpty(macroRef) == false)
               {
-                cluster.SetPosition(position, name, connectionElement, source, fileName);
-                Clusters.Add(cluster);
-                cluster.Sectors.ForEach(s => Sectors.Add(s));
+                var cluster = allClusters.FirstOrDefault(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef));
+                if (cluster != null)
+                {
+                  cluster.SetPosition(position, name, connectionElement, source, fileName);
+                  Clusters.Add(cluster);
+                  cluster.Sectors.ForEach(s => Sectors.Add(s));
+                }
               }
             }
           }
-        }
-        else if (reference == "destination")
-        {
-          var galaxyConnection = new GalaxyConnection();
-          galaxyConnection.Load(connectionElement, allClusters, source, fileName, additionalZones);
-          Connections.Add(galaxyConnection);
+          else if (reference == "destination")
+          {
+            var galaxyConnection = new GalaxyConnection();
+            galaxyConnection.Load(connectionElement, allClusters, source, fileName, additionalZones);
+            Connections.Add(galaxyConnection);
+          }
         }
       }
     }
