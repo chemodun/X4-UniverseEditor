@@ -272,7 +272,7 @@ namespace ChemGateBuilder
       return true;
     }
 
-    public bool SaveData()
+    public bool SaveData(Galaxy? galaxy)
     {
       string currentPath = ModFolderPath;
       if (string.IsNullOrEmpty(currentPath))
@@ -327,14 +327,18 @@ namespace ChemGateBuilder
       Connections = GalaxyConnections.Select(gc => gc.Connection).Where(c => c != null).ToList();
       Date = DateTime.Now.ToString("yyyy-MM-dd");
       VersionInitial = _version;
-      SaveModXMLs();
+      SaveModXMLs(galaxy);
       bool result = !IsModChanged();
       OnPropertyChanged(nameof(Title));
       return result;
     }
 
-    private void SaveModXMLs()
+    private void SaveModXMLs(Galaxy? galaxy)
     {
+      if (galaxy == null)
+      {
+        return;
+      }
       DlcsRequired.Clear();
       _paths.Clear();
       string connectionsText = "";
@@ -398,13 +402,21 @@ namespace ChemGateBuilder
       }
       content.Add(new XElement("dependency", new XAttribute("version", $"{GameVersion}")));
       DlcsRequired.Sort();
+      List<ExtensionInfo> extensions = galaxy.Extensions;
       foreach (string dlc in DlcsRequired)
       {
         if (dlc == "vanilla")
         {
           continue;
         }
-        content.Add(new XElement("dependency", new XAttribute("id", dlc), new XAttribute("optional", "false")));
+        XElement dependencyElement = new("dependency", new XAttribute("id", dlc), new XAttribute("optional", "false"));
+        ExtensionInfo? extension = extensions.FirstOrDefault(e => e.Id == dlc);
+        if (extension != null)
+        {
+          dependencyElement.SetAttributeValue("version", extension.Version);
+          dependencyElement.SetAttributeValue("name", extension.Name);
+        }
+        content.Add(dependencyElement);
       }
       XDocument docContent = new(new XDeclaration("1.0", "utf-8", null), content);
       docContent.Save(Path.Combine(ModFolderPath, DataLoader.ContentXml));
