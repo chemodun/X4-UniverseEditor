@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml.Linq;
 using Utilities.Logging;
+using X4DataLoader;
 using X4Unpack;
 
 namespace ChemGateBuilder
@@ -16,9 +17,6 @@ namespace ChemGateBuilder
     private MainWindow? MainWindowReference = null;
 
     private readonly string X4Executable = "X4.exe";
-    private readonly string VersionDat = "version.dat";
-    private readonly string ExtensionsFolder = "extensions";
-    private readonly string DLCPrefix = "ego_dlc_";
     private string _extractedDataLocationFolder = string.Empty;
     public string ExtractedDataLocationFolder
     {
@@ -258,11 +256,11 @@ namespace ChemGateBuilder
         Log.Debug("X4 executable not found");
         return false;
       }
-      if (File.Exists(Path.Combine(GameFolder, VersionDat)))
+      if (File.Exists(Path.Combine(GameFolder, DataLoader.VersionDat)))
       {
         try
         {
-          string version = File.ReadAllText(Path.Combine(GameFolder, VersionDat)).Trim();
+          string version = File.ReadAllText(Path.Combine(GameFolder, DataLoader.VersionDat)).Trim();
           if (version.Length == 3)
           {
             GameVersion = $" v.{version[0]}.{version[1]}{version[2]}";
@@ -281,24 +279,24 @@ namespace ChemGateBuilder
         Log.Debug("version.dat not found");
         return false;
       }
-      if (Directory.Exists(Path.Combine(GameFolder, ExtensionsFolder)))
+      if (Directory.Exists(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
       {
         // Check for DLCs
-        foreach (var dlcFolder in Directory.GetDirectories(Path.Combine(GameFolder, ExtensionsFolder)))
+        foreach (var dlcFolder in Directory.GetDirectories(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
         {
-          if (Path.GetFileName(dlcFolder).StartsWith(DLCPrefix) && File.Exists(Path.Combine(dlcFolder, "content.xml")))
+          if (Path.GetFileName(dlcFolder).StartsWith(DataLoader.DlcPrefix) && File.Exists(Path.Combine(dlcFolder, DataLoader.ContentXml)))
           {
-            XDocument contentXml = XDocument.Load(Path.Combine(dlcFolder, "content.xml"));
+            XDocument contentXml = XDocument.Load(Path.Combine(dlcFolder, DataLoader.ContentXml));
             XElement? contentElement = contentXml.Element("content");
             if (contentElement == null)
             {
-              Log.Warn($"No content element found in {Path.Combine(dlcFolder, "content.xml")}");
+              Log.Warn($"No content element found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
               continue;
             }
             string dlcName = contentElement.Attribute("name")?.Value ?? "";
             if (string.IsNullOrEmpty(dlcName))
             {
-              Log.Warn($"No name attribute found in {Path.Combine(dlcFolder, "content.xml")}");
+              Log.Warn($"No name attribute found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
               continue;
             }
             Log.Debug($"DLC {Path.GetFileName(dlcFolder)}: {dlcName}");
@@ -508,19 +506,38 @@ namespace ChemGateBuilder
           Extractor.ExtractEntry(catEntry, ExtractToFolder, OverwriteExistingFiles, !VerifyExtractedData);
         }
       }
-      if (File.Exists(Path.Combine(GameFolder, VersionDat)))
+      foreach (var dlc in DlcOptions)
+      {
+        Log.Debug($"DLC {dlc.Name}: {(dlc.IsChecked ? "Included" : "Excluded")}");
+        if (dlc.IsChecked)
+        {
+          try
+          {
+            File.Copy(
+              Path.Combine(GameFolder, DataLoader.ExtensionsFolder, dlc.Folder, DataLoader.ContentXml),
+              Path.Combine(ExtractedDataLocationFolder, DataFolder, DataLoader.ExtensionsFolder, dlc.Folder, DataLoader.ContentXml),
+              OverwriteExistingFiles
+            );
+          }
+          catch (Exception ex)
+          {
+            Log.Error($"Error copying {DataLoader.ContentXml} from {dlc.Folder}", ex);
+          }
+        }
+      }
+      if (File.Exists(Path.Combine(GameFolder, DataLoader.VersionDat)))
       {
         try
         {
           File.Copy(
-            Path.Combine(GameFolder, VersionDat),
-            Path.Combine(ExtractedDataLocationFolder, DataFolder, VersionDat),
+            Path.Combine(GameFolder, DataLoader.VersionDat),
+            Path.Combine(ExtractedDataLocationFolder, DataFolder, DataLoader.VersionDat),
             OverwriteExistingFiles
           );
         }
         catch (Exception ex)
         {
-          Log.Error($"Error copying {VersionDat}", ex);
+          Log.Error($"Error copying {DataLoader.VersionDat}", ex);
         }
       }
     }
@@ -537,8 +554,8 @@ namespace ChemGateBuilder
           Log.Warn($"DLC {category} not found");
           return (new ContentExtractor(""), new List<CatEntry>(), "");
         }
-        sourceFolder = Path.Combine(GameFolder, ExtensionsFolder, dlcFolder);
-        extractToFolder = Path.Combine(extractToFolder, ExtensionsFolder, dlcFolder);
+        sourceFolder = Path.Combine(GameFolder, DataLoader.ExtensionsFolder, dlcFolder);
+        extractToFolder = Path.Combine(extractToFolder, DataLoader.ExtensionsFolder, dlcFolder);
       }
       ContentExtractor extractor = new(sourceFolder);
       List<CatEntry> catEntries = [];
