@@ -1266,7 +1266,7 @@ namespace ChemGateBuilder
     {
       if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
       {
-        IsModCanBeSaved = !ChemGateKeeperMod.SaveData();
+        IsModCanBeSaved = !ChemGateKeeperMod.SaveData(Galaxy);
       }
     }
 
