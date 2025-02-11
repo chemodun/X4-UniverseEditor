@@ -12,7 +12,8 @@ namespace X4DataLoader
     public string Name { get; private set; }
     public string Reference { get; private set; }
     public int Version { get; set; } = 0;
-    public List<string> DLCs { get; private set; } = [];
+    public List<ExtensionInfo> DLCs { get; private set; } = [];
+    public List<ExtensionInfo> Mods { get; private set; } = [];
     public Translation Translation { get; set; } = new();
     public List<Cluster> Clusters { get; private set; }
     public List<Sector> Sectors { get; private set; }
@@ -36,9 +37,9 @@ namespace X4DataLoader
       Connections = [];
     }
 
-    public void LoadXML(XDocument doc, List<Cluster> allClusters, string source, string fileName)
+    public void LoadXML(XElement root, List<Cluster> allClusters, string source, string fileName)
     {
-      XElement? galaxyElement = doc.XPathSelectElement("/macros/macro");
+      XElement? galaxyElement = root.XPathSelectElement("/macros/macro");
       if (galaxyElement != null)
       {
         Load(galaxyElement, allClusters, source, fileName);
@@ -46,7 +47,7 @@ namespace X4DataLoader
       }
       else
       {
-        XElement? galaxyDiffElement = doc.XPathSelectElement("/diff");
+        XElement? galaxyDiffElement = root.XPathSelectElement("/diff");
         if (galaxyDiffElement != null)
         {
           IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();

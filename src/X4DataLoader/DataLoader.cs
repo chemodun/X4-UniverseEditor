@@ -13,53 +13,22 @@ namespace X4DataLoader
 {
   public static class DataLoader
   {
+    public static readonly string ContentXml = "content.xml";
+    public static readonly string ExtensionsFolder = "extensions";
+    public static readonly string DlcPrefix = "ego_dlc_";
+    public static readonly string VersionDat = "version.dat";
+
     public static void LoadAllData(
       Galaxy galaxy,
       string coreFolderPath,
-      Dictionary<string, (string path, string fileName)> relativePaths,
+      List<GameFilesStructureItem> gameFilesStructure,
       bool loadMods = false
     )
     {
-      LoadData(galaxy, coreFolderPath, relativePaths);
+      LoadData(galaxy, coreFolderPath, gameFilesStructure);
       if (loadMods)
       {
-        if (Directory.Exists(Path.Combine(coreFolderPath, "extensions")))
-        {
-          foreach (var extensionFolder in Directory.GetDirectories(Path.Combine(coreFolderPath, "extensions")))
-          {
-            if (!Path.GetFileName(extensionFolder).StartsWith("ego_dlc_") && File.Exists(Path.Combine(extensionFolder, "content.xml")))
-            {
-              XDocument contentDoc = XDocument.Load(Path.Combine(extensionFolder, "content.xml"));
-              bool acceptableMod = true;
-              foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
-              {
-                string? versionStr = dependencyElement.Attribute("version")?.Value;
-                string? idStr = dependencyElement.Attribute("id")?.Value;
-                if (!string.IsNullOrEmpty(versionStr) && int.TryParse(versionStr, out int gameVersion))
-                {
-                  if (gameVersion > galaxy.Version)
-                  {
-                    acceptableMod = false;
-                    break;
-                  }
-                }
-                else if (!string.IsNullOrEmpty(idStr) && idStr.StartsWith("ego_dlc_"))
-                {
-                  string optionalStr = dependencyElement.Attribute("optional")?.Value ?? "";
-                  if (optionalStr == "true" && !galaxy.DLCs.Contains(idStr))
-                  {
-                    acceptableMod = false;
-                    break;
-                  }
-                }
-              }
-              if (acceptableMod)
-              {
-                LoadData(galaxy, extensionFolder, relativePaths, false);
-              }
-            }
-          }
-        }
+        LoadMods(galaxy, coreFolderPath, gameFilesStructure);
       }
       foreach (Sector sector in galaxy.Sectors)
       {
@@ -70,517 +39,432 @@ namespace X4DataLoader
     private static void LoadData(
       Galaxy galaxy,
       string coreFolderPath,
-      Dictionary<string, (string path, string fileName)> relativePaths,
+      List<GameFilesStructureItem> gameFilesStructure,
       bool isMainData = true
     )
     {
-      Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> fileSets = GatherFiles(coreFolderPath, relativePaths);
-
-      Dictionary<string, (string fullPath, string fileName)> vanillaFiles = fileSets["vanilla"];
-      galaxy.Translation.Load(fileSets["vanilla"]["translation"].fullPath);
-      Log.Debug("Translation loaded.");
-      // Process each file set
-      foreach (KeyValuePair<string, Dictionary<string, (string fullPath, string fileName)>> fileSet in fileSets)
+      List<ExtensionInfo> dlcs = [];
+      List<GameFile> gameFiles;
+      if (isMainData)
       {
-        string? source = fileSet.Key;
-        if (isMainData && source != "vanilla")
+        gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs);
+      }
+      else
+      {
+        gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, new List<ExtensionInfo>());
+      }
+      List<string> sources = GameFile.GetExtensions(gameFiles);
+      foreach (string source in sources)
+      {
+        List<GameFile> sourceFiles = gameFiles.Where(f => f.ExtensionId == source).ToList();
+        foreach (GameFile file in sourceFiles)
         {
-          galaxy.DLCs.Add(source);
-        }
-        // Process mapDefaults
-        if (fileSet.Value.TryGetValue("mapDefaults", out (string fullPath, string fileName) mapDefaultsFile))
-        {
-          XDocument mapDefaultsDoc;
-          try
+          Log.Debug($"Loading {file.FileName} for {source}");
+          switch (file.Id)
           {
-            mapDefaultsDoc = XDocument.Load(mapDefaultsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading map defaults {mapDefaultsFile.fullPath}: {e.Message}");
-            continue;
-          }
-          foreach (XElement datasetElement in mapDefaultsDoc.XPathSelectElements("/defaults/dataset"))
-          {
-            string? macro = datasetElement.Attribute("macro")?.Value;
-            if (macro != null)
-            {
-              if (Cluster.IsClusterMacro(macro))
+            case "translations":
+              galaxy.Translation.Load(file.XML);
+              Log.Debug("Translation loaded.");
+              break;
+            case "colors":
+              X4Color.LoadElements(file.XML.XPathSelectElements("/colormap/colors/color"), source, file.FileName, galaxy.Colors);
+              X4MappedColor.LoadElements(
+                file.XML.XPathSelectElements("/colormap/mappings/mapping"),
+                source,
+                file.FileName,
+                galaxy.MappedColors,
+                galaxy.Colors
+              );
+              Log.Debug($"Colors loaded from: {file.FileName} for {source}");
+              break;
+            case "mapDefaults":
+              foreach (XElement datasetElement in file.XML.XPathSelectElements("/defaults/dataset"))
               {
-                Cluster? cluster = new();
-                try
+                string? macro = datasetElement.Attribute("macro")?.Value;
+                if (macro != null)
                 {
-                  cluster.Load(datasetElement, galaxy.Translation, source, mapDefaultsFile.fileName);
-                  galaxy.Clusters.Add(cluster);
-                  Log.Debug($"Cluster loaded: {cluster.Name}");
-                }
-                catch (ArgumentException e)
-                {
-                  Log.Error($"Error loading cluster: {e.Message}");
-                }
-              }
-              else if (Sector.IsSectorMacro(macro))
-              {
-                Sector? sector = new();
-                try
-                {
-                  sector.Load(datasetElement, galaxy.Translation, source, mapDefaultsFile.fileName);
-                  galaxy.Sectors.Add(sector);
-                  Cluster? cluster = galaxy.Clusters.Find(c => c.Id == sector.ClusterId);
-                  if (cluster != null)
+                  if (Cluster.IsClusterMacro(macro))
                   {
-                    cluster.Sectors.Add(sector);
-                    Log.Debug($"Sector added: {sector.Name} to Cluster: {cluster.Name}");
+                    Cluster? cluster = new();
+                    try
+                    {
+                      cluster.Load(datasetElement, galaxy.Translation, source, file.FileName);
+                      galaxy.Clusters.Add(cluster);
+                      Log.Debug($"Cluster loaded: {cluster.Name}");
+                    }
+                    catch (ArgumentException e)
+                    {
+                      Log.Error($"Error loading cluster: {e.Message}");
+                    }
                   }
-                  Log.Debug($"Sector loaded: {sector.Name}");
-                }
-                catch (ArgumentException e)
-                {
-                  Log.Error($"Error loading sector: {e.Message}");
+                  else if (Sector.IsSectorMacro(macro))
+                  {
+                    Sector? sector = new();
+                    try
+                    {
+                      sector.Load(datasetElement, galaxy.Translation, source, file.FileName);
+                      galaxy.Sectors.Add(sector);
+                      Cluster? cluster = galaxy.Clusters.Find(c => c.Id == sector.ClusterId);
+                      if (cluster != null)
+                      {
+                        cluster.Sectors.Add(sector);
+                        Log.Debug($"Sector added: {sector.Name} to Cluster: {cluster.Name}");
+                      }
+                      Log.Debug($"Sector loaded: {sector.Name}");
+                    }
+                    catch (ArgumentException e)
+                    {
+                      Log.Error($"Error loading sector: {e.Message}");
+                    }
+                  }
                 }
               }
-            }
+              Log.Debug($"Map Defaults loaded from: {file.FileName} for {source}");
+              break;
+            case "clusters":
+              Connection.LoadFromXML(file.XML, galaxy.Clusters, galaxy.Sectors, source, file.FileName);
+              Log.Debug($"Clusters loaded from: {file.FileName} for {source}");
+              break;
+            case "sectors":
+              Connection.LoadFromXML(file.XML, galaxy.Clusters, galaxy.Sectors, source, file.FileName);
+              Log.Debug($"Sectors loaded from: {file.FileName} for {source}");
+              break;
+            case "zones":
+              Zone.LoadFromXML(file.XML, galaxy.Sectors, source, file.FileName);
+              Log.Debug($"Zones loaded from: {file.FileName} for {source}");
+              break;
+            case "sechighways":
+              foreach (XElement macroElement in file.XML.XPathSelectElements("/macros/macro"))
+              {
+                HighwayClusterLevel? highway = new(macroElement, source, file.FileName);
+                Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
+                  c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
+                );
+                if (cluster != null)
+                {
+                  cluster.Highways.Add(highway);
+                  highway.Load(cluster);
+                  Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
+                }
+                else
+                {
+                  Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
+                }
+              }
+              Log.Debug($"Sector Highways loaded from: {file.FileName} for {source}");
+              break;
+            case "zonehighways":
+              foreach (XElement macroElement in file.XML.XPathSelectElements("/macros/macro"))
+              {
+                HighwaySectorLevel? highway = new(macroElement, source, file.FileName);
+                Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
+                  s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
+                );
+                if (sector != null)
+                {
+                  sector.Highways.Add(highway);
+                  Log.Debug($"Zone Highway loaded for Sector: {sector.Name}");
+                }
+                else
+                {
+                  Log.Warn($"No matching sector found for Zone Highway: {highway.Macro}");
+                }
+              }
+              Log.Debug($"Zone Highways loaded from: {file.FileName} for {source}");
+              break;
+            case "races":
+              IEnumerable<XElement> races = file.XML.XPathSelectElements("/races/race");
+              if (!races.Any())
+              {
+                races = file.XML.XPathSelectElements("/diff/add[@sel='/races']/race");
+              }
+              Race.LoadElements(races, source, file.FileName, galaxy.Races, galaxy.Translation);
+              Log.Debug($"Races loaded from: {file.FileName} for {source}");
+              break;
+            case "factions":
+              IEnumerable<XElement> factions = file.XML.XPathSelectElements("/factions/faction");
+              if (!factions.Any())
+              {
+                factions = file.XML.XPathSelectElements("/diff/add[@sel='/factions']/faction");
+              }
+              Faction.LoadElements(factions, source, file.FileName, galaxy.Factions, galaxy.Translation, galaxy.Races);
+              Log.Debug($"Factions loaded from: {file.FileName} for {source}");
+              break;
+            case "modules":
+              IEnumerable<XElement> modules = file.XML.XPathSelectElements("/modules/module");
+              if (!modules.Any())
+              {
+                modules = file.XML.XPathSelectElements("/diff/add[@sel='/modules']/module");
+              }
+              StationModule.LoadElements(modules, source, file.FileName, galaxy.StationModules);
+              Log.Debug($"Modules loaded from: {file.FileName} for {source}");
+              break;
+            case "modulegroups":
+              IEnumerable<XElement> moduleGroups = file.XML.XPathSelectElements("/groups/group");
+              if (!moduleGroups.Any())
+              {
+                moduleGroups = file.XML.XPathSelectElements("/diff/add[@sel='/groups']/group");
+              }
+              StationModuleGroup.LoadElements(moduleGroups, source, file.FileName, galaxy.StationModuleGroups);
+              Log.Debug($"Module groups loaded from: {file.FileName} for {source}");
+              break;
+            case "constructionplans":
+              ConstructionPlan.LoadElements(
+                file.XML.XPathSelectElements("/plans/plan"),
+                source,
+                file.FileName,
+                galaxy.ConstructionPlans,
+                galaxy.Translation,
+                galaxy.StationModules,
+                galaxy.StationModuleGroups
+              );
+              Log.Debug($"Construction plans loaded from: {file.FileName} for {source}");
+              break;
+            case "stationgroups":
+              IEnumerable<XElement> stationGroups = file.XML.XPathSelectElements("/groups/group");
+              if (!stationGroups.Any())
+              {
+                stationGroups = file.XML.XPathSelectElements("/diff/add[@sel='/groups']/group");
+              }
+              StationGroup.LoadElements(stationGroups, source, file.FileName, galaxy.StationGroups, galaxy.ConstructionPlans);
+              Log.Debug($"Station groups loaded from: {file.FileName} for {source}");
+              break;
+            case "stations":
+              IEnumerable<XElement> stationCategories = file.XML.XPathSelectElements("/stations/station");
+              if (!stationCategories.Any())
+              {
+                stationCategories = file.XML.XPathSelectElements("/diff/add[@sel='/stations']/station");
+              }
+              StationCategory.LoadElements(stationCategories, source, file.FileName, galaxy.StationCategories, galaxy.StationGroups);
+              Log.Debug($"Station categories loaded from: {file.FileName} for {source}");
+              break;
+            case "god":
+              IEnumerable<XElement> godElements = file.XML.XPathSelectElements("/god/stations/station");
+              if (!godElements.Any())
+              {
+                godElements = file.XML.XPathSelectElements("/diff/add[@sel='/god/stations']/station");
+              }
+              foreach (XElement stationElement in godElements)
+              {
+                Station? station = new();
+                station.Load(
+                  stationElement,
+                  source,
+                  file.FileName,
+                  galaxy.Sectors,
+                  galaxy.StationCategories,
+                  galaxy.ConstructionPlans,
+                  galaxy.Factions
+                );
+              }
+              Log.Debug($"Stations loaded from: {file.FileName} for {source}");
+              break;
+            case "galaxy":
+              if (isMainData)
+              {
+                galaxy.LoadXML(file.XML, galaxy.Clusters, source, file.FileName);
+                Log.Debug($"Galaxy loaded from: {file.FileName} for {source}");
+              }
+              break;
           }
-          Log.Debug($"Map Defaults loaded from: {mapDefaultsFile.fileName} for {source}");
-        }
-
-        // Process clusters
-        if (fileSet.Value.TryGetValue("clusters", out (string fullPath, string fileName) clustersFile))
-        {
-          XDocument clustersDoc;
-          try
-          {
-            clustersDoc = XDocument.Load(clustersFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading clusters {clustersFile.fullPath}: {e.Message}");
-            continue;
-          }
-          Connection.LoadFromXML(clustersDoc, galaxy.Clusters, galaxy.Sectors, source, clustersFile.fileName);
-          Log.Debug($"Clusters loaded from: {clustersFile.fileName} for {source}");
-        }
-
-        // Process sectors
-        if (fileSet.Value.TryGetValue("sectors", out (string fullPath, string fileName) sectorsFile))
-        {
-          XDocument sectorsDoc;
-          try
-          {
-            sectorsDoc = XDocument.Load(sectorsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading sectors {sectorsFile.fullPath}: {e.Message}");
-            continue;
-          }
-          Connection.LoadFromXML(sectorsDoc, galaxy.Clusters, galaxy.Sectors, source, sectorsFile.fileName);
-          Log.Debug($"Sectors loaded from: {sectorsFile.fileName} for {source}");
-        }
-
-        // Process zones
-        if (fileSet.Value.TryGetValue("zones", out (string fullPath, string fileName) zonesFile))
-        {
-          XDocument zonesDoc;
-          try
-          {
-            zonesDoc = XDocument.Load(zonesFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading zones {zonesFile.fullPath}: {e.Message}");
-            continue;
-          }
-          Zone.LoadFromXML(zonesDoc, galaxy.Sectors, source, zonesFile.fileName);
-          Log.Debug($"Zones loaded from: {zonesFile.fileName} for {source}");
-        }
-
-        // Process sechighways
-        if (fileSet.Value.TryGetValue("sechighways", out (string fullPath, string fileName) sechighwaysFile))
-        {
-          XDocument sechighwaysDoc;
-          try
-          {
-            sechighwaysDoc = XDocument.Load(sechighwaysFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading sechighways {sechighwaysFile.fullPath}: {e.Message}");
-            continue;
-          }
-          foreach (XElement macroElement in sechighwaysDoc.XPathSelectElements("/macros/macro"))
-          {
-            HighwayClusterLevel? highway = new(macroElement, source, sechighwaysFile.fileName);
-            Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
-              c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
-            );
-            if (cluster != null)
-            {
-              cluster.Highways.Add(highway);
-              highway.Load(cluster);
-              Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
-            }
-            else
-            {
-              Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
-            }
-          }
-          Log.Debug($"Sector Highways loaded from: {sechighwaysFile.fileName} for {source}");
-        }
-
-        // Process zonehighways
-        if (fileSet.Value.TryGetValue("zonehighways", out (string fullPath, string fileName) zonehighwaysFile))
-        {
-          XDocument zonehighwaysDoc;
-          try
-          {
-            zonehighwaysDoc = XDocument.Load(zonehighwaysFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading zonehighways {zonehighwaysFile.fullPath}: {e.Message}");
-            continue;
-          }
-          foreach (XElement macroElement in zonehighwaysDoc.XPathSelectElements("/macros/macro"))
-          {
-            HighwaySectorLevel? highway = new(macroElement, source, zonehighwaysFile.fileName);
-            Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
-              s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
-            );
-            if (sector != null)
-            {
-              sector.Highways.Add(highway);
-              Log.Debug($"Zone Highway loaded for Sector: {sector.Name}");
-            }
-            else
-            {
-              Log.Warn($"No matching sector found for Zone Highway: {highway.Macro}");
-            }
-          }
-          Log.Debug($"Zone Highways loaded from: {zonehighwaysFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("colors", out (string fullPath, string fileName) colorsFile))
-        {
-          XDocument colorsDoc;
-          try
-          {
-            colorsDoc = XDocument.Load(colorsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading colors {colorsFile.fullPath}: {e.Message}");
-            continue;
-          }
-          X4Color.LoadElements(colorsDoc.XPathSelectElements("/colormap/colors/color"), source, colorsFile.fileName, galaxy.Colors);
-          X4MappedColor.LoadElements(
-            colorsDoc.XPathSelectElements("/colormap/mappings/mapping"),
-            source,
-            colorsFile.fileName,
-            galaxy.MappedColors,
-            galaxy.Colors
-          );
-          Log.Debug($"Colors loaded from: {colorsFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("races", out (string fullPath, string fileName) racesFile))
-        {
-          XDocument racesDoc;
-          try
-          {
-            racesDoc = XDocument.Load(racesFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading races {racesFile.fullPath}: {e.Message}");
-            continue;
-          }
-          IEnumerable<XElement> races = racesDoc.XPathSelectElements("/races/race");
-          if (!races.Any())
-          {
-            races = racesDoc.XPathSelectElements("/diff/add[@sel='/races']/race");
-          }
-          Race.LoadElements(races, source, racesFile.fileName, galaxy.Races, galaxy.Translation);
-          Log.Debug($"Races loaded from: {racesFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("factions", out (string fullPath, string fileName) factionsFile))
-        {
-          XDocument factionsDoc;
-          try
-          {
-            factionsDoc = XDocument.Load(factionsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading factions {factionsFile.fullPath}: {e.Message}");
-            continue;
-          }
-          IEnumerable<XElement> factions = factionsDoc.XPathSelectElements("/factions/faction");
-          if (!factions.Any())
-          {
-            factions = factionsDoc.XPathSelectElements("/diff/add[@sel='/factions']/faction");
-          }
-          Faction.LoadElements(factions, source, factionsFile.fileName, galaxy.Factions, galaxy.Translation, galaxy.Races);
-          Log.Debug($"Factions loaded from: {factionsFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("modules", out (string fullPath, string fileName) modulesFile))
-        {
-          XDocument modulesDoc;
-          try
-          {
-            modulesDoc = XDocument.Load(modulesFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading modules {modulesFile.fullPath}: {e.Message}");
-            continue;
-          }
-          IEnumerable<XElement> modules = modulesDoc.XPathSelectElements("/modules/module");
-          if (!modules.Any())
-          {
-            modules = modulesDoc.XPathSelectElements("/diff/add[@sel='/modules']/module");
-          }
-          StationModule.LoadElements(modules, source, modulesFile.fileName, galaxy.StationModules);
-          Log.Debug($"Modules loaded from: {modulesFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("modulegroups", out (string fullPath, string fileName) stationModuleGroupsFile))
-        {
-          XDocument stationModuleGroupsDoc;
-          try
-          {
-            stationModuleGroupsDoc = XDocument.Load(stationModuleGroupsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading station module groups {stationModuleGroupsFile.fullPath}: {e.Message}");
-            continue;
-          }
-          StationModuleGroup.LoadElements(
-            stationModuleGroupsDoc.XPathSelectElements("/groups/group"),
-            source,
-            stationModuleGroupsFile.fileName,
-            galaxy.StationModuleGroups
-          );
-          Log.Debug($"Station module groups loaded from: {stationModuleGroupsFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("constructionplans", out (string fullPath, string fileName) constructionPlansFile))
-        {
-          XDocument constructionPlansDoc;
-          try
-          {
-            constructionPlansDoc = XDocument.Load(constructionPlansFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading construction plans {constructionPlansFile.fullPath}: {e.Message}");
-            continue;
-          }
-          ConstructionPlan.LoadElements(
-            constructionPlansDoc.XPathSelectElements("/plans/plan"),
-            source,
-            constructionPlansFile.fileName,
-            galaxy.ConstructionPlans,
-            galaxy.Translation,
-            galaxy.StationModules,
-            galaxy.StationModuleGroups
-          );
-          Log.Debug($"Construction plans loaded from: {constructionPlansFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("stationgroups", out (string fullPath, string fileName) stationGroupsFile))
-        {
-          XDocument stationGroupsDoc;
-          try
-          {
-            stationGroupsDoc = XDocument.Load(stationGroupsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading station groups {stationGroupsFile.fullPath}: {e.Message}");
-            continue;
-          }
-          IEnumerable<XElement> stationGroups = stationGroupsDoc.XPathSelectElements("/groups/group");
-          if (!stationGroups.Any())
-          {
-            stationGroups = stationGroupsDoc.XPathSelectElements("/diff/add[@sel='/groups']/group");
-          }
-          StationGroup.LoadElements(stationGroups, source, stationGroupsFile.fileName, galaxy.StationGroups, galaxy.ConstructionPlans);
-          Log.Debug($"Station groups loaded from: {stationGroupsFile.fileName} for {source}");
-        }
-        if (fileSet.Value.TryGetValue("stations", out (string fullPath, string fileName) stationCategoriesFile))
-        {
-          XDocument stationCategoriesDoc;
-          try
-          {
-            stationCategoriesDoc = XDocument.Load(stationCategoriesFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading station categories {stationCategoriesFile.fullPath}: {e.Message}");
-            continue;
-          }
-          IEnumerable<XElement> stationCategories = stationCategoriesDoc.XPathSelectElements("/stations/station");
-          if (!stationCategories.Any())
-          {
-            stationCategories = stationCategoriesDoc.XPathSelectElements("/diff/add[@sel='/stations']/station");
-          }
-          StationCategory.LoadElements(
-            stationCategories,
-            source,
-            stationCategoriesFile.fileName,
-            galaxy.StationCategories,
-            galaxy.StationGroups
-          );
-          Log.Debug($"Station categories loaded from: {stationCategoriesFile.fileName} for {source}");
-        }
-        // Process god (Stations)
-        if (fileSet.Value.TryGetValue("god", out (string fullPath, string fileName) godFile))
-        {
-          XDocument godDoc;
-          try
-          {
-            godDoc = XDocument.Load(godFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading god {godFile.fullPath}: {e.Message}");
-            continue;
-          }
-          IEnumerable<XElement>? godElements = godDoc.XPathSelectElements("/god/stations/station");
-          if (!godElements.Any())
-          {
-            godElements = godDoc.XPathSelectElements("/diff/add[@sel='/god/stations']/station");
-          }
-          foreach (XElement stationElement in godElements)
-          {
-            Station? station = new();
-            station.Load(
-              stationElement,
-              source,
-              godFile.fileName,
-              galaxy.Sectors,
-              galaxy.StationCategories,
-              galaxy.ConstructionPlans,
-              galaxy.Factions
-            );
-          }
-          Log.Debug($"Stations loaded from: {godFile.fileName} for {source}");
-        }
-
-        if (!isMainData)
-        {
-          continue;
-        }
-        // Process galaxy
-        if (fileSet.Value.TryGetValue("galaxy", out (string fullPath, string fileName) galaxyFile))
-        {
-          XDocument galaxyDoc;
-          try
-          {
-            galaxyDoc = XDocument.Load(galaxyFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading galaxy {galaxyFile.fullPath}: {e.Message}");
-            continue;
-          }
-          galaxy.LoadXML(galaxyDoc, galaxy.Clusters, source, galaxyFile.fileName);
         }
       }
       if (!isMainData)
       {
-        Dictionary<string, (string fullPath, string fileName)> fileSet = fileSets["vanilla"];
-        if (fileSet.TryGetValue("galaxy", out (string fullPath, string fileName) galaxyFile))
+        GameFile? galaxyFile = GameFile.GetFromList(gameFiles, "galaxy", "vanilla");
+        if (galaxyFile == null)
         {
-          XDocument galaxyDoc;
-          try
-          {
-            galaxyDoc = XDocument.Load(galaxyFile.fullPath);
-            galaxy.LoadXML(galaxyDoc, galaxy.Clusters, "vanilla", galaxyFile.fileName);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Error($"Error loading galaxy {galaxyFile.fullPath}: {e.Message}");
-          }
+          Log.Warn("No galaxy file found for vanilla.");
+          return;
         }
+        galaxy.LoadXML(galaxyFile.XML, galaxy.Clusters, "vanilla", galaxyFile.FileName);
       }
       else
       {
-        if (File.Exists(Path.Combine(coreFolderPath, "version.dat")))
+        if (File.Exists(Path.Combine(coreFolderPath, VersionDat)))
         {
-          string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, "version.dat")).Trim();
+          string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, VersionDat)).Trim();
           if (int.TryParse(versionStr, out int version))
           {
             galaxy.Version = version;
           }
         }
-        if (galaxy.Version == 0 && vanillaFiles.TryGetValue("patchactions", out (string fullPath, string fileName) patchActionsFile))
+        if (galaxy.Version == 0)
         {
-          XDocument? patchActionsDoc = null;
-          try
+          GameFile? patchActionsFile = GameFile.GetFromList(gameFiles, "patchactions", "vanilla");
+          if (patchActionsFile == null)
           {
-            patchActionsDoc = XDocument.Load(patchActionsFile.fullPath);
-          }
-          catch (ArgumentException e)
-          {
-            Log.Warn($"Error loading patch actions {patchActionsFile.fullPath}: {e.Message}");
+            Log.Warn("No patch actions file found for vanilla.");
+            return;
           }
           int version = 0;
-          if (patchActionsDoc != null)
+          foreach (XElement actionElement in patchActionsFile.XML.XPathSelectElements("/actions/action"))
           {
-            foreach (XElement actionElement in patchActionsDoc.XPathSelectElements("/actions/action"))
+            string versionStr = actionElement.Attribute("version")?.Value ?? "0";
+            if (int.TryParse(versionStr, out int actionVersion))
             {
-              string versionStr = actionElement.Attribute("version")?.Value ?? "0";
-              if (int.TryParse(versionStr, out int actionVersion))
+              if (actionVersion > version)
               {
-                if (actionVersion > version)
-                {
-                  version = actionVersion;
-                }
+                version = actionVersion;
               }
             }
-            Log.Debug($"Patch actions loaded from: {patchActionsFile.fileName} for vanilla. Version: {version}");
-            if (version > 0)
-            {
-              galaxy.Version = version;
-            }
+          }
+          Log.Debug($"Patch actions loaded from: {patchActionsFile.FileName} for vanilla. Version: {version}");
+          if (version > 0)
+          {
+            galaxy.Version = version;
           }
         }
       }
     }
 
-    public static Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> GatherFiles(
+    private static void LoadMods(Galaxy galaxy, string coreFolderPath, List<GameFilesStructureItem> relativePaths)
+    {
+      if (Directory.Exists(Path.Combine(coreFolderPath, "extensions")))
+      {
+        Dictionary<string, ExtensionInfo> mods = [];
+        foreach (var extensionFolder in Directory.GetDirectories(Path.Combine(coreFolderPath, "extensions")))
+        {
+          string contentPath = Path.Combine(extensionFolder, ContentXml);
+          if (!Path.GetFileName(extensionFolder).StartsWith(DlcPrefix) && File.Exists(contentPath))
+          {
+            ExtensionInfo modInfo;
+            try
+            {
+              modInfo = new(contentPath);
+            }
+            catch (ArgumentException e)
+            {
+              Log.Error($"Error loading mod {contentPath}: {e.Message}");
+              continue;
+            }
+            if (modInfo.GameVersion > galaxy.Version)
+            {
+              Log.Debug($"Skipping mod {modInfo.Name} because it requires game version {modInfo.GameVersion}");
+              continue;
+            }
+            bool acceptableMod = true;
+            foreach (ModDependency dependency in modInfo.Dependencies)
+            {
+              if (dependency.Id.StartsWith(DlcPrefix) && !dependency.Optional && !galaxy.DLCs.Any(d => d.Id == dependency.Id))
+              {
+                Log.Debug($"Skipping mod {modInfo.Name} because it requires DLC {dependency.Id}");
+                acceptableMod = false;
+                break;
+              }
+              {
+                acceptableMod = false;
+                break;
+              }
+            }
+            if (!acceptableMod)
+            {
+              Log.Debug($"Skipping mod {modInfo.Name} because it has unmet dependencies");
+              continue;
+            }
+            mods[modInfo.Id] = modInfo;
+          }
+        }
+        if (mods.Count > 0)
+        {
+          Log.Debug($"Found {mods.Count} mods to load.");
+          List<string> modsOrder = [];
+          foreach (string modId in mods.Keys)
+          {
+            if (modsOrder.Count == 0)
+            {
+              modsOrder.Add(modId);
+            }
+            else
+            {
+              bool inserted = false;
+              for (int i = 0; i < modsOrder.Count; i++)
+              {
+                if (mods[modId].Dependencies.Any(d => d.Id == modsOrder[i]))
+                {
+                  modsOrder.Insert(i, modId);
+                  inserted = true;
+                  break;
+                }
+              }
+              if (!inserted)
+              {
+                modsOrder.Add(modId);
+              }
+            }
+          }
+          // foreach (ModInfo modInfo in mods.Values)
+          // {
+          //   LoadData(galaxy, modInfo.Folder, relativePaths, false);
+          // }
+        }
+      }
+    }
+
+    private static List<GameFile> CollectFiles(
       string coreFolderPath,
-      Dictionary<string, (string path, string fileName)> relativePaths
+      List<GameFilesStructureItem> gameFilesStructure,
+      string source = "vanilla",
+      string relatedExtensionId = ""
     )
     {
-      Dictionary<string, Dictionary<string, (string fullPath, string fileName)>> result = [];
+      List<GameFile> result = [];
+      Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
+      foreach (GameFilesStructureItem item in gameFilesStructure)
+      {
+        string folderPath = Path.Combine(coreFolderPath, item.Folder);
+        if (!Directory.Exists(folderPath))
+        {
+          Log.Warn($"Folder not found: {folderPath}");
+          continue;
+        }
+        foreach (string fileItem in item.PossibleNames)
+        {
+          string fileMask = item.MatchingMode switch
+          {
+            MatchingModes.Exact => fileItem,
+            MatchingModes.Prefix => $"{fileItem}*",
+            MatchingModes.Suffix => $"*{fileItem}",
+            MatchingModes.Mask => fileItem,
+            _ => throw new ArgumentException("Invalid matching mode"),
+          };
+          string[] files = Directory.GetFiles(folderPath, fileMask);
+          Log.Debug($"Found {files.Length} files for {item.Id} in {folderPath}");
+          foreach (string file in files)
+          {
+            try
+            {
+              result.Add(new GameFile(item.Id, coreFolderPath, file, source, relatedExtensionId));
+            }
+            catch (ArgumentException e)
+            {
+              Log.Error($"Error loading {file}: {e.Message}");
+            }
+          }
+          if (files.Length > 0)
+          {
+            break;
+          }
+        }
+      }
+      return result;
+    }
+
+    public static List<GameFile> GatherFiles(
+      string coreFolderPath,
+      List<GameFilesStructureItem> gameFilesStructure,
+      List<ExtensionInfo> extensions,
+      string source = ""
+    )
+    {
+      List<GameFile> result = [];
 
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
       // Scan for vanilla files
-      Dictionary<string, (string fullPath, string fileName)>? vanillaFiles = [];
-      foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
-      {
-        string? filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName);
-        if (File.Exists(filePath))
-        {
-          vanillaFiles[item.Key] = (filePath, item.Value.fileName);
-        }
-        else if (item.Key == "translation")
-        {
-          filePath = Path.Combine(coreFolderPath, item.Value.path, item.Value.fileName.Replace("-l044", ""));
-          if (File.Exists(filePath))
-          {
-            vanillaFiles[item.Key] = (filePath, item.Value.fileName);
-          }
-          else
-          {
-            Log.Warn($"File not found: {filePath}");
-          }
-        }
-        else
-        {
-          Log.Warn($"File not found: {filePath}");
-        }
-      }
-      result["vanilla"] = vanillaFiles;
+      string sourceStr = string.IsNullOrEmpty(source) ? "vanilla" : source;
+      string relatedExtensionId = string.IsNullOrEmpty(source) ? "" : "vanilla";
+      List<GameFile> vanillaFiles = CollectFiles(coreFolderPath, gameFilesStructure, sourceStr, relatedExtensionId);
+      result.AddRange(vanillaFiles);
       Log.Debug($"Vanilla files identified.");
 
       // Scan for extension files
@@ -592,31 +476,129 @@ namespace X4DataLoader
         Log.Debug($"No extensions folder found. Will check if the dlc folders is in the {coreFolderPath}.");
       }
 
-      foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, "ego_dlc_*"))
+      foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, $"DataLoader.dlcPrefix*"))
       {
-        string? dlcName = Path.GetFileName(dlcFolder);
-        Dictionary<string, (string fullPath, string fileName)>? dlcFiles = [];
-
-        foreach (KeyValuePair<string, (string path, string fileName)> item in relativePaths)
+        ExtensionInfo? dlc = null;
+        if (string.IsNullOrEmpty(source))
         {
-          string? searchPath = Path.Combine(dlcFolder, item.Value.path);
-          if (Directory.Exists(searchPath))
+          string contentPath = Path.Combine(dlcFolder, ContentXml);
+          if (File.Exists(contentPath))
           {
-            string[]? files = Directory.GetFiles(searchPath, $"*{item.Value.fileName}");
-            if (files.Length == 1)
+            try
             {
-              dlcFiles[item.Key] = (files[0], Path.GetFileName(files[0]));
+              dlc = new(contentPath);
             }
+            catch (ArgumentException e)
+            {
+              Log.Error($"Error loading DLC {contentPath}: {e.Message}");
+              continue;
+            }
+            extensions.Add(dlc);
+            Log.Debug($"DLC identified: {dlc.Name}");
+            sourceStr = dlc.Id;
           }
         }
-
-        if (dlcFiles.Count > 0)
+        else
         {
-          result[dlcName] = dlcFiles;
-          Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {dlcName}.");
+          dlc = extensions.FirstOrDefault(e => e.Folder == Path.GetFileName(dlcFolder));
+          relatedExtensionId = dlc?.Id ?? "";
+        }
+        if (dlc != null)
+        {
+          List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, sourceStr, relatedExtensionId);
+          if (dlcFiles.Count > 0)
+          {
+            result.AddRange(dlcFiles);
+            Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {dlc.Name}.");
+          }
         }
       }
       return result;
+    }
+  }
+
+  public class ModDependency(XElement dependencyElement)
+  {
+    public string Id { get; set; } = dependencyElement.Attribute("id")?.Value ?? "";
+    public bool Optional { get; set; } = dependencyElement.Attribute("optional")?.Value == "true";
+  }
+
+  public class ExtensionInfo
+  {
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Folder { get; set; }
+    public int GameVersion { get; set; }
+    public List<ModDependency> Dependencies { get; set; } = [];
+
+    public ExtensionInfo(string path)
+    {
+      Folder = Path.GetFileName(Path.GetDirectoryName(path)) ?? throw new ArgumentException("Invalid path");
+      XDocument contentDoc = XDocument.Load(path) ?? throw new ArgumentException("Invalid content.xml file");
+      XElement? contentElement = contentDoc.XPathSelectElement("/content") ?? throw new ArgumentException("Invalid content.xml file");
+      Id = contentElement.Attribute("id")?.Value ?? "";
+      Name = contentElement.Attribute("name")?.Value ?? "";
+      if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name))
+      {
+        throw new ArgumentException("Invalid content.xml file");
+      }
+      foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
+      {
+        string? versionStr = dependencyElement.Attribute("version")?.Value;
+        if (!string.IsNullOrEmpty(versionStr) && int.TryParse(versionStr, out int gameVersion))
+        {
+          GameVersion = gameVersion;
+        }
+        else
+        {
+          Dependencies.Add(new ModDependency(dependencyElement));
+        }
+      }
+    }
+  }
+
+  public enum MatchingModes
+  {
+    Exact,
+    Prefix,
+    Suffix,
+    Mask,
+  }
+
+  public class GameFilesStructureItem(string id, string folder, string[] possibleNames, MatchingModes matchingMode = MatchingModes.Exact)
+  {
+    public string Id { get; set; } = id;
+    public string Folder { get; set; } = folder;
+    public MatchingModes MatchingMode { get; set; } = matchingMode;
+    public string[] PossibleNames { get; set; } = possibleNames;
+  }
+
+  public class GameFile(string id, string mainFolder, string fullPath, string extensionId = "", string relatedExtensionId = "")
+  {
+    public string Id { get; set; } = id;
+    public string ExtensionId { get; set; } = extensionId;
+    public string RelatedExtensionId { get; set; } = relatedExtensionId;
+    public string PathRelative { get; set; } = Path.GetRelativePath(mainFolder, fullPath);
+    public string FileName { get; set; } = Path.GetFileName(fullPath);
+    public XElement XML { get; set; } = XDocument.Load(fullPath)?.Root ?? throw new ArgumentException($"Error loading {fullPath}");
+
+    public static GameFile? GetFromList(List<GameFile> files, string id, string extensionId, string relatedExtensionId = "")
+    {
+      return files.FirstOrDefault(f =>
+        f.Id == id
+        && f.ExtensionId == extensionId
+        && (string.IsNullOrEmpty(relatedExtensionId) || f.RelatedExtensionId == relatedExtensionId)
+      );
+    }
+
+    public static List<string> GetExtensions(List<GameFile> files)
+    {
+      return files.Select(f => f.ExtensionId).Distinct().ToList();
+    }
+
+    public static List<string> GetRelatedExtensions(List<GameFile> files, string extensionId)
+    {
+      return files.Where(f => f.ExtensionId == extensionId).Select(f => f.RelatedExtensionId).Distinct().ToList();
     }
   }
 }

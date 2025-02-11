@@ -17,10 +17,9 @@ namespace X4DataLoader
     private static Regex ReferenceRegex = new(@"\{(\d+),(\d+)\}");
     private static Regex CommentRegex = new(@"\([^)]*\)");
 
-    public void Load(string filePath)
+    public void Load(XElement rootElement)
     {
-      var doc = XDocument.Load(filePath);
-      foreach (var pageElement in doc.Descendants("page"))
+      foreach (var pageElement in rootElement.Descendants("page"))
       {
         var pageId = pageElement.Attribute("id")?.Value;
         if (pageId != null)

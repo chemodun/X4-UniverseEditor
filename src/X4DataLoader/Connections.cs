@@ -140,13 +140,13 @@ namespace X4DataLoader
       }
     }
 
-    public static void LoadFromXML(XDocument doc, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
+    public static void LoadFromXML(XElement root, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
     {
-      IEnumerable<XElement> elements = doc.XPathSelectElements("/macros/macro");
+      IEnumerable<XElement> elements = root.XPathSelectElements("/macros/macro");
       bool modeDiff = false;
       if (!elements.Any())
       {
-        elements = doc.XPathSelectElements("/diff/add");
+        elements = root.XPathSelectElements("/diff/add");
         modeDiff = true;
       }
       foreach (XElement element in elements)
