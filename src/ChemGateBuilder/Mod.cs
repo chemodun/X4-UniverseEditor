@@ -479,7 +479,12 @@ namespace ChemGateBuilder
         }
         for (int i = 0; i < Connections.Count; i++)
         {
-          GalaxyConnection newConnection = GalaxyConnections.First(gc => gc.Connection.Name == Connections[i].Name).Connection;
+          GalaxyConnection? newConnection = GalaxyConnections.FirstOrDefault(gc => gc.Connection.Name == Connections[i].Name)?.Connection;
+          if (newConnection == null)
+          {
+            result = true;
+            break;
+          }
           if (Connections[i].PathDirect?.Zone?.PositionXML?.ToString() != newConnection.PathDirect?.Zone?.PositionXML?.ToString())
           {
             result = true;
