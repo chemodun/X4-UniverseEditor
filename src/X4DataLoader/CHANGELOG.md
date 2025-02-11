@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.6...X4DataLoader@v0.4.0) (2025-02-11)
+
+
+### Features
+
+* **Galaxy:** add LoadXML method to support loading from XML ([84e2ff8](https://github.com/chemodun/X4-UniverseEditor/commit/84e2ff86952bfca6450e44bfba6a8264fb933452))
+* **Galaxy:** update LoadData method to support loading mods ([0d4da87](https://github.com/chemodun/X4-UniverseEditor/commit/0d4da873c95d4c99cf3c15795f5d1e578f57ea66))
+* **Zone:** implement LoadFromXML to support diff loading of zones ([4200250](https://github.com/chemodun/X4-UniverseEditor/commit/4200250cd3af37a149dfba3a6fc894a027b73a36))
+
+
+### Code Refactoring
+
+* **Connections:** enhance LoadFromXML to support diff loads ([084270c](https://github.com/chemodun/X4-UniverseEditor/commit/084270c79420f6a7a0258a52d1e85dc4d6db645e))
+* **DataLoader:** add possibility to load default 0001.xml ([5eabc90](https://github.com/chemodun/X4-UniverseEditor/commit/5eabc901c793ae9d65f09a0feaa103061252c8be))
+* **DataLoader:** enhance LoadData method to support loading extensions by ID and improve clarity in DLC file handling ([a4c1312](https://github.com/chemodun/X4-UniverseEditor/commit/a4c1312b5573022dd3976fcfd02d805459783d68))
+* **DataLoader:** refactor LoadAllData to accept Galaxy instance and streamline translation handling. As preparation to load mods, not only DLC's ([123badb](https://github.com/chemodun/X4-UniverseEditor/commit/123badb8db96193e654cb58b47263bdddbf86a90))
+* **Galaxy, DataLoader, Connections, Cluster:** update methods to use string IDs for clusters and sectors, improving consistency and clarity ([d2f3a08](https://github.com/chemodun/X4-UniverseEditor/commit/d2f3a081c1ddadc2e0d2c8875ccb6e32becb0220))
+* **Galaxy:** made a attribute Extensions, contains both - DLC's and Mods ([fddadec](https://github.com/chemodun/X4-UniverseEditor/commit/fddadecd256c141b53e66abf94803226168064bc))
+* **Mod:** make a mod loading fully operational ([e2225b5](https://github.com/chemodun/X4-UniverseEditor/commit/e2225b56433d516ffc1a65860d4c906dc0915573))
+* **Sector:** change initialization of ownerStationCount from new() to [] ([fd5c781](https://github.com/chemodun/X4-UniverseEditor/commit/fd5c7811ef85d0c67ac80552e6214ce48d4563dc))
+* **Translation:** change Regex fields to readonly for better performance and clarity ([5bbb572](https://github.com/chemodun/X4-UniverseEditor/commit/5bbb572fb1c1ec0407e1391451c12f5c871d8efb))
+* **X4DataLoader:** added special classes to work with game and extensions file structure: ([e8cc129](https://github.com/chemodun/X4-UniverseEditor/commit/e8cc1296fa60fdadd3ca4a382f17110da87b558c))
+* **XmlHelper:** add method to extract attribute and value from differential selection syntax ([ef67a8c](https://github.com/chemodun/X4-UniverseEditor/commit/ef67a8c803de6050544bedef445d0a332a519553))
+* **XmlHelper:** change Regex field to readonly and initialize tags list with empty array ([aebafd5](https://github.com/chemodun/X4-UniverseEditor/commit/aebafd518346a99ad4d59c732fa82f9668a28a8b))
+
 ## [0.3.6](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.5...X4DataLoader@v0.3.6) (2025-02-10)
 
 
