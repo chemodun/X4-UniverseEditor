@@ -228,6 +228,14 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.7.0] - 2025-02-11
+
+- Added
+  - Working with Mods, not only DLC's
+- Changed
+  - DLC's and Mods `content.xml` files are now required in extracted files
+  - They are extracted automatically. **Please repeat the extraction process if you have already extracted the game files**
+
 ### [0.6.0] - 2025-02-10
 
 - Added
