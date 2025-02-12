@@ -282,32 +282,40 @@ namespace ChemGateBuilder
       if (Directory.Exists(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
       {
         // Check for DLCs
-        foreach (var dlcFolder in Directory.GetDirectories(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
+        foreach (string dlcId in Galaxy.DLCOrder)
         {
-          if (Path.GetFileName(dlcFolder).StartsWith(DataLoader.DlcPrefix) && File.Exists(Path.Combine(dlcFolder, DataLoader.ContentXml)))
+          string dlcFolder = Path.Combine(GameFolder, DataLoader.ExtensionsFolder, dlcId);
+          if (Directory.Exists(dlcFolder) && File.Exists(Path.Combine(dlcFolder, DataLoader.ContentXml)))
           {
-            XDocument contentXml = XDocument.Load(Path.Combine(dlcFolder, DataLoader.ContentXml));
-            XElement? contentElement = contentXml.Element("content");
-            if (contentElement == null)
+            try
             {
-              Log.Warn($"No content element found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
-              continue;
-            }
-            string dlcName = contentElement.Attribute("name")?.Value ?? "";
-            if (string.IsNullOrEmpty(dlcName))
-            {
-              Log.Warn($"No name attribute found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
-              continue;
-            }
-            Log.Debug($"DLC {Path.GetFileName(dlcFolder)}: {dlcName}");
-            DlcOptions.Add(
-              new DlcOption
+              XDocument contentXml = XDocument.Load(Path.Combine(dlcFolder, DataLoader.ContentXml));
+              XElement? contentElement = contentXml.Element("content");
+              if (contentElement == null)
               {
-                Name = dlcName,
-                Folder = Path.GetFileName(dlcFolder),
-                IsChecked = true,
+                Log.Warn($"No content element found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
+                continue;
               }
-            );
+              string dlcName = contentElement.Attribute("name")?.Value ?? "";
+              if (string.IsNullOrEmpty(dlcName))
+              {
+                Log.Warn($"No name attribute found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
+                continue;
+              }
+              Log.Debug($"DLC {Path.GetFileName(dlcFolder)}: {dlcName}");
+              DlcOptions.Add(
+                new DlcOption
+                {
+                  Name = dlcName,
+                  Folder = Path.GetFileName(dlcFolder),
+                  IsChecked = true,
+                }
+              );
+            }
+            catch (Exception ex)
+            {
+              Log.Error($"Error reading {DataLoader.ContentXml} from {dlcFolder}", ex);
+            }
           }
         }
         return true;

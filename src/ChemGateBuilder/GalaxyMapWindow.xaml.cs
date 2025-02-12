@@ -151,11 +151,15 @@ namespace ChemGateBuilder
       Galaxy = MainWindowReference.Galaxy;
       if (Galaxy != null)
       {
-        foreach (ExtensionInfo dlc in Galaxy.DLCs)
+        foreach (string dlcId in Galaxy.DLCOrder)
         {
-          var extension = new ExtensionOnMap(dlc.Name, dlc.Id, true);
-          extension.PropertyChanged += Extension_PropertyChanged;
-          EnabledDLCs.Add(extension);
+          ExtensionInfo? dlc = Galaxy.DLCs.Find(dlc => dlc.Id == dlcId);
+          if (dlc != null)
+          {
+            var extension = new ExtensionOnMap(dlc.Name, dlc.Id, true);
+            extension.PropertyChanged += Extension_PropertyChanged;
+            EnabledDLCs.Add(extension);
+          }
         }
         foreach (ExtensionInfo mod in Galaxy.Mods)
         {
