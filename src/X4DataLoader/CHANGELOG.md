@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.4.0...X4DataLoader@v0.5.0) (2025-02-12)
+
+
+### Features
+
+* **Galaxy:** add static DLCOrder list ([b505bda](https://github.com/chemodun/X4-UniverseEditor/commit/b505bda3639a90e24d466909b18e53bfcccfd121))
+* **Sector:** add properties for sunlight, economy, and security; update dominant owner faction logic ([ef46907](https://github.com/chemodun/X4-UniverseEditor/commit/ef469076172bbafa7e0bf9f4edbb8e50a4d65b5b))
+
 ## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.3.6...X4DataLoader@v0.4.0) (2025-02-11)
 
 
