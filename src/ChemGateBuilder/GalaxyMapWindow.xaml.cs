@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -91,6 +92,9 @@ namespace ChemGateBuilder
     // private readonly Sector? clickedSector = null;
     public List<SectorMapItem> SectorsItems = [];
 
+    public ObservableCollection<ExtensionOnMap> EnabledDLCs { get; set; } = [];
+    public ObservableCollection<ExtensionOnMap> EnabledMods { get; set; } = [];
+
     public GalaxyMapWindow(MainWindow mainWindow, CollectionViewSource sectorsViewSource)
     {
       InitializeComponent();
@@ -99,6 +103,21 @@ namespace ChemGateBuilder
       SectorsList = sectorsViewSource;
       MainWindowReference = mainWindow;
       Galaxy = MainWindowReference.Galaxy;
+      if (Galaxy != null)
+      {
+        foreach (ExtensionInfo dlc in Galaxy.DLCs)
+        {
+          var extension = new ExtensionOnMap(dlc.Name, dlc.Id, true);
+          extension.PropertyChanged += Extension_PropertyChanged;
+          EnabledDLCs.Add(extension);
+        }
+        foreach (ExtensionInfo mod in Galaxy.Mods)
+        {
+          var extension = new ExtensionOnMap(mod.Name, mod.Id, true);
+          extension.PropertyChanged += Extension_PropertyChanged;
+          EnabledMods.Add(extension);
+        }
+      }
 
       // Set window size to 90% of the main window
       Width = mainWindow.ActualWidth * 0.9;
@@ -289,6 +308,14 @@ namespace ChemGateBuilder
         {
           cluster.Update();
         }
+      }
+    }
+
+    private void Extension_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(ExtensionOnMap.IsChecked))
+      {
+        UpdateMap();
       }
     }
 
@@ -1171,6 +1198,66 @@ namespace ChemGateBuilder
       line.SetBinding(Line.Y2Property, y2Binding);
       // Canvas.SetZIndex(line, -1);
       canvas.Children.Add(line);
+    }
+  }
+
+  public class ExtensionOnMap : INotifyPropertyChanged
+  {
+    private string _name = string.Empty;
+    private string _id = string.Empty;
+    private bool _isChecked = false;
+
+    public ExtensionOnMap(string name, string id, bool isChecked)
+    {
+      Name = name;
+      Id = id;
+      IsChecked = isChecked;
+    }
+
+    public string Name
+    {
+      get => _name;
+      set
+      {
+        if (_name != value)
+        {
+          _name = value;
+          OnPropertyChanged(nameof(Name));
+        }
+      }
+    }
+
+    public string Id
+    {
+      get => _id;
+      set
+      {
+        if (_id != value)
+        {
+          _id = value;
+          OnPropertyChanged(nameof(Id));
+        }
+      }
+    }
+
+    public bool IsChecked
+    {
+      get => _isChecked;
+      set
+      {
+        if (_isChecked != value)
+        {
+          _isChecked = value;
+          OnPropertyChanged(nameof(IsChecked));
+        }
+      }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
   }
 

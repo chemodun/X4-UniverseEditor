@@ -11,6 +11,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Slider x:Name="HexagonWidthSlider"
                 Grid.Row="0"
                 Minimum="{Binding HexagonWidthMinimal}"
@@ -28,5 +32,25 @@
                 Background="LightGray"
                 />
         </ScrollViewer>
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+            <GroupBox Header="DLC's" Margin="5">
+                <ItemsControl ItemsSource="{Binding EnabledDLCs}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </GroupBox>
+            <GroupBox Header="Mods" Margin="5">
+                <ItemsControl ItemsSource="{Binding EnabledMods}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </Window>
