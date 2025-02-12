@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -89,11 +90,56 @@ namespace ChemGateBuilder
     private double scrollVerticalOffset = 0;
     private double canvasWidth = 0;
 
+    private Visibility _optionsVisibilityState = Visibility.Hidden;
+    private string _optionsVisibilitySymbol = "CircleLeft";
+    private double _optionsWidth = 20;
+    public Visibility OptionsVisibilityState
+    {
+      get => _optionsVisibilityState;
+      set
+      {
+        _optionsVisibilityState = value;
+        if (value == Visibility.Visible)
+        {
+          OptionsWidth = double.NaN;
+          OptionsVisibilitySymbol = "CircleRight";
+        }
+        else
+        {
+          OptionsWidth = 20;
+          OptionsVisibilitySymbol = "CircleLeft";
+        }
+        OnPropertyChanged(nameof(OptionsVisibilityState));
+      }
+    }
+
+    public string OptionsVisibilitySymbol
+    {
+      get => _optionsVisibilitySymbol;
+      set
+      {
+        _optionsVisibilitySymbol = value;
+        OnPropertyChanged(nameof(OptionsVisibilitySymbol));
+      }
+    }
+
+    public double OptionsWidth
+    {
+      get => _optionsWidth;
+      set
+      {
+        _optionsWidth = value;
+        OnPropertyChanged(nameof(OptionsWidth));
+      }
+    }
+
     // private readonly Sector? clickedSector = null;
     public List<SectorMapItem> SectorsItems = [];
 
     public ObservableCollection<ExtensionOnMap> EnabledDLCs { get; set; } = [];
     public ObservableCollection<ExtensionOnMap> EnabledMods { get; set; } = [];
+
+    private readonly List<GalaxyMapInterConnection> InterConnections = [];
 
     public GalaxyMapWindow(MainWindow mainWindow, CollectionViewSource sectorsViewSource)
     {
@@ -226,6 +272,7 @@ namespace ChemGateBuilder
               }
               GalaxyMapInterConnection galaxyMapHighway = new(pointEntry, pointExit, false);
               galaxyMapHighway.Create(GalaxyCanvas);
+              InterConnections.Add(galaxyMapHighway);
             }
           }
         }
@@ -253,8 +300,9 @@ namespace ChemGateBuilder
             {
               continue;
             }
-            GalaxyMapInterConnection galaxyMapGateConnection = new(gateDirect, gateOpposite);
+            GalaxyMapInterConnection galaxyMapGateConnection = new(gateDirect, gateOpposite, true, connection.Source);
             galaxyMapGateConnection.Create(GalaxyCanvas);
+            InterConnections.Add(galaxyMapGateConnection);
           }
         }
         if (
@@ -273,6 +321,7 @@ namespace ChemGateBuilder
             {
               GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);
               galaxyMapGateConnection.Create(GalaxyCanvas);
+              InterConnections.Add(galaxyMapGateConnection);
             }
           }
         }
@@ -286,6 +335,7 @@ namespace ChemGateBuilder
           {
             GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);
             galaxyMapGateConnection.Create(GalaxyCanvas);
+            InterConnections.Add(galaxyMapGateConnection);
           }
         }
       }
@@ -308,7 +358,28 @@ namespace ChemGateBuilder
         {
           cluster.Update();
         }
+        foreach (GalaxyMapInterConnection connection in InterConnections)
+        {
+          connection.SetVisible(
+            IsExtensionEnabled(connection.SourceId)
+              && IsExtensionEnabled(connection.DirectSourceId)
+              && IsExtensionEnabled(connection.OppositeSourceId)
+          );
+        }
       }
+    }
+
+    public bool IsExtensionEnabled(string id)
+    {
+      if (EnabledDLCs.Any(extension => extension.Id == id))
+      {
+        return EnabledDLCs.First(extension => extension.Id == id).IsChecked;
+      }
+      if (EnabledMods.Any(extension => extension.Id == id))
+      {
+        return EnabledMods.First(extension => extension.Id == id).IsChecked;
+      }
+      return true;
     }
 
     private void Extension_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -317,6 +388,11 @@ namespace ChemGateBuilder
       {
         UpdateMap();
       }
+    }
+
+    private void ButtonOptionsVisibility_Click(object sender, RoutedEventArgs e)
+    {
+      OptionsVisibilityState = OptionsVisibilityState == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
     }
 
     private void GalaxyScrollViewer_ScrollChanged(object sender, RoutedEventArgs e)
@@ -921,6 +997,10 @@ namespace ChemGateBuilder
         // Position the Hexagon on the Canvas
         Canvas.SetLeft(Hexagon, X);
         Canvas.SetTop(Hexagon, Y);
+        if (Map != null)
+        {
+          Hexagon.Visibility = Map.IsExtensionEnabled(Cluster.Source) ? Visibility.Visible : Visibility.Hidden;
+        }
       }
       foreach (GalaxyMapSector sector in _sectors)
       {
@@ -1089,6 +1169,8 @@ namespace ChemGateBuilder
         image.SetBinding(Image.ToolTipProperty, toolTipBinding);
 
         Canvas.Children.Add(image);
+        item.ConnectImage(image);
+        item.SetVisible(true);
       }
     }
 
@@ -1105,6 +1187,9 @@ namespace ChemGateBuilder
       Grid.Width = Width;
       Grid.Height = Height;
       // Position the Hexagon on the Canvas
+      bool isVisible = Map == null || Map.IsExtensionEnabled(Sector.Source);
+      Hexagon.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+      Grid.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
       Canvas.SetLeft(Grid, X);
       Canvas.SetTop(Grid, Y);
       SectorMapHelper.VisualX = X;
@@ -1113,6 +1198,7 @@ namespace ChemGateBuilder
       foreach (SectorMapItem item in SectorMapHelper.Items)
       {
         item.Update();
+        item.SetVisible(isVisible);
       }
     }
 
@@ -1124,28 +1210,40 @@ namespace ChemGateBuilder
 
   public class GalaxyMapInterConnection : INotifyPropertyChanged
   {
-    private SectorMapItem? _source;
-    public SectorMapItem? Source
+    private SectorMapItem? _directItem;
+    public SectorMapItem? DirectItem
     {
-      get => _source;
+      get => _directItem;
       set
       {
-        _source = value;
-        OnPropertyChanged(nameof(Source));
+        _directItem = value;
+        OnPropertyChanged(nameof(DirectItem));
       }
     }
-    private SectorMapItem? _destination;
-    public SectorMapItem? Destination
+    private SectorMapItem? _oppositeItem;
+    public SectorMapItem? OppositeItem
     {
-      get => _destination;
+      get => _oppositeItem;
       set
       {
-        _destination = value;
-        OnPropertyChanged(nameof(Destination));
+        _oppositeItem = value;
+        OnPropertyChanged(nameof(OppositeItem));
       }
     }
 
+    public string SourceId = "unknown";
+    public string DirectSourceId
+    {
+      get { return _directItem?.Source ?? "unknown"; }
+    }
+    public string OppositeSourceId
+    {
+      get { return _oppositeItem?.Source ?? "unknown"; }
+    }
+
     private readonly bool IsGate = true;
+    private Line? Line = null;
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -1153,16 +1251,17 @@ namespace ChemGateBuilder
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public GalaxyMapInterConnection(SectorMapItem gateDirect, SectorMapItem gateOpposite, bool isGate = true)
+    public GalaxyMapInterConnection(SectorMapItem gateDirect, SectorMapItem gateOpposite, bool isGate = true, string sourceId = "unknown")
     {
-      Source = gateDirect;
-      Destination = gateOpposite;
+      DirectItem = gateDirect;
+      OppositeItem = gateOpposite;
       IsGate = isGate;
+      SourceId = sourceId;
     }
 
     public void Create(Canvas canvas)
     {
-      if (Source == null || Destination == null)
+      if (DirectItem == null || OppositeItem == null)
       {
         return;
       }
@@ -1170,9 +1269,9 @@ namespace ChemGateBuilder
       Line line = new() { DataContext = this, StrokeThickness = IsGate ? 2 : 1 };
       if (IsGate)
       {
-        if (Source.Status == "active" && Destination.Status == "active")
+        if (DirectItem.Status == "active" && OppositeItem.Status == "active")
         {
-          line.Stroke = Source.From switch
+          line.Stroke = DirectItem.From switch
           {
             "new" => Brushes.Green,
             "mod" => Brushes.DarkOrange,
@@ -1188,16 +1287,25 @@ namespace ChemGateBuilder
       {
         line.Stroke = Brushes.SkyBlue;
       }
-      Binding x1Binding = new(path: "CenterX") { Source = Source };
+      Binding x1Binding = new(path: "CenterX") { Source = DirectItem };
       line.SetBinding(Line.X1Property, x1Binding);
-      Binding y1Binding = new(path: "CenterY") { Source = Source };
+      Binding y1Binding = new(path: "CenterY") { Source = DirectItem };
       line.SetBinding(Line.Y1Property, y1Binding);
-      Binding x2Binding = new(path: "CenterX") { Source = Destination };
+      Binding x2Binding = new(path: "CenterX") { Source = OppositeItem };
       line.SetBinding(Line.X2Property, x2Binding);
-      Binding y2Binding = new(path: "CenterY") { Source = Destination };
+      Binding y2Binding = new(path: "CenterY") { Source = OppositeItem };
       line.SetBinding(Line.Y2Property, y2Binding);
       // Canvas.SetZIndex(line, -1);
       canvas.Children.Add(line);
+      Line = line;
+    }
+
+    public void SetVisible(bool isVisible)
+    {
+      if (Line != null)
+      {
+        Line.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
+      }
     }
   }
 
