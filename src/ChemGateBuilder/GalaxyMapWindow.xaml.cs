@@ -193,7 +193,7 @@ namespace ChemGateBuilder
           }
           Cluster cluster = row[X.ToString()];
           GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (X - MinCol), MaxRow - Z, GalaxyCanvas, cluster);
-          clusterMapCluster.Create();
+          clusterMapCluster.Create(this);
           _clusters.Add(clusterMapCluster);
           if (cluster.Sectors.Count > 1 && cluster.Highways.Count > 0)
           {
@@ -495,6 +495,12 @@ namespace ChemGateBuilder
       }
     }
 
+    private static readonly string[] _toolTipItems = new[] { "Name", "Source", "Macro", "Coordinates", "X", "Y", "Z" };
+    protected virtual string[] ToolTipItems
+    {
+      get => _toolTipItems;
+    }
+
     private readonly double _y = y;
     protected double Y
     {
@@ -548,7 +554,7 @@ namespace ChemGateBuilder
       (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
     ];
 
-    public virtual void Create()
+    public virtual void Create(Window window)
     {
       if (Map == null || Cluster == null || Canvas == null)
       {
@@ -558,7 +564,7 @@ namespace ChemGateBuilder
       {
         Sector sector = Cluster.Sectors[0];
         GalaxyMapSector clusterMapSector = new(Map, _x, _y, Canvas, Cluster, sector);
-        clusterMapSector.Create();
+        clusterMapSector.Create(window);
         _sectors.Add(clusterMapSector);
       }
       else
@@ -573,6 +579,7 @@ namespace ChemGateBuilder
           Tag = Cluster.Name,
           DataContext = Cluster,
           Points = Points,
+          ToolTip = ToolTipCreator(Cluster),
         };
         // Position the Hexagon on the Canvas
         Canvas.SetLeft(Hexagon, X);
@@ -726,11 +733,152 @@ namespace ChemGateBuilder
             }
             Log.Debug($"Sector {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
             GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[index], true);
-            clusterMapSector.Create();
+            clusterMapSector.Create(window);
             _sectors.Add(clusterMapSector);
           }
         }
       }
+    }
+
+    protected Grid ToolTipCreator(Cluster cluster, Sector? sector = null)
+    {
+      Grid toolTipGrid = new()
+      {
+        MinWidth = 200,
+        MinHeight = 100,
+        Background = Brushes.LightGray,
+      };
+      if (sector != null && Map != null)
+      {
+        SolidColorBrush? brush = Map.MainWindowReference.FactionColors.GetBrush(sector.DominantOwner);
+        if (brush != null)
+        {
+          toolTipGrid.Background = brush;
+        }
+      }
+      toolTipGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100) });
+      toolTipGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+      bool isSector = sector != null;
+      foreach (string toolTipItem in ToolTipItems)
+      {
+        if (isSector && sector == null)
+        {
+          if (toolTipItem != "Cluster")
+          {
+            continue;
+          }
+        }
+        string labelStr = string.Empty;
+        string textStr = string.Empty;
+        bool alignRight = false;
+        switch (toolTipItem)
+        {
+          case "Cluster":
+            isSector = false;
+            break;
+          case "Name":
+            labelStr = sector != null && isSector ? $"Sector: {sector.Name}" : $"Cluster: {cluster.Name}";
+            break;
+          case "Source":
+            labelStr = "Source:";
+            textStr = sector != null && isSector ? sector.Source : cluster.Source;
+            break;
+          case "Coordinates":
+            labelStr = "Coordinates:";
+            break;
+          case "X":
+          case "Y":
+          case "Z":
+            labelStr = $"{toolTipItem}:";
+            textStr = toolTipItem switch
+            {
+              "X" => sector != null && isSector ? sector.Position.X.ToString("N0") : cluster.Position.X.ToString("N0"),
+              "Y" => sector != null && isSector ? sector.Position.Y.ToString("N0") : cluster.Position.Y.ToString("N0"),
+              "Z" => sector != null && isSector ? sector.Position.Z.ToString("N0") : cluster.Position.Z.ToString("N0"),
+              _ => string.Empty,
+            };
+            alignRight = true;
+            break;
+          case "Macro":
+            labelStr = "Macro:";
+            textStr = sector != null && isSector ? sector.Macro : cluster.Macro;
+            break;
+          case "Owner":
+            if (sector != null && isSector)
+            {
+              labelStr = "Owner:";
+              textStr = sector.DominantOwnerFaction == null ? "Contested" : sector.DominantOwnerFaction.Name;
+            }
+            break;
+          case "Sunlight":
+            if (sector != null && isSector)
+            {
+              labelStr = "Sunlight:";
+              textStr = $"{sector.Sunlight:F2}";
+            }
+            break;
+          case "Economy":
+            if (sector != null && isSector)
+            {
+              labelStr = "Economy:";
+              textStr = $"{sector.Economy:F2}";
+            }
+            break;
+          case "Security":
+            if (sector != null && isSector)
+            {
+              labelStr = "Security:";
+              textStr = $"{sector.Security:F2}";
+            }
+            break;
+          default:
+            break;
+        }
+        if (!string.IsNullOrEmpty(labelStr) || !string.IsNullOrEmpty(textStr))
+        {
+          toolTipGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+          int row = toolTipGrid.RowDefinitions.Count - 1;
+          if (!string.IsNullOrEmpty(labelStr))
+          {
+            TextBlock label = new()
+            {
+              Text = labelStr,
+              FontWeight = FontWeights.DemiBold,
+              Background = Brushes.Transparent,
+              VerticalAlignment = VerticalAlignment.Center,
+              HorizontalAlignment = HorizontalAlignment.Stretch,
+              TextAlignment = TextAlignment.Left,
+              Margin = new Thickness(5, 0, 5, 0),
+              FontSize = 10,
+            };
+            Grid.SetRow(label, row);
+            Grid.SetColumn(label, 0);
+            if (string.IsNullOrEmpty(textStr))
+            {
+              Grid.SetColumnSpan(label, 2);
+              label.TextAlignment = TextAlignment.Center;
+            }
+            toolTipGrid.Children.Add(label);
+          }
+          if (!string.IsNullOrEmpty(textStr))
+          {
+            TextBlock text = new()
+            {
+              Text = textStr,
+              Background = Brushes.Transparent,
+              VerticalAlignment = VerticalAlignment.Center,
+              HorizontalAlignment = HorizontalAlignment.Stretch,
+              TextAlignment = alignRight ? TextAlignment.Right : TextAlignment.Left,
+              Margin = new Thickness(5, 0, 5, 0),
+              FontSize = 10,
+            };
+            Grid.SetRow(text, row);
+            Grid.SetColumn(text, 1);
+            toolTipGrid.Children.Add(text);
+          }
+        }
+      }
+      return toolTipGrid;
     }
 
     public virtual void Update()
@@ -783,7 +931,25 @@ namespace ChemGateBuilder
     private readonly double FrontSizeProportion = 0.12;
     private readonly double FrontSizeMax = 22;
 
-    public override void Create()
+    private static readonly string[] _toolTipItems = new[]
+    {
+      "Name",
+      "Owner",
+      "Sunlight",
+      "Economy",
+      "Security",
+      "Source",
+      "Macro",
+      "Coordinates",
+      "X",
+      "Y",
+      "Z",
+      "Cluster",
+    };
+
+    protected override string[] ToolTipItems => _toolTipItems.Concat(base.ToolTipItems).ToArray(); /* Implement setter if needed, or leave it empty if not applicable */
+
+    public override void Create(Window window)
     {
       if (Cluster == null || Sector == null || Canvas == null || Map == null || Map.Galaxy == null)
       {
@@ -798,6 +964,7 @@ namespace ChemGateBuilder
         Tag = Sector.Name,
         DataContext = Sector,
         Points = Points,
+        ToolTip = ToolTipCreator(Cluster, Sector),
       };
       SolidColorBrush? brush = Map.MainWindowReference.FactionColors.GetBrush(Sector.DominantOwner);
       if (brush != null)
