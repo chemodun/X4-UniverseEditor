@@ -129,6 +129,16 @@ namespace ChemGateBuilder
     private Sector? Sector;
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    public string Source
+    {
+      get
+      {
+        if (Sector == null)
+          return "unknown";
+        return Sector.Source;
+      }
+    }
+
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -601,10 +611,28 @@ namespace ChemGateBuilder
     {
       get => Y + ItemSizePx / 2;
     }
-
+    public Image? Image { get; private set; } = null;
     private Dictionary<string, string> Attributes
     {
       get => ObjectData?.Attributes ?? [];
+    }
+
+    public string Source
+    {
+      get => SectorMap?.Source ?? "unknown";
+    }
+
+    public void ConnectImage(Image image)
+    {
+      Image = image;
+    }
+
+    public void SetVisible(bool visible)
+    {
+      if (Image != null)
+      {
+        Image.Visibility = visible ? Visibility.Visible : Visibility.Hidden;
+      }
     }
 
     public void Update()
