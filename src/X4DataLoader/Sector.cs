@@ -21,6 +21,9 @@ namespace X4DataLoader
     public string PositionId { get; private set; }
     public string PositionSource { get; private set; }
     public string PositionFileName { get; private set; }
+    public double Sunlight { get; set; } = 0.0;
+    public double Economy { get; set; } = 0.0;
+    public double Security { get; set; } = 0.0;
     public string Source { get; private set; }
     public string FileName { get; private set; }
     public XElement? PositionXML { get; set; }
@@ -33,6 +36,7 @@ namespace X4DataLoader
     public List<Station> Stations { get; private set; } = [];
 
     public string DominantOwner { get; private set; } = "";
+    public Faction? DominantOwnerFaction { get; private set; } = null;
 
     public Sector()
     {
@@ -67,6 +71,13 @@ namespace X4DataLoader
           int sectorPosition = lowerId.IndexOf("_sector", StringComparison.Ordinal);
           ClusterId = Id[..sectorPosition];
           Description = translation.Translate(descriptionId);
+          XElement? areaElement = propertiesElement?.Element("area");
+          if (areaElement != null)
+          {
+            Sunlight = StringHelper.ParseDouble(areaElement.Attribute("sunlight")?.Value, 0.0);
+            Economy = StringHelper.ParseDouble(areaElement.Attribute("economy")?.Value, 0.0);
+            Security = StringHelper.ParseDouble(areaElement.Attribute("security")?.Value, 0.0);
+          }
           XML = element;
           Console.WriteLine($"Sector Name: {Name}");
           Source = source;
@@ -154,6 +165,7 @@ namespace X4DataLoader
         if (ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100 > 50)
         {
           DominantOwner = dominantOwner;
+          DominantOwnerFaction = allFactions.Find(faction => faction.Id == DominantOwner);
           Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
         }
         else
