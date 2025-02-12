@@ -29,6 +29,15 @@ namespace X4DataLoader
     public List<StationCategory> StationCategories { get; private set; } = [];
     public List<GalaxyConnection> Connections { get; private set; }
 
+    public static readonly List<string> DLCOrder =
+    [
+      "ego_dlc_split",
+      "ego_dlc_terran",
+      "ego_dlc_pirate",
+      "ego_dlc_boron",
+      "ego_dlc_timelines",
+    ];
+
     public Galaxy()
     {
       Name = "";
