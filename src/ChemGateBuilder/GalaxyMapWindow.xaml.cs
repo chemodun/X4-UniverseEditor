@@ -60,17 +60,20 @@ namespace ChemGateBuilder
       }
     }
 
-    private const double ColumnWidth = 15000000; // 15,000,000 meters for horizontal (X) axis
-    private const double RowHeight = 17320000; // 17,320,000 meters for vertical (Z) axis
+    private const int ColumnWidth = 15000000; // 15,000,000 meters for horizontal (X) axis
+    private const int RowHeight = 17320000 / 2; // 17,320,000 meters for vertical (Z) axis
 
     public double ScaleFactor = 0.001; // Scaling factor to convert units to pixels
     private double _canvasWidthBase = 0;
     private double _canvasHeightBase = 0;
-    private readonly Dictionary<string, Dictionary<string, Cluster>> MapDict = [];
-    private readonly List<double> AxisZ = [];
-    private readonly List<int> AxisX = [];
     private int MinCol = 0;
-    private double MaxRow = 0;
+    private int MaxCol = 0;
+
+    private int MinRow = 0;
+    private int MaxRow = 0;
+
+    private readonly List<GalaxyMapCell> MapCells = [];
+
     private readonly CollectionViewSource? SectorsList = null;
 
     // Reference to the main window's size (assumed to be passed or accessible)
@@ -92,7 +95,7 @@ namespace ChemGateBuilder
 
     private Visibility _optionsVisibilityState = Visibility.Hidden;
     private string _optionsVisibilitySymbol = "CircleLeft";
-    private double _optionsWidth = 20;
+    private double _optionsWidth = 10;
     public Visibility OptionsVisibilityState
     {
       get => _optionsVisibilityState;
@@ -106,7 +109,7 @@ namespace ChemGateBuilder
         }
         else
         {
-          OptionsWidth = 20;
+          OptionsWidth = 10;
           OptionsVisibilitySymbol = "CircleLeft";
         }
         OnPropertyChanged(nameof(OptionsVisibilityState));
@@ -133,11 +136,14 @@ namespace ChemGateBuilder
       }
     }
 
+    public MapOptions ShowEmptyClusterPlaces = new("Show Empty Cluster Cells", "EmptyCell", false);
+
     // private readonly Sector? clickedSector = null;
     public List<SectorMapItem> SectorsItems = [];
 
-    public ObservableCollection<ExtensionOnMap> EnabledDLCs { get; set; } = [];
-    public ObservableCollection<ExtensionOnMap> EnabledMods { get; set; } = [];
+    public ObservableCollection<MapOptions> DLCsOptions { get; set; } = [];
+    public ObservableCollection<MapOptions> ModsOptions { get; set; } = [];
+    public ObservableCollection<MapOptions> DeveloperOptions { get; set; } = [];
 
     private readonly List<GalaxyMapInterConnection> InterConnections = [];
 
@@ -156,17 +162,19 @@ namespace ChemGateBuilder
           ExtensionInfo? dlc = Galaxy.DLCs.Find(dlc => dlc.Id == dlcId);
           if (dlc != null)
           {
-            var extension = new ExtensionOnMap(dlc.Name, dlc.Id, true);
-            extension.PropertyChanged += Extension_PropertyChanged;
-            EnabledDLCs.Add(extension);
+            var extension = new MapOptions(dlc.Name, dlc.Id, true);
+            extension.PropertyChanged += MapOptions_PropertyChanged;
+            DLCsOptions.Add(extension);
           }
         }
         foreach (ExtensionInfo mod in Galaxy.Mods)
         {
-          var extension = new ExtensionOnMap(mod.Name, mod.Id, true);
-          extension.PropertyChanged += Extension_PropertyChanged;
-          EnabledMods.Add(extension);
+          var extension = new MapOptions(mod.Name, mod.Id, true);
+          extension.PropertyChanged += MapOptions_PropertyChanged;
+          ModsOptions.Add(extension);
         }
+        ShowEmptyClusterPlaces.PropertyChanged += MapOptions_PropertyChanged;
+        DeveloperOptions.Add(ShowEmptyClusterPlaces);
       }
 
       // Set window size to 90% of the main window
@@ -201,42 +209,46 @@ namespace ChemGateBuilder
       // Determine the rowId and columnId for each cluster and populate the dictionary
       foreach (var cluster in Galaxy.Clusters)
       {
-        string columnIdStr = $"{(int)Math.Floor(cluster.Position.X / ColumnWidth)}";
-        string rowIdStr = $"{cluster.Position.Z / RowHeight:F1}";
+        int col = (int)(cluster.Position.X / ColumnWidth);
+        int row = (int)(cluster.Position.Z / RowHeight);
 
-        if (!MapDict.TryGetValue(rowIdStr, out Dictionary<string, Cluster>? value))
+        if (col < MinCol)
         {
-          value = [];
-          MapDict[rowIdStr] = value;
+          MinCol = col;
         }
-
-        value[columnIdStr] = cluster;
-
-        if (!AxisZ.Contains(double.Parse(rowIdStr)))
+        if (col > MaxCol)
         {
-          AxisZ.Add(double.Parse(rowIdStr));
+          MaxCol = col;
         }
-
-        if (!AxisX.Contains(int.Parse(columnIdStr)))
+        if (row < MinRow)
         {
-          AxisX.Add(int.Parse(columnIdStr));
+          MinRow = row;
         }
+        if (row > MaxRow)
+        {
+          MaxRow = row;
+        }
+        MapCells.Add(new GalaxyMapCell(cluster, col, row));
       }
 
-      AxisX.Sort();
-      AxisZ.Sort();
-      AxisZ.Reverse();
-      MaxRow = AxisZ.First();
-      MinCol = AxisX.First();
-
-      _canvasWidthBase = (AxisX.Last() - MinCol + 1) * 0.75 + 0.25;
-      _canvasHeightBase = MaxRow - AxisZ.Last() + 1;
+      _canvasWidthBase = (MaxCol - MinCol + 1) * 0.75 + 0.25;
+      _canvasHeightBase = (MaxRow - MinRow) * 0.5 + 1;
       return true;
+    }
+
+    public double ReverseX(double x)
+    {
+      return (x / 0.75 + MinCol) * ColumnWidth;
+    }
+
+    public double ReverseZ(double z)
+    {
+      return (MaxRow - z * 2) * RowHeight;
     }
 
     private void CreateMap()
     {
-      if (MapDict.Count == 0)
+      if (MapCells.Count == 0)
       {
         Log.Warn("Cluster map is empty.");
         return;
@@ -251,19 +263,20 @@ namespace ChemGateBuilder
       GalaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
 
       GalaxyCanvas.Children.Clear();
-      foreach (var Z in AxisZ)
+
+      for (int row = MaxRow; row >= MinRow; row--)
       {
-        Dictionary<string, Cluster> row = MapDict[Z.ToString(format: "F1")];
-        foreach (var X in AxisX)
+        int shiftCol = row % 2 == 0 ? 0 : 1;
+        for (int col = MinCol + shiftCol; col <= MaxCol; col += 2)
         {
-          if (!row.ContainsKey(X.ToString()))
+          Cluster? cluster = GalaxyMapCell.GetCluster(MapCells, col, row);
+          GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (col - MinCol), (MaxRow - row) * 0.5, GalaxyCanvas, cluster);
+          clusterMapCluster.Create();
+          _clusters.Add(clusterMapCluster);
+          if (cluster == null)
           {
             continue;
           }
-          Cluster cluster = row[X.ToString()];
-          GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (X - MinCol), MaxRow - Z, GalaxyCanvas, cluster);
-          clusterMapCluster.Create(this);
-          _clusters.Add(clusterMapCluster);
           if (cluster.Sectors.Count > 1 && cluster.Highways.Count > 0)
           {
             foreach (HighwayClusterLevel highway in cluster.Highways.Cast<HighwayClusterLevel>())
@@ -365,30 +378,34 @@ namespace ChemGateBuilder
         foreach (GalaxyMapInterConnection connection in InterConnections)
         {
           connection.SetVisible(
-            IsExtensionEnabled(connection.SourceId)
-              && IsExtensionEnabled(connection.DirectSourceId)
-              && IsExtensionEnabled(connection.OppositeSourceId)
+            IsVisibleBySource(connection.SourceId)
+              && IsVisibleBySource(connection.DirectSourceId)
+              && IsVisibleBySource(connection.OppositeSourceId)
           );
         }
       }
     }
 
-    public bool IsExtensionEnabled(string id)
+    public bool IsVisibleBySource(string id)
     {
-      if (EnabledDLCs.Any(extension => extension.Id == id))
+      if (DLCsOptions.Any(extension => extension.Id == id))
       {
-        return EnabledDLCs.First(extension => extension.Id == id).IsChecked;
+        return DLCsOptions.First(extension => extension.Id == id).IsChecked;
       }
-      if (EnabledMods.Any(extension => extension.Id == id))
+      if (ModsOptions.Any(extension => extension.Id == id))
       {
-        return EnabledMods.First(extension => extension.Id == id).IsChecked;
+        return ModsOptions.First(extension => extension.Id == id).IsChecked;
+      }
+      if (DeveloperOptions.Any(extension => extension.Id == id))
+      {
+        return DeveloperOptions.First(extension => extension.Id == id).IsChecked;
       }
       return true;
     }
 
-    private void Extension_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void MapOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-      if (e.PropertyName == nameof(ExtensionOnMap.IsChecked))
+      if (e.PropertyName == nameof(MapOptions.IsChecked))
       {
         UpdateMap();
       }
@@ -585,7 +602,19 @@ namespace ChemGateBuilder
     }
   }
 
-  class GalaxyMapCluster(GalaxyMapWindow map, double x, double y, Canvas canvas, Cluster cluster) : INotifyPropertyChanged
+  class GalaxyMapCell(Cluster cluster, int col, int row)
+  {
+    public int X { get; set; } = col;
+    public int Z { get; set; } = row;
+    public Cluster Cluster { get; set; } = cluster;
+
+    public static Cluster? GetCluster(List<GalaxyMapCell> cells, int col, int row)
+    {
+      return cells.Find(cell => cell.X == col && cell.Z == row)?.Cluster;
+    }
+  }
+
+  class GalaxyMapCluster(GalaxyMapWindow map, double x, double y, Canvas canvas, Cluster? cluster) : INotifyPropertyChanged
   {
     protected Cluster? Cluster = cluster;
     protected virtual double Modifier { get; set; } = 1.0;
@@ -597,6 +626,30 @@ namespace ChemGateBuilder
         if (Map != null)
         {
           return _x * Map.HexagonWidth * Map.ScaleFactor;
+        }
+        return 0;
+      }
+    }
+
+    protected double OriginalX
+    {
+      get
+      {
+        if (Map != null)
+        {
+          return Map.ReverseX(_x);
+        }
+        return 0;
+      }
+    }
+
+    protected double OriginalZ
+    {
+      get
+      {
+        if (Map != null)
+        {
+          return Map.ReverseZ(_y);
         }
         return 0;
       }
@@ -642,6 +695,7 @@ namespace ChemGateBuilder
         return 0;
       }
     }
+    public string Source => Cluster?.Source ?? "EmptyCell";
     protected GalaxyMapWindow? Map = map;
     protected Canvas? Canvas = canvas;
     protected PointCollection Points = [];
@@ -661,17 +715,17 @@ namespace ChemGateBuilder
       (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
     ];
 
-    public virtual void Create(Window window)
+    public virtual void Create()
     {
-      if (Map == null || Cluster == null || Canvas == null)
+      if (Map == null || Canvas == null)
       {
         return;
       }
-      if (Cluster.Sectors.Count == 1)
+      if (Cluster != null && Cluster.Sectors.Count == 1)
       {
         Sector sector = Cluster.Sectors[0];
         GalaxyMapSector clusterMapSector = new(Map, _x, _y, Canvas, Cluster, sector);
-        clusterMapSector.Create(window);
+        clusterMapSector.Create();
         _sectors.Add(clusterMapSector);
       }
       else
@@ -680,174 +734,182 @@ namespace ChemGateBuilder
         // Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
         Hexagon = new()
         {
-          Stroke = Brushes.Black,
+          Stroke = Cluster != null ? Brushes.Black : Brushes.DarkGray,
           StrokeThickness = 1,
           Fill = Brushes.Transparent,
-          Tag = Cluster.Name,
+          Tag = Cluster != null ? Cluster.Name : "Empty Map Cell",
           DataContext = Cluster,
           Points = Points,
-          ToolTip = ToolTipCreator(Cluster),
+          ToolTip = Cluster != null ? ToolTipCreator(Cluster) : ToolTipCreator(null, null, new Position(OriginalX, 0, OriginalZ)),
         };
+        if (Cluster == null)
+        {
+          Hexagon.StrokeDashArray = [2, 2]; // Dash pattern: 2 units dash, 2 units gap
+          Hexagon.Visibility = Map.ShowEmptyClusterPlaces.IsChecked ? Visibility.Visible : Visibility.Hidden;
+        }
         // Position the Hexagon on the Canvas
         Canvas.SetLeft(Hexagon, X);
         Canvas.SetTop(Hexagon, Y);
         Canvas.Children.Add(Hexagon);
         List<HexagonCorner> corners = [];
         List<double?> angles = [];
-        for (int i = 0; i < Cluster.Sectors.Count; i++)
+        if (Cluster != null)
         {
-          double? angle = null;
-          Sector sector = Cluster.Sectors[i];
-          if (i == 0)
+          for (int i = 0; i < Cluster.Sectors.Count; i++)
           {
-            corners.Add(HexagonCorner.Unknown);
-            angles.Add(0);
+            double? angle = null;
+            Sector sector = Cluster.Sectors[i];
+            if (i == 0)
+            {
+              corners.Add(HexagonCorner.Unknown);
+              angles.Add(0);
+            }
+            else
+            {
+              angle = Math.Atan2(sector.Position.Z, sector.Position.X) * (180 / Math.PI);
+              angles.Add(angle);
+              if (angle <= 30 && angle > -30)
+              {
+                corners.Add(HexagonCorner.RightCenter);
+              }
+              else if (angle <= -30 && angle > -90)
+              {
+                corners.Add(HexagonCorner.RightBottom);
+              }
+              else if (angle <= -90 && angle > -120)
+              {
+                corners.Add(HexagonCorner.LeftBottom);
+              }
+              else if (angle <= -120 || angle > 120)
+              {
+                corners.Add(HexagonCorner.LeftCenter);
+              }
+              else if (angle <= 120 && angle > 90)
+              {
+                corners.Add(HexagonCorner.LeftTop);
+              }
+              else if (angle <= 90 && angle > 30)
+              {
+                corners.Add(HexagonCorner.RightTop);
+              }
+            }
+            Log.Debug(
+              $"Sector {sector.Name}  with Position: X = {sector.Position.X}, Y = {sector.Position.Y}, Z = {sector.Position.Z}. Angle: {angle}, Corner: {corners[i]}"
+            );
           }
-          else
+          if (corners.Count == 3)
           {
-            angle = Math.Atan2(sector.Position.Z, sector.Position.X) * (180 / Math.PI);
-            angles.Add(angle);
-            if (angle <= 30 && angle > -30)
-            {
-              corners.Add(HexagonCorner.RightCenter);
-            }
-            else if (angle <= -30 && angle > -90)
-            {
-              corners.Add(HexagonCorner.RightBottom);
-            }
-            else if (angle <= -90 && angle > -120)
-            {
-              corners.Add(HexagonCorner.LeftBottom);
-            }
-            else if (angle <= -120 || angle > 120)
-            {
-              corners.Add(HexagonCorner.LeftCenter);
-            }
-            else if (angle <= 120 && angle > 90)
-            {
-              corners.Add(HexagonCorner.LeftTop);
-            }
-            else if (angle <= 90 && angle > 30)
-            {
-              corners.Add(HexagonCorner.RightTop);
-            }
+            corners[0] = HexagonCornersTriplet.GetCornerByTwoOther(corners[1], corners[2], Triplets);
           }
-          Log.Debug(
-            $"Sector {sector.Name}  with Position: X = {sector.Position.X}, Y = {sector.Position.Y}, Z = {sector.Position.Z}. Angle: {angle}, Corner: {corners[i]}"
-          );
-        }
-        if (corners.Count == 3)
-        {
-          corners[0] = HexagonCornersTriplet.GetCornerByTwoOther(corners[1], corners[2], Triplets);
-        }
-        else if (corners.Count == 2)
-        {
-          if (angles[1] < 90 && angles[1] > 0)
+          else if (corners.Count == 2)
           {
-            corners[0] = HexagonCorner.LeftBottom;
-            corners[1] = HexagonCorner.RightTop;
-          }
-          else if (angles[1] < 0 && angles[1] > -90)
-          {
-            corners[0] = HexagonCorner.LeftTop;
-            corners[1] = HexagonCorner.RightBottom;
-          }
-          else if (angles[1] < -90 && angles[1] > -180)
-          {
-            corners[0] = HexagonCorner.RightTop;
-            corners[1] = HexagonCorner.LeftBottom;
-          }
-          else if (angles[1] < 180 && angles[1] > 90)
-          {
-            corners[0] = HexagonCorner.RightBottom;
-            corners[1] = HexagonCorner.LeftTop;
-          }
-          else if (angles[1] == 90)
-          {
-            switch (Cluster.Macro)
+            if (angles[1] < 90 && angles[1] > 0)
             {
-              case "Cluster_32_macro": // Tharka's Cascade
-                corners[0] = HexagonCorner.RightBottom;
-                corners[1] = HexagonCorner.LeftTop;
-                break;
+              corners[0] = HexagonCorner.LeftBottom;
+              corners[1] = HexagonCorner.RightTop;
             }
-          }
-          else if (angles[1] == 0)
-          {
-            switch (Cluster.Macro)
+            else if (angles[1] < 0 && angles[1] > -90)
             {
-              case "Cluster_15_macro": // Ianamus Zura
-              case "Cluster_19_macro": // Hewa's Twin I & II
-                corners[0] = HexagonCorner.LeftBottom;
-                corners[1] = HexagonCorner.RightTop;
-                break;
-              case "Cluster_42_macro": // Hewa's Twin III & IV
-                corners[0] = HexagonCorner.LeftTop;
-                corners[1] = HexagonCorner.RightBottom;
-                break;
+              corners[0] = HexagonCorner.LeftTop;
+              corners[1] = HexagonCorner.RightBottom;
             }
-          }
-          else if (angles[1] == -90)
-          {
-            switch (Cluster.Macro)
+            else if (angles[1] < -90 && angles[1] > -180)
             {
-              case "Cluster_25_macro": // Faulty Logic
-              case "Cluster_112_macro": // Savage Spur
-                corners[0] = HexagonCorner.RightTop;
-                corners[1] = HexagonCorner.LeftBottom;
-                break;
-              case "Cluster_104_macro":
-                corners[0] = HexagonCorner.LeftTop; // Earth
-                corners[1] = HexagonCorner.RightBottom; // Moon
-                break;
+              corners[0] = HexagonCorner.RightTop;
+              corners[1] = HexagonCorner.LeftBottom;
             }
-          }
-          else if (angles[1] == -180) { }
-        }
-        foreach ((HexagonCorner, HexagonCorner) pair in HorizontalPairs)
-        {
-          if (corners.Contains(pair.Item1) || corners.Contains(pair.Item2))
-          {
-            int index = corners.Contains(pair.Item1) ? corners.IndexOf(pair.Item1) : corners.IndexOf(pair.Item2);
-            double x = 0;
-            double y = 0;
-            switch (corners[index])
+            else if (angles[1] < 180 && angles[1] > 90)
             {
-              case HexagonCorner.RightCenter:
-                x = _x + 0.5;
-                y = _y + 0.25;
-                break;
-              case HexagonCorner.RightBottom:
-                x = _x + 0.375;
-                y = _y + 0.5;
-                break;
-              case HexagonCorner.LeftBottom:
-                x = _x + 0.125;
-                y = _y + 0.5;
-                break;
-              case HexagonCorner.LeftCenter:
-                x = _x;
-                y = _y + 0.25;
-                break;
-              case HexagonCorner.LeftTop:
-                x = _x + 0.125;
-                y = _y;
-                break;
-              case HexagonCorner.RightTop:
-                x = _x + 0.375;
-                y = _y;
-                break;
+              corners[0] = HexagonCorner.RightBottom;
+              corners[1] = HexagonCorner.LeftTop;
             }
-            Log.Debug($"Sector {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
-            GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[index], true);
-            clusterMapSector.Create(window);
-            _sectors.Add(clusterMapSector);
+            else if (angles[1] == 90)
+            {
+              switch (Cluster.Macro)
+              {
+                case "Cluster_32_macro": // Tharka's Cascade
+                  corners[0] = HexagonCorner.RightBottom;
+                  corners[1] = HexagonCorner.LeftTop;
+                  break;
+              }
+            }
+            else if (angles[1] == 0)
+            {
+              switch (Cluster.Macro)
+              {
+                case "Cluster_15_macro": // Ianamus Zura
+                case "Cluster_19_macro": // Hewa's Twin I & II
+                  corners[0] = HexagonCorner.LeftBottom;
+                  corners[1] = HexagonCorner.RightTop;
+                  break;
+                case "Cluster_42_macro": // Hewa's Twin III & IV
+                  corners[0] = HexagonCorner.LeftTop;
+                  corners[1] = HexagonCorner.RightBottom;
+                  break;
+              }
+            }
+            else if (angles[1] == -90)
+            {
+              switch (Cluster.Macro)
+              {
+                case "Cluster_25_macro": // Faulty Logic
+                case "Cluster_112_macro": // Savage Spur
+                  corners[0] = HexagonCorner.RightTop;
+                  corners[1] = HexagonCorner.LeftBottom;
+                  break;
+                case "Cluster_104_macro":
+                  corners[0] = HexagonCorner.LeftTop; // Earth
+                  corners[1] = HexagonCorner.RightBottom; // Moon
+                  break;
+              }
+            }
+            else if (angles[1] == -180) { }
+          }
+          foreach ((HexagonCorner, HexagonCorner) pair in HorizontalPairs)
+          {
+            if (corners.Contains(pair.Item1) || corners.Contains(pair.Item2))
+            {
+              int index = corners.Contains(pair.Item1) ? corners.IndexOf(pair.Item1) : corners.IndexOf(pair.Item2);
+              double x = 0;
+              double y = 0;
+              switch (corners[index])
+              {
+                case HexagonCorner.RightCenter:
+                  x = _x + 0.5;
+                  y = _y + 0.25;
+                  break;
+                case HexagonCorner.RightBottom:
+                  x = _x + 0.375;
+                  y = _y + 0.5;
+                  break;
+                case HexagonCorner.LeftBottom:
+                  x = _x + 0.125;
+                  y = _y + 0.5;
+                  break;
+                case HexagonCorner.LeftCenter:
+                  x = _x;
+                  y = _y + 0.25;
+                  break;
+                case HexagonCorner.LeftTop:
+                  x = _x + 0.125;
+                  y = _y;
+                  break;
+                case HexagonCorner.RightTop:
+                  x = _x + 0.375;
+                  y = _y;
+                  break;
+              }
+              Log.Debug($"Sector {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
+              GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[index], true);
+              clusterMapSector.Create();
+              _sectors.Add(clusterMapSector);
+            }
           }
         }
       }
     }
 
-    protected Grid ToolTipCreator(Cluster cluster, Sector? sector = null)
+    protected Grid ToolTipCreator(Cluster? cluster, Sector? sector = null, Position? position = null)
     {
       Grid toolTipGrid = new()
       {
@@ -884,11 +946,22 @@ namespace ChemGateBuilder
             isSector = false;
             break;
           case "Name":
-            labelStr = sector != null && isSector ? $"Sector: {sector.Name}" : $"Cluster: {cluster.Name}";
+            labelStr =
+              sector != null && isSector
+                ? $"Sector: {sector.Name}"
+                : (cluster != null ? $"Cluster: {cluster.Name}" : "Empty Cluster Placeholder");
             break;
           case "Source":
-            labelStr = "Source:";
-            textStr = sector != null && isSector ? sector.Source : cluster.Source;
+            if (sector != null && isSector)
+            {
+              labelStr = "Source:";
+              textStr = sector.Source;
+            }
+            else if (cluster != null)
+            {
+              labelStr = "Source:";
+              textStr = cluster.Source;
+            }
             break;
           case "Coordinates":
             labelStr = "Coordinates:";
@@ -897,18 +970,36 @@ namespace ChemGateBuilder
           case "Y":
           case "Z":
             labelStr = $"{toolTipItem}:";
+            if (sector != null && isSector)
+            {
+              position = sector.Position;
+            }
+            else if (cluster != null)
+            {
+              position = cluster.Position;
+            }
+            else
+              position ??= new Position();
             textStr = toolTipItem switch
             {
-              "X" => sector != null && isSector ? sector.Position.X.ToString("N0") : cluster.Position.X.ToString("N0"),
-              "Y" => sector != null && isSector ? sector.Position.Y.ToString("N0") : cluster.Position.Y.ToString("N0"),
-              "Z" => sector != null && isSector ? sector.Position.Z.ToString("N0") : cluster.Position.Z.ToString("N0"),
+              "X" => position.X.ToString("N0"),
+              "Y" => position.Y.ToString("N0"),
+              "Z" => position.Z.ToString("N0"),
               _ => string.Empty,
             };
             alignRight = true;
             break;
           case "Macro":
-            labelStr = "Macro:";
-            textStr = sector != null && isSector ? sector.Macro : cluster.Macro;
+            if (sector != null && isSector)
+            {
+              labelStr = "Macro:";
+              textStr = sector.Macro;
+            }
+            else if (cluster != null)
+            {
+              labelStr = "Macro:";
+              textStr = cluster.Macro;
+            }
             break;
           case "Owner":
             if (sector != null && isSector)
@@ -990,7 +1081,7 @@ namespace ChemGateBuilder
 
     public virtual void Update()
     {
-      if (Cluster == null || Canvas == null)
+      if (Canvas == null)
       {
         return;
       }
@@ -1003,7 +1094,7 @@ namespace ChemGateBuilder
         Canvas.SetTop(Hexagon, Y);
         if (Map != null)
         {
-          Hexagon.Visibility = Map.IsExtensionEnabled(Cluster.Source) ? Visibility.Visible : Visibility.Hidden;
+          Hexagon.Visibility = Map.IsVisibleBySource(Source) ? Visibility.Visible : Visibility.Hidden;
         }
       }
       foreach (GalaxyMapSector sector in _sectors)
@@ -1060,7 +1151,7 @@ namespace ChemGateBuilder
 
     protected override string[] ToolTipItems => _toolTipItems.Concat(base.ToolTipItems).ToArray(); /* Implement setter if needed, or leave it empty if not applicable */
 
-    public override void Create(Window window)
+    public override void Create()
     {
       if (Cluster == null || Sector == null || Canvas == null || Map == null || Map.Galaxy == null)
       {
@@ -1191,7 +1282,7 @@ namespace ChemGateBuilder
       Grid.Width = Width;
       Grid.Height = Height;
       // Position the Hexagon on the Canvas
-      bool isVisible = Map == null || Map.IsExtensionEnabled(Sector.Source);
+      bool isVisible = Map == null || Map.IsVisibleBySource(Sector.Source);
       Hexagon.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
       Grid.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
       Canvas.SetLeft(Grid, X);
@@ -1313,13 +1404,13 @@ namespace ChemGateBuilder
     }
   }
 
-  public class ExtensionOnMap : INotifyPropertyChanged
+  public class MapOptions : INotifyPropertyChanged
   {
     private string _name = string.Empty;
     private string _id = string.Empty;
     private bool _isChecked = false;
 
-    public ExtensionOnMap(string name, string id, bool isChecked)
+    public MapOptions(string name, string id, bool isChecked)
     {
       Name = name;
       Id = id;
