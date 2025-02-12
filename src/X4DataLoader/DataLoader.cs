@@ -289,7 +289,7 @@ namespace X4DataLoader
           Log.Warn("No galaxy file found for vanilla.");
           return;
         }
-        galaxy.LoadXML(galaxyFile.XML, galaxy.Clusters, "vanilla", galaxyFile.FileName);
+        galaxy.LoadXML(galaxyFile.XML, galaxy.Clusters, loadFor, galaxyFile.FileName);
       }
       else
       {
