@@ -152,6 +152,8 @@ namespace ChemGateBuilder
       }
     }
 
+    private bool LoadMods { get; set; } = false;
+
     public ObservableCollection<ExtensionOption> DlcsOptions { get; set; } = [];
     public ObservableCollection<ExtensionOption> ModsOptions { get; set; } = [];
 
@@ -227,6 +229,7 @@ namespace ChemGateBuilder
       MainWindowReference = Owner as MainWindow;
       if (MainWindowReference != null)
       {
+        LoadMods = MainWindowReference.LoadModsData;
         if (!string.IsNullOrEmpty(MainWindowReference.X4GameFolder) && Directory.Exists(MainWindowReference.X4GameFolder))
         {
           GameFolder = MainWindowReference.X4GameFolder;
@@ -323,15 +326,18 @@ namespace ChemGateBuilder
                 continue;
               }
               Log.Debug($"Extension {Path.GetFileName(extensionFolder)}: {extensionName}");
-              ModsOptions.Add(
-                new ExtensionOption
-                {
-                  Name = extensionName,
-                  Id = extensionId,
-                  Folder = Path.GetFileName(extensionFolder),
-                  IsChecked = true,
-                }
-              );
+              if (LoadMods || Galaxy.DLCOrder.Contains(extensionId))
+              {
+                ModsOptions.Add(
+                  new ExtensionOption
+                  {
+                    Name = extensionName,
+                    Id = extensionId,
+                    Folder = Path.GetFileName(extensionFolder),
+                    IsChecked = true,
+                  }
+                );
+              }
             }
             catch (Exception ex)
             {
