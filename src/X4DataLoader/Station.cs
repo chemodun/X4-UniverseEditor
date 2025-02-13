@@ -181,7 +181,7 @@ namespace X4DataLoader
           }
         }
       }
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
       Sector.AddStation(this);

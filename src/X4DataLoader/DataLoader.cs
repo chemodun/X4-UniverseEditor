@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Utilities.Logging;
+using Utilities.X4XMLPatch;
 using X4DataLoader.Helpers;
 
 namespace X4DataLoader
@@ -51,6 +52,53 @@ namespace X4DataLoader
       {
         gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.Extensions, loadFor);
         sources = GameFile.GetRelatedExtensions(gameFiles, loadFor);
+      }
+      if (isMainData)
+      {
+        List<GameFile> vanillaFiles = gameFiles.Where(f => f.ExtensionId == "vanilla").ToList();
+        foreach (string source in sources)
+        {
+          if (source == "vanilla")
+          {
+            continue;
+          }
+          string sourceStr = source;
+          List<GameFile> sourceFiles = gameFiles.Where(f => f.ExtensionId == sourceStr).ToList();
+          List<GameFile> toRemove = [];
+          foreach (GameFile file in sourceFiles)
+          {
+            Log.Debug($"Loading {file.FileName} for {sourceStr}");
+            if (vanillaFiles.Any(f => f.FileName == file.FileName))
+            {
+              if (file.XML.Name.ToString() == "diff")
+              {
+                Log.Debug($"Merging {file.FileName} for {sourceStr}");
+                GameFile? vanillaFile = vanillaFiles.FirstOrDefault(f => f.FileName == file.FileName);
+                if (vanillaFile != null && vanillaFile.XML != null)
+                {
+                  XElement vanillaXML = new(vanillaFile.XML);
+                  if (!XMLPatch.ApplyPatch(vanillaXML, file.XML, file.ExtensionId))
+                  {
+                    Log.Error($"Failed to apply patch for file {file.FileName} with extension {file.ExtensionId}.");
+                  }
+                  else
+                  {
+                    toRemove.Add(file);
+                    Log.Debug($"Patch applied for {file.FileName} with extension {file.ExtensionId}.");
+                  }
+                }
+              }
+              else
+              {
+                Log.Warn($"File {file.FileName} for {sourceStr} is not a diff file.");
+              }
+            }
+          }
+          foreach (GameFile file in toRemove)
+          {
+            sourceFiles.Remove(file);
+          }
+        }
       }
       foreach (string source in sources)
       {

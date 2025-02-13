@@ -35,7 +35,7 @@ namespace X4DataLoader
           ConstructionPlans.Add((constructionPlan, weight));
         }
       }
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
     }

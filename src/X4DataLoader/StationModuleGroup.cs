@@ -33,7 +33,7 @@ namespace X4DataLoader
           ModuleIds.Add(stationModuleId);
         }
       }
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
     }

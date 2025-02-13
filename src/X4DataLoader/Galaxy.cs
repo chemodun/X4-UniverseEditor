@@ -279,7 +279,7 @@ namespace X4DataLoader
         throw new ArgumentException("GalaxyConnection must have a macro element with path attribute");
       }
 
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
 
       XML = element;

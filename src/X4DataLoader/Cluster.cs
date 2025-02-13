@@ -82,7 +82,7 @@ namespace X4DataLoader
       Position = position;
       PositionId = positionId;
       PositionXML = positionXML;
-      PositionSource = source;
+      PositionSource = XmlHelper.GetAttribute(positionXML, "_source") ?? source;
       PositionFileName = fileName;
     }
 

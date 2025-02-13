@@ -74,7 +74,7 @@ namespace X4DataLoader
         IconInactiveId = XmlHelper.GetAttribute(iconElement, "inactive") ?? "";
       }
       XML = element;
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
     }
 

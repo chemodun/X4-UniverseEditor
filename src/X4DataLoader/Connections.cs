@@ -184,6 +184,7 @@ namespace X4DataLoader
         name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
         connectionClass = XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
         reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
+        source = XmlHelper.GetAttribute(element, "_source") ?? source;
       }
       else if (string.IsNullOrEmpty(name))
       {

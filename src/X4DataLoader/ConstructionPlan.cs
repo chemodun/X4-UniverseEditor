@@ -72,7 +72,7 @@ namespace X4DataLoader
         }
       }
       XML = element;
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
     }
 

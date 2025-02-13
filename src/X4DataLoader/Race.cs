@@ -48,7 +48,7 @@ namespace X4DataLoader
       Names = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "names"));
       Tags = XmlHelper.GetAttributeAsList(element, "tags", " ");
       XML = element;
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
     }
 

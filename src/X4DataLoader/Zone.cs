@@ -81,6 +81,7 @@ namespace X4DataLoader
     {
       Name = XmlHelper.GetAttribute(element, "name") ?? "";
       Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
+      source = XmlHelper.GetAttribute(element, "_source") ?? source;
       string zoneClass = XmlHelper.GetAttribute(element, "class") ?? "";
       if (zoneClass != "zone")
       {

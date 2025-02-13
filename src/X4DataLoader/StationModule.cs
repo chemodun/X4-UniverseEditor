@@ -35,7 +35,7 @@ namespace X4DataLoader
         Tags = XmlHelper.GetAttributeAsList(categoryElement, "tags");
         Factions = XmlHelper.GetAttributeAsList(categoryElement, "faction");
       }
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
     }

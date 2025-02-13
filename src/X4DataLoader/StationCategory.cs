@@ -44,7 +44,7 @@ namespace X4DataLoader
       StationGroupId = XmlHelper.GetAttribute(element, "group") ?? "";
       Macro = XmlHelper.GetAttribute(element, "macro") ?? "";
       StationGroup = allStationGroups.FirstOrDefault(sg => sg.Name == StationGroupId);
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
     }
