@@ -1291,7 +1291,6 @@ namespace ChemGateBuilder
       Grid.Height = Height;
       // Position the Hexagon on the Canvas
       bool isVisible = Map == null || Map.IsVisibleBySource(Sector.Source);
-      Hexagon.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
       Grid.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
       Canvas.SetLeft(Grid, X);
       Canvas.SetTop(Grid, Y);
