@@ -282,7 +282,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 - Added
   - Clusters and sectors tooltips
   - Hiding and showing the DLC's and Mods on a map
-  - Showing empty cluster cells
+  - Showing empty cluster cells (with coordinates on the tooltip)
 
 ### [0.7.0] - 2025-02-11
 
