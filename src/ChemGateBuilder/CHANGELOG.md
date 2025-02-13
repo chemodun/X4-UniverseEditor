@@ -5,12 +5,8 @@
 
 ### Features
 
-* **GalaxyMapWindow:** bind visibility of Mods group to ModsOptions count ([8a247dd](https://github.com/chemodun/X4-UniverseEditor/commit/8a247dd600a98210680404a01d2103ba2e69c9b0))
-
-
-### Bug Fixes
-
 * **X4DataExtractionWindow:** allow extract not only DLC's - mod extraction is available for now too ([038f3ef](https://github.com/chemodun/X4-UniverseEditor/commit/038f3ef34a69a89dc89de56107e483149c806bed))
+* **GalaxyMapWindow:** bind visibility of Mods group to ModsOptions count ([8a247dd](https://github.com/chemodun/X4-UniverseEditor/commit/8a247dd600a98210680404a01d2103ba2e69c9b0))
 
 
 ### Documentation
