@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.0...XMLPatch@v0.1.1) (2025-02-13)
+
+
+### Code Refactoring
+
+* **XMLPatch:** enhance XML patching methods to return success status ([6449d2e](https://github.com/chemodun/X4-UniverseEditor/commit/6449d2e8b4d4b96d769a322cb348d2520a060144))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch-v0.1.0...XMLPatch@v0.1.0) (2025-02-13)
 
 
