@@ -68,9 +68,10 @@ Additionally, you can see unselect some DLC's, if you don't want to extract them
 
 #### Loading the Mods with the Game Data and DLC's
 
-On the options page there is a checkbox which allows you to load the mods with the game data and DLC's. This is useful if you want to work with the mods in the tool. The mods will be loaded from the `extensions` folder in the game data. You should extract them manually to the `extensions` folder in the extracted game data.
+On the options page there is a checkbox which allows you to load the mods with the game data and DLC's. This is useful if you want to work with the mods in the tool. The mods will be loaded from the `extensions` folder in the game data. Can be extracted the same way as the game data and DCL's.
 
 Available from `version 0.7.0`.
+Updated in `version 0.8.1`.
 
 ##### Data Loading Important Notice
 
@@ -276,6 +277,11 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.8.1] - 2025-02-14
+
+- Improved
+  - Mods can be extracted with the game data and DLC's
 
 ### [0.8.0] - 2025-02-13
 
