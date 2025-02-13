@@ -278,7 +278,12 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
-### [0.8.1] - 2025-02-14
+### [0.8.2] - 2025-02-13
+
+- Fixed
+  - Fixed the extraction window behavior
+
+### [0.8.1] - 2025-02-13
 
 - Improved
   - Mods can be extracted with the game data and DLC's
