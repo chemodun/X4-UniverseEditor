@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.0...X4Unpack@v0.3.1) (2025-02-13)
+
+
+### Code Refactoring
+
+* **ContentExtractor:** change access modifiers for better subclass creation ([9cba4ef](https://github.com/chemodun/X4-UniverseEditor/commit/9cba4ef53ee85e9e4840e83acdf1f1104f89a476))
+
 ## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.2.0...X4Unpack@v0.3.0) (2025-02-10)
 
 
