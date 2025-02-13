@@ -66,6 +66,17 @@ There are several options to extract the game files:
 
 Additionally, you can see unselect some DLC's, if you don't want to extract them.
 
+#### Loading the Mods with the Game Data and DLC's
+
+On the options page there is a checkbox which allows you to load the mods with the game data and DLC's. This is useful if you want to work with the mods in the tool. The mods will be loaded from the `extensions` folder in the game data. You should extract them manually to the `extensions` folder in the extracted game data.
+
+Available from `version 0.7.0`.
+
+##### Data Loading Important Notice
+
+From `version 0.7.0` the tool requires the `content.xml` files for the DLC's and Mods in the extracted game data.
+The tool will extract them automatically for DLC's. If you have an extracted data by previous version of a tool (before `v0.7.0`)- please repeat the process.
+
 ### Main Window
 
 After starting, you will see the main window with a list of connections and an area to define a gate connection, i.e., two areas to define the gates in the two sectors.
@@ -181,12 +192,36 @@ Additionally, you can drag the map with the left mouse button when it is zoomed 
 
 When you click the left mouse button on a sector, it will be selected as the direct or opposite sector in the connection. If the selected sector is not available for the connection, like grayed-out sectors in the dropdown lists, the tool will do nothing.
 
+##### Clusters and sectors tooltips
+
+You can hover over the clusters and sectors on the map to view additional information about them:
+
+- For clusters you can see a name, macro and coordinates.
+- For sectors you can see a name, owner, sunlight, economy, security, macro and coordinates. Additionally information about parent cluster is shown.
+
+![Clusters and sectors tooltips](docs/images/cluster_sector_tooltips.gif)
+
+Available from `version 0.8.0`.
+
+##### Hiding and showing the DLC's and Mods on a map
+
+You can toggle the visibility of DLCs and Mods on the map to focus on your current editing tasks. This feature allows you to clearly see the connections you are working on without distractions from additional content. Use the map options menu to show or hide these elements according to your needs.
+
+![Hide and show DLC's and Mods](docs/images/hide_show_extensions.gif)
+
+Available from `version 0.8.0`.
+
+##### Showing an empty cluster cells
+
+You can toggle the visibility of empty cluster cells on the map. This feature allows you to see the empty cells where a new cluster can be placed. Use the map options menu to show or hide these elements according to your needs. Additionally, you will have the possibility to see the coordinates of such cells on the appropriate tooltip.
+
+![Show empty cluster cells](docs/images/empty_cluster_cells.gif)
+
 ### Save the Mod
 
-When you finish with the connections, you can save the mod via the `Mod` -> `Save` menu item.
+When you finish with the connections, you can save the mod via the `Mod` -> `Save` menu item. Please ensure you have completed all necessary edits before saving to avoid losing data. If the connections are not finalized, the save option may be disabled.
 
-Please note that if you have not finished editing the connections, this menu item will be disabled.
-Save the current connection or reset it to have the ability to save the mod.
+Please note that if you have not finished editing the connections, this menu item will be disabled. Save the current connection or reset it to have the ability to save the mod.
 
 After selecting the `Save` menu item, the tool will ask you to select the output folder for the mod.
 
@@ -241,6 +276,13 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.8.0] - 2025-02-13
+
+- Added
+  - Clusters and sectors tooltips
+  - Hiding and showing the DLC's and Mods on a map
+  - Showing empty cluster cells
 
 ### [0.7.0] - 2025-02-11
 
