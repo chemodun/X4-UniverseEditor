@@ -4,7 +4,6 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         Title="Galaxy Map" Height="600" Width="800"
         WindowStartupLocation="CenterOwner"
-        SizeChanged="GalaxyMapWindow_SizeChanged"
         Icon="{StaticResource BuilderIcon}"
         PreviewMouseWheel="Window_PreviewMouseWheel">
     <Window.Resources>
@@ -36,7 +35,8 @@
                         HorizontalScrollBarVisibility="Auto"
                         VerticalScrollBarVisibility="Auto"
                         Background="LightGray"
-                        ScrollChanged="GalaxyScrollViewer_ScrollChanged">
+                        ScrollChanged="GalaxyScrollViewer_ScrollChanged"
+                        SizeChanged="GalaxyScrollViewer_SizeChanged">
             <Canvas x:Name="GalaxyCanvas"
                 Background="LightGray"
                 />

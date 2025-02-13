@@ -423,6 +423,7 @@ namespace ChemGateBuilder
     private void ButtonOptionsVisibility_Click(object sender, RoutedEventArgs e)
     {
       OptionsVisibilityState = OptionsVisibilityState == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+      UpdateMap();
     }
 
     private void GalaxyScrollViewer_ScrollChanged(object sender, RoutedEventArgs e)
@@ -582,7 +583,7 @@ namespace ChemGateBuilder
       }
     }
 
-    private void GalaxyMapWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+    private void GalaxyScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       if (GalaxyScrollViewer.ActualWidth != 0 && GalaxyScrollViewer.ActualHeight != 0)
       {
@@ -956,9 +957,7 @@ namespace ChemGateBuilder
             break;
           case "Name":
             labelStr =
-              sector != null && isSector
-                ? $"Sector: {sector.Name}"
-                : (cluster != null ? $"Cluster: {cluster.Name}" : "Empty Cluster Placeholder");
+              sector != null && isSector ? $"Sector: {sector.Name}" : (cluster != null ? $"Cluster: {cluster.Name}" : "Empty Cluster Cell");
             break;
           case "Source":
             if (sector != null && isSector)
