@@ -87,7 +87,7 @@ The new gates are already shown on the map in the default position in the sector
 
 #### Connection Editing Area
 
-##### First Sector Selection and Simple Map
+##### Direct Sector Selection and Simple Map
 
 To start, simply select any sector from the list in the `Direct Sector` group.
 Then the items from the selected sector will be displayed on the raw and simple sector map and as a list on the right side of the map.
@@ -134,7 +134,7 @@ Under the sector map, there is a slider to change the sector map "real" size. Th
 
 You can define rotation angles for the gate and set the status of the gate. For some reason, you can deactivate it (if you plan to use it in your own scenarios).
 
-#### Second Sector Selection
+#### Opposite Sector Selection
 
 Now you can select the second sector and define the gate location in it.
 
