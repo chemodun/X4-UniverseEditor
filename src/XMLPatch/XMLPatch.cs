@@ -6,45 +6,56 @@ using System.Xml.Schema;
 using System.Xml.XPath;
 using Utilities.Logging;
 
-namespace X4XMLPatch
+namespace Utilities.X4XMLPatch
 {
-  class XMLPatch
+  public static class XMLPatch
   {
-    private static void ProcessSingleDoc(XDocument originalXml, XDocument diffXML, string SourceId)
+    public static bool ApplyPatch(XElement originalRoot, XElement diffRoot, string SourceId)
     {
       try
       {
-        XElement originalRoot = originalXml.Root ?? throw new InvalidOperationException("originalXml.Root is null");
-        XElement diffRoot = diffXML.Root ?? throw new InvalidOperationException("diffXML.Root is null");
-
+        XElement workingRoot = new XElement("root");
+        workingRoot.Add(originalRoot);
+        Log.Debug("Applying XML patch...");
         foreach (var operation in diffRoot.Elements())
         {
           switch (operation.Name.LocalName)
           {
             case "add":
-              ApplyAdd(operation, originalRoot, SourceId);
+              if (!ApplyAdd(operation, workingRoot, SourceId))
+              {
+                return false;
+              }
               break;
             case "replace":
-              ApplyReplace(operation, originalRoot, SourceId);
+              if (!ApplyReplace(operation, workingRoot, SourceId))
+              {
+                return false;
+              }
               break;
             case "remove":
-              ApplyRemove(operation, originalRoot);
+              if (!ApplyRemove(operation, workingRoot))
+              {
+                return false;
+              }
               break;
             default:
               Log.Warn($"Unknown operation: {operation.Name}. Skipping.");
-              break;
+              return false;
           }
         }
 
         Log.Debug($"Patched XML successfully.");
+        return true;
       }
       catch (Exception ex)
       {
         Log.Error($"Error processing XMLs: {ex.Message}");
+        return false;
       }
     }
 
-    private static void ApplyAdd(XElement addElement, XElement originalRoot, string SourceId)
+    private static bool ApplyAdd(XElement addElement, XElement originalRoot, string SourceId)
     {
       string sel = addElement.Attribute("sel")?.Value ?? throw new ArgumentException("The 'sel' attribute is required.");
       string? type = addElement.Attribute("type")?.Value;
@@ -60,12 +71,12 @@ namespace X4XMLPatch
       if (targetElements == null || !targetElements.Any())
       {
         Log.Warn($"No nodes found for add selector: {sel}");
-        return;
+        return false;
       }
       if (targetElements.Count() > 1)
       {
         Log.Warn($"Multiple nodes found for add selector: {sel}. Skipping.");
-        return;
+        return false;
       }
       var targetElement = targetElements.First();
       if (pos != null)
@@ -98,6 +109,7 @@ namespace X4XMLPatch
           else
           {
             Log.Warn($"Unknown position: {pos}. Skipping insertion.");
+            return false;
           }
         }
       }
@@ -109,28 +121,29 @@ namespace X4XMLPatch
           if (addElement.Value == null)
           {
             Log.Warn("Attribute add operation missing value.");
-            return;
+            return false;
           }
           targetElement.SetAttributeValue(type, addElement.Value);
           Log.Debug($"Added attribute '{type}' with value '{addElement.Value}' to '{targetElement.Name}'.");
         }
       }
+      return true;
     }
 
-    private static void ApplyReplace(XElement replaceElement, XElement originalRoot, string SourceId)
+    private static bool ApplyReplace(XElement replaceElement, XElement originalRoot, string SourceId)
     {
       string? sel = replaceElement.Attribute("sel")?.Value;
       if (sel == null)
       {
         Log.Warn("Replace operation missing 'sel' attribute.");
-        return;
+        return false;
       }
 
       var targetNodes = originalRoot.XPathEvaluate(sel) as IEnumerable<object>;
       if (targetNodes == null || !targetNodes.Any())
       {
         Log.Warn($"No nodes found for replace selector: {sel}");
-        return;
+        return false;
       }
 
       foreach (var targetObj in targetNodes)
@@ -164,22 +177,23 @@ namespace X4XMLPatch
           Log.Debug($"Replaced attribute '{attr.Name}' with '{replaceElement.Value}'.");
         }
       }
+      return true;
     }
 
-    private static void ApplyRemove(XElement removeElement, XElement originalRoot)
+    private static bool ApplyRemove(XElement removeElement, XElement originalRoot)
     {
       string? sel = removeElement.Attribute("sel")?.Value;
       if (sel == null)
       {
         Log.Warn("Remove operation missing 'sel' attribute.");
-        return;
+        return false;
       }
 
       var targetNodes = originalRoot.XPathEvaluate(sel) as IEnumerable<object>;
       if (targetNodes == null || !targetNodes.Any())
       {
         Log.Warn($"No nodes found for remove selector: {sel}");
-        return;
+        return false;
       }
 
       foreach (var targetObj in targetNodes)
@@ -190,7 +204,7 @@ namespace X4XMLPatch
           if (parent == null)
           {
             Log.Warn($"Element '{target.Name}' has no parent. Cannot remove.");
-            continue;
+            return false;
           }
           target.Remove();
           Log.Debug($"Removed element '{target.Name}' from '{parent.Name}'.");
@@ -201,7 +215,7 @@ namespace X4XMLPatch
           if (parent == null)
           {
             Log.Warn($"Attribute '{attr.Name}' has no parent. Cannot remove.");
-            continue;
+            return false;
           }
           attr.Remove();
           Log.Debug($"Removed attribute '{attr.Name}' from '{parent.Name}'.");
@@ -212,6 +226,7 @@ namespace X4XMLPatch
           Log.Debug("Removed text node.");
         }
       }
+      return true;
     }
   }
 }
