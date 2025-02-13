@@ -4,7 +4,7 @@
         WindowStartupLocation="CenterOwner"
         Icon="{StaticResource BuilderIcon}"
         Title="X4 Data Extraction" Height="320" Width="800"
-        MaxHeight="400"
+        MaxHeight="600"
         SizeToContent="Height" ResizeMode="CanResizeWithGrip"
         >
     <Grid>
