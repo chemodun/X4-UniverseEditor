@@ -98,13 +98,6 @@
         "Directory.Build.props"
       ]
     },
-    "src/X4UnpackTestConsole": {
-      "package-name": "X4UnpackTestConsole",
-      "release-type": "simple",
-      "extra-files": [
-        "Directory.Build.props"
-      ]
-    },
     "src/XMLPatch": {
       "package-name": "XMLPatch",
       "release-type": "simple",
