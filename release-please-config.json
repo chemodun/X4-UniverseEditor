@@ -104,6 +104,13 @@
       "extra-files": [
         "Directory.Build.props"
       ]
+    },
+    "src/XMLPatch": {
+      "package-name": "XMLPatch",
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     }
   }
 }
