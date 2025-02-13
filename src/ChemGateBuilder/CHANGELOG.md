@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.1...ChemGateBuilder@v0.8.2) (2025-02-13)
+
+
+### Bug Fixes
+
+* **X4DataExtractionWindow:** Hide Mods list in extraction window if Mods loading is not configured ([c3c5def](https://github.com/chemodun/X4-UniverseEditor/commit/c3c5def745474300326fc874d7ec23e2e56e4251))
+* **X4DataExtractionWindow:** increase maximum height to improve usability ([70c6c2e](https://github.com/chemodun/X4-UniverseEditor/commit/70c6c2e2391920d4199ec1ada5696c5bd8817ffe))
+
+
+### Documentation
+
+* **README:** update changelog for version 0.8.2 ([4f46570](https://github.com/chemodun/X4-UniverseEditor/commit/4f46570293824c03342c6f21ddc30a86726e96c7))
+
 ## [0.8.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.0...ChemGateBuilder@v0.8.1) (2025-02-13)
 
 
