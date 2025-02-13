@@ -152,7 +152,27 @@ namespace ChemGateBuilder
       }
     }
 
-    public ObservableCollection<DlcOption> DlcOptions { get; set; } = [];
+    public ObservableCollection<ExtensionOption> DlcsOptions { get; set; } = [];
+    public ObservableCollection<ExtensionOption> ModsOptions { get; set; } = [];
+
+    private List<ExtensionOption> Extensions
+    {
+      get => [.. DlcsOptions, .. ModsOptions];
+    }
+
+    private Visibility _isModsOptionsVisible = Visibility.Hidden;
+    public Visibility IsModsOptionsVisible
+    {
+      get => _isModsOptionsVisible;
+      set
+      {
+        if (_isModsOptionsVisible != value)
+        {
+          _isModsOptionsVisible = value;
+          OnPropertyChanged(nameof(IsModsOptionsVisible));
+        }
+      }
+    }
 
     public bool IsExtractionPossible { get; set; } = false;
 
@@ -245,7 +265,8 @@ namespace ChemGateBuilder
 
     private bool GetGameFolderInfo()
     {
-      DlcOptions.Clear();
+      DlcsOptions.Clear();
+      ModsOptions.Clear();
       if (string.IsNullOrEmpty(GameFolder) || !Directory.Exists(GameFolder))
       {
         Log.Debug("No game folder selected");
@@ -281,41 +302,60 @@ namespace ChemGateBuilder
       }
       if (Directory.Exists(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
       {
-        // Check for DLCs
-        foreach (string dlcId in Galaxy.DLCOrder)
+        foreach (string extensionFolder in Directory.GetDirectories(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
         {
-          string dlcFolder = Path.Combine(GameFolder, DataLoader.ExtensionsFolder, dlcId);
-          if (Directory.Exists(dlcFolder) && File.Exists(Path.Combine(dlcFolder, DataLoader.ContentXml)))
+          if (File.Exists(Path.Combine(extensionFolder, DataLoader.ContentXml)))
           {
             try
             {
-              XDocument contentXml = XDocument.Load(Path.Combine(dlcFolder, DataLoader.ContentXml));
+              XDocument contentXml = XDocument.Load(Path.Combine(extensionFolder, DataLoader.ContentXml));
               XElement? contentElement = contentXml.Element("content");
               if (contentElement == null)
               {
-                Log.Warn($"No content element found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
+                Log.Warn($"No content element found in {Path.Combine(extensionFolder, DataLoader.ContentXml)}");
                 continue;
               }
-              string dlcName = contentElement.Attribute("name")?.Value ?? "";
-              if (string.IsNullOrEmpty(dlcName))
+              string extensionName = contentElement.Attribute("name")?.Value ?? "";
+              string extensionId = contentElement.Attribute("id")?.Value ?? "";
+              if (string.IsNullOrEmpty(extensionName) || string.IsNullOrEmpty(extensionId))
               {
-                Log.Warn($"No name attribute found in {Path.Combine(dlcFolder, DataLoader.ContentXml)}");
+                Log.Warn($"No name or id attribute found in {Path.Combine(extensionFolder, DataLoader.ContentXml)}");
                 continue;
               }
-              Log.Debug($"DLC {Path.GetFileName(dlcFolder)}: {dlcName}");
-              DlcOptions.Add(
-                new DlcOption
+              Log.Debug($"Extension {Path.GetFileName(extensionFolder)}: {extensionName}");
+              ModsOptions.Add(
+                new ExtensionOption
                 {
-                  Name = dlcName,
-                  Folder = Path.GetFileName(dlcFolder),
+                  Name = extensionName,
+                  Id = extensionId,
+                  Folder = Path.GetFileName(extensionFolder),
                   IsChecked = true,
                 }
               );
             }
             catch (Exception ex)
             {
-              Log.Error($"Error reading {DataLoader.ContentXml} from {dlcFolder}", ex);
+              Log.Error($"Error reading {DataLoader.ContentXml} from {extensionFolder}", ex);
             }
+          }
+        }
+        if (ModsOptions.Count > 0)
+        {
+          // Check for DLCs
+          foreach (string dlcId in Galaxy.DLCOrder)
+          {
+            if (ModsOptions.Any(extension => extension.Id == dlcId))
+            {
+              DlcsOptions.Add(ModsOptions.First(extension => extension.Id == dlcId));
+            }
+          }
+          foreach (var dlc in DlcsOptions)
+          {
+            ModsOptions.Remove(dlc);
+          }
+          if (ModsOptions.Count > 0)
+          {
+            IsModsOptionsVisible = Visibility.Visible;
           }
         }
         return true;
@@ -443,22 +483,21 @@ namespace ChemGateBuilder
       int progressInt = 0;
       long totalCount = 0;
       _backgroundWorker.ReportProgress(progressInt);
-      List<(ContentExtractor Extractor, List<CatEntry> Entries, string ExtractFolder)> extractors = [];
-
-      extractors.Add(GetCatEntries());
+      List<CatalogEntry> catalogEntries = [];
+      catalogEntries.Add(GetCatEntries());
       progressInt += 1;
-      totalCount += extractors.Last().Entries.Count;
+      totalCount += catalogEntries.Last().Count;
       _backgroundWorker.ReportProgress(progressInt, $"Reading catalog files of Vanilla");
-      foreach (var dlc in DlcOptions)
+      foreach (var extension in Extensions)
       {
-        Log.Debug($"DLC {dlc.Name}: {(dlc.IsChecked ? "Included" : "Excluded")}");
-        if (dlc.IsChecked)
+        Log.Debug($"Extension {extension.Name}: {(extension.IsChecked ? "Included" : "Excluded")}");
+        if (extension.IsChecked)
         {
-          extractors.Add(GetCatEntries(dlc.Name));
+          catalogEntries.Add(GetCatEntries(extension.Name, extension.Folder));
+          totalCount += catalogEntries.Last().Count;
         }
         progressInt += 1;
-        _backgroundWorker.ReportProgress(progressInt, $"Reading catalog files of {dlc.Name}");
-        totalCount += extractors.Last().Entries.Count;
+        _backgroundWorker.ReportProgress(progressInt, $"Reading catalog files of {extension.Name}");
       }
 
       double step = (100.0 - progressInt) / totalCount;
@@ -469,7 +508,7 @@ namespace ChemGateBuilder
         return;
       }
 
-      foreach ((ContentExtractor Extractor, List<CatEntry> Entries, string ExtractToFolder) in extractors)
+      foreach (CatalogEntry entry in catalogEntries)
       {
         if (_backgroundWorker.CancellationPending)
         {
@@ -479,16 +518,16 @@ namespace ChemGateBuilder
           }
           return;
         }
-        if (!Directory.Exists(ExtractToFolder))
+        if (!Directory.Exists(entry.ExtractToFolder))
         {
           try
           {
-            Directory.CreateDirectory(ExtractToFolder);
+            Directory.CreateDirectory(entry.ExtractToFolder);
           }
           catch (Exception ex)
           {
-            Log.Error($"Error creating directory {ExtractToFolder}", ex);
-            progress += Entries.Count * step;
+            Log.Error($"Error creating directory {entry.ExtractToFolder}", ex);
+            progress += entry.Count * step;
             progressInt = (int)progress;
             if (progressInt > ExtractionProgress)
             {
@@ -497,7 +536,12 @@ namespace ChemGateBuilder
             continue;
           }
         }
-        foreach (var catEntry in Entries)
+        if (entry.Entries == null || entry.Extractor == null)
+        {
+          Log.Debug("No files to extract");
+          continue;
+        }
+        foreach (var catEntry in entry.Entries)
         {
           if (_backgroundWorker.CancellationPending)
           {
@@ -510,26 +554,27 @@ namespace ChemGateBuilder
           Log.Debug($"Extracting {catEntry.FilePath}");
           progress += step;
           progressInt = (int)progress;
-          _backgroundWorker.ReportProgress(progressInt, $"Extracting {ExtractToFolder}/{catEntry.FilePath}");
-          Extractor.ExtractEntry(catEntry, ExtractToFolder, OverwriteExistingFiles, !VerifyExtractedData);
+          _backgroundWorker.ReportProgress(progressInt, $"Extracting {entry.ExtractToFolder}/{catEntry.FilePath}");
+          entry.Extractor.ExtractEntry(catEntry, entry.ExtractToFolder, OverwriteExistingFiles, !VerifyExtractedData);
         }
       }
-      foreach (var dlc in DlcOptions)
+      foreach (var extension in Extensions)
       {
-        Log.Debug($"DLC {dlc.Name}: {(dlc.IsChecked ? "Included" : "Excluded")}");
-        if (dlc.IsChecked)
+        Log.Debug($"Extension {extension.Name}: {(extension.IsChecked ? "Included" : "Excluded")}");
+        if (extension.IsChecked)
         {
           try
           {
+            Log.Debug($"Copying {Path.Combine(GameFolder, DataLoader.ExtensionsFolder, extension.Folder, DataLoader.ContentXml)}");
             File.Copy(
-              Path.Combine(GameFolder, DataLoader.ExtensionsFolder, dlc.Folder, DataLoader.ContentXml),
-              Path.Combine(ExtractedDataLocationFolder, DataFolder, DataLoader.ExtensionsFolder, dlc.Folder, DataLoader.ContentXml),
+              Path.Combine(GameFolder, DataLoader.ExtensionsFolder, extension.Folder, DataLoader.ContentXml),
+              Path.Combine(ExtractedDataLocationFolder, DataFolder, DataLoader.ExtensionsFolder, extension.Folder, DataLoader.ContentXml),
               OverwriteExistingFiles
             );
           }
           catch (Exception ex)
           {
-            Log.Error($"Error copying {DataLoader.ContentXml} from {dlc.Folder}", ex);
+            Log.Error($"Error copying {DataLoader.ContentXml} from {extension.Folder}", ex);
           }
         }
       }
@@ -550,35 +595,32 @@ namespace ChemGateBuilder
       }
     }
 
-    private (ContentExtractor Extractor, List<CatEntry> Entries, string ExtractToFolder) GetCatEntries(string category = "Vanilla")
+    private CatalogEntry GetCatEntries(string category = "Vanilla", string folder = "")
     {
       string sourceFolder = GameFolder;
       string extractToFolder = Path.Combine(ExtractedDataLocationFolder, DataFolder);
       if (category != "Vanilla")
       {
-        string dlcFolder = DlcOptions.FirstOrDefault(dlc => dlc.Name == category)?.Folder ?? string.Empty;
-        if (string.IsNullOrEmpty(dlcFolder))
-        {
-          Log.Warn($"DLC {category} not found");
-          return (new ContentExtractor(""), new List<CatEntry>(), "");
-        }
-        sourceFolder = Path.Combine(GameFolder, DataLoader.ExtensionsFolder, dlcFolder);
-        extractToFolder = Path.Combine(extractToFolder, DataLoader.ExtensionsFolder, dlcFolder);
+        sourceFolder = Path.Combine(GameFolder, DataLoader.ExtensionsFolder, folder);
+        extractToFolder = Path.Combine(extractToFolder, DataLoader.ExtensionsFolder, folder);
       }
-      ContentExtractor extractor = new(sourceFolder);
+      ContentCopier extractor = new(sourceFolder);
       List<CatEntry> catEntries = [];
       if (ExtractOnlyNeededData)
       {
         catEntries.AddRange(extractor.GetFilesByMask("maps/xu_ep2_universe/*.xml"));
         catEntries.AddRange(extractor.GetFilesByMask("libraries/*.xml"));
         catEntries.AddRange(extractor.GetFilesByMask("t/*.xml"));
+        catEntries.AddRange(extractor.GetFilesByMask("extensions/*/maps/xu_ep2_universe/*.xml"));
+        catEntries.AddRange(extractor.GetFilesByMask("extensions/*/libraries/*.xml"));
+        catEntries.AddRange(extractor.GetFilesByMask("extensions/*/t/*.xml"));
       }
       else
       {
         catEntries.AddRange(extractor.GetFilesByMask("*.*"));
       }
       Log.Debug($"Found {catEntries.Count} files to extract");
-      return (extractor, catEntries, extractToFolder);
+      return new CatalogEntry(extractor, catEntries, extractToFolder);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -589,10 +631,11 @@ namespace ChemGateBuilder
     }
   }
 
-  public class DlcOption : INotifyPropertyChanged
+  public class ExtensionOption : INotifyPropertyChanged
   {
     private string _name = string.Empty;
-    private string _path = string.Empty;
+    private string _folder = string.Empty;
+    private string _id = string.Empty;
     private bool _isChecked = false;
 
     public string Name
@@ -610,17 +653,29 @@ namespace ChemGateBuilder
 
     public string Folder
     {
-      get => _path;
+      get => _folder;
       set
       {
-        if (_path != value)
+        if (_folder != value)
         {
-          _path = value;
+          _folder = value;
           OnPropertyChanged(nameof(Folder));
         }
       }
     }
 
+    public string Id
+    {
+      get => _id;
+      set
+      {
+        if (_id != value)
+        {
+          _id = value;
+          OnPropertyChanged(nameof(Id));
+        }
+      }
+    }
     public bool IsChecked
     {
       get => _isChecked;
@@ -639,6 +694,87 @@ namespace ChemGateBuilder
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+  }
+
+  public class CatalogEntry(ContentCopier? extractor, List<CatEntry>? entries, string extractToFolder)
+  {
+    public ContentCopier? Extractor = extractor;
+    public List<CatEntry>? Entries = entries;
+    public string ExtractToFolder = extractToFolder;
+
+    public int Count
+    {
+      get => Entries != null ? Entries.Count : 0;
+    }
+  }
+
+  public class ContentCopier(string folderPath, string pattern = "*.cat", bool excludeSignatures = true)
+    : ContentExtractor(folderPath, pattern, excludeSignatures)
+  {
+    private bool IsNotPacked { get; set; } = false;
+
+    protected override void InitializeCatalog(string pattern = "*.cat", bool excludeSignatures = true)
+    {
+      List<string> catFiles = [.. Directory.GetFiles(_folderPath, pattern)];
+      if (excludeSignatures)
+      {
+        catFiles = catFiles.Where(f => !f.EndsWith("_sig.cat")).ToList();
+      }
+      if (catFiles.Count == 0 && Directory.GetDirectories(_folderPath).Length > 0)
+      {
+        IsNotPacked = true;
+        List<string> files = [.. Directory.GetFiles(_folderPath, "*.*", SearchOption.AllDirectories)];
+        foreach (string file in files)
+        {
+          string relativePath = Path.GetRelativePath(_folderPath, file);
+          FileInfo fileInfo = new(file);
+          _catalog[relativePath.Replace("\\", "/")] = new CatEntry
+          {
+            FilePath = relativePath,
+            FileSize = fileInfo.Length,
+            FileOffset = 0,
+            FileDate = fileInfo.LastWriteTime,
+            FileHash = "",
+            DatFilePath = "",
+          };
+        }
+      }
+      else
+      {
+        base.InitializeCatalog(pattern, excludeSignatures);
+      }
+    }
+
+    public override void ExtractEntry(CatEntry catEntry, string extractToFolder, bool overwriteExistingFiles, bool skipVerification)
+    {
+      if (IsNotPacked)
+      {
+        string sourceFile = Path.Combine(_folderPath, catEntry.FilePath);
+        string destFile = Path.Combine(extractToFolder, catEntry.FilePath);
+        if (File.Exists(destFile) && !overwriteExistingFiles)
+        {
+          Log.Debug($"File {catEntry.FilePath} already exists in {extractToFolder}");
+          return;
+        }
+        try
+        {
+          var directoryName = Path.GetDirectoryName(destFile);
+          if (directoryName != null)
+          {
+            Directory.CreateDirectory(directoryName);
+          }
+          File.Copy(sourceFile, destFile, overwriteExistingFiles);
+        }
+        catch (Exception ex)
+        {
+          Log.Error($"Error copying {catEntry.FilePath} from {sourceFile} to {destFile}", ex);
+        }
+      }
+      else
+      {
+        base.ExtractEntry(catEntry, extractToFolder, overwriteExistingFiles, skipVerification);
+      }
     }
   }
 }

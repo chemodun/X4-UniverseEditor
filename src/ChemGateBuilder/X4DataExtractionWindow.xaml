@@ -3,7 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterOwner"
         Icon="{StaticResource BuilderIcon}"
-        Title="X4 Data Extraction" Height="320" Width="800">
+        Title="X4 Data Extraction" Height="320" Width="800"
+        MaxHeight="400"
+        SizeToContent="Height" ResizeMode="CanResizeWithGrip"
+        >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -44,20 +47,44 @@
                         <CheckBox Content="Set as source and load after extraction" IsChecked="{Binding LoadExtractedDataAfterExtraction}"/>
                     </StackPanel>
                 </GroupBox>
-
-                <GroupBox Grid.Row="0" Grid.Column="1" Margin="5" Header="Extract DLC's in addition:" VerticalAlignment="Stretch" IsEnabled="{Binding IsExtractionPossible}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="5" Orientation="Vertical">
-                            <ItemsControl ItemsSource="{Binding DlcOptions}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </GroupBox> <!-- Fixed closing tag for GroupBox -->
+                <Grid Grid.Row="0" Grid.Column="1" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="Extract DLC's in addition:" VerticalAlignment="Stretch" IsEnabled="{Binding IsExtractionPossible}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="5" Orientation="Vertical">
+                                <ItemsControl ItemsSource="{Binding DlcsOptions}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </GroupBox> <!-- Fixed closing tag for GroupBox -->
+                    <GroupBox Grid.Row="1" Grid.Column="0" Margin="5" Header="Extract Mods in addition:"
+                            VerticalAlignment="Stretch"
+                            Visibility="{Binding IsModsOptionsVisible}"
+                            IsEnabled="{Binding IsExtractionPossible}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="5" Orientation="Vertical">
+                                <ItemsControl ItemsSource="{Binding ModsOptions}"> <!-- Changed DlcOptions to ModsOptions for clarity -->
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </GroupBox> <!-- Fixed closing tag for GroupBox -->
+                </Grid> <!-- Ensure this closing tag aligns properly -->
                 <ProgressBar x:Name="ProgressBarOfExtraction" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Height="20" Value="{Binding ExtractionProgress}" Maximum="100" HorizontalAlignment="Stretch"/>
                 <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding ExtractionProgressText}" Background="Transparent" TextAlignment="Left"/>
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
