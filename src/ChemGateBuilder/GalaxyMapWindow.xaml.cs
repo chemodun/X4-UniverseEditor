@@ -263,11 +263,20 @@ namespace ChemGateBuilder
       GalaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
 
       GalaxyCanvas.Children.Clear();
-
+      bool isMinColOdd = Math.Abs(MinCol) % 2 == 1;
       for (int row = MaxRow; row >= MinRow; row--)
       {
-        int shiftCol = row % 2 == 0 ? 0 : 1;
-        for (int col = MinCol + shiftCol; col <= MaxCol; col += 2)
+        bool isRowOdd = Math.Abs(row) % 2 == 1;
+        int startCol = MinCol;
+        if (isRowOdd)
+        {
+          startCol += isMinColOdd ? 0 : 1;
+        }
+        else
+        {
+          startCol += isMinColOdd ? 1 : 0;
+        }
+        for (int col = startCol; col <= MaxCol; col += 2)
         {
           Cluster? cluster = GalaxyMapCell.GetCluster(MapCells, col, row);
           GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (col - MinCol), (MaxRow - row) * 0.5, GalaxyCanvas, cluster);
