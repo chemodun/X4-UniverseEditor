@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.8.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.0...ChemGateBuilder@v0.8.1) (2025-02-13)
+
+
+### Features
+
+* **GalaxyMapWindow:** bind visibility of Mods group to ModsOptions count ([8a247dd](https://github.com/chemodun/X4-UniverseEditor/commit/8a247dd600a98210680404a01d2103ba2e69c9b0))
+
+
+### Bug Fixes
+
+* **X4DataExtractionWindow:** allow extract not only DLC's - mod extraction is available for now too ([038f3ef](https://github.com/chemodun/X4-UniverseEditor/commit/038f3ef34a69a89dc89de56107e483149c806bed))
+
+
+### Documentation
+
+* **README:** update instructions for loading mods and add changelog entry for version 0.8.1 ([dbe1f67](https://github.com/chemodun/X4-UniverseEditor/commit/dbe1f67a358b2c461c27c11042526da4b9624023))
+* **README:** Update README's files ([8adf425](https://github.com/chemodun/X4-UniverseEditor/commit/8adf425abcecb0c14fe2b1554de177f8e80ab320))
+* **README:** update section titles for clarity in sector selection instructions ([2fc222b](https://github.com/chemodun/X4-UniverseEditor/commit/2fc222b527d4e210dbc64a2fb17c738cc8211591))
+
 ## [0.8.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.7.0...ChemGateBuilder@v0.8.0) (2025-02-13)
 
 
