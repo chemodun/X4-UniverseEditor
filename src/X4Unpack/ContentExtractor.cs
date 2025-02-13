@@ -20,8 +20,8 @@ namespace X4Unpack
 
   public class ContentExtractor
   {
-    private readonly string _folderPath;
-    private readonly Dictionary<string, CatEntry> _catalog;
+    protected string _folderPath;
+    protected readonly Dictionary<string, CatEntry> _catalog;
 
     public ContentExtractor(string folderPath, string pattern = "*.cat", bool excludeSignatures = true)
     {
@@ -30,7 +30,7 @@ namespace X4Unpack
       InitializeCatalog(pattern, excludeSignatures);
     }
 
-    private void InitializeCatalog(string pattern = "*.cat", bool excludeSignatures = true)
+    protected virtual void InitializeCatalog(string pattern = "*.cat", bool excludeSignatures = true)
     {
       List<string> catFiles = Directory.GetFiles(_folderPath, pattern).ToList();
       if (excludeSignatures)
@@ -129,7 +129,7 @@ namespace X4Unpack
       }
     }
 
-    public void ExtractEntry(CatEntry entry, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
+    public virtual void ExtractEntry(CatEntry entry, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
       string outputFilePath = Path.Combine(outputDirectory, entry.FilePath);
       if (File.Exists(outputFilePath) && !overwrite)
@@ -137,39 +137,34 @@ namespace X4Unpack
         Log.Warn($"File {entry.FilePath} already exists in output directory. Skipping extraction.");
         return;
       }
-      using (var datFileStream = new FileStream(entry.DatFilePath, FileMode.Open, FileAccess.Read))
+      using var datFileStream = new FileStream(entry.DatFilePath, FileMode.Open, FileAccess.Read);
+      datFileStream.Seek(entry.FileOffset, SeekOrigin.Begin);
+
+      byte[] buffer = new byte[entry.FileSize];
+      datFileStream.Read(buffer, 0, buffer.Length);
+
+      if (!skipHashCheck)
       {
-        datFileStream.Seek(entry.FileOffset, SeekOrigin.Begin);
-
-        byte[] buffer = new byte[entry.FileSize];
-        datFileStream.Read(buffer, 0, buffer.Length);
-
-        if (!skipHashCheck)
+        string extractedFileHash = CalculateMD5Hash(buffer);
+        if (extractedFileHash != entry.FileHash)
         {
-          string extractedFileHash = CalculateMD5Hash(buffer);
-          if (extractedFileHash != entry.FileHash)
-          {
-            Log.Warn($"Warning: Hash mismatch for file {entry.FilePath}. Skipping extraction.");
-            return;
-          }
+          Log.Warn($"Warning: Hash mismatch for file {entry.FilePath}. Skipping extraction.");
+          return;
         }
-        var directoryPath = Path.GetDirectoryName(outputFilePath);
-        if (directoryPath != null)
-        {
-          Directory.CreateDirectory(directoryPath);
-        }
-        File.WriteAllBytes(outputFilePath, buffer);
-        File.SetLastWriteTime(outputFilePath, entry.FileDate);
       }
+      var directoryPath = Path.GetDirectoryName(outputFilePath);
+      if (directoryPath != null)
+      {
+        Directory.CreateDirectory(directoryPath);
+      }
+      File.WriteAllBytes(outputFilePath, buffer);
+      File.SetLastWriteTime(outputFilePath, entry.FileDate);
     }
 
-    private string CalculateMD5Hash(byte[] data)
+    private static string CalculateMD5Hash(byte[] data)
     {
-      using (var md5 = MD5.Create())
-      {
-        byte[] hashBytes = md5.ComputeHash(data);
-        return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-      }
+      byte[] hashBytes = MD5.HashData(data);
+      return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
     }
   }
 }
