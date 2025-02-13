@@ -11,4 +11,8 @@
     <Copyright>Developed by Chem O`Dun</Copyright>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Logger\Logger.csproj" />
+  </ItemGroup>
+
 </Project>
