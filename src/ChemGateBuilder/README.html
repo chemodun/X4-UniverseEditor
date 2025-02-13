@@ -254,6 +254,22 @@ extraction.</li>
 </ul>
 <p>Additionally, you can see unselect some DLC’s, if you don’t want to
 extract them.</p>
+<h4 id="loading-the-mods-with-the-game-data-and-dlcs">Loading the Mods
+with the Game Data and DLC’s</h4>
+<p>On the options page there is a checkbox which allows you to load the
+mods with the game data and DLC’s. This is useful if you want to work
+with the mods in the tool. The mods will be loaded from the
+<code>extensions</code> folder in the game data. You should extract them
+manually to the <code>extensions</code> folder in the extracted game
+data.</p>
+<p>Available from <code>version 0.7.0</code>.</p>
+<h5 id="data-loading-important-notice">Data Loading Important
+Notice</h5>
+<p>From <code>version 0.7.0</code> the tool requires the
+<code>content.xml</code> files for the DLC’s and Mods in the extracted
+game data. The tool will extract them automatically for DLC’s. If you
+have an extracted data by previous version of a tool (before
+<code>v0.7.0</code>)- please repeat the process.</p>
 <h3 id="main-window">Main Window</h3>
 <p>After starting, you will see the main window with a list of
 connections and an area to define a gate connection, i.e., two areas to
@@ -419,9 +435,54 @@ is zoomed in.</p>
 as the direct or opposite sector in the connection. If the selected
 sector is not available for the connection, like grayed-out sectors in
 the dropdown lists, the tool will do nothing.</p>
+<h5 id="clusters-and-sectors-tooltips">Clusters and sectors
+tooltips</h5>
+<p>You can hover over the clusters and sectors on the map to view
+additional information about them:</p>
+<ul>
+<li>For clusters you can see a name, macro and coordinates.</li>
+<li>For sectors you can see a name, owner, sunlight, economy, security,
+macro and coordinates. Additionally information about parent cluster is
+shown.</li>
+</ul>
+<figure>
+<img src="docs/images/cluster_sector_tooltips.gif"
+alt="Clusters and sectors tooltips" />
+<figcaption aria-hidden="true">Clusters and sectors
+tooltips</figcaption>
+</figure>
+<p>Available from <code>version 0.8.0</code>.</p>
+<h5 id="hiding-and-showing-the-dlcs-and-mods-on-a-map">Hiding and
+showing the DLC’s and Mods on a map</h5>
+<p>You can toggle the visibility of DLCs and Mods on the map to focus on
+your current editing tasks. This feature allows you to clearly see the
+connections you are working on without distractions from additional
+content. Use the map options menu to show or hide these elements
+according to your needs.</p>
+<figure>
+<img src="docs/images/hide_show_extensions.gif"
+alt="Hide and show DLC’s and Mods" />
+<figcaption aria-hidden="true">Hide and show DLC’s and Mods</figcaption>
+</figure>
+<p>Available from <code>version 0.8.0</code>.</p>
+<h5 id="showing-an-empty-cluster-cells">Showing an empty cluster
+cells</h5>
+<p>You can toggle the visibility of empty cluster cells on the map. This
+feature allows you to see the empty cells where a new cluster can be
+placed. Use the map options menu to show or hide these elements
+according to your needs. Additionally, you will have the possibility to
+see the coordinates of such cells on the appropriate tooltip.</p>
+<figure>
+<img src="docs/images/empty_cluster_cells.gif"
+alt="Show empty cluster cells" />
+<figcaption aria-hidden="true">Show empty cluster cells</figcaption>
+</figure>
 <h3 id="save-the-mod">Save the Mod</h3>
 <p>When you finish with the connections, you can save the mod via the
-<code>Mod</code> -&gt; <code>Save</code> menu item.</p>
+<code>Mod</code> -&gt; <code>Save</code> menu item. Please ensure you
+have completed all necessary edits before saving to avoid losing data.
+If the connections are not finalized, the save option may be
+disabled.</p>
 <p>Please note that if you have not finished editing the connections,
 this menu item will be disabled. Save the current connection or reset it
 to have the ability to save the mod.</p>
@@ -506,7 +567,16 @@ everyone!</p>
 <p>This project is licensed under the Apache License 2.0 - see the <a
 href="../../LICENSE">LICENSE</a> file for details.</p>
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">[0.7.0] - 2025-02-11</h3>
+<h3 id="section">[0.8.0] - 2025-02-13</h3>
+<ul>
+<li>Added
+<ul>
+<li>Clusters and sectors tooltips</li>
+<li>Hiding and showing the DLC’s and Mods on a map</li>
+<li>Showing empty cluster cells (with coordinates on the tooltip)</li>
+</ul></li>
+</ul>
+<h3 id="section-1">[0.7.0] - 2025-02-11</h3>
 <ul>
 <li>Added
 <ul>
@@ -524,14 +594,14 @@ extracted files</li>
 extracted the game files</strong></li>
 </ul></li>
 </ul>
-<h3 id="section-1">[0.6.0] - 2025-02-10</h3>
+<h3 id="section-2">[0.6.0] - 2025-02-10</h3>
 <ul>
 <li>Added
 <ul>
 <li>Extraction game files</li>
 </ul></li>
 </ul>
-<h3 id="section-2">[0.5.2] - 2025-02-08</h3>
+<h3 id="section-3">[0.5.2] - 2025-02-08</h3>
 <ul>
 <li>Added
 <ul>
@@ -548,7 +618,7 @@ detection</li>
 <li>Console version is gone</li>
 </ul></li>
 </ul>
-<h3 id="section-3">[0.4.3] - 2025-01-14</h3>
+<h3 id="section-4">[0.4.3] - 2025-01-14</h3>
 <ul>
 <li>Added
 <ul>

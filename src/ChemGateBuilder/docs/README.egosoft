@@ -76,6 +76,17 @@ There are several options to extract the game files:
 [/list]
 Additionally, you can see unselect some DLC's, if you don't want to extract them.
 
+[size=120][u]Loading the Mods with the Game Data and DLC's[/u][/size]
+
+On the options page there is a checkbox which allows you to load the mods with the game data and DLC's. This is useful if you want to work with the mods in the tool. The mods will be loaded from the [b]extensions[/b] folder in the game data. You should extract them manually to the [b]extensions[/b] folder in the extracted game data.
+
+Available from [b]version 0.7.0[/b].
+
+[size=115][u]Data Loading Important Notice[/u][/size]
+
+From [b]version 0.7.0[/b] the tool requires the [b]content.xml[/b] files for the DLC's and Mods in the extracted game data.
+The tool will extract them automatically for DLC's. If you have an extracted data by previous version of a tool (before [b]v0.7.0[/b])- please repeat the process.
+
 [size=125][u]Main Window[/u][/size]
 
 After starting, you will see the main window with a list of connections and an area to define a gate connection, i.e., two areas to define the gates in the two sectors.
@@ -199,12 +210,38 @@ Additionally, you can drag the map with the left mouse button when it is zoomed 
 
 When you click the left mouse button on a sector, it will be selected as the direct or opposite sector in the connection. If the selected sector is not available for the connection, like grayed-out sectors in the dropdown lists, the tool will do nothing.
 
+[size=115][u]Clusters and sectors tooltips[/u][/size]
+
+You can hover over the clusters and sectors on the map to view additional information about them:
+[list]
+
+[*] For clusters you can see a name, macro and coordinates.
+[*] For sectors you can see a name, owner, sunlight, economy, security, macro and coordinates. Additionally information about parent cluster is shown.
+
+[/list]
+[spoiler][img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/cluster_sector_tooltips.gif[/img][/spoiler]
+
+Available from [b]version 0.8.0[/b].
+
+[size=115][u]Hiding and showing the DLC's and Mods on a map[/u][/size]
+
+You can toggle the visibility of DLCs and Mods on the map to focus on your current editing tasks. This feature allows you to clearly see the connections you are working on without distractions from additional content. Use the map options menu to show or hide these elements according to your needs.
+
+[spoiler][img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/hide_show_extensions.gif[/img][/spoiler]
+
+Available from [b]version 0.8.0[/b].
+
+[size=115][u]Showing an empty cluster cells[/u][/size]
+
+You can toggle the visibility of empty cluster cells on the map. This feature allows you to see the empty cells where a new cluster can be placed. Use the map options menu to show or hide these elements according to your needs. Additionally, you will have the possibility to see the coordinates of such cells on the appropriate tooltip.
+
+[spoiler][img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/empty_cluster_cells.gif[/img][/spoiler]
+
 [size=125][u]Save the Mod[/u][/size]
 
-When you finish with the connections, you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item.
+When you finish with the connections, you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item. Please ensure you have completed all necessary edits before saving to avoid losing data. If the connections are not finalized, the save option may be disabled.
 
-Please note that if you have not finished editing the connections, this menu item will be disabled.
-Save the current connection or reset it to have the ability to save the mod.
+Please note that if you have not finished editing the connections, this menu item will be disabled. Save the current connection or reset it to have the ability to save the mod.
 
 After selecting the [b]Save[/b] menu item, the tool will ask you to select the output folder for the mod.
 
@@ -262,6 +299,17 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][0.8.0] - 2025-02-13[/u][/size]
+[list]
+
+[*] Added
+[list]
+[*] Clusters and sectors tooltips
+[*] Hiding and showing the DLC's and Mods on a map
+[*] Showing empty cluster cells (with coordinates on the tooltip)
+
+[/list]
+[/list]
 [size=125][u][0.7.0] - 2025-02-11[/u][/size]
 [list]
 
