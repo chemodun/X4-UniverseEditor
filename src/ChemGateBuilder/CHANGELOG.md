@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.8.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.7.0...ChemGateBuilder@v0.8.0) (2025-02-13)
+
+
+### Features
+
+* **GalaxyMap:** add Developer options group with binding for developer settings, to display the empty cells ([a27efdc](https://github.com/chemodun/X4-UniverseEditor/commit/a27efdcffa520792bf17d1faa5157cacd4e5d182))
+* **GalaxyMap:** add tooltip functionality for sectors and clusters; update Create methods to accept window parameter ([33d2d49](https://github.com/chemodun/X4-UniverseEditor/commit/33d2d49dc6b3aa2ba71279a4eae3db8109c49184))
+* **GalaxyMap:** prepare to support for show/hide DLCs and mods related objects with checkboxes in the UI ([ec59d69](https://github.com/chemodun/X4-UniverseEditor/commit/ec59d692e295646e85d15ed518ae7c720021b8f4))
+
+
+### Bug Fixes
+
+* **GalaxyMap:** optimize column calculation for hexagonal grid rendering ([0381efa](https://github.com/chemodun/X4-UniverseEditor/commit/0381efaf5f2378483d30efef10c215e4749f1b67))
+
+
+### Code Refactoring
+
+* **GalaxyMap:** enhance options visibility with toggle button and FontAwesome icons ([f67bc8e](https://github.com/chemodun/X4-UniverseEditor/commit/f67bc8e6f9e8fc74bca35390b8211c1f47374487))
+* **GalaxyMap:** Map building is rewritten ([a27efdc](https://github.com/chemodun/X4-UniverseEditor/commit/a27efdcffa520792bf17d1faa5157cacd4e5d182))
+* **GalaxyMap:** update DLC handling to use DLCOrder for improved consistency and error handling ([02cfc0c](https://github.com/chemodun/X4-UniverseEditor/commit/02cfc0c7199965e73ca503bcb7b19464d2dd3b06))
+* **GalaxyMap:** update event handlers and improve map update logic when options is shown ([cb66435](https://github.com/chemodun/X4-UniverseEditor/commit/cb66435878f81dd5cef093a11959809be7a51096))
+* **GalaxyMapWindow:** remove redundant visibility update for Hexagon ([e60f17a](https://github.com/chemodun/X4-UniverseEditor/commit/e60f17ab3f3ac976407147ad00a4d3fb8c5641fb))
+* **SectorMap:** add Source property and image visibility control methods ([bc6f949](https://github.com/chemodun/X4-UniverseEditor/commit/bc6f949ea7d0c35669f48dc19db13b15cba6f9e2))
+
+
+### Documentation
+
+* **images:** Update GIF files ([0d75f94](https://github.com/chemodun/X4-UniverseEditor/commit/0d75f94bdd26373d790b1346dea09e980fa2b7d9))
+* **README:** add gate rotation details and credits section ([20bcc79](https://github.com/chemodun/X4-UniverseEditor/commit/20bcc79d9ada2e3b5752f570f92d306dff2cb82e))
+* **README:** clarify the changelog ([6dcce41](https://github.com/chemodun/X4-UniverseEditor/commit/6dcce4145390f0651c48cd9b628b96cf8ab5ec46))
+* **README:** update for the new features of version 0.8.0 ([082d4bf](https://github.com/chemodun/X4-UniverseEditor/commit/082d4bfc5d321a2b0b1079f5caa2bd91f9de05aa))
+* **README:** Update README's files ([badb722](https://github.com/chemodun/X4-UniverseEditor/commit/badb72277bceb8eb7375eed8c4c1beb9ec4246cb))
+* **videos:** add several new videos ([f6aa70b](https://github.com/chemodun/X4-UniverseEditor/commit/f6aa70b1947e97418dfbb16448fc267f31ab4174))
+
 ## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.6.0...ChemGateBuilder@v0.7.0) (2025-02-11)
 
 
