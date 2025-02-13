@@ -97,6 +97,14 @@ To simplify editing, the position part is randomly prefilled on sector selection
 
 ![Define Direct sector](docs/images/define_direct_sector.gif)
 
+###### Gate Rotation
+
+The rotation of the gate can be defined using three angles: Pitch, Yaw, and Roll. Here is an explanation of each:
+
+- **Pitch**: This is the left/right rotation of the ring and is the one to actually use if you want to face the ring in a certain direction on the map. A Pitch of 0 degrees has the ring facing North and the connection line on the map coming out of the south side of the ring. +45 degrees has the ring turn right to face North-East with the map line going to the South-West. While ship traffic doesn't care which way the map line is facing, it does make the map a bit wild and unnecessarily cluttered if it's facing the wrong way. Also, you can't enter more than 180 degrees in the box, so if you want to face west you must use a negative value. And oddly, you can't type in a negative sign (-) without a value already in the box. For example, -135 would face the gate South-West with the map line going North-East.
+- **Yaw**: This is just the clockwise/counterclockwise rotation of the ring. A value of 90 would put the side pods of the ring at the top and bottom instead and so is also generally unnecessary and can be left at 0 in most cases.
+- **Roll**: This is the forward/backward pitch of the gate and so is generally unneeded unless the gate is well above or below the plane of the sector. It can typically just be left at 0.
+
 ##### Extended Sector Map
 
 If the current sector map size is too small for you, you can press the appropriate button to open the extended sector map.
@@ -211,6 +219,12 @@ Here are several screenshots from the game with the mod gates in the `Asteroid B
 ![Gate to Barren Shores](docs/images/X4-AsteroidBelt-to-BarrenShores.png)
 
 ![Gate to Atreus' Clouds](docs/images/X4-AsteroidBelt-to-AtreusClouds.png)
+
+## Credits
+
+- [EGOSOFT](https://www.egosoft.com) - for the game itself (In fact - for the series of games)!
+- Members of the [x4_modding discord channel](https://discord.com/channels/337098290917146624/502057640877228042) - for the answers, support, ideas and inspiration!
+- [SiliconStew](https://steamcommunity.com/profiles/76561198005610231) - for the documentation of the Gate Rotation specifics!
 
 ## Useful Links
 
