@@ -68,7 +68,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </GroupBox>
-                <GroupBox Header="Mods" Margin="5">
+                <GroupBox Header="Mods" Margin="5" Visibility="{Binding OptionsModsVisibilityState}">
                     <ItemsControl ItemsSource="{Binding ModsOptions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>

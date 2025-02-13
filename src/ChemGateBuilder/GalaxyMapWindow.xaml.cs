@@ -93,9 +93,21 @@ namespace ChemGateBuilder
     private double scrollVerticalOffset = 0;
     private double canvasWidth = 0;
 
+    private Visibility _optionsModsVisibilityState = Visibility.Hidden;
+
     private Visibility _optionsVisibilityState = Visibility.Hidden;
     private string _optionsVisibilitySymbol = "CircleLeft";
     private double _optionsWidth = 10;
+
+    public Visibility OptionsModsVisibilityState
+    {
+      get => _optionsModsVisibilityState;
+      set
+      {
+        _optionsModsVisibilityState = value;
+        OnPropertyChanged(nameof(OptionsModsVisibilityState));
+      }
+    }
     public Visibility OptionsVisibilityState
     {
       get => _optionsVisibilityState;
@@ -173,6 +185,7 @@ namespace ChemGateBuilder
           extension.PropertyChanged += MapOptions_PropertyChanged;
           ModsOptions.Add(extension);
         }
+        OptionsModsVisibilityState = ModsOptions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
         ShowEmptyClusterPlaces.PropertyChanged += MapOptions_PropertyChanged;
         DeveloperOptions.Add(ShowEmptyClusterPlaces);
       }
