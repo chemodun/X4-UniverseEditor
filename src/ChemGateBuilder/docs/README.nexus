@@ -300,7 +300,16 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
-[size=3][u][i][0.8.1] - 2025-02-14[/i][/u][/size]
+[size=3][u][i][0.8.2] - 2025-02-13[/i][/u][/size]
+[list]
+
+[*] Fixed
+[list]
+[*] Fixed the extraction window behavior
+
+[/list]
+[/list]
+[size=3][u][i][0.8.1] - 2025-02-13[/i][/u][/size]
 [list]
 
 [*] Improved
