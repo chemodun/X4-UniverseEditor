@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.5.0...X4DataLoader@v0.5.1) (2025-02-13)
+
+
+### Miscellaneous Chores
+
+* add XMLPatch project reference to X4DataLoader ([8a2af90](https://github.com/chemodun/X4-UniverseEditor/commit/8a2af90fb12eff61fadc7c64d53c8d8b0216140b))
+
 ## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.4.0...X4DataLoader@v0.5.0) (2025-02-12)
 
 
