@@ -82,8 +82,7 @@
       "release-type": "simple",
       "extra-files": [
         "Directory.Build.props"
-      ],
-      "release-as": "0.8.1"
+      ]
     },
     "src/Logger": {
       "package-name": "Logger",
