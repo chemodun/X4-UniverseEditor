@@ -175,9 +175,9 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
             current_list = parent_list
 
         if list_type == 'ordered':
-            return "[list=1]" + "\n".join(current_list) + "\n[/list]"
+            return "[list=1]" + "\n".join(current_list) + "[/list]"
         else:
-            return "[list]" + "\n".join(current_list) + "\n[/list]"
+            return "[list]" + "\n".join(current_list) + "[/list]"
 
     def replace_lists(match):
         list_content = match.group(0)
