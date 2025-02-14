@@ -104,6 +104,13 @@
       "extra-files": [
         "Directory.Build.props"
       ]
+    },
+    "src/X4Map": {
+      "package-name": "X4Map",
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     }
   }
 }
