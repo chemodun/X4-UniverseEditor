@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChemGateBuilder"
-        xmlns:converters="clr-namespace:ChemGateBuilder.Core.Converters"
+        xmlns:converters="clr-namespace:X4Map.Converters;assembly=X4Map"
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"

@@ -21,6 +21,7 @@
     <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <ProjectReference Include="..\X4Unpack\X4Unpack.csproj" />
+    <ProjectReference Include="..\X4Map\X4Map.csproj" />
     <Resource Include="Assets\builder.ico" />
     <Resource Include="Assets\x4.ico" />
     <Resource Include="Assets\galaxymap.ico" />

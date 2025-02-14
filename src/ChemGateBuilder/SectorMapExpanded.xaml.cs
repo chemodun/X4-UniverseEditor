@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Utilities.Logging;
+using X4Map;
 
 namespace ChemGateBuilder
 {
@@ -21,8 +22,8 @@ namespace ChemGateBuilder
         OnPropertyChanged(nameof(SectorMapExpanded));
       }
     }
-    private Coordinates _newGateCoordinates = new();
-    public Coordinates NewGateCoordinates
+    private ObjectCoordinates _newGateCoordinates = new();
+    public ObjectCoordinates NewGateCoordinates
     {
       get => _newGateCoordinates;
       set

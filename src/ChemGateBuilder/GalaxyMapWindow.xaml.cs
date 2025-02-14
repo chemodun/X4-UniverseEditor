@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Utilities.Logging;
 using X4DataLoader;
+using X4Map;
 
 namespace ChemGateBuilder
 {

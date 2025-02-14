@@ -3,16 +3,17 @@ using System.ComponentModel;
 using System.Data;
 using System.Windows;
 using X4DataLoader;
+using X4Map;
 
 namespace ChemGateBuilder
 {
   public class GalaxyConnectionData : INotifyPropertyChanged
   {
     private GalaxyConnection _connection;
-    public Coordinates DirectPosition;
-    public Rotation DirectRotation;
-    public Coordinates OppositePosition;
-    public Rotation OppositeRotation;
+    public ObjectCoordinates DirectPosition;
+    public ObjectRotation DirectRotation;
+    public ObjectCoordinates OppositePosition;
+    public ObjectRotation OppositeRotation;
     public string SectorDirectName => _connection?.PathDirect?.Sector?.Name ?? string.Empty;
     public int GateDirectX => (int)(_connection?.PathDirect?.Zone?.Position?.X / 1000 ?? 0);
     public int GateDirectY => (int)(_connection?.PathDirect?.Zone?.Position?.Y / 1000 ?? 0);
@@ -42,7 +43,7 @@ namespace ChemGateBuilder
       {
         if (connection?.PathDirect?.Gate?.Position != null)
         {
-          DirectPosition = new Coordinates(
+          DirectPosition = new ObjectCoordinates(
             (int)(connection?.PathDirect?.Gate?.Position.X ?? 0),
             (int)(connection?.PathDirect?.Gate?.Position.Y ?? 0),
             (int)(connection?.PathDirect?.Gate?.Position.Z ?? 0)
@@ -50,19 +51,19 @@ namespace ChemGateBuilder
         }
         else
         {
-          DirectPosition = new Coordinates(0, 0, 0);
+          DirectPosition = new ObjectCoordinates(0, 0, 0);
         }
         if (connection?.PathDirect?.Gate?.Quaternion != null)
         {
-          DirectRotation = Rotation.FromQuaternion(connection.PathDirect.Gate.Quaternion);
+          DirectRotation = ObjectRotation.FromQuaternion(connection.PathDirect.Gate.Quaternion);
         }
         else
         {
-          DirectRotation = new Rotation(0, 0, 0);
+          DirectRotation = new ObjectRotation(0, 0, 0);
         }
         if (connection?.PathOpposite?.Gate?.Position != null)
         {
-          OppositePosition = new Coordinates(
+          OppositePosition = new ObjectCoordinates(
             (int)(connection?.PathOpposite?.Gate?.Position.X ?? 0),
             (int)(connection?.PathOpposite?.Gate?.Position.Y ?? 0),
             (int)(connection?.PathOpposite?.Gate?.Position.Z ?? 0)
@@ -70,15 +71,15 @@ namespace ChemGateBuilder
         }
         else
         {
-          OppositePosition = new Coordinates(0, 0, 0);
+          OppositePosition = new ObjectCoordinates(0, 0, 0);
         }
         if (connection?.PathOpposite?.Gate?.Quaternion != null)
         {
-          OppositeRotation = Rotation.FromQuaternion(connection.PathOpposite.Gate.Quaternion);
+          OppositeRotation = ObjectRotation.FromQuaternion(connection.PathOpposite.Gate.Quaternion);
         }
         else
         {
-          OppositeRotation = new Rotation(0, 0, 0);
+          OppositeRotation = new ObjectRotation(0, 0, 0);
         }
       }
       else

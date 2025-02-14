@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Utilities.Logging;
 using X4DataLoader;
+using X4Map;
+using X4Map.Converters;
 
 namespace ChemGateBuilder
 {
@@ -1114,9 +1116,9 @@ namespace ChemGateBuilder
         string zoneOppositeId = $"Zone_{GalaxyConnectionPrefix}_{uniqueId}_{sectorOpposite.Id}";
         GateConnection gateDirect = new();
         GateData gateData = GatesConnectionCurrent.GateDirect;
-        Coordinates position = gateData.Position;
+        ObjectCoordinates position = gateData.Position;
         Position gatePosition = new(position.X, position.Y, position.Z);
-        Coordinates coordinates = gateData.Coordinates;
+        ObjectCoordinates coordinates = gateData.Coordinates;
         Position zonePosition = new(coordinates.X * 1000, coordinates.Y * 1000, coordinates.Z * 1000);
         gateDirect.Create(
           gateDirectId,

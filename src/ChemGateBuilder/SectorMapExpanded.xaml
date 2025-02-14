@@ -3,7 +3,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:ChemGateBuilder"
-        xmlns:converters="clr-namespace:ChemGateBuilder.Core.Converters"
+        xmlns:converters="clr-namespace:X4Map.Converters;assembly=X4Map"
         Title="Sector Map" MinHeight="600" MinWidth="600"
         WindowStartupLocation="CenterOwner"
         Icon="{StaticResource BuilderIcon}"
