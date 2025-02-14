@@ -21,77 +21,78 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Identify changed README.md files
-        id: identify-changes
-        run: |
-          git log -1 --name-status | grep 'src/.*/README.md' > changed_readmes.txt || true
-          if [[ -s changed_readmes.txt ]]; then
-            echo "changed_readmes=$(wc -l < changed_readmes.txt)" >> $GITHUB_OUTPUT || true
-            echo "new_or_updated_readmes=$(grep -v '^D' changed_readmes.txt | wc -l)" >> $GITHUB_OUTPUT || true
-          else
-            echo "changed_readmes=0" >> $GITHUB_OUTPUT
-            echo "new_or_updated_readmes=0" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
+      - name: Get all README markdown files
+        id: changed-readme-markdown-files
+        uses: tj-actions/changed-files@v45
+        with:
+          # Avoid using single or double quotes for multiline patterns
+          files: |
+            src/**/README.md
 
       - name: Install python3
-        if: ${{ steps.identify-changes.outputs.new_or_updated_readmes != '0' }}
+        if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
         run: sudo apt-get update && sudo apt-get install -y python3
 
       - name: Process README.md changes
-        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
+        if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
+        env:
+          CHANGED_FILES: ${{ steps.changed-readme-markdown-files.outputs.all_changed_files }}
+          DELETED_FILES: ${{ steps.changed-readme-markdown-files.outputs.deleted_files }}
         run: |
           git config user.name "Chem O'Dun"
           git config user.email "chemodun@gmail.com"
-          while IFS=$'\t' read -u 9 -r status readme; do
+          for readme in ${CHANGED_FILES}; do
             output_file="${readme%.md}.html"
-            if [[ "$status" == "A" || "$status" == "M" ]]; then
-              echo "Converting $readme to $output_file"
-              docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="/workspace/$output_file" "/workspace/$readme"
+            echo "Converting $readme to $output_file"
+            docker run --rm -v $(pwd):/workspace pandoc/core:3.5 --from=markdown --to=html --standalone=true --output="/workspace/$output_file" "/workspace/$readme"
+            if [[ $? -ne 0 ]]; then
+              echo "Error converting $readme to $output_file" >&2
+            else
+              echo "Converted $readme to $output_file"
+              git add "$output_file"
               if [[ $? -ne 0 ]]; then
-                echo "Error converting $readme to $output_file" >&2
+                echo "Error adding $output_file to git" >&2
               else
-                echo "Converted $readme to $output_file"
-                git add "$output_file"
-                if [[ $? -ne 0 ]]; then
-                  echo "Error adding $output_file to git" >&2
-                else
-                  echo "Added $output_file to git"
-                fi
-              fi
-              relative_path=$(dirname $readme)
-              for conversion_type in egosoft nexus; do
-                echo "Converting $readme to $conversion_type"
-                python3 .utils/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
-                if [[ $? -ne 0 ]]; then
-                  echo "Error converting $readme to $conversion_type" >&2
-                else
-                  echo "Converted $readme to $conversion_type"
-                  git add "$relative_path/docs/README.$conversion_type"
-                  if [[ $? -ne 0 ]]; then
-                    echo "Error adding $relative_path/docs/README.$conversion_type to git" >&2
-                  else
-                    echo "Added $relative_path/docs/README.$conversion_type to git"
-                  fi
-                fi
-              done
-            elif [[ "$status" == "D" ]]; then
-              if [[ -f "$output_file" ]]; then
-                echo "Deleting $output_file"
-                git rm "$output_file"
-                if [[ $? -ne 0 ]]; then
-                  echo "Error deleting $output_file" >&2
-                else
-                  echo "Deleted $output_file"
-                fi
+                echo "Added $output_file to git"
               fi
             fi
-          done 9< changed_readmes.txt
+            relative_path=$(dirname $readme)
+            for conversion_type in egosoft nexus; do
+              echo "Converting $readme to $conversion_type"
+              python3 .utils/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
+              if [[ $? -ne 0 ]]; then
+                echo "Error converting $readme to $conversion_type" >&2
+              else
+                echo "Converted $readme to $conversion_type"
+                git add "$relative_path/docs/README.$conversion_type"
+                if [[ $? -ne 0 ]]; then
+                  echo "Error adding $relative_path/docs/README.$conversion_type to git" >&2
+                else
+                  echo "Added $relative_path/docs/README.$conversion_type to git"
+                fi
+              fi
+            done
+          done
+          for readme in ${DELETED_FILES}; do
+            output_file="${readme%.md}.html"
+            egosoft_file="${readme%.md}/docs/README.egosoft"
+            nexus_file="${readme%.md}/docs/README.nexus"
+            for file in $output_file $egosoft_file $nexus_file; do
+              if [[ -f "$file" ]]; then
+                echo "Deleting $file"
+                git rm "$file"
+                if [[ $? -ne 0 ]]; then
+                  echo "Error deleting $file" >&2
+                else
+                  echo "Deleted $file"
+                fi
+              fi
+            done
+          done
 
       - name: Commit and push changes
-        if: ${{ steps.identify-changes.outputs.changed_readmes != '0' }}
+        if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
         run: |
-          rm changed_readmes.txt
           if [[ -n $(git status -uno --porcelain) ]]; then
             git commit -m "docs(README): Update README's files"
             git push
