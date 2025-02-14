@@ -278,6 +278,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.8.6] - 2025-02-14
+
+- Fixed
+  - Fixed the issue with the mod loading
+
 ### [0.8.5] - 2025-02-14
 
 - Updated
