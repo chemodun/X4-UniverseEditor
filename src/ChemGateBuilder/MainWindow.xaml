@@ -135,6 +135,14 @@
                             <fa:IconImage Icon="FileArrowDown" Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
+                    <fluent:Button Header="Save as"
+                                    IsEnabled="{Binding IsModCanBeSavedAs}"
+                                    Click="ButtonSaveModAs_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FilePen" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Program">
                     <fluent:Button Header="Exit"

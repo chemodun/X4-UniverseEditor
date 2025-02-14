@@ -15,7 +15,7 @@ namespace ChemGateBuilder
 {
   public class ChemGateKeeper : INotifyPropertyChanged
   {
-    private string ModFolderPath = "";
+    public string ModFolderPath { get; private set; } = "";
     private string Id = "chem_gate_keeper";
     private string Name = "Chem Gate Keeper";
     private string Description = "This extension adds new gate connections between sectors";
@@ -232,10 +232,10 @@ namespace ChemGateBuilder
       return true;
     }
 
-    public bool SaveData(Galaxy? galaxy)
+    public bool SaveData(Galaxy? galaxy, bool newLocation = false)
     {
       string currentPath = ModFolderPath;
-      if (string.IsNullOrEmpty(currentPath))
+      if (string.IsNullOrEmpty(currentPath) || newLocation)
       {
         System.Windows.Forms.FolderBrowserDialog dialog = new();
         System.Windows.Forms.DialogResult folderSelect = dialog.ShowDialog();
@@ -243,6 +243,10 @@ namespace ChemGateBuilder
         if (folderSelect == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
         {
           currentPath = Path.Combine(dialog.SelectedPath, Id);
+        }
+        else
+        {
+          return false;
         }
       }
       if (Directory.Exists(currentPath))

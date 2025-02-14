@@ -397,6 +397,21 @@ namespace ChemGateBuilder
         {
           _isModCanBeSaved = value;
           OnPropertyChanged(nameof(IsModCanBeSaved));
+          IsModCanBeSavedAs = value && !string.IsNullOrEmpty(ChemGateKeeperMod.ModFolderPath);
+        }
+      }
+    }
+
+    private bool _isModCanBeSavedAs = false;
+    public bool IsModCanBeSavedAs
+    {
+      get => _isModCanBeSavedAs;
+      set
+      {
+        if (_isModCanBeSavedAs != value)
+        {
+          _isModCanBeSavedAs = value;
+          OnPropertyChanged(nameof(IsModCanBeSavedAs));
         }
       }
     }
@@ -1267,6 +1282,14 @@ namespace ChemGateBuilder
       if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
       {
         IsModCanBeSaved = !ChemGateKeeperMod.SaveData(Galaxy);
+      }
+    }
+
+    public void ButtonSaveModAs_Click(object sender, RoutedEventArgs e)
+    {
+      if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
+      {
+        IsModCanBeSaved = !ChemGateKeeperMod.SaveData(Galaxy, true);
       }
     }
 
