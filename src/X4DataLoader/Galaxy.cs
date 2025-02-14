@@ -27,7 +27,8 @@ namespace X4DataLoader
     public List<ConstructionPlan> ConstructionPlans { get; private set; } = [];
     public List<StationGroup> StationGroups { get; private set; } = [];
     public List<StationCategory> StationCategories { get; private set; } = [];
-    public List<GalaxyConnection> Connections { get; private set; }
+    public List<GalaxyConnection> Connections { get; private set; } = [];
+    public List<GameFile> GameFiles { get; private set; } = [];
 
     public static readonly List<string> DLCOrder =
     [
@@ -45,6 +46,7 @@ namespace X4DataLoader
       Clusters = [];
       Sectors = [];
       Connections = [];
+      GameFiles = [];
     }
 
     public void LoadFromXML(GameFile file, Galaxy galaxy)

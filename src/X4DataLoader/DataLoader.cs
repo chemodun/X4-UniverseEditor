@@ -193,6 +193,8 @@ namespace X4DataLoader
       {
         sector.CalculateOwnership(galaxy.Factions);
       }
+      galaxy.GameFiles.Clear();
+      galaxy.GameFiles.AddRange(gameFiles);
     }
 
     private static void LoadMods(
@@ -504,15 +506,23 @@ namespace X4DataLoader
     public string[] PossibleNames { get; set; } = possibleNames;
   }
 
-  public class GameFile(string id, string mainFolder, string fullPath, string extensionId = "", string relatedExtensionId = "")
+  public class GameFile(
+    string id,
+    string mainFolder,
+    string fullPath,
+    string extensionId = "",
+    string relatedExtensionId = "",
+    bool patched = false,
+    XElement? xml = null
+  )
   {
     public string Id { get; set; } = id;
     public string ExtensionId { get; set; } = extensionId;
     public string RelatedExtensionId { get; set; } = relatedExtensionId;
     public string PathRelative { get; set; } = Path.GetRelativePath(mainFolder, fullPath);
     public string FileName { get; set; } = Path.GetFileName(fullPath);
-    public bool Patched { get; set; } = false;
-    public XElement XML { get; set; } = XDocument.Load(fullPath)?.Root ?? throw new ArgumentException($"Error loading {fullPath}");
+    public bool Patched { get; set; } = patched;
+    public XElement XML { get; set; } = xml ?? XDocument.Load(fullPath)?.Root ?? throw new ArgumentException($"Error loading {fullPath}");
 
     public static GameFile? GetFromList(List<GameFile> files, string id, string extensionId, string relatedExtensionId = "")
     {
@@ -521,6 +531,13 @@ namespace X4DataLoader
         && f.ExtensionId == extensionId
         && (string.IsNullOrEmpty(relatedExtensionId) || f.RelatedExtensionId == relatedExtensionId)
       );
+    }
+
+    public static List<GameFile> CloneList(List<GameFile> files, bool resetPatched = false)
+    {
+      return files
+        .Select(f => new GameFile(f.Id, f.PathRelative, f.FileName, f.ExtensionId, f.RelatedExtensionId, !resetPatched && f.Patched, f.XML))
+        .ToList();
     }
 
     public static List<string> GetExtensions(List<GameFile> files)
