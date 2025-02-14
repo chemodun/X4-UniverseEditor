@@ -533,28 +533,32 @@ namespace X4DataLoader
 
       if (string.IsNullOrEmpty(source))
       {
-        foreach (string dlcFolder in Directory.GetDirectories(extensionsFolder, $"{DlcPrefix}*"))
+        foreach (string dlcId in Galaxy.DLCOrder)
         {
-          ExtensionInfo? dlc;
-          string contentPath = Path.Combine(dlcFolder, ContentXml);
-          if (File.Exists(contentPath))
+          string dlcFolder = Path.Combine(extensionsFolder, dlcId);
+          if (Directory.Exists(dlcFolder))
           {
-            try
+            ExtensionInfo? dlc;
+            string contentPath = Path.Combine(dlcFolder, ContentXml);
+            if (File.Exists(contentPath))
             {
-              dlc = new(contentPath);
-            }
-            catch (ArgumentException e)
-            {
-              Log.Error($"Error loading DLC {contentPath}: {e.Message}");
-              continue;
-            }
-            extensions.Add(dlc);
-            Log.Debug($"DLC identified: {dlc.Name}");
-            List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, dlc.Id, relatedExtensionId);
-            if (dlcFiles.Count > 0)
-            {
-              result.AddRange(dlcFiles);
-              Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {dlc.Name}.");
+              try
+              {
+                dlc = new(contentPath);
+              }
+              catch (ArgumentException e)
+              {
+                Log.Error($"Error loading DLC {contentPath}: {e.Message}");
+                continue;
+              }
+              extensions.Add(dlc);
+              Log.Debug($"DLC identified: {dlc.Name}");
+              List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, dlc.Id, relatedExtensionId);
+              if (dlcFiles.Count > 0)
+              {
+                result.AddRange(dlcFiles);
+                Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {dlc.Name}.");
+              }
             }
           }
         }
@@ -563,14 +567,14 @@ namespace X4DataLoader
       {
         foreach (ExtensionInfo extension in extensions)
         {
-          string dlcFolder = Path.Combine(extensionsFolder, extension.Folder);
-          if (Directory.Exists(dlcFolder))
+          string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
+          if (Directory.Exists(extensionFolder))
           {
-            List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, source, extension.Id);
-            if (dlcFiles.Count > 0)
+            List<GameFile> extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, source, extension.Id);
+            if (extensionFiles.Count > 0)
             {
-              result.AddRange(dlcFiles);
-              Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {extension.Name}.");
+              result.AddRange(extensionFiles);
+              Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extension.Name}.");
             }
           }
         }
