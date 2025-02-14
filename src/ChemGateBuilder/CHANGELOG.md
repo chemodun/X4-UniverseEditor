@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.5...ChemGateBuilder@v0.8.6) (2025-02-14)
+
+
+### Documentation
+
+* **README:** update changelog for version 0.8.6 with mod loading fix ([a31ef9e](https://github.com/chemodun/X4-UniverseEditor/commit/a31ef9e8266e9e22b39c601abf943bd6093bb848))
+
 ## [0.8.5](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.4...ChemGateBuilder@v0.8.5) (2025-02-14)
 
 
