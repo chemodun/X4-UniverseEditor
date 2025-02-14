@@ -1,6 +1,7 @@
 using System.Data;
 using System.Drawing;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -44,13 +45,14 @@ namespace X4DataLoader
       XML = element;
     }
 
-    public static void LoadElements(IEnumerable<XElement> elements, string source, string fileName, List<X4Color> allColors)
+    public static void LoadFromXml(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/colormap/colors/color");
       foreach (XElement element in elements)
       {
         X4Color color = new();
-        color.Load(element, source, fileName);
-        allColors.Add(color);
+        color.Load(element, file.ExtensionId, file.FileName);
+        galaxy.Colors.Add(color);
       }
     }
   }
@@ -85,19 +87,14 @@ namespace X4DataLoader
       XML = element;
     }
 
-    public static void LoadElements(
-      IEnumerable<XElement> elements,
-      string source,
-      string fileName,
-      List<X4MappedColor> allColors,
-      List<X4Color> allOriginalColors
-    )
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/colormap/mappings/mapping");
       foreach (XElement element in elements)
       {
         X4MappedColor color = new();
-        color.Load(element, source, fileName, allOriginalColors);
-        allColors.Add(color);
+        color.Load(element, file.ExtensionId, file.FileName, galaxy.Colors);
+        galaxy.MappedColors.Add(color);
       }
     }
   }

@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -45,18 +46,19 @@ namespace X4DataLoader
       return Tags.Contains(tag);
     }
 
-    public static void LoadElements(IEnumerable<XElement> elements, string source, string fileName, List<StationModule> allModules)
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/modules/module");
       foreach (XElement element in elements)
       {
         StationModule module = new();
-        module.Load(element, source, fileName);
-        if (allModules.Any(m => m.Id == module.Id))
+        module.Load(element, file.ExtensionId, file.FileName);
+        if (galaxy.StationModules.Any(m => m.Id == module.Id))
         {
           Log.Error($"Duplicate module id {module.Id}");
           continue;
         }
-        allModules.Add(module);
+        galaxy.StationModules.Add(module);
       }
     }
 

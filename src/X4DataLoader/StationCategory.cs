@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -59,29 +60,24 @@ namespace X4DataLoader
       return allStationCategories.FirstOrDefault(sc => sc.StationId == stationId);
     }
 
-    public static void LoadElements(
-      IEnumerable<XElement> elements,
-      string source,
-      string fileName,
-      List<StationCategory> allStationCategories,
-      List<StationGroup> allStationGroups
-    )
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/stations/station");
       foreach (XElement element in elements)
       {
         StationCategory stationCategory = new();
-        stationCategory.Load(element, source, fileName, allStationGroups);
+        stationCategory.Load(element, file.ExtensionId, file.FileName, galaxy.StationGroups);
         if (stationCategory.Tag == "")
         {
           Log.Warn($"StationCategory {stationCategory.StationId} must have a category");
           continue;
         }
-        if (allStationCategories.Any(sc => sc.StationId == stationCategory.StationId))
+        if (galaxy.StationCategories.Any(sc => sc.StationId == stationCategory.StationId))
         {
           Log.Warn($"Duplicate StationCategory id {stationCategory.StationId}");
           continue;
         }
-        allStationCategories.Add(stationCategory);
+        galaxy.StationCategories.Add(stationCategory);
       }
     }
   }

@@ -140,18 +140,18 @@ namespace X4DataLoader
       }
     }
 
-    public static void LoadFromXML(XElement root, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
-      IEnumerable<XElement> elements = root.XPathSelectElements("/macros/macro");
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
       bool modeDiff = false;
       if (!elements.Any())
       {
-        elements = root.XPathSelectElements("/diff/add");
+        elements = file.XML.XPathSelectElements("/diff/add");
         modeDiff = true;
       }
       foreach (XElement element in elements)
       {
-        LoadConnections(element, allClusters, allSectors, source, fileName, modeDiff);
+        LoadConnections(element, galaxy.Clusters, galaxy.Sectors, file.ExtensionId, file.FileName, modeDiff);
       }
     }
 

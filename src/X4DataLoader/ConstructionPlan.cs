@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -76,31 +77,31 @@ namespace X4DataLoader
       FileName = fileName;
     }
 
-    public static void LoadElements(
-      IEnumerable<XElement> elements,
-      string source,
-      string fileName,
-      List<ConstructionPlan> allConstructionPlans,
-      Translation translation,
-      List<StationModule> allModules,
-      List<StationModuleGroup> allStationModuleGroups
-    )
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/plans/plan");
       foreach (XElement element in elements)
       {
         ConstructionPlan constructionPlan = new();
-        constructionPlan.Load(element, source, fileName, translation, allModules, allStationModuleGroups);
+        constructionPlan.Load(
+          element,
+          file.ExtensionId,
+          file.FileName,
+          galaxy.Translation,
+          galaxy.StationModules,
+          galaxy.StationModuleGroups
+        );
         if (constructionPlan.Name == "")
         {
           Log.Warn($"ConstructionPlan {constructionPlan.Id} must have a name");
           continue;
         }
-        if (allConstructionPlans.Any(cp => cp.Id == constructionPlan.Id))
+        if (galaxy.ConstructionPlans.Any(cp => cp.Id == constructionPlan.Id))
         {
           Log.Warn($"ConstructionPlan {constructionPlan.Id} has a duplicate id");
           continue;
         }
-        allConstructionPlans.Add(constructionPlan);
+        galaxy.ConstructionPlans.Add(constructionPlan);
       }
     }
   }

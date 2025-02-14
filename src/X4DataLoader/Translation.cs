@@ -17,7 +17,7 @@ namespace X4DataLoader
     private static readonly Regex ReferenceRegex = new(@"\{(\d+),(\d+)\}");
     private static readonly Regex CommentRegex = new(@"\([^)]*\)");
 
-    public void Load(XElement rootElement)
+    public void LoadFromXML(XElement rootElement)
     {
       foreach (var pageElement in rootElement.Descendants("page"))
       {

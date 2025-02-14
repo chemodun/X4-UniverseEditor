@@ -47,17 +47,17 @@ namespace X4DataLoader
       Connections = [];
     }
 
-    public void LoadXML(XElement root, List<Cluster> allClusters, string source, string fileName)
+    public void LoadFromXML(GameFile file, Galaxy galaxy)
     {
-      XElement? galaxyElement = root.XPathSelectElement("/macros/macro");
+      XElement? galaxyElement = file.XML.XPathSelectElement("/macros/macro");
       if (galaxyElement != null)
       {
-        Load(galaxyElement, allClusters, source, fileName);
-        Log.Debug($"Galaxy loaded from: {fileName} for {source}");
+        Load(galaxyElement, galaxy.Clusters, file.ExtensionId, file.FileName);
+        Log.Debug($"Galaxy loaded from: {file.FileName} for {file.ExtensionId}");
       }
       else
       {
-        XElement? galaxyDiffElement = root.XPathSelectElement("/diff");
+        XElement? galaxyDiffElement = file.XML.XPathSelectElement("/diff");
         if (galaxyDiffElement != null)
         {
           IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();
@@ -68,8 +68,8 @@ namespace X4DataLoader
               && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections"
             )
             {
-              LoadConnections(galaxyElementDiff, allClusters, source, fileName);
-              Log.Debug($"Galaxy connections loaded from: {fileName} for {source}");
+              LoadConnections(galaxyElementDiff, galaxy.Clusters, file.ExtensionId, file.FileName);
+              Log.Debug($"Galaxy connections loaded from: {file.FileName} for {file.ExtensionId}");
             }
           }
         }

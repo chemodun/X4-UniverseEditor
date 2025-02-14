@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -147,6 +148,28 @@ namespace X4DataLoader
         }
       }
     }
+
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
+    {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
+      foreach (XElement element in elements)
+      {
+        HighwayClusterLevel? highway = new(element, file.ExtensionId, file.FileName);
+        Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
+          c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
+        );
+        if (cluster != null)
+        {
+          cluster.Highways.Add(highway);
+          highway.Load(cluster);
+          Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
+        }
+        else
+        {
+          Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
+        }
+      }
+    }
   }
 
   public class HighwaySectorLevel : Highway
@@ -157,6 +180,27 @@ namespace X4DataLoader
       if (Reference != "standardzonehighway")
       {
         throw new ArgumentException("HighwaySectorLevel must have reference=\"standardzonehighway\"");
+      }
+    }
+
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
+    {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
+      foreach (XElement element in elements)
+      {
+        HighwaySectorLevel? highway = new(element, file.ExtensionId, file.FileName);
+        Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
+          s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
+        );
+        if (sector != null)
+        {
+          sector.Highways.Add(highway);
+          Log.Debug($"Zone Highway loaded for Sector: {sector.Name}");
+        }
+        else
+        {
+          Log.Warn($"No matching sector found for Zone Highway: {highway.Macro}");
+        }
       }
     }
   }
