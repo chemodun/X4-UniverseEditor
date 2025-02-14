@@ -28,7 +28,6 @@ namespace ChemGateBuilder
     private readonly string Sync = "false";
     private readonly List<string> DlcsRequired = [];
     private readonly Dictionary<string, List<GalaxyConnectionPath>> _paths = [];
-    private static readonly Regex _regex = new(@"/macros/macro\[@name='([^']+)'\]/connections");
     public int Version
     {
       get => _version;
@@ -463,22 +462,17 @@ namespace ChemGateBuilder
             result = true;
             break;
           }
+          else if (Connections[i].PathDirect?.Zone?.XML?.ToString() != newConnection.PathDirect?.Zone?.XML?.ToString())
+          {
+            result = true;
+            break;
+          }
+          else if (Connections[i].PathOpposite?.Zone?.PositionXML?.ToString() != newConnection.PathOpposite?.Zone?.PositionXML?.ToString())
+          {
+            result = true;
+            break;
+          }
           else if (Connections[i].PathOpposite?.Zone?.XML?.ToString() != newConnection.PathOpposite?.Zone?.XML?.ToString())
-          {
-            result = true;
-            break;
-          }
-          else if (Connections[i].PathDirect?.Gate?.XML?.ToString() != newConnection.PathDirect?.Gate?.XML?.ToString())
-          {
-            result = true;
-            break;
-          }
-          else if (Connections[i].PathOpposite?.Gate?.XML?.ToString() != newConnection.PathOpposite?.Gate?.XML?.ToString())
-          {
-            result = true;
-            break;
-          }
-          else if (Connections[i].PathOpposite?.Gate?.XML?.ToString() != newConnection.PathOpposite?.Gate?.XML?.ToString())
           {
             result = true;
             break;
