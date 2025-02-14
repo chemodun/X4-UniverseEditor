@@ -3,6 +3,11 @@
 ## [0.8.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.5...ChemGateBuilder@v0.8.6) (2025-02-14)
 
 
+### Bug Fixes
+
+* **Mod:** not loading the mod if it uses other preloaded mods, not only DLC's ([6e568e2](https://github.com/chemodun/X4-UniverseEditor/commit/6e568e24907c696378b66d134eded78deb123eb3))
+
+
 ### Documentation
 
 * **README:** update changelog for version 0.8.6 with mod loading fix ([a31ef9e](https://github.com/chemodun/X4-UniverseEditor/commit/a31ef9e8266e9e22b39c601abf943bd6093bb848))
