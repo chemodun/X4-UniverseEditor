@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.5](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.4...ChemGateBuilder@v0.8.5) (2025-02-14)
+
+
+### Documentation
+
+* **README:** add changelog entry for version 0.8.3 ([a0b08c5](https://github.com/chemodun/X4-UniverseEditor/commit/a0b08c57e3232b37679c3d84e15e4a3447b394a2))
+* **README:** update changelog for versions 0.8.4 and 0.8.5 ([ffe9ae0](https://github.com/chemodun/X4-UniverseEditor/commit/ffe9ae0a1ec45e6e229414880f3e5efcbe7e201c))
+* **README:** Update README's files ([d2e8cc0](https://github.com/chemodun/X4-UniverseEditor/commit/d2e8cc0097aaf2783fb265d440aa89753d2fcadd))
+
 ## [0.8.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.3...ChemGateBuilder@v0.8.4) (2025-02-14)
 
 
