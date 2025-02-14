@@ -278,6 +278,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.8.3] - 2025-02-14
+
+- Refactor
+  - Changed internal logic of data loading (XMLPatch)
+
 ### [0.8.2] - 2025-02-13
 
 - Fixed
