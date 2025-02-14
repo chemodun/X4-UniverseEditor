@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.2...ChemGateBuilder@v0.8.3) (2025-02-14)
+
+
+### Miscellaneous Chores
+
+* **Mod:** Enhance mod loading by applying the same XMLPatch approach as for the DLC's and mods ([dc269fd](https://github.com/chemodun/X4-UniverseEditor/commit/dc269fdc86aea4173fe28fb9697d5f30c4f866ff))
+
 ## [0.8.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.1...ChemGateBuilder@v0.8.2) (2025-02-13)
 
 
