@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.7](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.6...ChemGateBuilder@v0.8.7) (2025-02-14)
+
+
+### Code Refactoring
+
+* **ChemGateBuilder:** integrate X4Map project and update references ([a826f87](https://github.com/chemodun/X4-UniverseEditor/commit/a826f87df0ef4d1e1ff25ab234ea7e935534ab19))
+* **X4Map:** move to X4Map: SectorMap.cs and MapColors.cs as whole and some related objects, including HexagonPointsConverter ([a826f87](https://github.com/chemodun/X4-UniverseEditor/commit/a826f87df0ef4d1e1ff25ab234ea7e935534ab19))
+
 ## [0.8.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.5...ChemGateBuilder@v0.8.6) (2025-02-14)
 
 
