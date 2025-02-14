@@ -96,7 +96,6 @@ namespace ChemGateBuilder
         Filter = "Mod Content File|content.xml",
         Title = "Select a File",
       };
-
       System.Windows.Forms.DialogResult result = dialog.ShowDialog();
       if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
       {
@@ -125,7 +124,7 @@ namespace ChemGateBuilder
         List<GameFile> processedFiles = DataLoader.GatherFiles(
           currentPath,
           gameFilesStructure,
-          galaxy.DLCs,
+          galaxy.Extensions,
           "chem_gate_keeper",
           GameFile.CloneList(galaxy.GameFiles, true)
         );
