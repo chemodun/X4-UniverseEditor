@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.1...XMLPatch@v0.1.2) (2025-02-14)
+
+
+### Code Refactoring
+
+* **XMLPatch:** change ApplyPatch method to return patched XElement instead of bool ([7894bdb](https://github.com/chemodun/X4-UniverseEditor/commit/7894bdb31b8a8ec19cf3ca2990f9e1c3018d9d2a))
+
 ## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.0...XMLPatch@v0.1.1) (2025-02-13)
 
 
