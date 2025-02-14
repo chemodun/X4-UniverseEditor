@@ -175,14 +175,14 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
             current_list = parent_list
 
         if list_type == 'ordered':
-            return "[list=1]" + "\n".join(current_list) + "[/list]"
+            return "[list=1]" + "\n".join(current_list) + "\n[/list]"
         else:
-            return "[list]" + "\n".join(current_list) + "[/list]"
+            return "[list]" + "\n".join(current_list) + "\n[/list]"
 
     def replace_lists(match):
         list_content = match.group(0)
         lines = list_content.split('\n')
-        return parse_list_items(lines)
+        return parse_list_items(lines).replace('\n\n', '\n')
 
     bbcode_text = re.sub(r'(?:^\s*[-*+]\s+.*\n?)+', replace_lists, bbcode_text, flags=re.MULTILINE)
     bbcode_text = re.sub(r'(?:^\s*\d+\.\s+.*\n?)+', replace_lists, bbcode_text, flags=re.MULTILINE)
