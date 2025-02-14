@@ -278,13 +278,20 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][0.8.6] - 2025-02-14[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Fixed the issue with the mod loading
+[/list]
+[/list]
 [size=125][u][0.8.5] - 2025-02-14[/u][/size]
 [list]
 [*] Updated
 [list]
 [*] Documentation
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.8.4] - 2025-02-14[/u][/size]
 [list]
 [*] Added
@@ -298,29 +305,29 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [*] Fixed
 [list]
 [*] Mod changes detection logic
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.8.3] - 2025-02-14[/u][/size]
 [list]
 [*] Refactor
 [list]
 [*] Changed internal logic of data loading (XMLPatch)
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.8.2] - 2025-02-13[/u][/size]
 [list]
 [*] Fixed
 [list]
 [*] Fixed the extraction window behavior
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.8.1] - 2025-02-13[/u][/size]
 [list]
 [*] Improved
 [list]
 [*] Mods can be extracted with the game data and DLC's
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.8.0] - 2025-02-13[/u][/size]
 [list]
 [*] Added
@@ -328,8 +335,8 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [*] Clusters and sectors tooltips
 [*] Hiding and showing the DLC's and Mods on a map
 [*] Showing empty cluster cells (with coordinates on the tooltip)
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.7.0] - 2025-02-11[/u][/size]
 [list]
 [*] Added
@@ -344,37 +351,35 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [*] Warning
 [list]
 [*] [b]Please repeat the extraction process if you have already extracted the game files[/b]
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.6.0] - 2025-02-10[/u][/size]
 [list]
 [*] Added
 [list]
 [*] Extraction game files
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.5.2] - 2025-02-08[/u][/size]
 [list]
 [*] Added
 [list]
 [*] Galaxy Map
 [*] A lot all other small stuff...
-
 [/list]
 [*] Refactor
 [list]
 [*] Rewritten from Python to C# to avoid false positive virus detection
-
 [/list]
 [*] Removed
 [list]
 [*] Console version is gone
-
-[/list][/list]
+[/list]
+[/list]
 [size=125][u][0.4.3] - 2025-01-14[/u][/size]
 [list]
 [*] Added
 [list]
 [*] Initial public version
-
-[/list][/list]
+[/list]
+[/list]
