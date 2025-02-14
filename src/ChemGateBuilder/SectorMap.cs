@@ -233,7 +233,7 @@ namespace ChemGateBuilder
                 Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
                 Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
                 Type = "gate",
-                From = "map",
+                From = galaxy.Extensions.FirstOrDefault(e => e.Id == zone.Source)?.Name ?? "Vanilla",
                 Id = gateConnection.Name,
               };
               sectorObjects.Add(newObject);
@@ -255,7 +255,7 @@ namespace ChemGateBuilder
             Y = (int)(highwayPoint.Position.Y / 1000),
             Z = (int)(highwayPoint.Position.Z / 1000),
             Type = "highway",
-            From = "map",
+            From = galaxy.Extensions.FirstOrDefault(e => e.Id == highwayPoint.Source)?.Name ?? "Vanilla",
             Id = highwayPoint.Name,
           };
           newObject.Attributes.Add("PointType", highwayPoint.Type == HighwayPointType.EntryPoint ? "entry" : "exit");
@@ -275,7 +275,7 @@ namespace ChemGateBuilder
             Y = (int)(station.Position.Y / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Y / 1000) : 0),
             Z = (int)(station.Position.Z / 1000) + (station.Zone?.Position != null ? (int)(station.Zone.Position.Z / 1000) : 0),
             Type = "station",
-            From = "map",
+            From = galaxy.Extensions.FirstOrDefault(e => e.Id == station.Source)?.Name ?? "Vanilla",
             Id = station.Id,
             Color = FactionColors.GetColor(station.OwnerId),
           };
@@ -708,7 +708,7 @@ namespace ChemGateBuilder
         ToolTip = "No data";
       string result = $"{char.ToUpper(Type[0])}{Type[1..]}";
       if (Type == "gate" || Type == "highway")
-        result += $": {Status} ({From})\n";
+        result += $": {Status}\n";
       if (Type == "gate")
       {
         result += $"To: {_objectData?.Info ?? ""}\n";
@@ -726,6 +726,7 @@ namespace ChemGateBuilder
         result = $"{_objectData?.Info ?? ""}\n";
       }
       result += $"X: {_objectData?.X ?? 0, 4}, Y: {_objectData?.Y ?? 0, 4}, Z: {_objectData?.Z ?? 0, 4}";
+      result += $"\nSource: {From}";
       ToolTip = result;
     }
 
