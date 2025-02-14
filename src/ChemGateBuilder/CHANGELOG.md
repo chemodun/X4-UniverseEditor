@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.3...ChemGateBuilder@v0.8.4) (2025-02-14)
+
+
+### Bug Fixes
+
+* **Mod:** fix connection comparison logic to identify the Mod change status ([7cadf1e](https://github.com/chemodun/X4-UniverseEditor/commit/7cadf1ea11f68f1cc4a0ce13dcfdc20ca7794e52))
+* **SectorMap:** update source identification for sector objects and improve tooltip formatting ([1a23216](https://github.com/chemodun/X4-UniverseEditor/commit/1a232163740ff6ab81e067cc5d140a92776d77d7))
+
+
+### Miscellaneous Chores
+
+* **UI:** add "Save as" button functionality and update save logic ([acb95cd](https://github.com/chemodun/X4-UniverseEditor/commit/acb95cd455757d49a0f805083316a7bff536a11d))
+
 ## [0.8.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.2...ChemGateBuilder@v0.8.3) (2025-02-14)
 
 
