@@ -278,6 +278,20 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.8.5] - 2025-02-14
+
+- Updated
+  - Documentation
+
+### [0.8.4] - 2025-02-14
+
+- Added
+  - "Save As" option for the mod
+- Improved:
+  - Tooltips for the map objects
+- Fixed
+  - Mod changes detection logic
+
 ### [0.8.3] - 2025-02-14
 
 - Refactor
