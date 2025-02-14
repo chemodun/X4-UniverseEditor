@@ -31,7 +31,7 @@ namespace X4DataLoader
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
 
       Galaxy galaxy = new();
-      DataLoader.LoadAllData(galaxy, coreFolderPath, gameFilesStructure, loadMods);
+      DataLoader.LoadData(galaxy, coreFolderPath, gameFilesStructure, loadMods);
       return galaxy;
     }
   }

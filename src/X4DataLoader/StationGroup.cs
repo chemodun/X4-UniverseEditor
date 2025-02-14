@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -35,7 +36,7 @@ namespace X4DataLoader
           ConstructionPlans.Add((constructionPlan, weight));
         }
       }
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
     }
@@ -59,29 +60,24 @@ namespace X4DataLoader
       return mostWeightedConstructionPlan;
     }
 
-    public static void LoadElements(
-      IEnumerable<XElement> elements,
-      string source,
-      string fileName,
-      List<StationGroup> allGroups,
-      List<ConstructionPlan> allConstructionPlans
-    )
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/groups/group");
       foreach (XElement element in elements)
       {
         StationGroup group = new();
-        group.Load(element, source, fileName, allConstructionPlans);
+        group.Load(element, file.ExtensionId, file.FileName, galaxy.ConstructionPlans);
         if (group.Name == "")
         {
           Log.Warn($"StationGroup must have a name");
           continue;
         }
-        if (allGroups.Any(x => x.Name == group.Name))
+        if (galaxy.StationGroups.Any(x => x.Name == group.Name))
         {
           Log.Warn($"Duplicate StationGroup name {group.Name}");
           continue;
         }
-        allGroups.Add(group);
+        galaxy.StationGroups.Add(group);
       }
     }
   }

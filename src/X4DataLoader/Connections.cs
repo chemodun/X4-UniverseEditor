@@ -140,18 +140,18 @@ namespace X4DataLoader
       }
     }
 
-    public static void LoadFromXML(XElement root, List<Cluster> allClusters, List<Sector> allSectors, string source, string fileName)
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
-      IEnumerable<XElement> elements = root.XPathSelectElements("/macros/macro");
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
       bool modeDiff = false;
       if (!elements.Any())
       {
-        elements = root.XPathSelectElements("/diff/add");
+        elements = file.XML.XPathSelectElements("/diff/add");
         modeDiff = true;
       }
       foreach (XElement element in elements)
       {
-        LoadConnections(element, allClusters, allSectors, source, fileName, modeDiff);
+        LoadConnections(element, galaxy.Clusters, galaxy.Sectors, file.ExtensionId, file.FileName, modeDiff);
       }
     }
 
@@ -184,6 +184,7 @@ namespace X4DataLoader
         name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
         connectionClass = XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
         reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
+        source = XmlHelper.GetAttribute(element, "_source") ?? source;
       }
       else if (string.IsNullOrEmpty(name))
       {

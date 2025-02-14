@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -181,11 +182,29 @@ namespace X4DataLoader
           }
         }
       }
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
       XML = element;
       Sector.AddStation(this);
       Log.Debug($"Loaded station {Id} in {Sector.Name}");
+    }
+
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
+    {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/god/stations/station");
+      foreach (XElement element in elements)
+      {
+        Station? station = new();
+        station.Load(
+          element,
+          file.ExtensionId,
+          file.FileName,
+          galaxy.Sectors,
+          galaxy.StationCategories,
+          galaxy.ConstructionPlans,
+          galaxy.Factions
+        );
+      }
     }
   }
 }

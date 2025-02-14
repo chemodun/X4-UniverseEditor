@@ -10,12 +10,12 @@ namespace Utilities.X4XMLPatch
 {
   public static class XMLPatch
   {
-    public static bool ApplyPatch(XElement originalRoot, XElement diffRoot, string SourceId)
+    public static XElement? ApplyPatch(XElement originalRoot, XElement diffRoot, string SourceId)
     {
       try
       {
         XElement workingRoot = new XElement("root");
-        workingRoot.Add(originalRoot);
+        workingRoot.Add(new XElement(originalRoot));
         Log.Debug("Applying XML patch...");
         foreach (var operation in diffRoot.Elements())
         {
@@ -24,34 +24,33 @@ namespace Utilities.X4XMLPatch
             case "add":
               if (!ApplyAdd(operation, workingRoot, SourceId))
               {
-                return false;
+                return null;
               }
               break;
             case "replace":
               if (!ApplyReplace(operation, workingRoot, SourceId))
               {
-                return false;
+                return null;
               }
               break;
             case "remove":
               if (!ApplyRemove(operation, workingRoot))
               {
-                return false;
+                return null;
               }
               break;
             default:
               Log.Warn($"Unknown operation: {operation.Name}. Skipping.");
-              return false;
+              return null;
           }
         }
-
         Log.Debug($"Patched XML successfully.");
-        return true;
+        return workingRoot.Elements().First();
       }
       catch (Exception ex)
       {
         Log.Error($"Error processing XMLs: {ex.Message}");
-        return false;
+        return null;
       }
     }
 

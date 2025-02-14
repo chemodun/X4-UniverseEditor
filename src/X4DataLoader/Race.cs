@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -48,33 +49,28 @@ namespace X4DataLoader
       Names = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "names"));
       Tags = XmlHelper.GetAttributeAsList(element, "tags", " ");
       XML = element;
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
     }
 
-    public static void LoadElements(
-      IEnumerable<XElement> elements,
-      string source,
-      string fileName,
-      List<Race> allRaces,
-      Translation translation
-    )
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/races/race");
       foreach (XElement element in elements)
       {
         Race Race = new();
-        Race.Load(element, source, fileName, translation);
+        Race.Load(element, file.ExtensionId, file.FileName, galaxy.Translation);
         if (Race.Name == "")
         {
           Log.Warn($"Race must have a name");
           continue;
         }
-        if (allRaces.Any(f => f.Id == Race.Id))
+        if (galaxy.Races.Any(f => f.Id == Race.Id))
         {
           Log.Warn($"Duplicate Race id {Race.Id}");
           continue;
         }
-        allRaces.Add(Race);
+        galaxy.Races.Add(Race);
       }
     }
   }

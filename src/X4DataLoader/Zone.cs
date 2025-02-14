@@ -30,13 +30,13 @@ namespace X4DataLoader
       Connections = [];
     }
 
-    public static void LoadFromXML(XElement root, List<Sector> allSectors, string source, string fileName)
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
-      IEnumerable<XElement> elements = root.XPathSelectElements("/macros/macro");
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
       bool modeDiff = false;
       if (!elements.Any())
       {
-        elements = root.XPathSelectElements("/diff/add");
+        elements = file.XML.XPathSelectElements("/diff/add");
         modeDiff = true;
       }
       foreach (XElement element in elements)
@@ -60,8 +60,8 @@ namespace X4DataLoader
         foreach (XElement zoneElement in zonesElement.Elements("macro"))
         {
           Zone? zone = new();
-          zone.Load(zoneElement, source, fileName);
-          Sector? sector = allSectors.FirstOrDefault(s =>
+          zone.Load(zoneElement, file.ExtensionId, file.FileName);
+          Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
             s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
           );
           if (sector != null)
@@ -81,6 +81,7 @@ namespace X4DataLoader
     {
       Name = XmlHelper.GetAttribute(element, "name") ?? "";
       Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
+      source = XmlHelper.GetAttribute(element, "_source") ?? source;
       string zoneClass = XmlHelper.GetAttribute(element, "class") ?? "";
       if (zoneClass != "zone")
       {

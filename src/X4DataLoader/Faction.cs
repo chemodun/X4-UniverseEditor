@@ -1,6 +1,7 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -74,7 +75,7 @@ namespace X4DataLoader
         IconInactiveId = XmlHelper.GetAttribute(iconElement, "inactive") ?? "";
       }
       XML = element;
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
     }
 
@@ -83,30 +84,24 @@ namespace X4DataLoader
       return Tags.Contains(tag);
     }
 
-    public static void LoadElements(
-      IEnumerable<XElement> elements,
-      string source,
-      string fileName,
-      List<Faction> allFactions,
-      Translation translation,
-      List<Race> allRaces
-    )
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
+      IEnumerable<XElement> elements = file.XML.XPathSelectElements("/factions/faction");
       foreach (XElement element in elements)
       {
         Faction faction = new();
-        faction.Load(element, source, fileName, translation, allRaces);
+        faction.Load(element, file.ExtensionId, file.FileName, galaxy.Translation, galaxy.Races);
         if (faction.Name == "")
         {
           Log.Warn($"Faction must have a name");
           continue;
         }
-        if (allFactions.Any(f => f.Id == faction.Id))
+        if (galaxy.Factions.Any(f => f.Id == faction.Id))
         {
           Log.Warn($"Duplicate faction id {faction.Id}");
           continue;
         }
-        allFactions.Add(faction);
+        galaxy.Factions.Add(faction);
       }
     }
   }

@@ -27,7 +27,8 @@ namespace X4DataLoader
     public List<ConstructionPlan> ConstructionPlans { get; private set; } = [];
     public List<StationGroup> StationGroups { get; private set; } = [];
     public List<StationCategory> StationCategories { get; private set; } = [];
-    public List<GalaxyConnection> Connections { get; private set; }
+    public List<GalaxyConnection> Connections { get; private set; } = [];
+    public List<GameFile> GameFiles { get; private set; } = [];
 
     public static readonly List<string> DLCOrder =
     [
@@ -45,19 +46,20 @@ namespace X4DataLoader
       Clusters = [];
       Sectors = [];
       Connections = [];
+      GameFiles = [];
     }
 
-    public void LoadXML(XElement root, List<Cluster> allClusters, string source, string fileName)
+    public void LoadFromXML(GameFile file, Galaxy galaxy)
     {
-      XElement? galaxyElement = root.XPathSelectElement("/macros/macro");
+      XElement? galaxyElement = file.XML.XPathSelectElement("/macros/macro");
       if (galaxyElement != null)
       {
-        Load(galaxyElement, allClusters, source, fileName);
-        Log.Debug($"Galaxy loaded from: {fileName} for {source}");
+        Load(galaxyElement, galaxy.Clusters, file.ExtensionId, file.FileName);
+        Log.Debug($"Galaxy loaded from: {file.FileName} for {file.ExtensionId}");
       }
       else
       {
-        XElement? galaxyDiffElement = root.XPathSelectElement("/diff");
+        XElement? galaxyDiffElement = file.XML.XPathSelectElement("/diff");
         if (galaxyDiffElement != null)
         {
           IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();
@@ -68,8 +70,8 @@ namespace X4DataLoader
               && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections"
             )
             {
-              LoadConnections(galaxyElementDiff, allClusters, source, fileName);
-              Log.Debug($"Galaxy connections loaded from: {fileName} for {source}");
+              LoadConnections(galaxyElementDiff, galaxy.Clusters, file.ExtensionId, file.FileName);
+              Log.Debug($"Galaxy connections loaded from: {file.FileName} for {file.ExtensionId}");
             }
           }
         }
@@ -279,7 +281,7 @@ namespace X4DataLoader
         throw new ArgumentException("GalaxyConnection must have a macro element with path attribute");
       }
 
-      Source = source;
+      Source = XmlHelper.GetAttribute(element, "_source") ?? source;
       FileName = fileName;
 
       XML = element;
