@@ -8,7 +8,6 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 [*] Select sectors from a list or from the Galaxy map.
 [*] Create any number of connections, where a connection is a pair of gates in two sectors.
 [*] Easily arrange the location of gates in sectors by moving them on the map using the mouse.
-
 [/list]
 [size=3][u][b]Disclaimer[/b][/u][/size]
 
@@ -21,7 +20,6 @@ You can download the tool from the following locations:
 [list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/releases]Releases on GitHub[/url]
 [*] [url=https://www.nexusmods.com/x4foundations/mods/1587/]Nexus[/url]
-
 [/list]
 [size=3][u][b]Installation[/b][/u][/size]
 
@@ -39,7 +37,6 @@ And when you press a button to select the folder, the tool will propose two ways
 [list]
 [*] Select the extracted game folder. If you already have it - simply press the "Yes" button.
 [*] Extract the game files. If you don't have the game files extracted, you can press the "No" button to initiate the extraction.
-
 [/list]
 [size=3][u][i]With Extracted Game Files[/i][/u][/size]
 
@@ -57,7 +54,6 @@ Now everything is simple:
 [*] Select the folder with the game files.
 [*] Select the folder where will be placed new folder with the extracted game files. It will be created automatically with a name containing the current game version. Like "X4v710-extracted".
 [*] Press the "Extract Data" button.
-
 [/list]
 [img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/first_start_with_extraction.gif[/img]
 
@@ -67,7 +63,6 @@ There are several options to extract the game files:
 [*] Verify extracted data - this will check the consistency of the extracted data. Recommended to use it every time you extract the data.
 [*] Overwrite existing files - this will overwrite the existing files in the output folder. Again, recommended to use it every time you extract the data.
 [*] Set as source and load after extraction - this will set the extracted folder as the source for the game data and load it after the extraction.
-
 [/list]
 Additionally, you can see unselect some DLC's, if you don't want to extract them.
 
@@ -109,7 +104,6 @@ Please note that the coordinates are split into two parts:
 [list]
 [*] Coordinates themselves, in km (this is the appropriate zone position in the sector).
 [*] Position - the position from the coordinates point in meters (this is the position of the gate in the zone).
-
 [/list]
 To simplify editing, the position part is randomly prefilled on sector selection.
 
@@ -122,7 +116,6 @@ The rotation of the gate can be defined using three angles: Pitch, Yaw, and Roll
 [*] [b]Pitch[/b]: This is the left/right rotation of the ring and is the one to actually use if you want to face the ring in a certain direction on the map. A Pitch of 0 degrees has the ring facing North and the connection line on the map coming out of the south side of the ring. +45 degrees has the ring turn right to face North-East with the map line going to the South-West. While ship traffic doesn't care which way the map line is facing, it does make the map a bit wild and unnecessarily cluttered if it's facing the wrong way. Also, you can't enter more than 180 degrees in the box, so if you want to face west you must use a negative value. And oddly, you can't type in a negative sign (-) without a value already in the box. For example, -135 would face the gate South-West with the map line going North-East.
 [*] [b]Yaw[/b]: This is just the clockwise/counterclockwise rotation of the ring. A value of 90 would put the side pods of the ring at the top and bottom instead and so is also generally unnecessary and can be left at 0 in most cases.
 [*] [b]Roll[/b]: This is the forward/backward pitch of the gate and so is generally unneeded unless the gate is well above or below the plane of the sector. It can typically just be left at 0.
-
 [/list]
 [size=2][u][i]Extended Sector Map[/i][/u][/size]
 
@@ -172,7 +165,6 @@ There are two buttons at the bottom of the window:
 [list]
 [*] [b]Add/Update[/b] - to add the gate connection to the list. We already discussed it.
 [*] [b]Reset[/b] - to reset the gate data fields to the default values. See below for more information.
-
 [/list]
 [size=2][u][i]Reset Button[/i][/u][/size]
 
@@ -196,7 +188,6 @@ For zooming, there are two options available:
 [list]
 [*] Use the slider at the top of the map.
 [*] Use the mouse wheel while holding the [b]Ctrl[/b] key.
-
 [/list]
 Additionally, you can drag the map with the left mouse button when it is zoomed in.
 
@@ -208,7 +199,6 @@ You can hover over the clusters and sectors on the map to view additional inform
 [list]
 [*] For clusters you can see a name, macro and coordinates.
 [*] For sectors you can see a name, owner, sunlight, economy, security, macro and coordinates. Additionally information about parent cluster is shown.
-
 [/list]
 [img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/cluster_sector_tooltips.gif[/img]
 
@@ -271,7 +261,6 @@ Here are several screenshots from the game with the mod gates in the [b]Asteroid
 [*] [url=https://www.egosoft.com]EGOSOFT[/url] - for the game itself (In fact - for the series of games)!
 [*] Members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]x4_modding discord channel[/url] - for the answers, support, ideas and inspiration!
 [*] [url=https://steamcommunity.com/profiles/76561198005610231]SiliconStew[/url] - for the documentation of the Gate Rotation specifics!
-
 [/list]
 [size=3][u][b]Useful Links[/b][/u][/size]
 
@@ -289,30 +278,49 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][0.8.5] - 2025-02-14[/i][/u][/size]
+[list]
+[*] Updated
+[list]
+[*] Documentation
+
+[/list][/list]
+[size=3][u][i][0.8.4] - 2025-02-14[/i][/u][/size]
+[list]
+[*] Added
+[list]
+[*] "Save As" option for the mod
+[/list]
+[*] Improved:
+[list]
+[*] Tooltips for the map objects
+[/list]
+[*] Fixed
+[list]
+[*] Mod changes detection logic
+
+[/list][/list]
 [size=3][u][i][0.8.3] - 2025-02-14[/i][/u][/size]
 [list]
 [*] Refactor
 [list]
 [*] Changed internal logic of data loading (XMLPatch)
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.8.2] - 2025-02-13[/i][/u][/size]
 [list]
 [*] Fixed
 [list]
 [*] Fixed the extraction window behavior
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.8.1] - 2025-02-13[/i][/u][/size]
 [list]
 [*] Improved
 [list]
 [*] Mods can be extracted with the game data and DLC's
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.8.0] - 2025-02-13[/i][/u][/size]
 [list]
 [*] Added
@@ -321,8 +329,7 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [*] Hiding and showing the DLC's and Mods on a map
 [*] Showing empty cluster cells (with coordinates on the tooltip)
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.7.0] - 2025-02-11[/i][/u][/size]
 [list]
 [*] Added
@@ -338,16 +345,14 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [list]
 [*] [b]Please repeat the extraction process if you have already extracted the game files[/b]
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.6.0] - 2025-02-10[/i][/u][/size]
 [list]
 [*] Added
 [list]
 [*] Extraction game files
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.5.2] - 2025-02-08[/i][/u][/size]
 [list]
 [*] Added
@@ -365,13 +370,11 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [list]
 [*] Console version is gone
 
-[/list]
-[/list]
+[/list][/list]
 [size=3][u][i][0.4.3] - 2025-01-14[/i][/u][/size]
 [list]
 [*] Added
 [list]
 [*] Initial public version
 
-[/list]
-[/list]
+[/list][/list]
