@@ -718,19 +718,7 @@ namespace ChemGateBuilder
 
     private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
     {
-      string subfolderPath = System.IO.Path.Combine(folderPath, "t");
-      string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
-
-      if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
-      {
-        errorMessage = string.Empty;
-        return true;
-      }
-      else
-      {
-        errorMessage = $"Error: Folder does not contain required X4 data ({folderPath})";
-        return false;
-      }
+      return X4Galaxy.ValidateDataFolder(folderPath, out errorMessage);
     }
 
     private void SelectX4DataFolder_Click(object? sender, RoutedEventArgs? e)
