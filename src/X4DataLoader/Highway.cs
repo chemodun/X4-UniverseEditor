@@ -113,13 +113,27 @@ namespace X4DataLoader
         if (reference == "entrypoint")
         {
           EntryPointPath = new HighwayClusterConnectionPath(cluster, macroReference);
-          EntryPointPath.Load(path);
+          try
+          {
+            EntryPointPath.Load(path, cluster.Sectors.SelectMany(s => s.Zones).ToList());
+          }
+          catch (ArgumentException e)
+          {
+            throw new ArgumentException($"Error loading EntryPointPath for Highway ${Macro}: {e.Message}");
+          }
           pointPath = EntryPointPath;
         }
         else if (reference == "exitpoint")
         {
           ExitPointPath = new HighwayClusterConnectionPath(cluster, macroReference);
-          ExitPointPath.Load(path);
+          try
+          {
+            ExitPointPath.Load(path, cluster.Sectors.SelectMany(s => s.Zones).ToList());
+          }
+          catch (ArgumentException e)
+          {
+            throw new ArgumentException($"Error loading ExitPointPath for Highway ${Macro}: {e.Message}");
+          }
           pointPath = ExitPointPath;
         }
         if (pointPath != null)
@@ -146,6 +160,12 @@ namespace X4DataLoader
           HighwayPoint? exitPoint = ExitPointPath.Sector.HighwayPoints.FirstOrDefault(p => p.Name == ExitPointPath.Zone.Name);
           exitPoint?.Connect(EntryPointPath.Sector);
         }
+        else
+        {
+          throw new ArgumentException(
+            $"EntryPointPath or ExitPointPath for Highway {Macro} in Cluster {cluster.Name} has no Sector or Zone"
+          );
+        }
       }
     }
 
@@ -154,19 +174,26 @@ namespace X4DataLoader
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
       foreach (XElement element in elements)
       {
-        HighwayClusterLevel? highway = new(element, file.ExtensionId, file.FileName);
-        Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
-          c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
-        );
-        if (cluster != null)
+        try
         {
-          cluster.Highways.Add(highway);
-          highway.Load(cluster);
-          Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
+          HighwayClusterLevel highway = new(element, file.ExtensionId, file.FileName);
+          Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
+            c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
+          );
+          if (cluster != null)
+          {
+            highway.Load(cluster);
+            cluster.Highways.Add(highway);
+            Log.Debug($"Sector Highway loaded for Cluster: {cluster.Name}");
+          }
+          else
+          {
+            Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
+          }
         }
-        else
+        catch (ArgumentException e)
         {
-          Log.Warn($"No matching cluster found for Sector Highway: {highway.Macro}");
+          Log.Error($"Error loading Sector Highway: {e.Message}");
         }
       }
     }
