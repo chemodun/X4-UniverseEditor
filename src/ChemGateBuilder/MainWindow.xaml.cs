@@ -311,66 +311,7 @@ namespace ChemGateBuilder
       }
     }
 
-    private string _statusMessage = "Ready";
-    public string StatusMessage
-    {
-      get => _statusMessage;
-      set
-      {
-        if (_statusMessage != value)
-        {
-          _statusMessage = value;
-          OnPropertyChanged(nameof(StatusMessage));
-          StartStatusMessageTimer();
-        }
-      }
-    }
-
-    private StatusMessageType _statusMessageType = StatusMessageType.Info;
-    public StatusMessageType StatusMessageType
-    {
-      get => _statusMessageType;
-      set
-      {
-        if (_statusMessageType != value)
-        {
-          _statusMessageType = value;
-          OnPropertyChanged(nameof(StatusMessageType));
-        }
-      }
-    }
-
-    // Timer to hide the StatusMessage
-    private DispatcherTimer? _statusMessageTimer;
-    private readonly TimeSpan _statusMessageDisplayDuration = TimeSpan.FromSeconds(5); // Adjust as needed
-
-    private void StartStatusMessageTimer()
-    {
-      // Stop existing timer if any
-      _statusMessageTimer?.Stop();
-
-      if (string.IsNullOrEmpty(_statusMessage))
-        return;
-
-      // Initialize and start the timer
-      _statusMessageTimer = new DispatcherTimer { Interval = _statusMessageDisplayDuration };
-      _statusMessageTimer.Tick += StatusMessageTimer_Tick;
-      _statusMessageTimer.Start();
-    }
-
-    private void StatusMessageTimer_Tick(object? sender, EventArgs e)
-    {
-      _statusMessageTimer?.Stop();
-      StatusMessage = string.Empty; // Clear the message
-      StatusMessageType = StatusMessageType.Info; // Reset the message type
-    }
-
-    // Method to set status message with type
-    public void SetStatusMessage(string message, StatusMessageType messageType)
-    {
-      StatusMessage = message;
-      StatusMessageType = messageType;
-    }
+    public StatusBarMessage StatusBar { get; set; } = new();
 
     private readonly string _gateMacroDefault = "props_gates_anc_gate_macro";
     private static readonly string GalaxyConnectionPrefix = "Chem_Gate";
@@ -493,7 +434,7 @@ namespace ChemGateBuilder
       // Optional: Log the validation message for debugging
       Log.Error($"Validation Error: {message}");
 
-      SetStatusMessage(message, StatusMessageType.Error);
+      StatusBar.SetStatusMessage(message, StatusMessageType.Error);
     }
 
     // Galaxy and Sectors
@@ -617,7 +558,7 @@ namespace ChemGateBuilder
       // Load sectors if the folder is valid
       if (ValidateX4DataFolder(X4DataFolder, out string errorMessage))
       {
-        SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
+        StatusBar.SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
         LoadX4Data();
       }
       GateMacros.Add(_gateMacroDefault);
@@ -704,7 +645,7 @@ namespace ChemGateBuilder
       // Validate the loaded X4DataFolder
       if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
       {
-        SetStatusMessage(errorMessage, StatusMessageType.Error);
+        StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
         // Prompt the user to select a valid folder
         _ = MessageBox.Show(
           "The X4 Data folder is not set. Please set it via Configuration -> X4 Data Folder!",
@@ -712,7 +653,7 @@ namespace ChemGateBuilder
           MessageBoxButton.OK,
           MessageBoxImage.Warning
         );
-        SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
+        StatusBar.SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
         // Show the ribbon tab options
         SelectedTabIndex = 2;
       }
@@ -775,18 +716,18 @@ namespace ChemGateBuilder
         {
           X4DataFolder = selectedPath;
           LoadX4Data();
-          SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
+          StatusBar.SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
         }
         else
         {
-          SetStatusMessage(errorMessage, StatusMessageType.Error);
+          StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
           MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
           // Optionally, prompt again
         }
       }
       else
       {
-        SetStatusMessage("Folder selection was canceled or invalid.", StatusMessageType.Warning);
+        StatusBar.SetStatusMessage("Folder selection was canceled or invalid.", StatusMessageType.Warning);
       }
     }
 
@@ -818,7 +759,7 @@ namespace ChemGateBuilder
       GatesConnectionCurrent?.SetColors(FactionColors);
       OnPropertyChanged(nameof(IsDataLoaded));
       GateConnectionReset();
-      SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
+      StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
     }
 
     // Filter methods
@@ -1101,19 +1042,19 @@ namespace ChemGateBuilder
         Log.Debug($"[ButtonSave_Click] GatesConnectionCurrent: {GatesConnectionCurrent}");
         if (Galaxy == null)
         {
-          SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
+          StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
           return;
         }
         if (GatesConnectionCurrent.SectorDirect == null || GatesConnectionCurrent.SectorOpposite == null)
         {
-          SetStatusMessage("Error: Both sectors must be selected.", StatusMessageType.Error);
+          StatusBar.SetStatusMessage("Error: Both sectors must be selected.", StatusMessageType.Error);
           return;
         }
         Sector? sectorDirect = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorDirect.Macro);
         Sector? sectorOpposite = Galaxy.GetSectorByMacro(GatesConnectionCurrent.SectorOpposite.Macro);
         if (sectorDirect == null || sectorOpposite == null)
         {
-          SetStatusMessage("Error: Sectors not found.", StatusMessageType.Error);
+          StatusBar.SetStatusMessage("Error: Sectors not found.", StatusMessageType.Error);
           return;
         }
         string sectorDirectId = sectorDirect.Id;
@@ -1166,7 +1107,7 @@ namespace ChemGateBuilder
         Cluster? clusterOpposite = Galaxy.GetClusterById(sectorOpposite.ClusterId);
         if (clusterDirect == null || clusterOpposite == null)
         {
-          SetStatusMessage("Error: Clusters not found.", StatusMessageType.Error);
+          StatusBar.SetStatusMessage("Error: Clusters not found.", StatusMessageType.Error);
           return;
         }
         GalaxyConnection galaxyConnection = new();
@@ -1262,7 +1203,7 @@ namespace ChemGateBuilder
     {
       if (Galaxy == null)
       {
-        SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
         return;
       }
       ChemGateKeeper newMod = new();
@@ -1280,11 +1221,11 @@ namespace ChemGateBuilder
         {
           CurrentGalaxyConnection = null;
         }
-        SetStatusMessage("Mod data loaded successfully.", StatusMessageType.Info);
+        StatusBar.SetStatusMessage("Mod data loaded successfully.", StatusMessageType.Info);
       }
       else
       {
-        SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
         Log.Warn("Mod data could not be loaded.");
       }
     }
@@ -1345,7 +1286,7 @@ namespace ChemGateBuilder
       else
       {
         Log.Error("Documentation file not found.");
-        SetStatusMessage("Error: Documentation file not found.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage("Error: Documentation file not found.", StatusMessageType.Error);
       }
     }
 
@@ -1360,13 +1301,6 @@ namespace ChemGateBuilder
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-  }
-
-  public enum StatusMessageType
-  {
-    Info,
-    Warning,
-    Error,
   }
 
   class WindowHelper

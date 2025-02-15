@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using SharedWindows;
 using X4DataLoader;
 using X4Map;
 
@@ -396,7 +397,7 @@ namespace ChemGateBuilder
           if (distance < mainWindow.GatesMinimalDistanceBetween)
           {
             string recommendation = AxisToChangeToMeetDistanceWithRecommendedValue(coordinates, coordinates2);
-            mainWindow.SetStatusMessage($"{message}. {recommendation}", StatusMessageType.Warning);
+            mainWindow.StatusBar.SetStatusMessage($"{message}. {recommendation}", StatusMessageType.Warning);
             return false;
           }
         }
@@ -439,7 +440,7 @@ namespace ChemGateBuilder
             if (distance < mainWindow.GatesMinimalDistanceBetween)
             {
               string recommendation = AxisToChangeToMeetDistanceWithRecommendedValue(coordinates, coordinates2);
-              mainWindow.SetStatusMessage($"{message}. {recommendation}", StatusMessageType.Warning);
+              mainWindow.StatusBar.SetStatusMessage($"{message}. {recommendation}", StatusMessageType.Warning);
               return false;
             }
           }

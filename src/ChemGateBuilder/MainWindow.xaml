@@ -96,13 +96,13 @@
         <Style x:Key="StatusMessageStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black"/> <!-- Default color -->
             <Style.Triggers>
-                <DataTrigger Binding="{Binding StatusMessageType}" Value="Info">
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Info">
                     <Setter Property="Foreground" Value="Blue"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding StatusMessageType}" Value="Warning">
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Warning">
                     <Setter Property="Foreground" Value="DarkOrange"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding StatusMessageType}" Value="Error">
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Error">
                     <Setter Property="Foreground" Value="DarkRed"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -334,7 +334,7 @@
             <!-- StatusBar Docked to Bottom -->
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
-                    <TextBlock Text="{Binding StatusMessage}"
+                    <TextBlock Text="{Binding StatusBar.StatusMessage}"
                         Style ="{StaticResource StatusMessageStyle}"/>
                 </StatusBarItem>
             </StatusBar>
