@@ -16,14 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
-    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
-    <PackageReference Include="NLog" Version="5.3.4" />
     <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <ProjectReference Include="..\X4Unpack\X4Unpack.csproj" />
     <ProjectReference Include="..\X4Map\X4Map.csproj" />
     <ProjectReference Include="..\SharedWindows\SharedWindows.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\builder.ico" />
     <Resource Include="Assets\x4.ico" />
     <Resource Include="Assets\galaxymap.ico" />
@@ -41,6 +41,12 @@
     <Resource Include="Assets\mapob_shipyard.png" />
     <Resource Include="Assets\mapob_tradestation.png" />
     <Resource Include="Assets\mapob_wharf.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="NLog" Version="5.3.4" />
   </ItemGroup>
 
 </Project>
