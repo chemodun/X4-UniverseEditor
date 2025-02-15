@@ -118,6 +118,13 @@
       "extra-files": [
         "Directory.Build.props"
       ]
+    },
+    "src/SharedWindows": {
+      "package-name": "SharedWindows",
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     }
   }
 }

@@ -6,5 +6,6 @@
   "src/X4Unpack": "0.3.1",
   "src/XMLPatch": "0.1.2",
   "src/X4Map": "0.2.0",
-  "src/GalaxyEditor": "0.0.1"
+  "src/GalaxyEditor": "0.0.1",
+  "src/SharedWindows": "0.0.1"
 }
