@@ -18,11 +18,82 @@ using X4Map.Converters;
 
 namespace GalaxyEditor
 {
+  public class AppConfig
+  {
+    public EditConfig Edit { get; set; } = new EditConfig();
+    public MapConfig Map { get; set; } = new MapConfig();
+    public DataConfig Data { get; set; } = new DataConfig();
+    public LoggingConfig Logging { get; set; } = new LoggingConfig();
+  }
+
+  public class EditConfig
+  {
+    public bool GatesActiveByDefault { get; set; } = true;
+    public int GatesMinimalDistanceBetween { get; set; } = 10;
+  }
+
+  public class MapConfig
+  {
+    public double MapColorsOpacity { get; set; } = 0.5;
+    public int SectorRadius { get; set; } = 400;
+  }
+
+  public class DataConfig
+  {
+    public string X4GameFolder { get; set; } = "";
+    public string X4DataExtractedPath { get; set; } = ".";
+    public bool X4DataVersionOverride { get; set; } = false;
+    public int X4DataVersion { get; set; } = 710;
+    public bool LoadModsData { get; set; } = false;
+  }
+
+  public class LoggingConfig : INotifyPropertyChanged
+  {
+    private string _logLevel = "Warning";
+    private bool _logToFile = false;
+
+    public string LogLevel
+    {
+      get => _logLevel;
+      set
+      {
+        if (_logLevel != value)
+        {
+          _logLevel = value;
+          OnPropertyChanged(nameof(LogLevel));
+          App.ConfigureNLog(this);
+        }
+      }
+    }
+
+    public bool LogToFile
+    {
+      get => _logToFile;
+      set
+      {
+        if (_logToFile != value)
+        {
+          _logToFile = value;
+          OnPropertyChanged(nameof(LogToFile));
+          App.ConfigureNLog(this);
+        }
+      }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+  }
+
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window, INotifyPropertyChanged
   {
+    private readonly string _configFileName;
     private string _x4DataFolder = ".";
     public string X4DataFolder
     {
@@ -34,18 +105,17 @@ namespace GalaxyEditor
           _x4DataFolder = value;
           OnPropertyChanged(nameof(X4DataFolder));
           OnPropertyChanged(nameof(X4DataFolderPath));
-          // SaveConfiguration();
+          SaveConfiguration();
         }
       }
     }
 
-    public Galaxy? Galaxy { get; private set; }
+    public Galaxy? GalaxyData { get; private set; }
+    public FactionColors FactionColors = new();
 
     public bool IsDataLoaded
     {
-      get =>
-        false /* AllSectors.Count > 0 */
-      ;
+      get => GalaxyData != null && GalaxyData.Clusters.Count > 0;
     }
 
     private bool _isModCanBeLoaded = true;
@@ -87,14 +157,48 @@ namespace GalaxyEditor
         }
       }
     }
-
+    private string _x4GameFolder = "";
+    public string X4GameFolder
+    {
+      get => _x4GameFolder;
+      set
+      {
+        if (_x4GameFolder != value)
+        {
+          _x4GameFolder = value;
+          OnPropertyChanged(nameof(X4GameFolder));
+          SaveConfiguration();
+        }
+      }
+    }
+    private List<GameFilesStructureItem> _x4DataStructure =
+    [
+      new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
+      new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
+      new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
+      new GameFilesStructureItem(id: "clusters", folder: "maps/xu_ep2_universe", ["clusters.xml"], MatchingModes.Suffix),
+      new GameFilesStructureItem(id: "sectors", folder: "maps/xu_ep2_universe", ["sectors.xml"], MatchingModes.Suffix),
+      new GameFilesStructureItem(id: "zones", folder: "maps/xu_ep2_universe", ["zones.xml"], MatchingModes.Suffix),
+      new GameFilesStructureItem(id: "races", folder: "libraries", ["races.xml"]),
+      new GameFilesStructureItem(id: "factions", folder: "libraries", ["factions.xml"]),
+      new GameFilesStructureItem(id: "modules", folder: "libraries", ["modules.xml"]),
+      new GameFilesStructureItem(id: "modulegroups", folder: "libraries", ["modulegroups.xml"]),
+      new GameFilesStructureItem(id: "constructionplans", folder: "libraries", ["constructionplans.xml"]),
+      new GameFilesStructureItem(id: "stationgroups", folder: "libraries", ["stationgroups.xml"]),
+      new GameFilesStructureItem(id: "stations", folder: "libraries", ["stations.xml"]),
+      new GameFilesStructureItem(id: "god", folder: "libraries", ["god.xml"]),
+      new GameFilesStructureItem(id: "sechighways", folder: "maps/xu_ep2_universe", ["sechighways.xml"], MatchingModes.Suffix),
+      new GameFilesStructureItem(id: "zonehighways", folder: "maps/xu_ep2_universe", ["zonehighways.xml"], MatchingModes.Suffix),
+      new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
+      new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
+    ];
     public string X4DataFolderPath
     {
       get
       {
         if (Directory.Exists(X4DataFolder))
         {
-          if (ValidateX4DataFolder(X4DataFolder, out _))
+          if (X4Galaxy.ValidateDataFolder(X4DataFolder, out _))
           {
             return System.IO.Path.GetFullPath(X4DataFolder);
           }
@@ -119,10 +223,10 @@ namespace GalaxyEditor
         {
           _x4DataVersionOverride = value;
           OnPropertyChanged(nameof(X4DataVersionOverride));
-          // SaveConfiguration();
-          if (!value && Galaxy != null && Galaxy.Version != 0 && Galaxy.Version != X4DataVersion)
+          SaveConfiguration();
+          if (!value && GalaxyData != null && GalaxyData.Version != 0 && GalaxyData.Version != X4DataVersion)
           {
-            X4DataVersion = Galaxy.Version;
+            X4DataVersion = GalaxyData.Version;
           }
         }
       }
@@ -140,7 +244,7 @@ namespace GalaxyEditor
           OnPropertyChanged(nameof(X4DataVersion));
           OnPropertyChanged(nameof(X4DataVersionString));
           // _chemGateKeeperMod.SetGameVersion(_x4DataVersion);
-          // SaveConfiguration();
+          SaveConfiguration();
         }
       }
     }
@@ -170,7 +274,7 @@ namespace GalaxyEditor
         {
           _loadModsData = value;
           OnPropertyChanged(nameof(LoadModsData));
-          // SaveConfiguration();
+          SaveConfiguration();
         }
       }
     }
@@ -185,7 +289,7 @@ namespace GalaxyEditor
         {
           _sectorRadius = value;
           OnPropertyChanged(nameof(SectorRadius));
-          // SaveConfiguration();
+          SaveConfiguration();
           // if (value > 0 && GatesConnectionCurrent != null)
           // {
           //   GatesConnectionCurrent.SetSectorMapInternalSize(value);
@@ -205,7 +309,7 @@ namespace GalaxyEditor
         {
           _mapColorsOpacity = value;
           OnPropertyChanged(nameof(MapColorsOpacity));
-          // SaveConfiguration();
+          SaveConfiguration();
         }
       }
     }
@@ -219,7 +323,7 @@ namespace GalaxyEditor
         {
           _logLevel = value;
           OnPropertyChanged(nameof(LogLevel));
-          // SaveConfiguration();
+          SaveConfiguration();
         }
       }
     }
@@ -254,19 +358,151 @@ namespace GalaxyEditor
       }
     }
 
-    private AssemblyInfo AssemblyInfoData { get; set; }
+    private AssemblyInfo _assemblyInfoData { get; set; }
+    private BackgroundWorker _backgroundWorker;
 
     public MainWindow()
     {
+      _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
+      LoadConfiguration();
       InitializeComponent();
       DataContext = this;
-      AssemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
-      Title = $"{AssemblyInfoData.Product} - {AssemblyInfoData.Version}";
+      _assemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
+      Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
+      // Load sectors if the folder is valid
+      if (X4Galaxy.ValidateDataFolder(X4DataFolder, out string errorMessage))
+      {
+        StatusBar.SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
+        LoadX4Data();
+      }
+      else
+      {
+        StatusBar.SetStatusMessage($"X4 Data folder validation failed: {errorMessage}", StatusMessageType.Error);
+      }
+      Dispatcher.BeginInvoke(
+        DispatcherPriority.Loaded,
+        new Action(() =>
+        {
+          X4DataNotLoadedCheckAndWarning();
+        })
+      );
     }
 
-    private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
+    private void LoadConfiguration()
     {
-      return X4Galaxy.ValidateDataFolder(folderPath, out errorMessage);
+      if (File.Exists(_configFileName))
+      {
+        var jsonString = File.ReadAllText(_configFileName);
+        var config = JsonSerializer.Deserialize<AppConfig>(jsonString);
+
+        if (config != null)
+        {
+          X4DataFolder = config.Data.X4DataExtractedPath;
+          X4DataVersionOverride = config.Data.X4DataVersionOverride;
+          if (X4DataVersionOverride)
+          {
+            X4DataVersion = config.Data.X4DataVersion;
+          }
+          if (!String.IsNullOrEmpty(config.Data.X4GameFolder))
+          {
+            X4GameFolder = config.Data.X4GameFolder;
+          }
+          LoadModsData = config.Data.LoadModsData;
+          MapColorsOpacity = config.Map.MapColorsOpacity;
+          SectorRadius = config.Map.SectorRadius;
+          LogLevel = config.Logging.LogLevel;
+          LogToFile = config.Logging.LogToFile;
+        }
+      }
+      else
+      {
+        // Set default values if the config file does not exist
+        X4DataFolder = ".";
+        LogLevel = "Warning";
+        LogToFile = false;
+      }
+    }
+
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+
+    private void SaveConfiguration()
+    {
+      var config = new AppConfig
+      {
+        Data = new DataConfig
+        {
+          X4DataExtractedPath = X4DataFolder,
+          X4DataVersionOverride = X4DataVersionOverride,
+          LoadModsData = LoadModsData,
+        },
+        Map = new MapConfig { MapColorsOpacity = MapColorsOpacity, SectorRadius = SectorRadius },
+        Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
+      };
+      App.ConfigureNLog(config.Logging);
+      if (X4DataVersionOverride)
+      {
+        config.Data.X4DataVersion = X4DataVersion;
+      }
+      if (!String.IsNullOrEmpty(X4GameFolder))
+      {
+        config.Data.X4GameFolder = X4GameFolder;
+      }
+      var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
+      File.WriteAllText(_configFileName, jsonString);
+    }
+
+    private void X4DataNotLoadedCheckAndWarning()
+    {
+      // Validate the loaded X4DataFolder
+      if (!X4Galaxy.ValidateDataFolder(X4DataFolder, out string errorMessage))
+      {
+        StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
+        // Prompt the user to select a valid folder
+        _ = MessageBox.Show(
+          "The X4 Data folder is not set. Please set it via Configuration -> X4 Data Folder!",
+          "Invalid or missing X4 Data Folder",
+          MessageBoxButton.OK,
+          MessageBoxImage.Warning
+        );
+        StatusBar.SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
+        // Show the ribbon tab options
+        SelectedTabIndex = 2;
+      }
+    }
+
+    private void LoadX4DataInBackgroundStart()
+    {
+      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
+      _backgroundWorker.DoWork += LoadX4DataInBackground;
+      _backgroundWorker.RunWorkerCompleted += LoadX4DataInBackgroundCompleted;
+      _backgroundWorker.RunWorkerAsync();
+    }
+
+    private void LoadX4DataInBackground(object sender, DoWorkEventArgs e)
+    {
+      LoadX4Data();
+    }
+
+    private void LoadX4DataInBackgroundCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      if (e.Error != null)
+      {
+        StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
+      }
+      _backgroundWorker.Dispose();
+    }
+
+    private void LoadX4Data()
+    {
+      GalaxyData = X4Galaxy.LoadData(X4DataFolder, _x4DataStructure, LoadModsData);
+
+      if (!X4DataVersionOverride && GalaxyData.Version != 0 && GalaxyData.Version != X4DataVersion)
+      {
+        X4DataVersion = GalaxyData.Version;
+      }
+      FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
+      OnPropertyChanged(nameof(IsDataLoaded));
+      StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
     }
 
     public void ButtonNewMod_Click(object sender, RoutedEventArgs e) { }
@@ -279,7 +515,72 @@ namespace GalaxyEditor
 
     public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e) { }
 
-    public void SelectX4DataFolder_Click(object sender, RoutedEventArgs e) { }
+    public void SelectX4DataFolder_Click(object sender, RoutedEventArgs e)
+    {
+      if (GalaxyData != null && GalaxyData.Clusters.Count > 0)
+      {
+        MessageBoxResult confirm = MessageBox.Show(
+          "Are you really want to reload the X4 Data?\n\nAny unsaved changes will be lost!",
+          "Reload X4 Data",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (confirm == MessageBoxResult.No)
+        {
+          return;
+        }
+      }
+      else
+      {
+        MessageBoxResult confirm = MessageBox.Show(
+          "Do you have an extracted X4 data folder?\n\nIf not, you can cancel and extract the data first.",
+          "Select X4 Data Folder",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (confirm == MessageBoxResult.No)
+        {
+          SelectedTabIndex = 1;
+          return;
+        }
+      }
+      var dialog = new System.Windows.Forms.FolderBrowserDialog
+      {
+        Description = "Please select the folder where the X4 extracted data files are located.",
+        ShowNewFolderButton = false,
+      };
+      if (GalaxyData != null && GalaxyData.Clusters.Count > 0)
+      {
+        dialog.SelectedPath = $"{X4DataFolder}\\";
+      }
+      else
+      {
+        dialog.SelectedPath = "";
+        dialog.RootFolder = Environment.SpecialFolder.MyComputer; // Set the root folder to MyComputer
+      }
+      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+      if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+      {
+        string selectedPath = dialog.SelectedPath;
+        if (X4Galaxy.ValidateDataFolder(selectedPath, out string errorMessage))
+        {
+          X4DataFolder = selectedPath;
+          StatusBar.SetStatusMessage("X4 Data folder set successfully. Loading the data ...", StatusMessageType.Info, true);
+          LoadX4DataInBackgroundStart();
+        }
+        else
+        {
+          StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
+          MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+          // Optionally, prompt again
+        }
+      }
+      else
+      {
+        StatusBar.SetStatusMessage("Folder selection was canceled or invalid.", StatusMessageType.Warning);
+      }
+    }
 
     public void ButtonReadme_Click(object sender, RoutedEventArgs e) { }
 
@@ -287,7 +588,7 @@ namespace GalaxyEditor
     {
       Dictionary<string, string> informationalLinks = new() { { "GitHub", "https://github.com/chemodun/X4-UniverseEditor" } };
       var bitmapImage = Icon as BitmapImage;
-      AboutWindow aboutWindow = new(bitmapImage!, AssemblyInfoData, informationalLinks) { Owner = this };
+      AboutWindow aboutWindow = new(bitmapImage!, _assemblyInfoData, informationalLinks) { Owner = this };
       aboutWindow.ShowDialog();
     }
 
