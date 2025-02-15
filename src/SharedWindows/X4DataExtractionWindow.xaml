@@ -1,0 +1,96 @@
+<Window x:Class="SharedWindows.X4DataExtractionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterOwner"
+        Title="X4 Data Extraction" Height="320" Width="800"
+        MaxHeight="600"
+        SizeToContent="Height" ResizeMode="CanResizeWithGrip"
+        >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" VerticalAlignment="Center">"X4: Foundations" folder:</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="{Binding GameFolder, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Row="0" Grid.Column="2" Margin="5" Width="100" VerticalAlignment="Center" Content="Select" Click="ButtonSelectGameFolder_Click"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center">Extracted Data folder Location:</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center" Text="{Binding ExtractedDataLocationFolder, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Grid.Row="1" Grid.Column="2" Margin="5" Width="100" VerticalAlignment="Center" Content="Select" Click="ButtonSelectExtractedDataLocationFolder_Click"/>
+
+        <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="5" Header="{Binding GameInfo}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="{Binding DataFolderOptionsHeader, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch"  IsEnabled="{Binding IsExtractionPossible}">
+                    <StackPanel Margin="5" Orientation="Vertical">
+                        <CheckBox Content="Extract only needed data" IsChecked="{Binding ExtractOnlyNeededData}"/>
+                        <CheckBox Content="Verify extracted data" IsChecked="{Binding VerifyExtractedData}"/> <!-- New option for data verification -->
+                        <CheckBox Content="Overwrite existing files" IsChecked="{Binding OverwriteExistingFiles}"/>
+                        <CheckBox Content="Set as source and load after extraction" IsChecked="{Binding LoadExtractedDataAfterExtraction}"/>
+                    </StackPanel>
+                </GroupBox>
+                <Grid Grid.Row="0" Grid.Column="1" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="Extract DLC's in addition:" VerticalAlignment="Stretch" IsEnabled="{Binding IsExtractionPossible}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="5" Orientation="Vertical">
+                                <ItemsControl ItemsSource="{Binding DlcsOptions}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </GroupBox> <!-- Fixed closing tag for GroupBox -->
+                    <GroupBox Grid.Row="1" Grid.Column="0" Margin="5" Header="Extract Mods in addition:"
+                            VerticalAlignment="Stretch"
+                            Visibility="{Binding IsModsOptionsVisible}"
+                            IsEnabled="{Binding IsExtractionPossible}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="5" Orientation="Vertical">
+                                <ItemsControl ItemsSource="{Binding ModsOptions}"> <!-- Changed DlcOptions to ModsOptions for clarity -->
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </GroupBox> <!-- Fixed closing tag for GroupBox -->
+                </Grid> <!-- Ensure this closing tag aligns properly -->
+                <ProgressBar x:Name="ProgressBarOfExtraction" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Height="20" Value="{Binding ExtractionProgress}" Maximum="100" HorizontalAlignment="Stretch"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding ExtractionProgressText}" Background="Transparent" TextAlignment="Left"/>
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Margin="5" Width="100" Content="Cancel" Click="ButtonCancel_Click"/>
+                    <Button Margin="5" Width="100" Content="Extract Data" Click="ButtonStartExtraction_Click" IsEnabled="{Binding IsExtractionPossible}"/>
+                </StackPanel> <!-- Ensure this closing tag is added for StackPanel -->
+            </Grid> <!-- Ensure this closing tag aligns properly -->
+        </GroupBox> <!-- Added this closing tag for GroupBox -->
+    </Grid>
+</Window>
