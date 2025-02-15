@@ -225,12 +225,15 @@
         </fluent:Ribbon>
         <DockPanel LastChildFill="True" IsEnabled="{Binding IsDataLoaded}" x:Name="MainDockPanel">
             <!-- StatusBar Docked to Bottom -->
-            <StatusBar DockPanel.Dock="Bottom">
+            <StatusBar DockPanel.Dock="Bottom" Height="20">
                 <StatusBarItem>
                     <TextBlock Text="{Binding StatusBar.StatusMessage}"
                         Style ="{StaticResource StatusMessageStyle}"/>
                 </StatusBarItem>
             </StatusBar>
+            <!-- Main Content -->
+            <Grid>
+            </Grid>
         </DockPanel>
     </DockPanel>
 </Window>
