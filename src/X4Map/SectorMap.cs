@@ -17,8 +17,6 @@ namespace X4Map
 {
   public class SectorMap : INotifyPropertyChanged
   {
-    private double _minInternalSizeKm = 100;
-    private double _maxInternalSizeKm = 999;
     private double _visualX;
     private double _visualY;
     protected double _visualSizePx = 200; // Default size
@@ -29,31 +27,6 @@ namespace X4Map
     private readonly List<string> StationsToDisplay = ["equipmentdock", "tradestation", "tradingstation", "shipyard", "wharf"];
     private FactionColors FactionColors = new();
     public bool MapMode = false;
-
-    public double MinInternalSizeKm
-    {
-      get => _minInternalSizeKm;
-      set
-      {
-        if (_minInternalSizeKm != value)
-        {
-          _minInternalSizeKm = value;
-          OnPropertyChanged(nameof(MinInternalSizeKm));
-        }
-      }
-    }
-    public double MaxInternalSizeKm
-    {
-      get => _maxInternalSizeKm;
-      set
-      {
-        if (_maxInternalSizeKm != value)
-        {
-          _maxInternalSizeKm = value;
-          OnPropertyChanged(nameof(MaxInternalSizeKm));
-        }
-      }
-    }
     public double VisualX
     {
       get => _visualX;
@@ -179,8 +152,6 @@ namespace X4Map
     public void From(SectorMap sectorMap)
     {
       InternalSizeKm = sectorMap.InternalSizeKm;
-      MinInternalSizeKm = sectorMap.MinInternalSizeKm;
-      MaxInternalSizeKm = sectorMap.MaxInternalSizeKm;
       Sector = sectorMap.Sector;
       FactionColors = sectorMap.FactionColors;
       OwnerColor = sectorMap.OwnerColor;
