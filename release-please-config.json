@@ -111,6 +111,13 @@
       "extra-files": [
         "Directory.Build.props"
       ]
+    },
+    "src/GalaxyEditor": {
+      "package-name": "GalaxyEditor",
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
     }
   }
 }
