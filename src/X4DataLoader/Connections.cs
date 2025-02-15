@@ -370,11 +370,13 @@ namespace X4DataLoader
     public override void Load(XElement element, string source, string fileName)
     {
       base.Load(element, source, fileName);
+      IsActive = true;
       if (MacroXML == null)
       {
-        throw new ArgumentException("Gate connection must have a macro element");
+        // throw new ArgumentException("Gate connection must have a macro element");
+        Log.Error("Gate connection must have a macro element");
+        return;
       }
-      IsActive = true;
       XElement? propertiesElement = MacroXML.Element("properties");
       if (propertiesElement != null)
       {
