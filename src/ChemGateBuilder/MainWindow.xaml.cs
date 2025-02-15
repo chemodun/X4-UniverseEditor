@@ -531,6 +531,8 @@ namespace ChemGateBuilder
 
     public FactionColors FactionColors = new();
 
+    BitmapImage _appIcon;
+
     // Constructor
     public MainWindow()
     {
@@ -541,6 +543,7 @@ namespace ChemGateBuilder
       DataContext = this;
       Assembly assembly = Assembly.GetExecutingAssembly();
       AssemblyName assemblyName = assembly.GetName();
+      _appIcon = Icon as BitmapImage ?? new BitmapImage();
       Title = $"{Title} v{assemblyName.Version}";
       _chemGateKeeperMod.SetGameVersion(X4DataVersion);
       GatesConnectionCurrent.SetMapsCanvasAndHexagons(SectorDirectCanvas, SectorDirectHexagon, SectorOppositeCanvas, SectorOppositeHexagon);
@@ -1248,10 +1251,13 @@ namespace ChemGateBuilder
 
     public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e)
     {
-      X4DataExtractionWindow extractionWindow = new() { Owner = this };
-      extractionWindow.Connect();
+      X4DataExtractionWindow extractionWindow = new(_appIcon, X4GameFolder, X4DataFolder, LoadModsData) { Owner = this };
       if (extractionWindow.ShowDialog() == true)
       {
+        if (!string.IsNullOrEmpty(extractionWindow.GameFolder) && Directory.Exists(extractionWindow.GameFolder))
+        {
+          X4GameFolder = extractionWindow.GameFolder;
+        }
         string extractedDataFolder = extractionWindow.ExtractedDataFolder;
         if (!string.IsNullOrEmpty(extractedDataFolder))
         {
@@ -1269,9 +1275,9 @@ namespace ChemGateBuilder
         { "EGOSOFT Forum", "https://forum.egosoft.com/viewtopic.php?p=5262362" },
         { "Nexus", "https://www.nexusmods.com/x4foundations/mods/1587/" },
       };
-      var bitmapImage = Icon as BitmapImage;
+
       AssemblyInfo assemblyInfo = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
-      AboutWindow aboutWindow = new(bitmapImage!, assemblyInfo, informationalLinks) { Owner = this };
+      AboutWindow aboutWindow = new(_appIcon, assemblyInfo, informationalLinks) { Owner = this };
       aboutWindow.ShowDialog();
     }
 
