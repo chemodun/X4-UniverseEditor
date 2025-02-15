@@ -7,7 +7,9 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using SharedWindows;
 using Utilities.Logging;
 using X4DataLoader;
 using X4Map;
@@ -1320,7 +1322,15 @@ namespace ChemGateBuilder
 
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
     {
-      AboutWindow aboutWindow = new() { Owner = this };
+      Dictionary<string, string> informationalLinks = new()
+      {
+        { "GitHub", "https://github.com/chemodun/X4-UniverseEditor" },
+        { "EGOSOFT Forum", "https://forum.egosoft.com/viewtopic.php?p=5262362" },
+        { "Nexus", "https://www.nexusmods.com/x4foundations/mods/1587/" },
+      };
+      var bitmapImage = Icon as BitmapImage;
+      AssemblyInfo assemblyInfo = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
+      AboutWindow aboutWindow = new(bitmapImage!, assemblyInfo, informationalLinks) { Owner = this };
       aboutWindow.ShowDialog();
     }
 
