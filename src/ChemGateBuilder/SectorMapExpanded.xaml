@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:converters="clr-namespace:X4Map.Converters;assembly=X4Map"
+        xmlns:mapconstants="clr-namespace:X4Map.Constants;assembly=X4Map"
         Title="Sector Map" MinHeight="600" MinWidth="600"
         WindowStartupLocation="CenterOwner"
         Icon="{StaticResource BuilderIcon}"
@@ -118,8 +119,8 @@
                         Text="{Binding SectorMapExpanded.InternalSizeKm, StringFormat='Radius: {0} km'}" />
             <Slider x:Name="SectorDirectRadiusSlider"
                     Style="{StaticResource SectorInternalRadius}"
-                    Minimum="{Binding SectorMapExpanded.MinInternalSizeKm}"
-                    Maximum="{Binding SectorMapExpanded.MaxInternalSizeKm}"
+                    Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                    Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
                     Value="{Binding SectorMapExpanded.InternalSizeKm, Mode=TwoWay}"
             />
         </StackPanel>

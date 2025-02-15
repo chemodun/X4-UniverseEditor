@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:converters="clr-namespace:X4Map.Converters;assembly=X4Map"
+        xmlns:mapconstants="clr-namespace:X4Map.Constants;assembly=X4Map"
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
@@ -289,8 +290,8 @@
                                 VerticalAlignment="Center"
                                 TickFrequency="50"
                                 IsSnapToTickEnabled="True"
-                                Minimum="{Binding GatesConnectionCurrent.SectorDirectMap.MinInternalSizeKm}"
-                                Maximum="{Binding GatesConnectionCurrent.SectorDirectMap.MaxInternalSizeKm}"
+                                Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                                Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
                                 Value="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Grid.Row="1" Grid.Column="2"
                                 />
@@ -460,8 +461,8 @@
                                                             Text="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
                                                 <Slider x:Name="SectorDirectRadiusSlider"
                                                         Style="{StaticResource SectorInternalRadius}"
-                                                        Minimum="{Binding GatesConnectionCurrent.SectorDirectMap.MinInternalSizeKm}"
-                                                        Maximum="{Binding GatesConnectionCurrent.SectorDirectMap.MaxInternalSizeKm}"
+                                                        Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                                                        Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
                                                         Value="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, Mode=TwoWay}"
                                                 />
                                             </StackPanel>
@@ -666,8 +667,8 @@
                                                             Text="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
                                                 <Slider x:Name="SectorOppositeRadiusSlider"
                                                         Style="{StaticResource SectorInternalRadius}"
-                                                        Minimum="{Binding GatesConnectionCurrent.SectorOppositeMap.MinInternalSizeKm}"
-                                                        Maximum="{Binding GatesConnectionCurrent.SectorOppositeMap.MaxInternalSizeKm}"
+                                                        Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                                                        Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
                                                         Value="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, Mode=TwoWay}"
                                                 />
                                             </StackPanel>
