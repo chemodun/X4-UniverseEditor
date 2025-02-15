@@ -359,6 +359,7 @@ namespace GalaxyEditor
     }
 
     private AssemblyInfo _assemblyInfoData { get; set; }
+    private BitmapImage _appIcon { get; set; }
     private BackgroundWorker _backgroundWorker;
 
     public MainWindow()
@@ -368,6 +369,7 @@ namespace GalaxyEditor
       InitializeComponent();
       DataContext = this;
       _assemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
+      _appIcon = Icon as BitmapImage ?? new BitmapImage();
       Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
       // Load sectors if the folder is valid
       if (X4Galaxy.ValidateDataFolder(X4DataFolder, out string errorMessage))
@@ -513,7 +515,23 @@ namespace GalaxyEditor
 
     public void ButtonSaveModAs_Click(object sender, RoutedEventArgs e) { }
 
-    public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e) { }
+    public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e)
+    {
+      X4DataExtractionWindow extractionWindow = new(_appIcon, X4GameFolder, X4DataFolder, LoadModsData) { Owner = this };
+      if (extractionWindow.ShowDialog() == true)
+      {
+        if (!string.IsNullOrEmpty(extractionWindow.GameFolder) && Directory.Exists(extractionWindow.GameFolder))
+        {
+          X4GameFolder = extractionWindow.GameFolder;
+        }
+        string extractedDataFolder = extractionWindow.ExtractedDataFolder;
+        if (!string.IsNullOrEmpty(extractedDataFolder))
+        {
+          X4DataFolder = extractedDataFolder;
+          LoadX4Data();
+        }
+      }
+    }
 
     public void SelectX4DataFolder_Click(object sender, RoutedEventArgs e)
     {
@@ -587,8 +605,7 @@ namespace GalaxyEditor
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
     {
       Dictionary<string, string> informationalLinks = new() { { "GitHub", "https://github.com/chemodun/X4-UniverseEditor" } };
-      var bitmapImage = Icon as BitmapImage;
-      AboutWindow aboutWindow = new(bitmapImage!, _assemblyInfoData, informationalLinks) { Owner = this };
+      AboutWindow aboutWindow = new(_appIcon, _assemblyInfoData, informationalLinks) { Owner = this };
       aboutWindow.ShowDialog();
     }
 
