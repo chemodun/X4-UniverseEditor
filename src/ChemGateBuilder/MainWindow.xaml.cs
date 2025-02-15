@@ -108,7 +108,7 @@ namespace ChemGateBuilder
         }
       }
     }
-    private List<GameFilesStructureItem> X4DataStructure =
+    private List<GameFilesStructureItem> _x4DataStructure =
     [
       new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
       new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
@@ -715,8 +715,8 @@ namespace ChemGateBuilder
         if (ValidateX4DataFolder(selectedPath, out string errorMessage))
         {
           X4DataFolder = selectedPath;
-          LoadX4Data();
           StatusBar.SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
+          LoadX4Data();
         }
         else
         {
@@ -735,7 +735,7 @@ namespace ChemGateBuilder
     {
       AllSectors.Clear();
 
-      Galaxy = X4Galaxy.LoadData(X4DataFolder, X4DataStructure, LoadModsData);
+      Galaxy = X4Galaxy.LoadData(X4DataFolder, _x4DataStructure, LoadModsData);
       var sectors = Galaxy.GetSectors();
 
       foreach (var sector in sectors.Values.OrderBy(s => s.Name))
