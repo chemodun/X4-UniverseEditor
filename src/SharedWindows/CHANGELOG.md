@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.1.0...SharedWindows@v0.2.0) (2025-02-15)
+
+
+### Features
+
+* add StatusBarMessage class for dynamic status updates ([3460cfc](https://github.com/chemodun/X4-UniverseEditor/commit/3460cfc52694b918a28af4dc8f1fd10ef07c54ec))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows-v0.0.1...SharedWindows@v0.1.0) (2025-02-15)
 
 
