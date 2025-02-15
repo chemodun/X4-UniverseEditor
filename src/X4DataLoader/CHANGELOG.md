@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.6.0...X4DataLoader@v0.6.1) (2025-02-15)
+
+
+### Code Refactoring
+
+* **LoadData:** update LoadData method to accept gameFilesStructure as a parameter and remove "predefined" structure ([6a0c26d](https://github.com/chemodun/X4-UniverseEditor/commit/6a0c26dd01702c175ce40dcab58f1b22943debcd))
+* **X4Galaxy:** move data validation method for X4 data folder inside ([056a168](https://github.com/chemodun/X4-UniverseEditor/commit/056a168e2ee5fda60de5517743c4e169e9bcf5e0))
+
 ## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader-v0.5.1...X4DataLoader@v0.6.0) (2025-02-13)
 
 
