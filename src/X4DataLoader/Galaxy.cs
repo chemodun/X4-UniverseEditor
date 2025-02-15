@@ -156,7 +156,15 @@ namespace X4DataLoader
           else if (reference == "destination")
           {
             var galaxyConnection = new GalaxyConnection();
-            galaxyConnection.Load(connectionElement, allClusters, source, fileName, additionalZones);
+            try
+            {
+              galaxyConnection.Load(connectionElement, allClusters, source, fileName, additionalZones);
+            }
+            catch (Exception ex)
+            {
+              Log.Error($"Error loading GalaxyConnection: {ex.Message}");
+              continue; // Skip this connection
+            }
             Connections.Add(galaxyConnection);
           }
         }
@@ -267,18 +275,31 @@ namespace X4DataLoader
       Name = XmlHelper.GetAttribute(element, "name") ?? "";
       var pathDirect = XmlHelper.GetAttribute(element, "path") ?? "";
       PathDirect = new GalaxyConnectionPath();
-      PathDirect.Load(pathDirect, allClusters, additionalZones);
-
+      try
+      {
+        PathDirect.Load(pathDirect, allClusters, additionalZones);
+      }
+      catch (Exception ex)
+      {
+        throw new ArgumentException($"Error loading GalaxyConnection {Name}, error in Direct: {ex.Message}");
+      }
       var macroElement = element.Element("macro");
       if (macroElement != null)
       {
         var pathOpposite = XmlHelper.GetAttribute(macroElement, "path") ?? "";
         PathOpposite = new GalaxyConnectionPath();
-        PathOpposite.Load(pathOpposite, allClusters, additionalZones);
+        try
+        {
+          PathOpposite.Load(pathOpposite, allClusters, additionalZones);
+        }
+        catch (Exception ex)
+        {
+          throw new ArgumentException($"Error loading GalaxyConnection {Name}, error in Opposite: {ex.Message}");
+        }
       }
       else
       {
-        throw new ArgumentException("GalaxyConnection must have a macro element with path attribute");
+        throw new ArgumentException($"GalaxyConnection {Name} must have a macro element with path attribute");
       }
 
       Source = XmlHelper.GetAttribute(element, "_source") ?? source;
