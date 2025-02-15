@@ -3,10 +3,233 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mapconstants="clr-namespace:X4Map.Constants;assembly=X4Map"
         xmlns:local="clr-namespace:GalaxyEditor"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        xmlns:fluent="urn:fluent-ribbon"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+        Title="Chem Galaxy Editor"
+        MinWidth="1200" MinHeight="980"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <Style x:Key="FluentButtonStyle" TargetType="fluent:Button">
+            <Setter Property="Width" Value="60"/>
+        </Style>
+        <Style x:Key="FontAwesomeIconStyle" TargetType="fa:IconImage">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+        <Style x:Key="StatusMessageStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black"/> <!-- Default color -->
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Info">
+                    <Setter Property="Foreground" Value="Blue"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Warning">
+                    <Setter Property="Foreground" Value="DarkOrange"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Error">
+                    <Setter Property="Foreground" Value="DarkRed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <DockPanel>
+        <fluent:Ribbon DockPanel.Dock="Top" x:Name="MainRibbon" SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+            <fluent:RibbonTabItem Header="Mod" x:Name="ModTab">
+                <fluent:RibbonGroupBox Header="Mod Actions">
+                    <fluent:Button Header="New"
+                                    IsEnabled="{Binding IsModCanBeCreated}"
+                                    Click="ButtonNewMod_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileCirclePlus" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Load"
+                                    IsEnabled="{Binding IsDataLoaded}"
+                                    Click="ButtonLoadMod_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileArrowUp" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Save"
+                                    IsEnabled="{Binding IsModCanBeSaved}"
+                                    Click="ButtonSaveMod_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileArrowDown" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Save as"
+                                    IsEnabled="{Binding IsModCanBeSavedAs}"
+                                    Click="ButtonSaveModAs_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FilePen" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Program">
+                    <fluent:Button Header="Exit"
+                                    Click="ButtonExit_Click"
+                                    Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage  Icon="XMark" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="X4 Data">
+                <fluent:RibbonGroupBox Header="X4 Data">
+                    <fluent:Button Header="Extract"
+                                    Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonExtractX4Data_Click">
+                        <fluent:Button.Icon>
+                            <StaticResource ResourceKey="XIcon"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Configuration" x:Name="ConfigurationTab">
+                <fluent:RibbonGroupBox Header="X4 Data related">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="X4 Data Folder:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <fluent:Button Header="{Binding X4DataFolderPath}"
+                                        Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Click="SelectX4DataFolder_Click" SizeDefinition="Middle"
+                                        MinWidth= "100"
+                                        MaxWidth="200" HorizontalAlignment="Left"
+                                        ToolTip="{Binding X4DataFolderPath}">
+                            <fluent:Button.Icon>
+                                <StaticResource ResourceKey="XIcon"/>
+                            </fluent:Button.Icon>
+                        </fluent:Button>
+                        <Label Content="X4 Data Version:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    IsChecked="{Binding X4DataVersionOverride}"
+                                    ToolTip="Override the detected version"/>
+                        <ComboBox x:Name="X4DataVersionComboBox"
+                                    Grid.Row="1" Grid.Column="2"
+                                    Margin="0"
+                                    SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
+                                    ItemsSource="{Binding X4DataVersions}">
+                        </ComboBox>
+                        <Label Content="Load Mods Data:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                IsChecked="{Binding LoadModsData}"
+                                ToolTip="Load Mods data, not only official DLC's"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Map related">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Content="Colors opacity:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding MapColorsOpacity, StringFormat='{}{0:F2}'}"/>
+                        <Slider x:Name="MapColorsOpacitySlider"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                MinWidth="80"
+                                VerticalAlignment="Center"
+                                TickFrequency="0.05"
+                                IsSnapToTickEnabled="True"
+                                Minimum="0"
+                                Maximum="1"
+                                Value="{Binding MapColorsOpacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Grid.Row="0" Grid.Column="2"
+                                />
+                        <Label Content="Sector Radius, km:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="1" Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SectorRadius}"/>
+                        <Slider x:Name="SectorRadiusSlider"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                MinWidth="80"
+                                VerticalAlignment="Center"
+                                TickFrequency="50"
+                                IsSnapToTickEnabled="True"
+                                Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                                Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
+                                Value="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Grid.Row="1" Grid.Column="2"
+                                />
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Logging Options">
+                    <StackPanel>
+                        <ComboBox
+                            x:Name="LoggingLevelComboBox"
+                            Margin="5"
+                            SelectedValuePath="Content"
+                            SelectedValue="{Binding LogLevel, Mode=TwoWay}">
+                            <ComboBoxItem Content="Error"/>
+                            <ComboBoxItem Content="Warning"/>
+                            <ComboBoxItem Content="Info"/>
+                            <ComboBoxItem Content="Debug"/>
+                        </ComboBox>
+                        <CheckBox Content="Enable Writing to File" Margin="5" IsChecked="{Binding LogToFile}"/>
+                    </StackPanel>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Help" x:Name="HelpTab">
+                <fluent:RibbonGroupBox Header="Help Actions">
+                    <fluent:Button Header="Readme" Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonReadme_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="Readme" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="About" Style="{StaticResource FluentButtonStyle}"
+                                    Click="ButtonAbout_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="InfoCircle" Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+        </fluent:Ribbon>
+        <DockPanel LastChildFill="True" IsEnabled="{Binding IsDataLoaded}" x:Name="MainDockPanel">
+            <!-- StatusBar Docked to Bottom -->
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusBar.StatusMessage}"
+                        Style ="{StaticResource StatusMessageStyle}"/>
+                </StatusBarItem>
+            </StatusBar>
+        </DockPanel>
+    </DockPanel>
 </Window>
