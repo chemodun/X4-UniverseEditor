@@ -41,9 +41,4 @@
     <Resource Include="Assets\mapob_wharf.png" />
   </ItemGroup>
 
-  <Target Name="ReadVersion" BeforeTargets="BeforeBuild">
-    <ReadLinesFromFile File="version.txt">
-      <Output TaskParameter="Lines" PropertyName="Version" />
-    </ReadLinesFromFile>
-  </Target>
 </Project>
