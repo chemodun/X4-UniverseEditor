@@ -45,12 +45,14 @@ namespace SharedWindows
     private DispatcherTimer? _statusMessageTimer;
     private readonly TimeSpan _statusMessageDisplayDuration = TimeSpan.FromSeconds(5); // Adjust as needed
 
+    private bool Infinity = false;
+
     private void StartStatusMessageTimer()
     {
       // Stop existing timer if any
       _statusMessageTimer?.Stop();
 
-      if (string.IsNullOrEmpty(_statusMessage))
+      if (string.IsNullOrEmpty(_statusMessage) || Infinity)
         return;
 
       // Initialize and start the timer
@@ -67,8 +69,9 @@ namespace SharedWindows
     }
 
     // Method to set status message with type
-    public void SetStatusMessage(string message, StatusMessageType messageType)
+    public void SetStatusMessage(string message, StatusMessageType messageType, bool infinity = false)
     {
+      Infinity = infinity;
       StatusMessage = message;
       StatusMessageType = messageType;
     }
