@@ -240,10 +240,28 @@ namespace GalaxyEditor
     }
 
     public StatusBarMessage StatusBar { get; set; } = new();
+    private int _selectedTabIndex = -1;
+    public int SelectedTabIndex
+    {
+      get => _selectedTabIndex;
+      set
+      {
+        if (_selectedTabIndex != value)
+        {
+          _selectedTabIndex = value;
+          OnPropertyChanged(nameof(SelectedTabIndex));
+        }
+      }
+    }
+
+    private AssemblyInfo AssemblyInfoData { get; set; }
 
     public MainWindow()
     {
       InitializeComponent();
+      DataContext = this;
+      AssemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
+      Title = $"{AssemblyInfoData.Product} - {AssemblyInfoData.Version}";
     }
 
     private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
@@ -269,8 +287,7 @@ namespace GalaxyEditor
     {
       Dictionary<string, string> informationalLinks = new() { { "GitHub", "https://github.com/chemodun/X4-UniverseEditor" } };
       var bitmapImage = Icon as BitmapImage;
-      AssemblyInfo assemblyInfo = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
-      AboutWindow aboutWindow = new(bitmapImage!, assemblyInfo, informationalLinks) { Owner = this };
+      AboutWindow aboutWindow = new(bitmapImage!, AssemblyInfoData, informationalLinks) { Owner = this };
       aboutWindow.ShowDialog();
     }
 

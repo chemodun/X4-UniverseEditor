@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\x4.ico" />
+    <Resource Include="Assets\editor.ico" />
   </ItemGroup>
 
   <ItemGroup>
