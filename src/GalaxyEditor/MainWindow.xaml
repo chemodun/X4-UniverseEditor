@@ -232,7 +232,13 @@
                 </StatusBarItem>
             </StatusBar>
             <!-- Main Content -->
-            <Grid>
+            <Grid x:Name="MainGrid" SizeChanged="MainGrid_SizeChanged">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
             </Grid>
         </DockPanel>
     </DockPanel>

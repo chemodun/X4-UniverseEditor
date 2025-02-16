@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -111,6 +112,8 @@ namespace GalaxyEditor
     }
 
     public Galaxy? GalaxyData { get; private set; }
+
+    private GalaxyMapViewer? _galaxyMapViewer = null;
     public FactionColors FactionColors = new();
 
     public bool IsDataLoaded
@@ -171,7 +174,7 @@ namespace GalaxyEditor
         }
       }
     }
-    private List<GameFilesStructureItem> _x4DataStructure =
+    private readonly List<GameFilesStructureItem> _x4DataStructure =
     [
       new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
       new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
@@ -358,8 +361,8 @@ namespace GalaxyEditor
       }
     }
 
-    private AssemblyInfo _assemblyInfoData { get; set; }
-    private BitmapImage _appIcon { get; set; }
+    private readonly AssemblyInfo _assemblyInfoData;
+    private readonly BitmapImage _appIcon;
     private BackgroundWorker _backgroundWorker;
 
     public MainWindow()
@@ -388,6 +391,7 @@ namespace GalaxyEditor
           X4DataNotLoadedCheckAndWarning();
         })
       );
+      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
     }
 
     private void LoadConfiguration()
@@ -480,12 +484,12 @@ namespace GalaxyEditor
       _backgroundWorker.RunWorkerAsync();
     }
 
-    private void LoadX4DataInBackground(object sender, DoWorkEventArgs e)
+    private void LoadX4DataInBackground(object? sender, DoWorkEventArgs e)
     {
       LoadX4Data();
     }
 
-    private void LoadX4DataInBackgroundCompleted(object sender, RunWorkerCompletedEventArgs e)
+    private void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
       if (e.Error != null)
       {
@@ -505,6 +509,39 @@ namespace GalaxyEditor
       FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
       OnPropertyChanged(nameof(IsDataLoaded));
       StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
+      Grid mainGrid = (Grid)FindName("MainGrid");
+      if (_galaxyMapViewer != null && mainGrid != null)
+      {
+        mainGrid.Children.Remove(_galaxyMapViewer);
+      }
+      if (mainGrid != null)
+      {
+        _galaxyMapViewer = new GalaxyMapViewer(GalaxyData, FactionColors, MapColorsOpacity, SectorRadius);
+        Grid.SetRow(_galaxyMapViewer, 1);
+        Grid.SetColumn(_galaxyMapViewer, 1);
+        mainGrid.Children.Add(_galaxyMapViewer);
+        _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
+      }
+    }
+
+    private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      if (_galaxyMapViewer != null)
+      {
+        Log.Debug($"MainGrid_SizeChanged: {e.NewSize.Width}, {e.NewSize.Height}");
+        _galaxyMapViewer.Width = e.NewSize.Width;
+        _galaxyMapViewer.Height = e.NewSize.Height;
+      }
+    }
+
+    private void GalaxyMapViewer_SectorSelected(object? sender, SectorEventArgs e)
+    {
+      // Your code to run when the event is raised
+      if (e.SelectedSector != null)
+      {
+        Log.Debug($"Selected sector: {e.SelectedSector.Name}");
+        // Show the sector details
+      }
     }
 
     public void ButtonNewMod_Click(object sender, RoutedEventArgs e) { }
