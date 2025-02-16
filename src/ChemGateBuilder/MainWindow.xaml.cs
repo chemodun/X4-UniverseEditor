@@ -664,7 +664,7 @@ namespace ChemGateBuilder
 
     private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
     {
-      return X4Galaxy.ValidateDataFolder(folderPath, out errorMessage);
+      return DataLoader.ValidateDataFolder(folderPath, out errorMessage);
     }
 
     private void SelectX4DataFolder_Click(object? sender, RoutedEventArgs? e)
@@ -737,8 +737,9 @@ namespace ChemGateBuilder
     private void LoadX4Data()
     {
       AllSectors.Clear();
-
-      Galaxy = X4Galaxy.LoadData(X4DataFolder, _x4DataStructure, LoadModsData);
+      DataLoader dataLoader = new();
+      Galaxy = new();
+      dataLoader.LoadData(Galaxy, X4DataFolder, _x4DataStructure, LoadModsData);
       var sectors = Galaxy.GetSectors();
 
       foreach (var sector in sectors.Values.OrderBy(s => s.Name))

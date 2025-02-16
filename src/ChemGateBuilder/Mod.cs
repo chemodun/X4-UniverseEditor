@@ -121,7 +121,8 @@ namespace ChemGateBuilder
           new GameFilesStructureItem(id: "zones", folder: "maps/xu_ep2_universe", ["zones.xml"], MatchingModes.Suffix),
           new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
         ];
-        List<GameFile> processedFiles = DataLoader.GatherFiles(
+        DataLoader dataLoader = new();
+        List<GameFile> processedFiles = dataLoader.GatherFiles(
           currentPath,
           gameFilesStructure,
           galaxy.Extensions,
