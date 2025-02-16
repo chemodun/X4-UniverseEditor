@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Utilities.Logging;
@@ -104,8 +105,12 @@ namespace X4Map
     private double canvasToScrollWidthDelta = 0;
     private double canvasToScrollHeightDelta = 0;
     private double scrollVerticalOffset = 0;
-    private double canvasWidth = 0;
+    public Sector? SelectedSector = null;
 
+    // Fields to track panning state
+    private bool isPanning = false;
+    private Point panStartPoint = new();
+    private double canvasWidth = 0;
     private readonly List<GalaxyMapCell> MapCells = [];
     public List<SectorMapItem> SectorsItems = [];
     public ObservableCollection<MapOptions> DLCsOptions { get; set; } = [];
@@ -116,6 +121,7 @@ namespace X4Map
     private readonly List<GalaxyConnection> _extraConnections;
     private readonly Dictionary<string, List<ObjectInSector>>? _extraObjects;
     private readonly List<GalaxyMapInterConnection> InterConnections = [];
+    public event EventHandler<SectorEventArgs>? OnSectorSelected;
 
     public GalaxyMapViewer(
       Galaxy galaxy,
@@ -132,9 +138,9 @@ namespace X4Map
       _sectorRadius = sectorRadius;
       _extraObjects = extraObjects;
       _extraConnections = extraConnections ?? [];
+      Background = Brushes.LightGray;
       _galaxyCanvas = new Canvas { Background = Brushes.LightGray };
       AddChild(_galaxyCanvas);
-      Content = this;
       foreach (string dlcId in Galaxy.DLCOrder)
       {
         ExtensionInfo? dlc = GalaxyData.DLCs.Find(dlc => dlc.Id == dlcId);
@@ -158,6 +164,14 @@ namespace X4Map
       }
       ScrollChanged += GalaxyMapViewer_ScrollChanged;
       SizeChanged += GalaxyMapViewer_SizeChanged;
+      PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
+      PreviewMouseLeftButtonDown += GalaxyMapViewer_MouseLeftButtonDown;
+      MouseMove += GalaxyMapViewer_MouseMove;
+      MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
+      HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+      VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+      HorizontalAlignment = HorizontalAlignment.Stretch;
+      VerticalAlignment = VerticalAlignment.Stretch;
     }
 
     private bool PrepareGalaxyMap()
@@ -409,6 +423,84 @@ namespace X4Map
       }
     }
 
+    private void GalaxyMapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      var clickedElement = e.OriginalSource as DependencyObject;
+      if (clickedElement is TextBlock textBlock && textBlock.DataContext is Sector _sectorFromTextBlock)
+      {
+        SelectedSector = _sectorFromTextBlock;
+      }
+      else if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
+      {
+        SelectedSector = _sectorFromPolygon;
+      }
+      else if (clickedElement is Grid grid && grid.DataContext is Sector _sectorFromGrid)
+      {
+        SelectedSector = _sectorFromGrid;
+      }
+      isPanning = true;
+      panStartPoint = e.GetPosition(this);
+      scrollHorizontalOffset = HorizontalOffset;
+      scrollVerticalOffset = VerticalOffset;
+      _galaxyCanvas.CaptureMouse();
+    }
+
+    // Mouse Move - Perform Panning
+    private void GalaxyMapViewer_MouseMove(object sender, MouseEventArgs e)
+    {
+      if (isPanning)
+      {
+        Point currentPoint = e.GetPosition(this);
+        double deltaX = currentPoint.X - panStartPoint.X;
+        double deltaY = currentPoint.Y - panStartPoint.Y;
+        if (Math.Abs(deltaX) < 0.1 && Math.Abs(deltaY) < 0.1)
+        {
+          return;
+        }
+        SelectedSector = null;
+        // Adjust the ScrollViewer's offsets
+        ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
+        ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
+        // Change cursor to SizeAll
+        this.Cursor = Cursors.SizeAll;
+      }
+    }
+
+    // Mouse Left Button Up - End Panning
+    private void GalaxyMapViewer_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      if (isPanning)
+      {
+        isPanning = false;
+        _galaxyCanvas.ReleaseMouseCapture();
+        this.Cursor = Cursors.Arrow;
+      }
+      if (SelectedSector != null)
+      {
+        OnSectorSelected?.Invoke(this, new SectorEventArgs(SelectedSector));
+        SelectedSector = null;
+      }
+    }
+
+    public void GalaxyMapViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+      if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+      {
+        double step = HexagonWidth / HexagonWidthMinimal < 2 ? 10 : HexagonWidthMinimal * 0.5;
+        if (e.Delta > 0)
+        {
+          // Zoom In
+          HexagonWidth = Math.Min(HexagonWidth + step, HexagonWidthMaximal);
+        }
+        else if (e.Delta < 0)
+        {
+          // Zoom Out
+          HexagonWidth = Math.Max(HexagonWidth - step, HexagonWidthMinimal);
+        }
+        e.Handled = true;
+      }
+    }
+
     private void MapOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(MapOptions.IsChecked))
@@ -463,6 +555,11 @@ namespace X4Map
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+  }
+
+  public class SectorEventArgs(Sector? selectedSector) : EventArgs
+  {
+    public Sector? SelectedSector { get; } = selectedSector;
   }
 
   class GalaxyMapCell(Cluster cluster, int col, int row)
