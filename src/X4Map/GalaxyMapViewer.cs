@@ -615,7 +615,7 @@ namespace X4Map
       }
     }
 
-    private static readonly string[] _toolTipItems = new[] { "Name", "Source", "Macro", "Coordinates", "X", "Y", "Z" };
+    private static readonly string[] _toolTipItems = ["Name", "Source", "Macro", "Coordinates", "X", "Y", "Z"];
     protected virtual string[] ToolTipItems
     {
       get => _toolTipItems;
@@ -1091,8 +1091,8 @@ namespace X4Map
     private readonly double FrontSizeProportion = 0.12;
     private readonly double FrontSizeMax = 22;
 
-    private static readonly string[] _toolTipItems = new[]
-    {
+    private static readonly string[] _toolTipItems =
+    [
       "Name",
       "Owner",
       "Sunlight",
@@ -1105,9 +1105,9 @@ namespace X4Map
       "Y",
       "Z",
       "Cluster",
-    };
+    ];
 
-    protected override string[] ToolTipItems => _toolTipItems.Concat(base.ToolTipItems).ToArray(); /* Implement setter if needed, or leave it empty if not applicable */
+    protected override string[] ToolTipItems => [.. _toolTipItems, .. base.ToolTipItems]; /* Implement setter if needed, or leave it empty if not applicable */
 
     public override void Create()
     {
