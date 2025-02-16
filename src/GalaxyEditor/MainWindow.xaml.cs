@@ -396,7 +396,7 @@ namespace GalaxyEditor
       // _mainGrid.Children.Add(_galaxyMapViewer);
       _galaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
       _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
-      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
+      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
         new Action(() =>
@@ -499,8 +499,8 @@ namespace GalaxyEditor
 
     private void LoadX4DataInBackgroundStart()
     {
-      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
       _backgroundWorker.DoWork += LoadX4DataInBackground;
+      _backgroundWorker.ProgressChanged += LoadX4DataInBackgroundProgressChanged;
       _backgroundWorker.RunWorkerCompleted += LoadX4DataInBackgroundCompleted;
       _backgroundWorker.RunWorkerAsync();
     }
@@ -508,6 +508,14 @@ namespace GalaxyEditor
     private void LoadX4DataInBackground(object? sender, DoWorkEventArgs e)
     {
       LoadX4Data(true);
+    }
+
+    private void LoadX4DataInBackgroundProgressChanged(object? sender, ProgressChangedEventArgs e)
+    {
+      if (e.UserState is string progressText)
+      {
+        StatusBar.SetStatusMessage($"Processing file: {progressText} ...", StatusMessageType.Info, true);
+      }
     }
 
     private void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
@@ -522,11 +530,9 @@ namespace GalaxyEditor
         new Action(() =>
         {
           _galaxyMapViewer.RefreshGalaxyData();
-          _galaxyMapViewer.Background = Brushes.LightGray;
-          _mainGrid?.InvalidateVisual();
-          _mainGrid?.InvalidateMeasure();
         })
       );
+      StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
     }
 
     private void LoadX4Data(bool inBackground = false)
@@ -536,7 +542,7 @@ namespace GalaxyEditor
       {
         if (e.ProcessingFile != null)
         {
-          StatusBar.SetStatusMessage($"Processing file: {e.ProcessingFile} ...", StatusMessageType.Info, true);
+          _backgroundWorker.ReportProgress(0, e.ProcessingFile);
         }
       };
       dataLoader.LoadData(GalaxyData, X4DataFolder, _x4DataStructure, LoadModsData);
@@ -560,6 +566,7 @@ namespace GalaxyEditor
       if (e.SelectedSector != null)
       {
         Log.Debug($"Selected sector: {e.SelectedSector.Name}");
+        StatusBar.SetStatusMessage($"Selected sector: {e.SelectedSector.Name}", StatusMessageType.Info);
         // Show the sector details
       }
     }
