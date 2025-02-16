@@ -114,12 +114,32 @@ namespace X4Map
     private readonly List<GalaxyMapCell> MapCells = [];
     public List<SectorMapItem> SectorsItems = [];
     public ObservableCollection<MapOptions> DLCsOptions { get; set; } = [];
+    private Visibility _optionsDLCsVisibilityState = Visibility.Hidden;
+    public Visibility OptionsDLCsVisibilityState
+    {
+      get => _optionsDLCsVisibilityState;
+      set
+      {
+        _optionsDLCsVisibilityState = value;
+        OnPropertyChanged(nameof(OptionsDLCsVisibilityState));
+      }
+    }
     public ObservableCollection<MapOptions> ModsOptions { get; set; } = [];
+    private Visibility _optionsModsVisibilityState = Visibility.Hidden;
+    public Visibility OptionsModsVisibilityState
+    {
+      get => _optionsModsVisibilityState;
+      set
+      {
+        _optionsModsVisibilityState = value;
+        OnPropertyChanged(nameof(OptionsModsVisibilityState));
+      }
+    }
     public ObservableCollection<MapOptions> DeveloperOptions { get; set; } = [];
     public MapOptions ShowEmptyClusterPlaces = new("Show Empty Cluster Cells", "EmptyCell", false);
 
-    private List<GalaxyConnection> _extraConnections = [];
-    private Dictionary<string, List<ObjectInSector>>? _extraObjects = null;
+    private List<string> _extraConnectionsNames = [];
+    private Dictionary<string, List<ObjectInSector>> _extraObjects = [];
     private readonly List<GalaxyMapInterConnection> InterConnections = [];
     public event EventHandler<SectorEventArgs>? OnSectorSelected;
 
@@ -129,15 +149,17 @@ namespace X4Map
       double mapColorsOpacity,
       int sectorRadius,
       Dictionary<string, List<ObjectInSector>>? extraObjects = null,
-      List<GalaxyConnection>? extraConnections = null
+      List<string>? extraConnectionsNames = null
     )
     {
       GalaxyData = galaxy;
       GalaxyCanvas = galaxyCanvas;
       _mapColorsOpacity = mapColorsOpacity;
       _sectorRadius = sectorRadius;
-      _extraObjects = extraObjects;
-      _extraConnections = extraConnections ?? [];
+      _extraObjects = extraObjects ?? [];
+      _extraConnectionsNames = extraConnectionsNames ?? [];
+      ShowEmptyClusterPlaces.PropertyChanged += MapOptions_PropertyChanged;
+      DeveloperOptions.Add(ShowEmptyClusterPlaces);
       ScrollChanged += GalaxyMapViewer_ScrollChanged;
       SizeChanged += GalaxyMapViewer_SizeChanged;
       PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
@@ -184,12 +206,14 @@ namespace X4Map
           DLCsOptions.Add(extension);
         }
       }
+      OptionsDLCsVisibilityState = DLCsOptions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
       foreach (ExtensionInfo mod in GalaxyData.Mods)
       {
         var extension = new MapOptions(mod.Name, mod.Id, true);
         extension.PropertyChanged += MapOptions_PropertyChanged;
         ModsOptions.Add(extension);
       }
+      OptionsModsVisibilityState = ModsOptions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
       PrepareGalaxyMap();
       CreateMap();
     }
@@ -319,13 +343,13 @@ namespace X4Map
             InterConnections.Add(galaxyMapGateConnection);
           }
         }
-        foreach (GalaxyConnection connection in _extraConnections)
+        foreach (string connectionName in _extraConnectionsNames)
         {
-          if (connection.Name == null)
+          if (connectionName == null)
           {
             continue;
           }
-          List<SectorMapItem> extraGatesItems = SectorsItems.FindAll(item => item.Id == connection.Name);
+          List<SectorMapItem> extraGatesItems = SectorsItems.FindAll(item => item.Id == connectionName);
           if (extraGatesItems.Count == 2)
           {
             GalaxyMapInterConnection galaxyMapGateConnection = new(extraGatesItems[0], extraGatesItems[1], true);
@@ -559,17 +583,13 @@ namespace X4Map
       return true;
     }
 
-    public List<ObjectInSector>? GetExtraObjects(string sectorId)
+    public List<ObjectInSector> GetExtraObjects(string sectorId)
     {
-      if (_extraObjects == null)
-      {
-        return null;
-      }
       if (_extraObjects.TryGetValue(sectorId, out List<ObjectInSector>? objects))
       {
         return objects;
       }
-      return null;
+      return [];
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -1237,12 +1257,9 @@ namespace X4Map
       SectorMapHelper.SetColors(map.FactionColors);
       SectorMapHelper.SetSector(Sector, map.GalaxyData);
       List<ObjectInSector>? extraObjects = map.GetExtraObjects(Sector.Macro);
-      if (extraObjects != null)
+      foreach (ObjectInSector modObject in extraObjects)
       {
-        foreach (ObjectInSector modObject in extraObjects)
-        {
-          SectorMapHelper.AddItem(modObject);
-        }
+        SectorMapHelper.AddItem(modObject);
       }
       foreach (SectorMapItem item in SectorMapHelper.Items)
       {
