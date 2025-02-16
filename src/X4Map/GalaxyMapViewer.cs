@@ -125,7 +125,6 @@ namespace X4Map
 
     public GalaxyMapViewer(
       Galaxy galaxy,
-      FactionColors factionColors,
       double mapColorsOpacity,
       int sectorRadius,
       Dictionary<string, List<ObjectInSector>>? extraObjects = null,
@@ -133,7 +132,7 @@ namespace X4Map
     )
     {
       GalaxyData = galaxy;
-      FactionColors = factionColors;
+      FactionColors = new();
       _mapColorsOpacity = mapColorsOpacity;
       _sectorRadius = sectorRadius;
       _extraObjects = extraObjects;
@@ -141,6 +140,47 @@ namespace X4Map
       Background = Brushes.LightGray;
       _galaxyCanvas = new Canvas { Background = Brushes.LightGray };
       AddChild(_galaxyCanvas);
+      // DataContext = this;
+      ScrollChanged += GalaxyMapViewer_ScrollChanged;
+      SizeChanged += GalaxyMapViewer_SizeChanged;
+      PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
+      PreviewMouseLeftButtonDown += GalaxyMapViewer_MouseLeftButtonDown;
+      MouseMove += GalaxyMapViewer_MouseMove;
+      MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
+      HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+      VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+      HorizontalAlignment = HorizontalAlignment.Stretch;
+      VerticalAlignment = VerticalAlignment.Stretch;
+    }
+
+    public void RefreshGalaxyData()
+    {
+      if (_clusters.Count > 0)
+      {
+        foreach (GalaxyMapCluster cluster in _clusters)
+        {
+          cluster.Remove(_galaxyCanvas);
+        }
+        foreach (GalaxyMapInterConnection connection in InterConnections)
+        {
+          connection.Remove(_galaxyCanvas);
+        }
+        foreach (SectorMapItem sector in SectorsItems)
+        {
+          sector.Remove(_galaxyCanvas);
+        }
+        _clusters.Clear();
+        InterConnections.Clear();
+        SectorsItems.Clear();
+        MapCells.Clear();
+        DLCsOptions.Clear();
+        ModsOptions.Clear();
+      }
+      if (GalaxyData.Clusters.Count == 0)
+      {
+        Log.Error("Galaxy data is empty.");
+        return;
+      }
       foreach (string dlcId in Galaxy.DLCOrder)
       {
         ExtensionInfo? dlc = GalaxyData.DLCs.Find(dlc => dlc.Id == dlcId);
@@ -157,31 +197,12 @@ namespace X4Map
         extension.PropertyChanged += MapOptions_PropertyChanged;
         ModsOptions.Add(extension);
       }
-      if (!PrepareGalaxyMap())
-      {
-        Log.Error("Cluster map is not prepared.");
-        return;
-      }
-      ScrollChanged += GalaxyMapViewer_ScrollChanged;
-      SizeChanged += GalaxyMapViewer_SizeChanged;
-      PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
-      PreviewMouseLeftButtonDown += GalaxyMapViewer_MouseLeftButtonDown;
-      MouseMove += GalaxyMapViewer_MouseMove;
-      MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
-      HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-      VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-      HorizontalAlignment = HorizontalAlignment.Stretch;
-      VerticalAlignment = VerticalAlignment.Stretch;
+      PrepareGalaxyMap();
+      CreateMap();
     }
 
-    private bool PrepareGalaxyMap()
+    private void PrepareGalaxyMap()
     {
-      if (GalaxyData == null)
-      {
-        Log.Error("Galaxy data is not loaded.");
-        return false;
-      }
-
       // Determine the rowId and columnId for each cluster and populate the dictionary
       foreach (var cluster in GalaxyData.Clusters)
       {
@@ -209,7 +230,6 @@ namespace X4Map
 
       _canvasWidthBase = (MaxCol - MinCol + 1) * 0.75 + 0.25;
       _canvasHeightBase = (MaxRow - MinRow) * 0.5 + 1;
-      return true;
     }
 
     private void CreateMap()
@@ -224,7 +244,7 @@ namespace X4Map
         Log.Warn("GalaxyMapViewer size is zero.");
         return;
       }
-
+      ScaleFactorUpdate();
       Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
       Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
 
@@ -245,7 +265,7 @@ namespace X4Map
         {
           Cluster? cluster = GalaxyMapCell.GetCluster(MapCells, col, row);
           GalaxyMapCluster clusterMapCluster = new(this, 0.75 * (col - MinCol), (MaxRow - row) * 0.5, _galaxyCanvas, cluster);
-          clusterMapCluster.Create();
+          clusterMapCluster.Create(this);
           _clusters.Add(clusterMapCluster);
           if (cluster == null)
           {
@@ -320,8 +340,30 @@ namespace X4Map
       }
     }
 
-    private void UpdateMap()
+    private void ScaleFactorUpdate()
     {
+      double width = ActualWidth;
+      double height = ActualHeight;
+      double scaleFactorWidth = width / _canvasWidthBase / HexagonWidthDefault;
+      double scaleFactorHeight = height / _canvasHeightBase / HexagonHeightDefault;
+      ScaleFactor = Math.Min(scaleFactorWidth, scaleFactorHeight);
+      if (width * HexagonSizesRelation < height)
+      {
+        HexagonWidthMaximal = width / ScaleFactor * 2;
+      }
+      else
+      {
+        HexagonWidthMaximal = height / HexagonSizesRelation / ScaleFactor * 2;
+      }
+    }
+
+    public void UpdateMap()
+    {
+      if (GalaxyData.Clusters.Count == 0)
+      {
+        Log.Warn("Cluster map is empty.");
+        return;
+      }
       if (_clusters.Count == 0)
       {
         CreateMap();
@@ -335,7 +377,7 @@ namespace X4Map
         _galaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
         foreach (GalaxyMapCluster cluster in _clusters)
         {
-          cluster.Update();
+          cluster.Update(this);
         }
         foreach (GalaxyMapInterConnection connection in InterConnections)
         {
@@ -350,23 +392,11 @@ namespace X4Map
 
     private void GalaxyMapViewer_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-      if (ActualWidth != 0 && ActualHeight != 0)
+      if (ActualWidth != 0 && ActualHeight != 0 && _canvasWidthBase != 0 && _canvasHeightBase != 0)
       {
-        double width = ActualWidth;
-        double height = ActualHeight;
-        double scaleFactorWidth = width / _canvasWidthBase / HexagonWidthDefault;
-        double scaleFactorHeight = height / _canvasHeightBase / HexagonHeightDefault;
-        ScaleFactor = Math.Min(scaleFactorWidth, scaleFactorHeight);
-        if (width * HexagonSizesRelation < height)
-        {
-          HexagonWidthMaximal = width / ScaleFactor * 2;
-        }
-        else
-        {
-          HexagonWidthMaximal = height / HexagonSizesRelation / ScaleFactor * 2;
-        }
+        ScaleFactorUpdate();
+        UpdateMap();
       }
-      UpdateMap();
     }
 
     private void GalaxyMapViewer_ScrollChanged(object sender, RoutedEventArgs e)
@@ -675,17 +705,17 @@ namespace X4Map
       (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
     ];
 
-    public virtual void Create()
+    public virtual void Create(GalaxyMapViewer map)
     {
-      if (Map == null || Canvas == null)
+      if (map == null || Canvas == null)
       {
         return;
       }
       if (Cluster != null && Cluster.Sectors.Count == 1)
       {
         Sector sector = Cluster.Sectors[0];
-        GalaxyMapSector clusterMapSector = new(Map, _x, _y, Canvas, Cluster, sector);
-        clusterMapSector.Create();
+        GalaxyMapSector clusterMapSector = new(map, _x, _y, Canvas, Cluster, sector);
+        clusterMapSector.Create(map);
         _sectors.Add(clusterMapSector);
       }
       else
@@ -705,7 +735,7 @@ namespace X4Map
         if (Cluster == null)
         {
           Hexagon.StrokeDashArray = [2, 2]; // Dash pattern: 2 units dash, 2 units gap
-          Hexagon.Visibility = Map.ShowEmptyClusterPlaces.IsChecked ? Visibility.Visible : Visibility.Hidden;
+          Hexagon.Visibility = map.ShowEmptyClusterPlaces.IsChecked ? Visibility.Visible : Visibility.Hidden;
         }
         // Position the Hexagon on the Canvas
         Canvas.SetLeft(Hexagon, X);
@@ -860,12 +890,24 @@ namespace X4Map
                   break;
               }
               Log.Debug($"Sector {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
-              GalaxyMapSector clusterMapSector = new(Map, x, y, Canvas, Cluster, Cluster.Sectors[index], true);
-              clusterMapSector.Create();
+              GalaxyMapSector clusterMapSector = new(map, x, y, Canvas, Cluster, Cluster.Sectors[index], true);
+              clusterMapSector.Create(map);
               _sectors.Add(clusterMapSector);
             }
           }
         }
+      }
+    }
+
+    public virtual void Remove(Canvas canvas)
+    {
+      if (Hexagon != null)
+      {
+        canvas.Children.Remove(Hexagon);
+      }
+      foreach (GalaxyMapSector sector in _sectors)
+      {
+        sector.Remove(canvas);
       }
     }
 
@@ -877,11 +919,18 @@ namespace X4Map
         MinHeight = 100,
         Background = Brushes.LightGray,
       };
-      if (sector != null && Map != null)
+      if (sector != null)
       {
-        SolidColorBrush? brush = Map.FactionColors.GetBrush(sector.DominantOwner);
-        if (brush != null)
+        if (sector.DominantOwnerColor != null)
         {
+          SolidColorBrush brush = new(
+            Color.FromArgb(
+              (byte)(sector.DominantOwnerColor.Alpha),
+              (byte)sector.DominantOwnerColor.Red,
+              (byte)sector.DominantOwnerColor.Green,
+              (byte)sector.DominantOwnerColor.Blue
+            )
+          );
           toolTipGrid.Background = brush;
         }
       }
@@ -1037,7 +1086,7 @@ namespace X4Map
       return toolTipGrid;
     }
 
-    public virtual void Update()
+    public virtual void Update(GalaxyMapViewer map)
     {
       if (Canvas == null)
       {
@@ -1050,14 +1099,17 @@ namespace X4Map
         // Position the Hexagon on the Canvas
         Canvas.SetLeft(Hexagon, X);
         Canvas.SetTop(Hexagon, Y);
-        if (Map != null)
+        if (map != null)
         {
-          Hexagon.Visibility = Map.IsVisibleBySource(Source) ? Visibility.Visible : Visibility.Hidden;
+          Hexagon.Visibility = map.IsVisibleBySource(Source) ? Visibility.Visible : Visibility.Hidden;
         }
       }
-      foreach (GalaxyMapSector sector in _sectors)
+      if (map != null)
       {
-        sector.Update();
+        foreach (GalaxyMapSector sector in _sectors)
+        {
+          sector.Update(map);
+        }
       }
     }
 
@@ -1109,29 +1161,40 @@ namespace X4Map
 
     protected override string[] ToolTipItems => [.. _toolTipItems, .. base.ToolTipItems]; /* Implement setter if needed, or leave it empty if not applicable */
 
-    public override void Create()
+    public override void Create(GalaxyMapViewer map)
     {
-      if (Cluster == null || Sector == null || Canvas == null || Map == null)
+      if (Cluster == null || Sector == null || Canvas == null || map == null)
       {
         return;
       }
       UpdatePoints();
+      SolidColorBrush brush;
+      if (Sector.DominantOwnerColor != null)
+      {
+        brush = new SolidColorBrush(
+          Color.FromArgb(
+            (byte)(Sector.DominantOwnerColor.Alpha * map.MapColorsOpacity),
+            (byte)Sector.DominantOwnerColor.Red,
+            (byte)Sector.DominantOwnerColor.Green,
+            (byte)Sector.DominantOwnerColor.Blue
+          )
+        );
+      }
+      else
+      {
+        brush = Brushes.LightGray;
+      }
       Hexagon = new()
       {
         Stroke = Brushes.Black,
         StrokeThickness = 1,
-        Fill = Brushes.LightGray,
+        Fill = brush,
+        // Fill.Opacity = 0.5,
         Tag = Sector.Name,
         DataContext = Sector,
         Points = Points,
         ToolTip = ToolTipCreator(Cluster, Sector),
       };
-      SolidColorBrush? brush = Map.FactionColors.GetBrush(Sector.DominantOwner);
-      if (brush != null)
-      {
-        Hexagon.Fill = brush;
-        Hexagon.Fill.Opacity = Map.MapColorsOpacity;
-      }
       Grid = new()
       {
         Width = Width,
@@ -1168,11 +1231,11 @@ namespace X4Map
       SectorMapHelper.VisualX = X;
       SectorMapHelper.VisualY = Y;
       SectorMapHelper.VisualSizePx = Width;
-      SectorMapHelper.InternalSizeKm = Map.SectorRadius;
+      SectorMapHelper.InternalSizeKm = map.SectorRadius;
       SectorMapHelper.ItemSizeMinPx = 4;
-      SectorMapHelper.SetColors(Map.FactionColors);
-      SectorMapHelper.SetSector(Sector, Map.GalaxyData);
-      List<ObjectInSector>? extraObjects = Map.GetExtraObjects(Sector.Macro);
+      SectorMapHelper.SetColors(map.FactionColors);
+      SectorMapHelper.SetSector(Sector, map.GalaxyData);
+      List<ObjectInSector>? extraObjects = map.GetExtraObjects(Sector.Macro);
       if (extraObjects != null)
       {
         foreach (ObjectInSector modObject in extraObjects)
@@ -1182,7 +1245,7 @@ namespace X4Map
       }
       foreach (SectorMapItem item in SectorMapHelper.Items)
       {
-        Map.SectorsItems.Add(item);
+        map.SectorsItems.Add(item);
         Image image = new() { DataContext = item };
         // Binding for Width
         Binding widthBinding = new(path: "ItemSizePx") { Source = item };
@@ -1217,7 +1280,15 @@ namespace X4Map
       }
     }
 
-    public override void Update()
+    public override void Remove(Canvas canvas)
+    {
+      if (Grid != null)
+      {
+        canvas.Children.Remove(Grid);
+      }
+    }
+
+    public override void Update(GalaxyMapViewer map)
     {
       if (Cluster == null || Sector == null || Canvas == null || Hexagon == null || Grid == null || TextBlock == null)
       {
@@ -1230,7 +1301,7 @@ namespace X4Map
       Grid.Width = Width;
       Grid.Height = Height;
       // Position the Hexagon on the Canvas
-      bool isVisible = Map == null || Map.IsVisibleBySource(Sector.Source);
+      bool isVisible = map == null || map.IsVisibleBySource(Sector.Source);
       Grid.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
       Canvas.SetLeft(Grid, X);
       Canvas.SetTop(Grid, Y);
@@ -1340,6 +1411,14 @@ namespace X4Map
       // Canvas.SetZIndex(line, -1);
       canvas.Children.Add(line);
       Line = line;
+    }
+
+    public void Remove(Canvas canvas)
+    {
+      if (Line != null)
+      {
+        canvas.Children.Remove(Line);
+      }
     }
 
     public void SetVisible(bool isVisible)
