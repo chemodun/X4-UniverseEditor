@@ -46,7 +46,9 @@ namespace X4DataTestConsole
         new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
       ];
 
-      var galaxy = X4Galaxy.LoadData(coreFolderPath, gameFilesStructure);
+      Galaxy galaxy = new();
+      DataLoader dataLoader = new();
+      dataLoader.LoadData(galaxy, coreFolderPath, gameFilesStructure);
 
       // Print the loaded data
       foreach (var cluster in galaxy.Clusters)
