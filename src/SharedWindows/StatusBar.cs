@@ -45,7 +45,7 @@ namespace SharedWindows
     private DispatcherTimer? _statusMessageTimer;
     private readonly TimeSpan _statusMessageDisplayDuration = TimeSpan.FromSeconds(5); // Adjust as needed
 
-    private bool Infinity = false;
+    private bool Infinity { get; set; }
 
     private void StartStatusMessageTimer()
     {
@@ -72,8 +72,8 @@ namespace SharedWindows
     public void SetStatusMessage(string message, StatusMessageType messageType, bool infinity = false)
     {
       Infinity = infinity;
-      StatusMessage = message;
       StatusMessageType = messageType;
+      StatusMessage = message;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
