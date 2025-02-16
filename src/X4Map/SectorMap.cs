@@ -605,6 +605,14 @@ namespace X4Map
       }
     }
 
+    public void Remove(Canvas canvas)
+    {
+      if (Image != null)
+      {
+        canvas.Children.Remove(Image);
+      }
+    }
+
     public void Update()
     {
       UpdateSize();
