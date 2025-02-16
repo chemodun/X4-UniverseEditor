@@ -921,15 +921,10 @@ namespace X4Map
       };
       if (sector != null)
       {
-        if (sector.DominantOwnerColor != null)
+        if (sector.Color != null)
         {
           SolidColorBrush brush = new(
-            Color.FromArgb(
-              (byte)(sector.DominantOwnerColor.Alpha),
-              (byte)sector.DominantOwnerColor.Red,
-              (byte)sector.DominantOwnerColor.Green,
-              (byte)sector.DominantOwnerColor.Blue
-            )
+            Color.FromArgb((byte)(sector.Color.Alpha), (byte)sector.Color.Red, (byte)sector.Color.Green, (byte)sector.Color.Blue)
           );
           toolTipGrid.Background = brush;
         }
@@ -1175,14 +1170,14 @@ namespace X4Map
       }
       UpdatePoints();
       SolidColorBrush brush;
-      if (Sector.DominantOwnerColor != null)
+      if (Sector.Color != null)
       {
         brush = new SolidColorBrush(
           Color.FromArgb(
-            (byte)(Sector.DominantOwnerColor.Alpha * map.MapColorsOpacity),
-            (byte)Sector.DominantOwnerColor.Red,
-            (byte)Sector.DominantOwnerColor.Green,
-            (byte)Sector.DominantOwnerColor.Blue
+            (byte)(Sector.Color.Alpha * map.MapColorsOpacity),
+            (byte)Sector.Color.Red,
+            (byte)Sector.Color.Green,
+            (byte)Sector.Color.Blue
           )
         );
       }
@@ -1305,14 +1300,14 @@ namespace X4Map
       ScaleFactor = map.ScaleFactor;
       SectorMapHelper.InternalSizeKm = map.SectorRadius;
       UpdatePoints();
-      if (Sector.DominantOwnerColor != null)
+      if (Sector.Color != null)
       {
         SolidColorBrush brush = new(
           Color.FromArgb(
-            (byte)(Sector.DominantOwnerColor.Alpha * map.MapColorsOpacity),
-            (byte)Sector.DominantOwnerColor.Red,
-            (byte)Sector.DominantOwnerColor.Green,
-            (byte)Sector.DominantOwnerColor.Blue
+            (byte)(Sector.Color.Alpha * map.MapColorsOpacity),
+            (byte)Sector.Color.Red,
+            (byte)Sector.Color.Green,
+            (byte)Sector.Color.Blue
           )
         );
         Hexagon.Fill = brush;
