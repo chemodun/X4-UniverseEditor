@@ -108,7 +108,7 @@ namespace ChemGateBuilder
         }
       }
     }
-    private List<GameFilesStructureItem> _x4DataStructure =
+    private readonly List<GameFilesStructureItem> _x4DataStructure =
     [
       new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
       new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
@@ -531,7 +531,7 @@ namespace ChemGateBuilder
 
     public FactionColors FactionColors = new();
 
-    BitmapImage _appIcon;
+    private readonly BitmapImage _appIcon;
 
     // Constructor
     public MainWindow()
