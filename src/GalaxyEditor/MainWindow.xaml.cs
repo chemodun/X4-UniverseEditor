@@ -375,7 +375,6 @@ namespace GalaxyEditor
     private readonly AssemblyInfo _assemblyInfoData;
     private readonly BitmapImage _appIcon;
     private BackgroundWorker _backgroundWorker;
-    private readonly Grid? _mainGrid;
 
     public MainWindow()
     {
@@ -386,14 +385,10 @@ namespace GalaxyEditor
       _assemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
       Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
-      _mainGrid = (Grid)FindName("MainGrid");
       GalaxyData = new Galaxy();
       _galaxyMapViewer = (GalaxyMapViewer)FindName("GalaxyMapViewer");
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
       _galaxyMapViewer.Connect(GalaxyData, galaxyCanvas, MapColorsOpacity, SectorRadius);
-      Grid.SetRow(_galaxyMapViewer, 1);
-      Grid.SetColumn(_galaxyMapViewer, 1);
-      // _mainGrid.Children.Add(_galaxyMapViewer);
       _galaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
       _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };

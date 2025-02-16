@@ -233,7 +233,7 @@
                 </StatusBarItem>
             </StatusBar>
             <!-- Main Content -->
-            <Grid x:Name="MainGrid">
+            <Grid x:Name="MainGrid" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
