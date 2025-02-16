@@ -37,7 +37,7 @@ namespace X4DataLoader
 
     public string DominantOwner { get; private set; } = "";
     public Faction? DominantOwnerFaction { get; private set; } = null;
-    public X4Color? DominantOwnerColor { get; private set; } = null;
+    public X4Color? Color { get; private set; } = null;
 
     public Sector()
     {
@@ -140,6 +140,7 @@ namespace X4DataLoader
 
     public void CalculateOwnership(Galaxy galaxy)
     {
+      Color = galaxy.Colors.Find(color => color.Id == "grey_128");
       Dictionary<string, int> ownerStationCount = [];
       foreach (Station station in Stations)
       {
@@ -173,13 +174,9 @@ namespace X4DataLoader
             X4MappedColor? factionColor = galaxy.MappedColors.Find(color => color.Id == faction.ColorId);
             if (factionColor != null)
             {
-              DominantOwnerColor = galaxy.Colors.Find(color => color.Id == factionColor.OriginalColorId);
+              Color = galaxy.Colors.Find(color => color.Id == factionColor.OriginalColorId);
             }
             Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
-          }
-          else
-          {
-            Log.Debug($"Sector {Name}: Dominant Owner not found");
           }
           Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
         }
