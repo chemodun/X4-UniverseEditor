@@ -49,6 +49,29 @@ namespace X4DataLoader
       GameFiles = [];
     }
 
+    public void Clear()
+    {
+      Name = "";
+      Reference = "";
+      Version = 0;
+      DLCs.Clear();
+      Mods.Clear();
+      Translation.Clear();
+      Clusters.Clear();
+      Sectors.Clear();
+      Colors.Clear();
+      MappedColors.Clear();
+      Races.Clear();
+      Factions.Clear();
+      StationModules.Clear();
+      StationModuleGroups.Clear();
+      ConstructionPlans.Clear();
+      StationGroups.Clear();
+      StationCategories.Clear();
+      Connections.Clear();
+      GameFiles.Clear();
+    }
+
     public void LoadFromXML(GameFile file, Galaxy galaxy)
     {
       XElement? galaxyElement = file.XML.XPathSelectElement("/macros/macro");

@@ -12,20 +12,19 @@ using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {
-  public static class DataLoader
+  public class DataLoader
   {
     public static readonly string ContentXml = "content.xml";
     public static readonly string ExtensionsFolder = "extensions";
     public static readonly string DlcPrefix = "ego_dlc_";
     public static readonly string VersionDat = "version.dat";
 
-    public static void LoadData(
-      Galaxy galaxy,
-      string coreFolderPath,
-      List<GameFilesStructureItem> gameFilesStructure,
-      bool loadMods = false
-    )
+    public event EventHandler<X4DataLoadingEventArgs>? X4DataLoadingEvent;
+
+    public void LoadData(Galaxy galaxy, string coreFolderPath, List<GameFilesStructureItem> gameFilesStructure, bool loadMods = false)
     {
+      Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
+      galaxy.Clear();
       List<ExtensionInfo> dlcs = [];
       List<GameFile> gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs);
       if (File.Exists(Path.Combine(coreFolderPath, VersionDat)))
@@ -74,6 +73,7 @@ namespace X4DataLoader
         foreach (GameFile file in filesToProcess)
         {
           // sourceStr = file.Source == "vanilla" && !string.IsNullOrEmpty(loadFor) ? loadFor : source;
+          X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(file.FileName));
           Log.Debug($"Loading {file.FileName} for {file.ExtensionId}");
           switch (file.Id)
           {
@@ -191,18 +191,13 @@ namespace X4DataLoader
       }
       foreach (Sector sector in galaxy.Sectors)
       {
-        sector.CalculateOwnership(galaxy.Factions);
+        sector.CalculateOwnership(galaxy);
       }
       galaxy.GameFiles.Clear();
       galaxy.GameFiles.AddRange(gameFiles);
     }
 
-    private static void LoadMods(
-      Galaxy galaxy,
-      string coreFolderPath,
-      List<GameFilesStructureItem> gameFilesStructure,
-      List<GameFile> gameFiles
-    )
+    private void LoadMods(Galaxy galaxy, string coreFolderPath, List<GameFilesStructureItem> gameFilesStructure, List<GameFile> gameFiles)
     {
       string extensionsFolder = Path.Combine(coreFolderPath, ExtensionsFolder);
       if (Directory.Exists(extensionsFolder))
@@ -293,7 +288,7 @@ namespace X4DataLoader
       }
     }
 
-    private static List<GameFile> CollectFiles(
+    private List<GameFile> CollectFiles(
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
       string source = "vanilla",
@@ -308,7 +303,7 @@ namespace X4DataLoader
         string folderPath = Path.Combine(coreFolderPath, item.Folder);
         if (!Directory.Exists(folderPath))
         {
-          Log.Warn($"Folder not found: {folderPath}");
+          Log.Info($"Folder not found: {folderPath}");
           continue;
         }
         foreach (string fileItem in item.PossibleNames)
@@ -328,6 +323,7 @@ namespace X4DataLoader
             try
             {
               GameFile? gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId);
+              X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(gameFile.FileName));
               if (gameFile.XML.Name.ToString() == "diff" && source != "vanilla" && exitingGameFiles != null)
               {
                 Log.Debug($"Merging {gameFile.FileName} for {source}");
@@ -372,7 +368,29 @@ namespace X4DataLoader
       return result;
     }
 
-    public static List<GameFile> GatherFiles(
+    public class X4DataLoadingEventArgs(string? processingFile) : EventArgs
+    {
+      public string? ProcessingFile { get; } = processingFile;
+    }
+
+    public static bool ValidateDataFolder(string folderPath, out string errorMessage)
+    {
+      string subfolderPath = System.IO.Path.Combine(folderPath, "t");
+      string filePath = System.IO.Path.Combine(subfolderPath, "0001-l044.xml");
+
+      if (Directory.Exists(subfolderPath) && File.Exists(filePath) && new FileInfo(filePath).Length > 0)
+      {
+        errorMessage = string.Empty;
+        return true;
+      }
+      else
+      {
+        errorMessage = $"Error: Folder does not contain required X4 data ({folderPath})";
+        return false;
+      }
+    }
+
+    public List<GameFile> GatherFiles(
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
       List<ExtensionInfo> extensions,

@@ -37,6 +37,7 @@ namespace X4DataLoader
 
     public string DominantOwner { get; private set; } = "";
     public Faction? DominantOwnerFaction { get; private set; } = null;
+    public X4Color? DominantOwnerColor { get; private set; } = null;
 
     public Sector()
     {
@@ -137,14 +138,14 @@ namespace X4DataLoader
       Stations.Add(station);
     }
 
-    public void CalculateOwnership(List<Faction> allFactions)
+    public void CalculateOwnership(Galaxy galaxy)
     {
       Dictionary<string, int> ownerStationCount = [];
       foreach (Station station in Stations)
       {
         if (station.IsClaimCapable && !station.GameStartDependent)
         {
-          Faction? stationOwner = allFactions.Find(faction => faction.Id == station.OwnerId);
+          Faction? stationOwner = galaxy.Factions.Find(faction => faction.Id == station.OwnerId);
           if (stationOwner == null || !stationOwner.IsContainsTag("claimspace"))
             continue;
           if (ownerStationCount.TryGetValue(station.OwnerId, out int countedValue))
@@ -165,7 +166,21 @@ namespace X4DataLoader
         if (ownerStationCount[dominantOwner] / (double)totalCalculableStations * 100 > 50)
         {
           DominantOwner = dominantOwner;
-          DominantOwnerFaction = allFactions.Find(faction => faction.Id == DominantOwner);
+          Faction? faction = galaxy.Factions.Find(faction => faction.Id == DominantOwner);
+          if (faction != null)
+          {
+            DominantOwnerFaction = faction;
+            X4MappedColor? factionColor = galaxy.MappedColors.Find(color => color.Id == faction.ColorId);
+            if (factionColor != null)
+            {
+              DominantOwnerColor = galaxy.Colors.Find(color => color.Id == factionColor.OriginalColorId);
+            }
+            Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
+          }
+          else
+          {
+            Log.Debug($"Sector {Name}: Dominant Owner not found");
+          }
           Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
         }
         else
