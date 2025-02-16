@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using SharedWindows;
@@ -111,9 +112,9 @@ namespace GalaxyEditor
       }
     }
 
-    public Galaxy? GalaxyData { get; private set; }
+    public Galaxy GalaxyData { get; private set; }
 
-    private GalaxyMapViewer? _galaxyMapViewer = null;
+    private readonly GalaxyMapViewer _galaxyMapViewer;
     public FactionColors FactionColors = new();
 
     public bool IsDataLoaded
@@ -201,7 +202,7 @@ namespace GalaxyEditor
       {
         if (Directory.Exists(X4DataFolder))
         {
-          if (X4Galaxy.ValidateDataFolder(X4DataFolder, out _))
+          if (DataLoader.ValidateDataFolder(X4DataFolder, out _))
           {
             return System.IO.Path.GetFullPath(X4DataFolder);
           }
@@ -364,6 +365,7 @@ namespace GalaxyEditor
     private readonly AssemblyInfo _assemblyInfoData;
     private readonly BitmapImage _appIcon;
     private BackgroundWorker _backgroundWorker;
+    private readonly Grid? _mainGrid;
 
     public MainWindow()
     {
@@ -374,16 +376,15 @@ namespace GalaxyEditor
       _assemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
       Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
-      // Load sectors if the folder is valid
-      if (X4Galaxy.ValidateDataFolder(X4DataFolder, out string errorMessage))
-      {
-        StatusBar.SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
-        LoadX4Data();
-      }
-      else
-      {
-        StatusBar.SetStatusMessage($"X4 Data folder validation failed: {errorMessage}", StatusMessageType.Error);
-      }
+      _mainGrid = (Grid)FindName("MainGrid");
+      GalaxyData = new Galaxy();
+      _galaxyMapViewer = new GalaxyMapViewer(GalaxyData, MapColorsOpacity, SectorRadius);
+      Grid.SetRow(_galaxyMapViewer, 1);
+      Grid.SetColumn(_galaxyMapViewer, 1);
+      _mainGrid.Children.Add(_galaxyMapViewer);
+      _galaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
+      _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
+      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
         new Action(() =>
@@ -391,7 +392,6 @@ namespace GalaxyEditor
           X4DataNotLoadedCheckAndWarning();
         })
       );
-      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
     }
 
     private void LoadConfiguration()
@@ -457,10 +457,15 @@ namespace GalaxyEditor
       File.WriteAllText(_configFileName, jsonString);
     }
 
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+      X4DataNotLoadedCheckAndWarning();
+    }
+
     private void X4DataNotLoadedCheckAndWarning()
     {
       // Validate the loaded X4DataFolder
-      if (!X4Galaxy.ValidateDataFolder(X4DataFolder, out string errorMessage))
+      if (!DataLoader.ValidateDataFolder(X4DataFolder, out string errorMessage))
       {
         StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
         // Prompt the user to select a valid folder
@@ -474,6 +479,10 @@ namespace GalaxyEditor
         // Show the ribbon tab options
         SelectedTabIndex = 2;
       }
+      else
+      {
+        LoadX4DataInBackgroundStart();
+      }
     }
 
     private void LoadX4DataInBackgroundStart()
@@ -486,7 +495,7 @@ namespace GalaxyEditor
 
     private void LoadX4DataInBackground(object? sender, DoWorkEventArgs e)
     {
-      LoadX4Data();
+      LoadX4Data(true);
     }
 
     private void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
@@ -496,31 +505,40 @@ namespace GalaxyEditor
         StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
       }
       _backgroundWorker.Dispose();
+      // IsDataRefreshed = true;
+      Dispatcher.BeginInvoke(
+        new Action(() =>
+        {
+          _galaxyMapViewer.RefreshGalaxyData();
+          _galaxyMapViewer.Background = Brushes.LightGray;
+          _mainGrid?.InvalidateVisual();
+          _mainGrid?.InvalidateMeasure();
+        })
+      );
     }
 
-    private void LoadX4Data()
+    private void LoadX4Data(bool inBackground = false)
     {
-      GalaxyData = X4Galaxy.LoadData(X4DataFolder, _x4DataStructure, LoadModsData);
+      DataLoader dataLoader = new();
+      dataLoader.X4DataLoadingEvent += (sender, e) =>
+      {
+        if (e.ProcessingFile != null)
+        {
+          StatusBar.SetStatusMessage($"Processing file: {e.ProcessingFile} ...", StatusMessageType.Info, true);
+        }
+      };
+      dataLoader.LoadData(GalaxyData, X4DataFolder, _x4DataStructure, LoadModsData);
 
       if (!X4DataVersionOverride && GalaxyData.Version != 0 && GalaxyData.Version != X4DataVersion)
       {
         X4DataVersion = GalaxyData.Version;
       }
-      FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
+      _galaxyMapViewer.FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
       OnPropertyChanged(nameof(IsDataLoaded));
       StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
-      Grid mainGrid = (Grid)FindName("MainGrid");
-      if (_galaxyMapViewer != null && mainGrid != null)
+      if (!inBackground)
       {
-        mainGrid.Children.Remove(_galaxyMapViewer);
-      }
-      if (mainGrid != null)
-      {
-        _galaxyMapViewer = new GalaxyMapViewer(GalaxyData, FactionColors, MapColorsOpacity, SectorRadius);
-        Grid.SetRow(_galaxyMapViewer, 1);
-        Grid.SetColumn(_galaxyMapViewer, 1);
-        mainGrid.Children.Add(_galaxyMapViewer);
-        _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
+        _galaxyMapViewer.RefreshGalaxyData();
       }
     }
 
@@ -565,7 +583,7 @@ namespace GalaxyEditor
         if (!string.IsNullOrEmpty(extractedDataFolder))
         {
           X4DataFolder = extractedDataFolder;
-          LoadX4Data();
+          LoadX4DataInBackgroundStart();
         }
       }
     }
@@ -618,7 +636,7 @@ namespace GalaxyEditor
       if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
       {
         string selectedPath = dialog.SelectedPath;
-        if (X4Galaxy.ValidateDataFolder(selectedPath, out string errorMessage))
+        if (DataLoader.ValidateDataFolder(selectedPath, out string errorMessage))
         {
           X4DataFolder = selectedPath;
           StatusBar.SetStatusMessage("X4 Data folder set successfully. Loading the data ...", StatusMessageType.Info, true);
