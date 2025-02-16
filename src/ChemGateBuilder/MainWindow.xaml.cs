@@ -896,9 +896,9 @@ namespace ChemGateBuilder
       return oppositeSectorsMacros;
     }
 
-    public List<ObjectInSector> GetObjectsInSectorFromMod(string sectorMacro)
+    private Dictionary<string, List<ObjectInSector>> GetObjectsFromModAndNew(bool onlyMod = false)
     {
-      List<ObjectInSector> sectorObjects = [];
+      Dictionary<string, List<ObjectInSector>> sectorObjects = [];
       foreach (var connection in ChemGateKeeperMod.GalaxyConnections)
       {
         if (connection.Connection?.PathDirect?.Sector?.Macro == null || connection.Connection?.PathOpposite?.Sector?.Macro == null)
@@ -913,10 +913,6 @@ namespace ChemGateBuilder
           }
         )
         {
-          if (modSectorMacro != sectorMacro)
-          {
-            continue;
-          }
           bool isDirect = modSectorMacro == connection.Connection.PathDirect.Sector.Macro;
           ObjectInSector newObject = new()
           {
@@ -929,15 +925,56 @@ namespace ChemGateBuilder
             From = "mod",
             Type = "gate",
           };
-          sectorObjects.Add(newObject);
+          if (sectorObjects.TryGetValue(modSectorMacro, out List<ObjectInSector>? value))
+          {
+            value.Add(newObject);
+          }
+          else
+          {
+            sectorObjects[modSectorMacro] = [newObject];
+          }
+        }
+      }
+      if (GatesConnectionCurrent != null && !onlyMod)
+      {
+        foreach (string gateType in new string[] { "GateDirect", "GateOpposite" })
+        {
+          bool isDirect = gateType == "GateDirect";
+          SectorsListItem? sector = isDirect ? GatesConnectionCurrent.SectorDirect : GatesConnectionCurrent.SectorOpposite;
+          if (sector == null)
+          {
+            continue;
+          }
+          ObjectInSector? newObject = GatesConnectionCurrent.UpdateCurrentGateOnMap(gateType, null, true);
+          if (newObject != null && sector.Macro != null)
+          {
+            if (sectorObjects.TryGetValue(sector.Macro, out List<ObjectInSector>? value))
+            {
+              value.Add(newObject);
+            }
+            else
+            {
+              sectorObjects[sector.Macro] = [newObject];
+            }
+          }
         }
       }
       return sectorObjects;
     }
 
+    public List<ObjectInSector> GetObjectsInSectorFromMod(string sectorMacro)
+    {
+      return GetObjectsFromModAndNew(true).GetValueOrDefault(sectorMacro) ?? [];
+    }
+
+    private List<string> GetConnectionNamesFromMod()
+    {
+      return ChemGateKeeperMod.GalaxyConnections.Select(c => c.Connection.Name).ToList();
+    }
+
     private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
     {
-      GalaxyMapWindow clusterMapWindow = new(this, SectorsDirectViewSource);
+      GalaxyMapWindow clusterMapWindow = new(this, SectorsDirectViewSource, GetObjectsFromModAndNew(), GetConnectionNamesFromMod());
       clusterMapWindow.ShowDialog();
       if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
       {
@@ -947,7 +984,7 @@ namespace ChemGateBuilder
 
     private void ButtonSectorOppositeSelectFromMap_Click(object sender, RoutedEventArgs e)
     {
-      GalaxyMapWindow clusterMapWindow = new(this, SectorsOppositeViewSource);
+      GalaxyMapWindow clusterMapWindow = new(this, SectorsOppositeViewSource, GetObjectsFromModAndNew(), GetConnectionNamesFromMod());
       clusterMapWindow.ShowDialog();
       if (clusterMapWindow.SelectedSector != null && GatesConnectionCurrent != null)
       {
