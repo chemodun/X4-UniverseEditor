@@ -294,6 +294,11 @@ namespace GalaxyEditor
           _sectorRadius = value;
           OnPropertyChanged(nameof(SectorRadius));
           SaveConfiguration();
+          if (_galaxyMapViewer != null)
+          {
+            _galaxyMapViewer.SectorRadius = value;
+            _galaxyMapViewer.UpdateMap();
+          }
           // if (value > 0 && GatesConnectionCurrent != null)
           // {
           //   GatesConnectionCurrent.SetSectorMapInternalSize(value);
@@ -314,6 +319,11 @@ namespace GalaxyEditor
           _mapColorsOpacity = value;
           OnPropertyChanged(nameof(MapColorsOpacity));
           SaveConfiguration();
+          if (_galaxyMapViewer != null)
+          {
+            _galaxyMapViewer.MapColorsOpacity = value;
+            _galaxyMapViewer.UpdateMap();
+          }
         }
       }
     }
@@ -378,10 +388,12 @@ namespace GalaxyEditor
       Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
       _mainGrid = (Grid)FindName("MainGrid");
       GalaxyData = new Galaxy();
-      _galaxyMapViewer = new GalaxyMapViewer(GalaxyData, MapColorsOpacity, SectorRadius);
+      _galaxyMapViewer = (GalaxyMapViewer)FindName("GalaxyMapViewer");
+      Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
+      _galaxyMapViewer.Connect(GalaxyData, galaxyCanvas, MapColorsOpacity, SectorRadius);
       Grid.SetRow(_galaxyMapViewer, 1);
       Grid.SetColumn(_galaxyMapViewer, 1);
-      _mainGrid.Children.Add(_galaxyMapViewer);
+      // _mainGrid.Children.Add(_galaxyMapViewer);
       _galaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
       _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = false, WorkerSupportsCancellation = false };
@@ -539,16 +551,6 @@ namespace GalaxyEditor
       if (!inBackground)
       {
         _galaxyMapViewer.RefreshGalaxyData();
-      }
-    }
-
-    private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-      if (_galaxyMapViewer != null)
-      {
-        Log.Debug($"MainGrid_SizeChanged: {e.NewSize.Width}, {e.NewSize.Height}");
-        _galaxyMapViewer.Width = e.NewSize.Width;
-        _galaxyMapViewer.Height = e.NewSize.Height;
       }
     }
 

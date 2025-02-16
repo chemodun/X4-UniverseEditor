@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mapconstants="clr-namespace:X4Map.Constants;assembly=X4Map"
+        xmlns:x4map="clr-namespace:X4Map;assembly=X4Map"
         xmlns:local="clr-namespace:GalaxyEditor"
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
@@ -232,13 +233,21 @@
                 </StatusBarItem>
             </StatusBar>
             <!-- Main Content -->
-            <Grid x:Name="MainGrid" SizeChanged="MainGrid_SizeChanged">
+            <Grid x:Name="MainGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <x4map:GalaxyMapViewer x:Name="GalaxyMapViewer" Grid.Column="0" Grid.Row="0"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                    Background="LightGray">
+                    <Canvas x:Name="GalaxyMapCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Background="LightGray">
+                    </Canvas>
+                </x4map:GalaxyMapViewer>
             </Grid>
         </DockPanel>
     </DockPanel>
