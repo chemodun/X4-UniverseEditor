@@ -328,11 +328,11 @@ namespace ChemGateBuilder
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void UpdateCurrentGateOnMap(string propertyName, SectorMap? alternateSectorMap = null)
+    public ObjectInSector? UpdateCurrentGateOnMap(string propertyName, SectorMap? alternateSectorMap = null, bool returnOnly = false)
     {
       GateData gateCurrent = propertyName == nameof(GateDirect) ? GateDirect : GateOpposite;
       if (gateCurrent == null)
-        return;
+        return null;
       SectorsListItem? sectorTo = propertyName == nameof(GateDirect) ? SectorOpposite : SectorDirect;
       SectorMap sectorMap = propertyName == nameof(GateDirect) ? SectorDirectMap : SectorOppositeMap;
       if (alternateSectorMap != null)
@@ -340,7 +340,7 @@ namespace ChemGateBuilder
         sectorMap = alternateSectorMap;
       }
       if (sectorMap == null || sectorMap.IsDragging)
-        return;
+        return null;
       ObjectInSector newObject = new()
       {
         Active = gateCurrent.Active && sectorTo != null,
@@ -352,7 +352,12 @@ namespace ChemGateBuilder
         From = "new",
         Id = SectorMap.NewGateId,
       };
-      sectorMap.UpdateItem(newObject);
+      if (!returnOnly)
+      {
+        sectorMap.UpdateItem(newObject);
+        return null;
+      }
+      return newObject;
     }
 
     public void SetSectorMapInternalSize(int sizeKm)
