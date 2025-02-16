@@ -29,6 +29,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\mapob_jumpgate_default.png" />
+    <Resource Include="Assets\mapob_jumpgate_map_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_map_inactive.png" />
+    <Resource Include="Assets\mapob_jumpgate_mod_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_mod_inactive.png" />
+    <Resource Include="Assets\mapob_jumpgate_new_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_new_inactive.png" />
+    <Resource Include="Assets\mapob_superhighway_default.png" />
+    <Resource Include="Assets\mapob_superhighway_map_active.png" />
+    <Resource Include="Assets\mapob_superhighway_map_inactive.png" />
+    <Resource Include="Assets\mapob_equipmentdock.png" />
+    <Resource Include="Assets\mapob_shipyard.png" />
+    <Resource Include="Assets\mapob_tradestation.png" />
+    <Resource Include="Assets\mapob_wharf.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="NLog" Version="5.4.0" />
