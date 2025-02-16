@@ -438,7 +438,7 @@ namespace ChemGateBuilder
     }
 
     // Galaxy and Sectors
-    public Galaxy? Galaxy { get; private set; }
+    public Galaxy Galaxy { get; private set; } = new();
 
     public bool IsDataLoaded
     {
@@ -533,6 +533,8 @@ namespace ChemGateBuilder
 
     private readonly BitmapImage _appIcon;
 
+    private BackgroundWorker _backgroundWorker;
+
     // Constructor
     public MainWindow()
     {
@@ -558,12 +560,8 @@ namespace ChemGateBuilder
       // Subscribe to Validation Errors
       TextBoxExtensions.OnValidationError += HandleValidationError;
 
-      // Load sectors if the folder is valid
-      if (ValidateX4DataFolder(X4DataFolder, out string errorMessage))
-      {
-        StatusBar.SetStatusMessage("X4 Data folder validated successfully.", StatusMessageType.Info);
-        LoadX4Data();
-      }
+      _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
+
       GateMacros.Add(_gateMacroDefault);
 
       Dispatcher.BeginInvoke(
@@ -660,6 +658,66 @@ namespace ChemGateBuilder
         // Show the ribbon tab options
         SelectedTabIndex = 2;
       }
+      else
+      {
+        LoadX4DataInBackgroundStart();
+      }
+    }
+
+    private void LoadX4DataInBackgroundStart()
+    {
+      AllSectors.Clear();
+      Galaxy.Clear();
+      _backgroundWorker.DoWork += LoadX4DataInBackground;
+      _backgroundWorker.ProgressChanged += LoadX4DataInBackgroundProgressChanged;
+      _backgroundWorker.RunWorkerCompleted += LoadX4DataInBackgroundCompleted;
+      _backgroundWorker.RunWorkerAsync();
+    }
+
+    private void LoadX4DataInBackground(object? sender, DoWorkEventArgs e)
+    {
+      LoadX4Data();
+    }
+
+    private void LoadX4DataInBackgroundProgressChanged(object? sender, ProgressChangedEventArgs e)
+    {
+      if (e.UserState is string progressText)
+      {
+        StatusBar.SetStatusMessage($"Processing file: {progressText} ...", StatusMessageType.Info, true);
+      }
+    }
+
+    private void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
+    {
+      if (e.Error != null)
+      {
+        StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
+      }
+      _backgroundWorker.Dispose();
+      var sectors = Galaxy.GetSectors();
+
+      foreach (var sector in sectors.Values.OrderBy(s => s.Name))
+      {
+        var sectorListItem = new SectorsListItem
+        {
+          Name = sector.Name,
+          Source = sector.Source,
+          Macro = sector.Macro,
+          Selectable = true,
+        };
+        AllSectors.Add(sectorListItem);
+      }
+      SectorsDirectViewSource.View.Refresh();
+      SectorsOppositeViewSource.View.Refresh();
+      if (!X4DataVersionOverride && Galaxy.Version != 0 && Galaxy.Version != X4DataVersion)
+      {
+        X4DataVersion = Galaxy.Version;
+      }
+      FactionColors.Load(Galaxy.Factions, Galaxy.MappedColors);
+      GatesConnectionCurrent?.SetColors(FactionColors);
+      OnPropertyChanged(nameof(IsDataLoaded));
+      GateConnectionReset();
+      StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
     }
 
     private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
@@ -719,7 +777,7 @@ namespace ChemGateBuilder
         {
           X4DataFolder = selectedPath;
           StatusBar.SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
-          LoadX4Data();
+          LoadX4DataInBackgroundStart();
         }
         else
         {
@@ -736,34 +794,15 @@ namespace ChemGateBuilder
 
     private void LoadX4Data()
     {
-      AllSectors.Clear();
       DataLoader dataLoader = new();
-      Galaxy = new();
-      dataLoader.LoadData(Galaxy, X4DataFolder, _x4DataStructure, LoadModsData);
-      var sectors = Galaxy.GetSectors();
-
-      foreach (var sector in sectors.Values.OrderBy(s => s.Name))
+      dataLoader.X4DataLoadingEvent += (sender, e) =>
       {
-        var sectorListItem = new SectorsListItem
+        if (e.ProcessingFile != null)
         {
-          Name = sector.Name,
-          Source = sector.Source,
-          Macro = sector.Macro,
-          Selectable = true,
-        };
-        AllSectors.Add(sectorListItem);
-      }
-      SectorsDirectViewSource.View.Refresh();
-      SectorsOppositeViewSource.View.Refresh();
-      if (!X4DataVersionOverride && Galaxy.Version != 0 && Galaxy.Version != X4DataVersion)
-      {
-        X4DataVersion = Galaxy.Version;
-      }
-      FactionColors.Load(Galaxy.Factions, Galaxy.MappedColors);
-      GatesConnectionCurrent?.SetColors(FactionColors);
-      OnPropertyChanged(nameof(IsDataLoaded));
-      GateConnectionReset();
-      StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
+          _backgroundWorker.ReportProgress(0, e.ProcessingFile);
+        }
+      };
+      dataLoader.LoadData(Galaxy, X4DataFolder, _x4DataStructure, LoadModsData);
     }
 
     // Filter methods
@@ -1263,7 +1302,7 @@ namespace ChemGateBuilder
         if (!string.IsNullOrEmpty(extractedDataFolder))
         {
           X4DataFolder = extractedDataFolder;
-          LoadX4Data();
+          LoadX4DataInBackgroundStart();
         }
       }
     }
