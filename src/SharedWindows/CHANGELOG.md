@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.2.0...SharedWindows@v0.3.0) (2025-02-17)
+
+
+### Features
+
+* **StatusBar:** add support for infinite status messages ([ea924aa](https://github.com/chemodun/X4-UniverseEditor/commit/ea924aa497cfe8fdd686c0cd9ed8103cd8f11408))
+* **X4DataExtraction:** move in a window for data extraction with configuration options ([8fa3fa3](https://github.com/chemodun/X4-UniverseEditor/commit/8fa3fa3f0c4a82dd079f15a590e8b6b684e7c202))
+
+
+### Bug Fixes
+
+* **StatusBar:** change Infinity field to a property and ensure status message is set correctly ([e5af470](https://github.com/chemodun/X4-UniverseEditor/commit/e5af47017af0ccfdc427afb2cfa144d8148eb0c9))
+
 ## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.1.0...SharedWindows@v0.2.0) (2025-02-15)
 
 
