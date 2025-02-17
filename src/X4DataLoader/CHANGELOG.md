@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.6.2...X4DataLoader@v0.7.0) (2025-02-17)
+
+
+### Features
+
+* **DataLoader:** implemented processingOrder to have possibility to process some files several times for different data on different steps ([1cbf851](https://github.com/chemodun/X4-UniverseEditor/commit/1cbf851c1b2fb5e62b845cdee4c10b0cbb4689d9))
+
+
+### Bug Fixes
+
+* **DataLoader:** avoided the issue when the case in `mapdefaults.xml` is different from other files for `clusters` and `sectors` prevent the right work of a created mods. Now the trusted sources are -`galaxy.xml` for `clusters` and `clusters.xml` for `sectors`. ([1cbf851](https://github.com/chemodun/X4-UniverseEditor/commit/1cbf851c1b2fb5e62b845cdee4c10b0cbb4689d9))
+
+
+### Code Refactoring
+
+* **Sectors:** now the `sectors` are assigned to `clusters` the right way, via `sector` connection, not via common parts in macros. ([1cbf851](https://github.com/chemodun/X4-UniverseEditor/commit/1cbf851c1b2fb5e62b845cdee4c10b0cbb4689d9))
+
 ## [0.6.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.6.1...X4DataLoader@v0.6.2) (2025-02-17)
 
 
