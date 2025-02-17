@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.6.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.6.1...X4DataLoader@v0.6.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* **X4DataLoader:** add error handling and logging for GalaxyConnection loading ([384ccf2](https://github.com/chemodun/X4-UniverseEditor/commit/384ccf25d12200eecd5da74591f0b9b440d8fa81))
+* **X4DataLoader:** enhance error handling and logging for Highway loading process ([28b4e87](https://github.com/chemodun/X4-UniverseEditor/commit/28b4e875daf52974f8cfdfe45fb9d391f5b19f65))
+* **X4DataLoader:** log error instead of throwing exception for missing macro element in Gate zone ([f612f28](https://github.com/chemodun/X4-UniverseEditor/commit/f612f283220c3aaa07f6dbad4060ef24f0f852d5))
+
+
+### Code Refactoring
+
+* **DataLoader:** convert static class to instance class and enhance data loading with events ([ee833e1](https://github.com/chemodun/X4-UniverseEditor/commit/ee833e169652e1b700ae79b5b1ebcb0d23022f12))
+* **Sector:** rename DominantOwnerColor to Color for consistency and clarity and set the default value to grey_128 ([4f3c118](https://github.com/chemodun/X4-UniverseEditor/commit/4f3c118d163bcb000707934ae7c3561c11d461bf))
+* **X4DataLoader:** streamline color handling in Faction, Station, and Sector classes ([3750afc](https://github.com/chemodun/X4-UniverseEditor/commit/3750afca1f702050f8ce355ed756da6917c548c0))
+
 ## [0.6.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.6.0...X4DataLoader@v0.6.1) (2025-02-15)
 
 
