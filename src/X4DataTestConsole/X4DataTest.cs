@@ -46,9 +46,31 @@ namespace X4DataTestConsole
         new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
       ];
 
+      List<ProcessingOrderItem> processingOrder =
+      [
+        new ProcessingOrderItem("translations", ""),
+        new ProcessingOrderItem("colors", ""),
+        new ProcessingOrderItem("galaxy", "clusters"),
+        new ProcessingOrderItem("clusters", ""),
+        new ProcessingOrderItem("mapDefaults", ""),
+        new ProcessingOrderItem("sectors", ""),
+        new ProcessingOrderItem("zones", ""),
+        new ProcessingOrderItem("races", ""),
+        new ProcessingOrderItem("factions", ""),
+        new ProcessingOrderItem("modules", ""),
+        new ProcessingOrderItem("modulegroups", ""),
+        new ProcessingOrderItem("constructionplans", ""),
+        new ProcessingOrderItem("stationgroups", ""),
+        new ProcessingOrderItem("stations", ""),
+        new ProcessingOrderItem("god", ""),
+        new ProcessingOrderItem("sechighways", ""),
+        new ProcessingOrderItem("zonehighways", ""),
+        new ProcessingOrderItem("galaxy", "gates"),
+      ];
+
       Galaxy galaxy = new();
       DataLoader dataLoader = new();
-      dataLoader.LoadData(galaxy, coreFolderPath, gameFilesStructure);
+      dataLoader.LoadData(galaxy, coreFolderPath, gameFilesStructure, processingOrder);
 
       // Print the loaded data
       foreach (var cluster in galaxy.Clusters)
