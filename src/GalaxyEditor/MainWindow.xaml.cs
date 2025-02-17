@@ -3,15 +3,18 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Fluent;
 using SharedWindows;
 using Utilities.Logging;
 using X4DataLoader;
@@ -370,7 +373,15 @@ namespace GalaxyEditor
         }
       }
     }
+    public ClusterItemInfo SelectedClusterItemInfo
+    {
+      get => new(GalaxyMapViewer.SelectedCluster?.Cluster);
+    }
 
+    public SectorItemInfo SelectedSectorItemInfo
+    {
+      get => new(GalaxyMapViewer.SelectedSector?.Sector);
+    }
     private readonly AssemblyInfo _assemblyInfoData;
     private readonly BitmapImage _appIcon;
     private BackgroundWorker _backgroundWorker;
@@ -388,7 +399,9 @@ namespace GalaxyEditor
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
       GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity, SectorRadius);
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
-      GalaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
+      GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_SectorSelected;
+      GalaxyMapViewer.OnPressedCluster += GalaxyMapViewer_ClusterSelected;
+      GalaxyMapViewer.OnPressedCell += GalaxyMapViewer_CellSelected;
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
@@ -482,7 +495,7 @@ namespace GalaxyEditor
         );
         StatusBar.SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
         // Show the ribbon tab options
-        SelectedTabIndex = 2;
+        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabConfiguration")!;
       }
       else
       {
@@ -553,6 +566,34 @@ namespace GalaxyEditor
       }
     }
 
+    private void GalaxyMapViewer_CellSelected(object? sender, CellEventArgs e)
+    {
+      // Your code to run when the event is raised
+      if (e.SelectedCell != null)
+      {
+        Log.Debug($"Selected cell: {e.SelectedCell.Column}, {e.SelectedCell.Row}");
+        StatusBar.SetStatusMessage($"Selected cell: {e.SelectedCell.Column}, {e.SelectedCell.Row}", StatusMessageType.Info);
+        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabCells")!;
+        OnPropertyChanged(nameof(SelectedSectorItemInfo));
+        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        // Show the cell details
+      }
+    }
+
+    private void GalaxyMapViewer_ClusterSelected(object? sender, ClusterEventArgs e)
+    {
+      // Your code to run when the event is raised
+      if (e.SelectedCluster != null)
+      {
+        Log.Debug($"Selected cluster: {e.SelectedCluster.Name}");
+        StatusBar.SetStatusMessage($"Selected sector: {e.SelectedCluster.Name}", StatusMessageType.Info);
+        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabClusters")!;
+        OnPropertyChanged(nameof(SelectedSectorItemInfo));
+        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        // Show the sector details
+      }
+    }
+
     private void GalaxyMapViewer_SectorSelected(object? sender, SectorEventArgs e)
     {
       // Your code to run when the event is raised
@@ -560,6 +601,9 @@ namespace GalaxyEditor
       {
         Log.Debug($"Selected sector: {e.SelectedSector.Name}");
         StatusBar.SetStatusMessage($"Selected sector: {e.SelectedSector.Name}", StatusMessageType.Info);
+        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabSectors")!;
+        OnPropertyChanged(nameof(SelectedSectorItemInfo));
+        OnPropertyChanged(nameof(SelectedClusterItemInfo));
         // Show the sector details
       }
     }
@@ -615,7 +659,7 @@ namespace GalaxyEditor
         );
         if (confirm == MessageBoxResult.No)
         {
-          SelectedTabIndex = 1;
+          MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabX4Data")!;
           return;
         }
       }

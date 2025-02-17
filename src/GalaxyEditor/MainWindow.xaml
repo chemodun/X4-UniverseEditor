@@ -38,7 +38,7 @@
     </Window.Resources>
     <DockPanel>
         <fluent:Ribbon DockPanel.Dock="Top" x:Name="MainRibbon" SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
-            <fluent:RibbonTabItem Header="Mod" x:Name="ModTab">
+            <fluent:RibbonTabItem Header="Mod" x:Name="RibbonTabMod">
                 <fluent:RibbonGroupBox Header="Mod Actions">
                     <fluent:Button Header="New"
                                     IsEnabled="{Binding IsModCanBeCreated}"
@@ -83,7 +83,109 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="X4 Data">
+            <fluent:RibbonTabItem Header="Cell" x:Name="RibbonTabCells">
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Cluster" x:Name="RibbonTabClusters">
+                <fluent:RibbonGroupBox Header="Main info">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedClusterItemInfo.Name}"/>
+                        <Label Content="Macro:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedClusterItemInfo.Macro}"/>
+                        <Label Content="X:" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedClusterItemInfo.X}"/>
+                        <Label Content="Y:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="1" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedClusterItemInfo.Y}"/>
+                        <Label Content="Z:" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedClusterItemInfo.Z}"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Sector" x:Name="RibbonTabSectors">
+                <fluent:RibbonGroupBox Header="Main info">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Name:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedSectorItemInfo.Name}"/>
+                        <Label Content="Owner:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="1" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedSectorItemInfo.Owner}"/>
+                        <Label Content="Macro:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedSectorItemInfo.Macro}"/>
+                        <Label Content="X:" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedSectorItemInfo.X}"/>
+                        <Label Content="Y:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="1" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedSectorItemInfo.Y}"/>
+                        <Label Content="Z:" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedSectorItemInfo.Z}"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="X4 Data" x:Name="RibbonTabX4Data">
                 <fluent:RibbonGroupBox Header="X4 Data">
                     <fluent:Button Header="Extract"
                                     Style="{StaticResource FluentButtonStyle}"
@@ -94,7 +196,7 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Configuration" x:Name="ConfigurationTab">
+            <fluent:RibbonTabItem Header="Configuration" x:Name="RibbonTabConfiguration">
                 <fluent:RibbonGroupBox Header="X4 Data related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
