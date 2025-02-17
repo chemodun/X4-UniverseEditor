@@ -245,6 +245,7 @@ namespace X4Map
             stationType = "tradestation";
           }
           newObject.Attributes.Add("StationType", stationType);
+          newObject.Attributes.Add("StationOwner", station.OwnerName);
           sectorObjects.Add(newObject);
           AddItem(newObject);
         }
@@ -687,7 +688,7 @@ namespace X4Map
       }
       else if (Type == "station")
       {
-        result = $"{_objectData?.Info ?? ""}\n";
+        result = $"{_objectData?.Info ?? ""}\nOwner: {_objectData?.Attributes["StationOwner"] ?? ""}\n";
       }
       result += $"X: {_objectData?.X ?? 0, 4}, Y: {_objectData?.Y ?? 0, 4}, Z: {_objectData?.Z ?? 0, 4}";
       result += $"\nSource: {From}";
