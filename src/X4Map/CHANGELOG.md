@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.2.1...X4Map@v0.3.0) (2025-02-17)
+
+
+### Features
+
+* **GalaxyMapViewer:** add editor mode support and enhance hexagon selection logic ([bcf1891](https://github.com/chemodun/X4-UniverseEditor/commit/bcf1891dc72f17c75b9189e44a3f80dbd3666b5c))
+* **GalaxyMapViewer:** class to display Galaxy Map in Scroll Viewer ([16b3483](https://github.com/chemodun/X4-UniverseEditor/commit/16b3483e8ea901dba54929f96392f40e22659135))
+* **GalaxyMapViewer:** enhance sector and cluster selection logic with new properties and events ([6080a8d](https://github.com/chemodun/X4-UniverseEditor/commit/6080a8dbb28f4250826f36205294e2072566a3be))
+* **GalaxyMapViewer:** expose ColumnWidth and RowHeight as public static properties and add Column/Row to tooltips ([ffcad19](https://github.com/chemodun/X4-UniverseEditor/commit/ffcad19b237ba9927118a64c8630a4e037197df0))
+* **GalaxyMapViewer:** implement panning and zooming functionality with mouse events ([8310c02](https://github.com/chemodun/X4-UniverseEditor/commit/8310c02d585213bcbecb46f19da3ba6ea5323254))
+
+
+### Code Refactoring
+
+* **GalaxyMapViewer:** enhance visibility management for DLCs and Mods options ([cbb92dc](https://github.com/chemodun/X4-UniverseEditor/commit/cbb92dc97a25fdf46e3d6b6fe377844e0e4f1d7f))
+* **GalaxyMapViewer:** make it settable via xaml ([b484449](https://github.com/chemodun/X4-UniverseEditor/commit/b484449f7ecbbfa66d7aecb7d40e35be347e6088))
+* **GalaxyMapViewer:** replace DominantOwnerColor with Color for consistency in color handling ([941a7c1](https://github.com/chemodun/X4-UniverseEditor/commit/941a7c1502d0384b152782ee90c7073729be9899))
+* **GalaxyMapViewer:** some  GalaxyMapViewer usage in child objects is changed ([7d6dd7a](https://github.com/chemodun/X4-UniverseEditor/commit/7d6dd7a7bc2604e78f2fa9be4eac47939b121946))
+* **GalaxyMapViewer:** update tooltip items syntax for consistency and clarity ([bb7fb89](https://github.com/chemodun/X4-UniverseEditor/commit/bb7fb89c62735ab39e3fa8901d0d332b06ffe5db))
+* **SectorMap:** remove FactionColors dependency and streamline color assignment logic ([dbf5148](https://github.com/chemodun/X4-UniverseEditor/commit/dbf51480a1ec92b337d77fb7bd2a8bcdc1d8189b))
+
+
+### Miscellaneous Chores
+
+* **SectorMap:** add Remove method to facilitate canvas image removal ([aa5d452](https://github.com/chemodun/X4-UniverseEditor/commit/aa5d452162bc6c7f2cb13652acb9e6452c931bcc))
+* **SectorMap:** add StationOwner attribute to sector objects and display owner in info ([c176d40](https://github.com/chemodun/X4-UniverseEditor/commit/c176d403f7e0d51679797beb4f65a4e9b8ddb85c))
+
 ## [0.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.2.0...X4Map@v0.2.1) (2025-02-15)
 
 
