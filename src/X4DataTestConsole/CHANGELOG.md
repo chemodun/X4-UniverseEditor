@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.4...X4DataTestConsole@v0.2.5) (2025-02-17)
+
+
+### Code Refactoring
+
+* **LoadData:** define game files structure locally ([777dff4](https://github.com/chemodun/X4-UniverseEditor/commit/777dff44fbd99dd9fa1f83db479f819a864b66a3))
+* **X4DataTest:** update data loading mechanism to use DataLoader for improved clarity and structure ([147e16b](https://github.com/chemodun/X4-UniverseEditor/commit/147e16b11de922dfe9ee99ff6419a75f41c7db0b))
+
 ## [0.2.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.3...X4DataTestConsole@v0.2.4) (2025-02-08)
 
 
