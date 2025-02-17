@@ -15,6 +15,7 @@ namespace X4Map
 {
   public class GalaxyMapViewer : ScrollViewer, INotifyPropertyChanged
   {
+    private bool _editorMode = true;
     public Galaxy GalaxyData { get; private set; } = new();
     public FactionColors FactionColors { get; private set; } = new();
     private double _mapColorsOpacity = 0.5;
@@ -32,6 +33,7 @@ namespace X4Map
       }
     }
     private readonly List<GalaxyMapCluster> _clusters = [];
+    private readonly List<GalaxyMapSector> _sectors = [];
     private Canvas GalaxyCanvas { get; set; } = new();
     private const double HexagonWidthDefault = 100; // Width of the hexagon in pixels
     public static readonly double HexagonSizesRelation = Math.Sqrt(3) / 2; // Height of the hexagon in pixels (Width * sqrt(3)/2)
@@ -105,7 +107,10 @@ namespace X4Map
     private double canvasToScrollWidthDelta = 0;
     private double canvasToScrollHeightDelta = 0;
     private double scrollVerticalOffset = 0;
-    public Sector? SelectedSector = null;
+    private Sector? PressedSector = null;
+    private Polygon? PressedHexagon = null;
+    private Polygon? SelectedHexagon = null;
+    private Sector? SelectedSector = null;
 
     // Fields to track panning state
     private bool isPanning = false;
@@ -148,10 +153,12 @@ namespace X4Map
       Canvas galaxyCanvas,
       double mapColorsOpacity,
       int sectorRadius,
+      bool editorMode = true,
       Dictionary<string, List<ObjectInSector>>? extraObjects = null,
       List<string>? extraConnectionsNames = null
     )
     {
+      _editorMode = editorMode;
       GalaxyData = galaxy;
       GalaxyCanvas = galaxyCanvas;
       _mapColorsOpacity = mapColorsOpacity;
@@ -294,6 +301,10 @@ namespace X4Map
           );
           clusterMapCluster.Create(this);
           _clusters.Add(clusterMapCluster);
+          if (cluster != null)
+          {
+            _sectors.AddRange(clusterMapCluster.Sectors);
+          }
           if (cluster == null)
           {
             continue;
@@ -485,15 +496,37 @@ namespace X4Map
       var clickedElement = e.OriginalSource as DependencyObject;
       if (clickedElement is TextBlock textBlock && textBlock.DataContext is Sector _sectorFromTextBlock)
       {
-        SelectedSector = _sectorFromTextBlock;
+        PressedSector = _sectorFromTextBlock;
+        if (textBlock.Parent is Polygon polygon)
+        {
+          PressedHexagon = polygon;
+        }
+        else if (textBlock.Parent is Grid grid)
+        {
+          PressedHexagon = grid.Children[0] as Polygon;
+        }
       }
       else if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
       {
-        SelectedSector = _sectorFromPolygon;
+        PressedSector = _sectorFromPolygon;
+        PressedHexagon = polygon;
       }
       else if (clickedElement is Grid grid && grid.DataContext is Sector _sectorFromGrid)
       {
-        SelectedSector = _sectorFromGrid;
+        PressedSector = _sectorFromGrid;
+        PressedHexagon = grid.Children[0] as Polygon;
+      }
+      else if (clickedElement is Polygon clusterPolygon && clusterPolygon.DataContext is Cluster _clusterFromPolygon)
+      {
+        GalaxyMapCluster? galaxyCluster = _clusters.Find(cluster => cluster.Macro == _clusterFromPolygon.Macro);
+        if (galaxyCluster != null)
+        {
+          PressedHexagon = galaxyCluster.Hexagon;
+        }
+      }
+      else if (clickedElement is Polygon cellPolygon && cellPolygon.DataContext is GalaxyMapCluster _galaxyClusterFromPolygon)
+      {
+        PressedHexagon = _galaxyClusterFromPolygon.Hexagon;
       }
       isPanning = true;
       panStartPoint = e.GetPosition(this);
@@ -514,7 +547,8 @@ namespace X4Map
         {
           return;
         }
-        SelectedSector = null;
+        PressedSector = null;
+        PressedHexagon = null;
         // Adjust the ScrollViewer's offsets
         ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
         ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
@@ -532,10 +566,30 @@ namespace X4Map
         GalaxyCanvas.ReleaseMouseCapture();
         this.Cursor = Cursors.Arrow;
       }
-      if (SelectedSector != null)
+      if (PressedSector != null)
       {
-        OnSectorSelected?.Invoke(this, new SectorEventArgs(SelectedSector));
-        SelectedSector = null;
+        OnSectorSelected?.Invoke(this, new SectorEventArgs(PressedSector));
+        PressedSector = null;
+      }
+      if (PressedHexagon != null)
+      {
+        if (_editorMode)
+        {
+          if (SelectedHexagon != null)
+          {
+            SelectedHexagon.StrokeThickness = 1;
+          }
+          if (SelectedHexagon != PressedHexagon)
+          {
+            SelectedHexagon = PressedHexagon;
+            SelectedHexagon.StrokeThickness = 3;
+          }
+          else
+          {
+            SelectedHexagon = null;
+          }
+        }
+        PressedHexagon = null;
       }
     }
 
@@ -617,7 +671,7 @@ namespace X4Map
     }
   }
 
-  class GalaxyMapCluster(
+  public class GalaxyMapCluster(
     double x,
     double y,
     Canvas canvas,
@@ -629,6 +683,7 @@ namespace X4Map
   ) : INotifyPropertyChanged
   {
     protected Cluster? Cluster = cluster;
+    public virtual string Macro => Cluster?.Macro ?? "";
     protected virtual double Modifier { get; set; } = 1.0;
     protected virtual double HexagonWidth { get; set; } = hexagonWidth;
     protected virtual double HexagonHeight { get; set; } = hexagonHeight;
@@ -682,6 +737,16 @@ namespace X4Map
       }
     }
 
+    public int Column
+    {
+      get { return (int)(OriginalX / GalaxyMapViewer.ColumnWidth); }
+    }
+
+    public int Row
+    {
+      get { return (int)(OriginalZ / GalaxyMapViewer.RowHeight); }
+    }
+
     private static readonly string[] _toolTipItems = ["Name", "Source", "Macro", "Coordinates", "X", "Y", "Z", "Column", "Row"];
     protected virtual string[] ToolTipItems
     {
@@ -699,8 +764,8 @@ namespace X4Map
     public string Source => Cluster?.Source ?? "EmptyCell";
     protected Canvas? Canvas = canvas;
     protected PointCollection Points = [];
-    protected Polygon? Hexagon = null;
-    private readonly List<GalaxyMapSector> _sectors = [];
+    public Polygon? Hexagon { get; protected set; } = null;
+    public readonly List<GalaxyMapSector> Sectors = [];
 
     private static readonly List<HexagonCornersTriplet> Triplets =
     [
@@ -726,7 +791,7 @@ namespace X4Map
         Sector sector = Cluster.Sectors[0];
         GalaxyMapSector clusterMapSector = new(_x, _y, Canvas, Cluster, sector, HexagonWidth, HexagonHeight, ScaleFactor);
         clusterMapSector.Create(map);
-        _sectors.Add(clusterMapSector);
+        Sectors.Add(clusterMapSector);
       }
       else
       {
@@ -738,7 +803,7 @@ namespace X4Map
           StrokeThickness = 1,
           Fill = Brushes.Transparent,
           Tag = Cluster != null ? Cluster.Name : "Empty Map Cell",
-          DataContext = Cluster,
+          DataContext = Cluster == null ? this : Cluster,
           Points = Points,
           ToolTip = Cluster != null ? ToolTipCreator(Cluster) : ToolTipCreator(null, null, new Position(OriginalX, 0, OriginalZ)),
         };
@@ -912,7 +977,7 @@ namespace X4Map
                 true
               );
               clusterMapSector.Create(map);
-              _sectors.Add(clusterMapSector);
+              Sectors.Add(clusterMapSector);
             }
           }
         }
@@ -925,7 +990,7 @@ namespace X4Map
       {
         canvas.Children.Remove(Hexagon);
       }
-      foreach (GalaxyMapSector sector in _sectors)
+      foreach (GalaxyMapSector sector in Sectors)
       {
         sector.Remove(canvas);
       }
@@ -1015,8 +1080,7 @@ namespace X4Map
             if (!isSector)
             {
               labelStr = "Column:";
-              position = cluster != null ? cluster.Position : position;
-              textStr = Convert.ToInt32(Position.X / GalaxyMapViewer.ColumnWidth).ToString();
+              textStr = Column.ToString();
               alignRight = true;
             }
             break;
@@ -1024,8 +1088,7 @@ namespace X4Map
             if (!isSector)
             {
               labelStr = "Row:";
-              position = cluster != null ? cluster.Position : position;
-              textStr = Convert.ToInt32(Position.Z / GalaxyMapViewer.RowHeight).ToString();
+              textStr = Row.ToString();
               alignRight = true;
             }
             break;
@@ -1119,6 +1182,14 @@ namespace X4Map
       return toolTipGrid;
     }
 
+    public virtual void Select(bool isSelected)
+    {
+      if (Hexagon != null)
+      {
+        Hexagon.StrokeThickness = isSelected ? 2 : 1;
+      }
+    }
+
     public virtual void Update(GalaxyMapViewer map)
     {
       if (Canvas == null)
@@ -1137,7 +1208,7 @@ namespace X4Map
         Canvas.SetTop(Hexagon, Y);
         Hexagon.Visibility = map.IsVisibleBySource(Source) ? Visibility.Visible : Visibility.Hidden;
       }
-      foreach (GalaxyMapSector sector in _sectors)
+      foreach (GalaxyMapSector sector in Sectors)
       {
         sector.Update(map);
       }
@@ -1162,7 +1233,7 @@ namespace X4Map
     }
   }
 
-  class GalaxyMapSector(
+  public class GalaxyMapSector(
     double x,
     double y,
     Canvas canvas,
@@ -1176,6 +1247,7 @@ namespace X4Map
   {
     protected override double Modifier { get; set; } = isHalf ? 0.5 : 1;
     protected Sector? Sector = sector;
+    public override string Macro => Sector?.Macro ?? "";
     protected Grid? Grid = null;
     protected TextBlock? TextBlock = null;
     private readonly SectorMap SectorMapHelper = new();
