@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.1.0...GalaxyEditor@v0.1.1) (2025-02-17)
+
+
+### Miscellaneous Chores
+
+* **MainWindow:** add processing order for X4 data loading ([f63b53c](https://github.com/chemodun/X4-UniverseEditor/commit/f63b53c32a3130be9cbf063857b7ee20d1837f99))
+
 ## [0.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor-v0.0.1...GalaxyEditor@v0.1.0) (2025-02-17)
 
 
