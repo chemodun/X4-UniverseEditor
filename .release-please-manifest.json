@@ -1,6 +1,6 @@
 {
   "src/X4DataLoader": "0.7.0",
-  "src/X4DataTestConsole": "0.2.5",
+  "src/X4DataTestConsole": "0.2.6",
   "src/ChemGateBuilder": "0.8.7",
   "src/Logger": "0.0.3",
   "src/X4Unpack": "0.3.1",
