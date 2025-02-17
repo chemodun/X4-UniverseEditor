@@ -97,5 +97,15 @@ namespace X4DataLoader
         galaxy.MappedColors.Add(color);
       }
     }
+
+    public static X4Color? GetColorByMappedId(string mappedId, Galaxy galaxy)
+    {
+      X4MappedColor? mappedColor = galaxy.MappedColors.Find(color => color.Id == mappedId);
+      if (mappedColor != null)
+      {
+        return galaxy.Colors.Find(color => color.Id == mappedColor.OriginalColorId);
+      }
+      return null;
+    }
   }
 }

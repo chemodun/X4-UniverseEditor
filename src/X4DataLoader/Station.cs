@@ -13,7 +13,8 @@ namespace X4DataLoader
     public string Name { get; private set; }
     public string Race { get; private set; }
     public string OwnerId { get; private set; }
-    public string OwnerName { get; private set; }
+    public string OwnerName { get; private set; } = "";
+    public X4Color? Color { get; private set; } = null;
     public string Type { get; private set; }
     public bool GameStartDependent { get; private set; } = false;
     public bool IsClaimCapable { get; private set; }
@@ -46,15 +47,7 @@ namespace X4DataLoader
       FileName = "";
     }
 
-    public void Load(
-      XElement element,
-      string source,
-      string fileName,
-      List<Sector> allSectors,
-      List<StationCategory> allStationCategories,
-      List<ConstructionPlan> allConstructionPlans,
-      List<Faction> allFactions
-    )
+    public void Load(XElement element, string source, string fileName, Galaxy galaxy)
     {
       Id = XmlHelper.GetAttribute(element, "id") ?? "";
       Race = XmlHelper.GetAttribute(element, "race") ?? "";
@@ -71,7 +64,7 @@ namespace X4DataLoader
       switch (locationClass)
       {
         case "zone":
-          Sector = allSectors.FirstOrDefault(s =>
+          Sector = galaxy.Sectors.FirstOrDefault(s =>
             s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, locationMacro))
           );
           if (Sector == null)
@@ -87,7 +80,7 @@ namespace X4DataLoader
           }
           break;
         case "sector":
-          Sector = allSectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, locationMacro));
+          Sector = galaxy.Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.Macro, locationMacro));
           if (Sector == null)
           {
             Log.Error($"Sector not found for station {Id}");
@@ -123,7 +116,7 @@ namespace X4DataLoader
         string refId = XmlHelper.GetAttribute(stationElement, "ref") ?? "";
         if (!String.IsNullOrEmpty(constructionPlanId))
         {
-          constructionPlan = allConstructionPlans.FirstOrDefault(cp => cp.Id == constructionPlanId);
+          constructionPlan = galaxy.ConstructionPlans.FirstOrDefault(cp => cp.Id == constructionPlanId);
         }
         XElement? selectElement = stationElement.Element("select");
         StationCategory? stationCategory = null;
@@ -132,20 +125,19 @@ namespace X4DataLoader
           if (selectElement != null)
           {
             Tags = XmlHelper.GetAttributeAsList(selectElement, "tags");
-            string faction = XmlHelper.GetAttribute(selectElement, "faction") ?? "";
-            if (!String.IsNullOrEmpty(faction) && Tags.Count == 1)
+            string factionId = XmlHelper.GetAttribute(selectElement, "faction") ?? "";
+            if (!String.IsNullOrEmpty(factionId) && Tags.Count == 1)
             {
-              stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, Tags[0], faction);
+              stationCategory = StationCategory.GetByTagAndFaction(galaxy.StationCategories, Tags[0], factionId);
             }
           }
           else if (!String.IsNullOrEmpty(refId)) // There is only for tradestation_tel_ring, really not clear situation
           {
-            stationCategory = StationCategory.GetByStationId(allStationCategories, refId);
+            stationCategory = StationCategory.GetByStationId(galaxy.StationCategories, refId);
             if (stationCategory != null)
             {
               string tag = stationCategory.Tag;
-              string faction = OwnerId;
-              stationCategory = StationCategory.GetByTagAndFaction(allStationCategories, tag, faction);
+              stationCategory = StationCategory.GetByTagAndFaction(galaxy.StationCategories, tag, OwnerId);
             }
           }
         }
@@ -159,11 +151,20 @@ namespace X4DataLoader
       }
       IsClaimCapable = constructionPlan?.IsClaimCapable ?? false;
       Name = constructionPlan?.Name ?? "";
-      OwnerName = allFactions.FirstOrDefault(f => f.Id == OwnerId)?.Name ?? "";
+      Faction? faction = galaxy.Factions.FirstOrDefault(f => f.Id == OwnerId);
+      if (faction != null)
+      {
+        Color = faction.Color;
+        OwnerName = faction.Name;
+      }
+      else
+      {
+        Color = galaxy.Colors.Find(color => color.Id == "grey_64");
+      }
       if (!String.IsNullOrEmpty(Name) && !String.IsNullOrEmpty(OwnerName))
       {
         string planPrefix = Name.Split(" ")[0];
-        if (allFactions.Any(f => f.Name.StartsWith(planPrefix)) || allFactions.Any(f => f.PrimaryRaceName.StartsWith(planPrefix)))
+        if (galaxy.Factions.Any(f => f.Name.StartsWith(planPrefix)) || galaxy.Factions.Any(f => f.PrimaryRaceName.StartsWith(planPrefix)))
         {
           Name = Name[planPrefix.Length..].Trim();
         }
@@ -195,15 +196,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         Station? station = new();
-        station.Load(
-          element,
-          file.ExtensionId,
-          file.FileName,
-          galaxy.Sectors,
-          galaxy.StationCategories,
-          galaxy.ConstructionPlans,
-          galaxy.Factions
-        );
+        station.Load(element, file.ExtensionId, file.FileName, galaxy);
       }
     }
   }

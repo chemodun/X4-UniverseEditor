@@ -171,11 +171,7 @@ namespace X4DataLoader
           if (faction != null)
           {
             DominantOwnerFaction = faction;
-            X4MappedColor? factionColor = galaxy.MappedColors.Find(color => color.Id == faction.ColorId);
-            if (factionColor != null)
-            {
-              Color = galaxy.Colors.Find(color => color.Id == factionColor.OriginalColorId);
-            }
+            Color = faction.Color;
             Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");
           }
           Log.Debug($"Sector {Name}: Dominant Owner: {DominantOwner}");

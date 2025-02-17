@@ -22,6 +22,7 @@ namespace X4DataLoader
     public List<string> Tags { get; private set; } = [];
     public string PoliceFaction { get; private set; }
     public string ColorId { get; private set; }
+    public X4Color? Color { get; private set; } = null;
     public string IconActiveId { get; private set; }
     public string IconInactiveId { get; private set; }
     public XElement? XML { get; set; }
@@ -49,17 +50,17 @@ namespace X4DataLoader
       FileName = "";
     }
 
-    public void Load(XElement element, string source, string fileName, Translation translation, List<Race> allRaces)
+    public void Load(XElement element, string source, string fileName, Galaxy galaxy)
     {
       Id = XmlHelper.GetAttribute(element, "id") ?? "";
-      Name = translation.Translate(XmlHelper.GetAttribute(element, "name") ?? "");
-      Description = translation.Translate(XmlHelper.GetAttribute(element, "description") ?? "");
-      ShortName = translation.Translate(XmlHelper.GetAttribute(element, "shortname") ?? "");
-      PrefixName = translation.Translate(XmlHelper.GetAttribute(element, "prefixname") ?? "");
-      SpaceName = translation.Translate(XmlHelper.GetAttribute(element, "spacename") ?? "");
-      HomeSpaceName = translation.Translate(XmlHelper.GetAttribute(element, "homespacename") ?? "");
+      Name = galaxy.Translation.Translate(XmlHelper.GetAttribute(element, "name") ?? "");
+      Description = galaxy.Translation.Translate(XmlHelper.GetAttribute(element, "description") ?? "");
+      ShortName = galaxy.Translation.Translate(XmlHelper.GetAttribute(element, "shortname") ?? "");
+      PrefixName = galaxy.Translation.Translate(XmlHelper.GetAttribute(element, "prefixname") ?? "");
+      SpaceName = galaxy.Translation.Translate(XmlHelper.GetAttribute(element, "spacename") ?? "");
+      HomeSpaceName = galaxy.Translation.Translate(XmlHelper.GetAttribute(element, "homespacename") ?? "");
       PrimaryRaceId = XmlHelper.GetAttribute(element, "primaryrace") ?? "";
-      PrimaryRaceName = allRaces.Find(r => r.Id == PrimaryRaceId)?.Name ?? "";
+      PrimaryRaceName = galaxy.Races.Find(r => r.Id == PrimaryRaceId)?.Name ?? "";
       BehaviorSet = XmlHelper.GetAttribute(element, "behaviorset") ?? "";
       Tags = XmlHelper.GetAttributeAsList(element, "tags", " ");
       PoliceFaction = XmlHelper.GetAttribute(element, "policefaction") ?? "";
@@ -68,6 +69,7 @@ namespace X4DataLoader
       {
         ColorId = XmlHelper.GetAttribute(colorElement, "ref") ?? "";
       }
+      Color = X4MappedColor.GetColorByMappedId(ColorId, galaxy);
       XElement? iconElement = element.Element("icon");
       if (iconElement != null)
       {
@@ -90,7 +92,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         Faction faction = new();
-        faction.Load(element, file.ExtensionId, file.FileName, galaxy.Translation, galaxy.Races);
+        faction.Load(element, file.ExtensionId, file.FileName, galaxy);
         if (faction.Name == "")
         {
           Log.Warn($"Faction must have a name");
@@ -103,6 +105,16 @@ namespace X4DataLoader
         }
         galaxy.Factions.Add(faction);
       }
+    }
+
+    public static X4Color? GetColorByFactionId(string factionId, Galaxy galaxy)
+    {
+      Faction? faction = galaxy.Factions.Find(faction => faction.Id == factionId);
+      if (faction != null)
+      {
+        return X4MappedColor.GetColorByMappedId(faction.ColorId, galaxy);
+      }
+      return null;
     }
   }
 }
