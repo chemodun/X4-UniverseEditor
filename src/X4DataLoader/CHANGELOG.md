@@ -10,7 +10,7 @@
 
 ### Bug Fixes
 
-* **DataLoader:** avoided the issue when the case in `mapdefaults.xml` is different from other files for `clusters` and `sectors` prevent the right work of a created mods. Now the trusted sources are -`galaxy.xml` for `clusters` and `clusters.xml` for `sectors`. ([1cbf851](https://github.com/chemodun/X4-UniverseEditor/commit/1cbf851c1b2fb5e62b845cdee4c10b0cbb4689d9))
+* **DataLoader:** avoided the issue when the case in `mapdefaults.xml` is different from other files for `clusters` and `sectors` prevent the right work of a created mods. Now the trusted sources are -`galaxy.xml` for `clusters` and `clusters.xml` for `sectors`. I.e fixes #79. ([1cbf851](https://github.com/chemodun/X4-UniverseEditor/commit/1cbf851c1b2fb5e62b845cdee4c10b0cbb4689d9))
 
 
 ### Code Refactoring
