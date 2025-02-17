@@ -198,6 +198,27 @@ namespace GalaxyEditor
       new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
       new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
     ];
+    private readonly List<ProcessingOrderItem> _x4PDataProcessingOrder =
+    [
+      new ProcessingOrderItem("translations", ""),
+      new ProcessingOrderItem("colors", ""),
+      new ProcessingOrderItem("galaxy", "clusters"),
+      new ProcessingOrderItem("clusters", ""),
+      new ProcessingOrderItem("mapDefaults", ""),
+      new ProcessingOrderItem("sectors", ""),
+      new ProcessingOrderItem("zones", ""),
+      new ProcessingOrderItem("races", ""),
+      new ProcessingOrderItem("factions", ""),
+      new ProcessingOrderItem("modules", ""),
+      new ProcessingOrderItem("modulegroups", ""),
+      new ProcessingOrderItem("constructionplans", ""),
+      new ProcessingOrderItem("stationgroups", ""),
+      new ProcessingOrderItem("stations", ""),
+      new ProcessingOrderItem("god", ""),
+      new ProcessingOrderItem("sechighways", ""),
+      new ProcessingOrderItem("zonehighways", ""),
+      new ProcessingOrderItem("galaxy", "gates"),
+    ];
     public string X4DataFolderPath
     {
       get
@@ -551,7 +572,7 @@ namespace GalaxyEditor
           _backgroundWorker.ReportProgress(0, e.ProcessingFile);
         }
       };
-      dataLoader.LoadData(GalaxyData, X4DataFolder, _x4DataStructure, LoadModsData);
+      dataLoader.LoadData(GalaxyData, X4DataFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData);
 
       if (!X4DataVersionOverride && GalaxyData.Version != 0 && GalaxyData.Version != X4DataVersion)
       {
