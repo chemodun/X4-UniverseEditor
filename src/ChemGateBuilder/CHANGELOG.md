@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.8.8](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.7...ChemGateBuilder@v0.8.8) (2025-02-17)
+
+
+### Bug Fixes
+
+* **GalaxyMapWindow:** rename event handler from OnSectorSelected to OnPressedSector for clarity ([bba23fb](https://github.com/chemodun/X4-UniverseEditor/commit/bba23fb6c942c2c0422c4555b908428ac6948b8c))
+
+
+### Code Refactoring
+
+* **DataLoader:** replace X4Galaxy references with DataLoader for improved data handling ([3bf9ce5](https://github.com/chemodun/X4-UniverseEditor/commit/3bf9ce51d38e77890014b76200da389ea456e99e))
+* **DataLoad:** reflect moving data validation method for X4 data folder to X4Galaxy ([dd73444](https://github.com/chemodun/X4-UniverseEditor/commit/dd73444a21a86a2449232fbfe3edc3ad91a4e388))
+* **GalaxyMapWindow:** rename GalaxyViewer and GalaxyCanvas to GalaxyMapViewer and GalaxyMapCanvas for consistency nas use them directly from xaml ([494af4e](https://github.com/chemodun/X4-UniverseEditor/commit/494af4eff2b2c54b24ba4c223b23de71a737c481))
+* **GalaxyMapWindow:** replace ScrollViewer with GalaxyMapViewer for improved functionality and binding ([2a7aaa1](https://github.com/chemodun/X4-UniverseEditor/commit/2a7aaa1adee0a137d1657e7d29bc5237950f79a4))
+* **GateData, MainWindow:** remove FactionColors dependency and clean up related logic ([b438813](https://github.com/chemodun/X4-UniverseEditor/commit/b4388130bf1c84d297ba8e7e0cf57e6b6b149881))
+* **GateData:** modify UpdateCurrentGateOnMap to return ObjectInSector and improve null handling ([e6330f6](https://github.com/chemodun/X4-UniverseEditor/commit/e6330f67918fd420e47b6bde8c79c7c00c22eef0))
+* **LoadData:** define game files structure locally ([5e33ec9](https://github.com/chemodun/X4-UniverseEditor/commit/5e33ec9a5b1bd74fe58e20f5b42a4b4f6da42064))
+* **MainWindow:** change fields to readonly for improved encapsulation and clarity ([c0d6a16](https://github.com/chemodun/X4-UniverseEditor/commit/c0d6a167ed70d8278d948454c10414897988dbd6))
+* **MainWindow:** consolidate object retrieval from mods and improve data structure handling ([c6648ac](https://github.com/chemodun/X4-UniverseEditor/commit/c6648acf55fa3b73afeb7c87c770f92814ad8538))
+* **MainWindow:** implement background loading for X4 data to enhance performance and user experience ([0c74d3f](https://github.com/chemodun/X4-UniverseEditor/commit/0c74d3f4a5f7a2f9b282698df35cdec141fc9628))
+* **MainWindow:** integrate app icon into extraction window and move to SharedWindows the X4DataExtractionWindow ([725468a](https://github.com/chemodun/X4-UniverseEditor/commit/725468ae58900265bb89291a46c41633712d0b8b))
+* **MainWindow:** rename X4DataStructure to _x4DataStructure for consistency ([7da5b4f](https://github.com/chemodun/X4-UniverseEditor/commit/7da5b4f771c5ce93325ddd1511f9da68b2abe882))
+* **MainWindow:** update status message handling to use StatusBarMessage class ([14f359b](https://github.com/chemodun/X4-UniverseEditor/commit/14f359b1de128512c070207da3d8325d26365dc1))
+* move AboutWindow to SharedWindows ([d2fbe46](https://github.com/chemodun/X4-UniverseEditor/commit/d2fbe46651f5ce2271d9375ad471012fbf52679c))
+* reorganize project file to separate package references and resources ([9410322](https://github.com/chemodun/X4-UniverseEditor/commit/941032278c3ece11358416b0500e446ca422c5de))
+* **X4Map:** reflect moving the sector size limits to MapConstants and refactor SectorMap ([28bfb6a](https://github.com/chemodun/X4-UniverseEditor/commit/28bfb6ae85e10616dbca6b6ad7c566a3752852e2))
+
+
+### Miscellaneous Chores
+
+* **MainWindow:** add processing order for X4 data loading ([da79596](https://github.com/chemodun/X4-UniverseEditor/commit/da795964364a7bad37af15c8f8fd1f2baa4a6af9))
+
+
+### Documentation
+
+* update README.md with changelog for version 0.8.8 ([76a918c](https://github.com/chemodun/X4-UniverseEditor/commit/76a918c6984b6d5278c3f566b82e42506f26f82b))
+
 ## [0.8.7](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.6...ChemGateBuilder@v0.8.7) (2025-02-14)
 
 
