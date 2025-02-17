@@ -278,10 +278,17 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.8.8] - 2025-02-17
+
+- Fixed
+  - Fixed the issue with the loading created mods to the game - "case" issue
+- Improved
+  - Internal procedure of game data loading
+
 ### [0.8.6] - 2025-02-14
 
 - Fixed
-  - Fixed the issue with the mod loading
+  - Fixed the issue with the mod loading to the tool
 
 ### [0.8.5] - 2025-02-14
 
