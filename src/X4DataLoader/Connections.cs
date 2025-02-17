@@ -143,87 +143,33 @@ namespace X4DataLoader
     public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
-      bool modeDiff = false;
-      if (!elements.Any())
-      {
-        elements = file.XML.XPathSelectElements("/diff/add");
-        modeDiff = true;
-      }
       foreach (XElement element in elements)
       {
-        LoadConnections(element, galaxy.Clusters, galaxy.Sectors, file.ExtensionId, file.FileName, modeDiff);
+        LoadConnections(element, galaxy, file.ExtensionId, file.FileName);
       }
     }
 
-    private static void LoadConnections(
-      XElement element,
-      List<Cluster> allClusters,
-      List<Sector> allSectors,
-      string source,
-      string fileName,
-      bool modeDiff
-    )
+    private static void LoadConnections(XElement element, Galaxy galaxy, string source, string fileName)
     {
-      bool modeFull = true;
-      string name = string.Empty;
-      string connectionClass = string.Empty;
-      string reference = string.Empty;
-      if (modeDiff)
-      {
-        string selStr = XmlHelper.GetAttribute(element, "sel") ?? "";
-        modeFull = selStr == "/macros" || selStr == "//macros" || selStr.StartsWith("/macros/macro") && !selStr.EndsWith("/connections");
-        if (!modeFull)
-        {
-          string[] parts = XmlHelper.GetDiffSelAttributeAndValue(selStr.Replace("/macros/macro", "").Replace("/connection", ""));
-          if (parts.Length == 2 && parts[0] == "name")
-            name = parts[1];
-        }
-      }
-      if (modeFull)
-      {
-        name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
-        connectionClass = XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
-        reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
-        source = XmlHelper.GetAttribute(element, "_source") ?? source;
-      }
-      else if (string.IsNullOrEmpty(name))
-      {
-        throw new ArgumentException("Connections list must have a name");
-      }
+      string name = XmlHelper.GetAttribute(element, "name") ?? throw new ArgumentException("Connections list must have a name");
+      string connectionClass =
+        XmlHelper.GetAttribute(element, "class") ?? throw new ArgumentException("Connections list must have a class");
+      string reference = XmlHelper.GetAttribute(element, "ref") ?? throw new ArgumentException("Connections list must have a ref");
+      source = XmlHelper.GetAttribute(element, "_source") ?? source;
       string sectorId = string.Empty;
       string clusterId = string.Empty;
+      if (connectionClass == "cluster")
+      {
+        clusterId = name.Replace("_macro", "");
+      }
+      else if (connectionClass == "sector")
+      {
+        sectorId = name.Replace("_macro", "");
+      }
       List<Connection>? connections = [];
       try
       {
-        if (Cluster.IsClusterMacro(name))
-        {
-          clusterId = Cluster.GetClusterIdByMacro(allClusters, name);
-        }
-        else if (Sector.IsSectorMacro(name))
-        {
-          sectorId = Sector.GetSectorIdByMacro(allSectors, name);
-        }
-        else
-        {
-          throw new ArgumentException("Invalid macro format");
-        }
-        if (modeFull && ConnectionOwnerClasses.Contains(connectionClass) == false)
-        {
-          throw new ArgumentException("Connection must have a valid class: {string.Join(", ", ConnectionOwnerClasses)}");
-        }
-        else if (string.IsNullOrEmpty(clusterId) && string.IsNullOrEmpty(sectorId))
-        {
-          throw new ArgumentException("Connection macro must have a cluster or sector id");
-        }
-        else if (connectionClass == "cluster" && string.IsNullOrEmpty(clusterId))
-        {
-          throw new ArgumentException("Cluster connection must have a cluster id");
-        }
-        else if (connectionClass == "sector" && string.IsNullOrEmpty(sectorId))
-        {
-          throw new ArgumentException("Sector connection must have both cluster and sector id");
-        }
-        XElement connectionsElement = modeFull ? element.Element("connections") ?? new XElement("connections") : element;
+        XElement? connectionsElement = element.Element("connections");
         if (connectionsElement != null)
         {
           foreach (XElement connectionElement in connectionsElement.Elements("connection"))
@@ -231,7 +177,7 @@ namespace X4DataLoader
             string? connectionName = connectionElement.Attribute("name")?.Value;
             string? connectionReference = connectionElement.Attribute("ref")?.Value;
 
-            if (connectionName != null && connectionReference == "sectors")
+            if (connectionClass == "cluster" && connectionName != null && connectionReference == "sectors")
             {
               XElement? positionElement = connectionElement.Element("offset")?.Element("position");
               Position position =
@@ -249,7 +195,15 @@ namespace X4DataLoader
                 string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
                 if (macroConnection == "cluster" && string.IsNullOrEmpty(macroRef) == false)
                 {
-                  Sector? sector = Sector.GetSectorByMacro(allSectors, macroRef);
+                  if (galaxy.Sectors.Any(sector => sector.Macro == macroRef))
+                  {
+                    throw new ArgumentException($"Sector with macro {macroRef} already exists");
+                  }
+                  Sector sector = new(macroRef, clusterId);
+                  Cluster? cluster = Cluster.GetClusterByMacro(galaxy.Clusters, name);
+                  cluster?.Sectors.Add(sector);
+                  galaxy.Sectors.Add(sector);
+                  Log.Debug($"Sector added: {sector.Macro} to Cluster: {cluster?.Macro}");
                   sector?.SetPosition(position, connectionName, connectionElement, source, fileName);
                 }
               }
@@ -273,30 +227,24 @@ namespace X4DataLoader
             }
           }
         }
-        if (!string.IsNullOrEmpty(sectorId))
+        if (connectionClass == "sector")
         {
-          Sector? sector = Sector.GetSectorById(allSectors, sectorId);
+          Sector? sector = Sector.GetSectorByMacro(galaxy.Sectors, name);
           if (sector != null)
           {
-            if (modeFull)
-            {
-              sector.Reference = reference;
-            }
+            sector.Update(reference, source, fileName, element);
             foreach (Connection connection in connections)
             {
               sector.Connections[connection.Name] = connection;
             }
           }
         }
-        else if (!string.IsNullOrEmpty(clusterId))
+        else if (connectionClass == "cluster")
         {
-          Cluster? cluster = Cluster.GetClusterById(allClusters, clusterId);
+          Cluster? cluster = Cluster.GetClusterByMacro(galaxy.Clusters, name);
           if (cluster != null)
           {
-            if (modeFull)
-            {
-              cluster.Reference = reference;
-            }
+            cluster.Update(reference, source, fileName, element);
             foreach (Connection connection in connections)
             {
               cluster.Connections[connection.Name] = connection;

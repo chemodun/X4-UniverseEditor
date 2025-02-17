@@ -196,7 +196,15 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         Station? station = new();
-        station.Load(element, file.ExtensionId, file.FileName, galaxy);
+        try
+        {
+          station.Load(element, file.ExtensionId, file.FileName, galaxy);
+        }
+        catch (ArgumentException e)
+        {
+          Log.Error(e.Message);
+        }
+        galaxy.Stations.Add(station);
       }
     }
   }

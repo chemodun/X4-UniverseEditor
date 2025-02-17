@@ -27,6 +27,7 @@ namespace X4DataLoader
     public List<ConstructionPlan> ConstructionPlans { get; private set; } = [];
     public List<StationGroup> StationGroups { get; private set; } = [];
     public List<StationCategory> StationCategories { get; private set; } = [];
+    public List<Station> Stations { get; private set; } = [];
     public List<GalaxyConnection> Connections { get; private set; } = [];
     public List<GameFile> GameFiles { get; private set; } = [];
 
@@ -72,45 +73,16 @@ namespace X4DataLoader
       GameFiles.Clear();
     }
 
-    public void LoadFromXML(GameFile file, Galaxy galaxy)
+    public void LoadFromXML(GameFile file, Galaxy galaxy, string procedureId)
     {
       XElement? galaxyElement = file.XML.XPathSelectElement("/macros/macro");
-      if (galaxyElement != null)
+      if (galaxyElement == null)
       {
-        Load(galaxyElement, galaxy.Clusters, file.ExtensionId, file.FileName);
-        Log.Debug($"Galaxy loaded from: {file.FileName} for {file.ExtensionId}");
+        throw new ArgumentException("Galaxy XML does not contain a macro element");
       }
-      else
-      {
-        XElement? galaxyDiffElement = file.XML.XPathSelectElement("/diff");
-        if (galaxyDiffElement != null)
-        {
-          IEnumerable<XElement>? galaxyDiffElements = galaxyDiffElement.Elements();
-          foreach (XElement galaxyElementDiff in galaxyDiffElements)
-          {
-            if (
-              galaxyElementDiff.Name == "add"
-              && galaxyElementDiff.Attribute("sel")?.Value == "/macros/macro[@name='XU_EP2_universe_macro']/connections"
-            )
-            {
-              LoadConnections(galaxyElementDiff, galaxy.Clusters, file.ExtensionId, file.FileName);
-              Log.Debug($"Galaxy connections loaded from: {file.FileName} for {file.ExtensionId}");
-            }
-          }
-        }
-        else
-        {
-          Log.Error("Invalid galaxy file format");
-          throw new ArgumentException("Invalid galaxy file format");
-        }
-      }
-    }
-
-    public void Load(XElement element, List<Cluster> allClusters, string source, string fileName)
-    {
-      Name = XmlHelper.GetAttribute(element, "name") ?? "";
-      Reference = XmlHelper.GetAttribute(element, "ref") ?? "";
-      string galaxyClass = XmlHelper.GetAttribute(element, "class") ?? "";
+      Name = XmlHelper.GetAttribute(galaxyElement, "name") ?? "";
+      Reference = XmlHelper.GetAttribute(galaxyElement, "ref") ?? "";
+      string galaxyClass = XmlHelper.GetAttribute(galaxyElement, "class") ?? "";
       if (galaxyClass != "galaxy")
       {
         throw new ArgumentException("Galaxy must have class=\"galaxy\"");
@@ -120,36 +92,17 @@ namespace X4DataLoader
         throw new ArgumentException("Galaxy must have a name or reference");
       }
 
-      var connectionsElement = element.Element("connections");
+      var connectionsElement = galaxyElement.Element("connections");
       if (connectionsElement != null)
       {
-        LoadConnections(connectionsElement, allClusters, source, fileName);
-      }
-    }
-
-    public void LoadConnections(
-      XElement connectionsElement,
-      List<Cluster> allClusters,
-      string source,
-      string fileName,
-      List<Zone>? additionalZones = null
-    )
-    {
-      string[] connectionRefs = ["clusters", "destination"];
-      foreach (var connectionRef in connectionRefs)
-      {
-        foreach (var connectionElement in connectionsElement.Elements("connection"))
+        if (procedureId == "clusters")
         {
-          var reference = connectionElement.Attribute("ref")?.Value;
-          if (reference == null || reference != connectionRef)
+          IEnumerable<XElement> elements = connectionsElement.XPathSelectElements("connection[@ref='clusters']");
+          foreach (var element in elements)
           {
-            continue;
-          }
-          if (reference == "clusters")
-          {
-            var name = XmlHelper.GetAttribute(connectionElement, "name") ?? "";
-            var offsetElement = connectionElement.Element("offset");
-            var positionElement = offsetElement?.Element("position");
+            string name = XmlHelper.GetAttribute(element, "name") ?? "";
+            XElement? offsetElement = element.Element("offset");
+            XElement? positionElement = offsetElement?.Element("position");
             Position position =
               positionElement != null
                 ? new Position(
@@ -159,29 +112,36 @@ namespace X4DataLoader
                 )
                 : new Position(0, 0, 0);
 
-            var macroElement = connectionElement.Element("macro");
+            XElement? macroElement = element.Element("macro");
             if (macroElement != null)
             {
               string macroRef = XmlHelper.GetAttribute(macroElement, "ref") ?? "";
               string macroConnection = XmlHelper.GetAttribute(macroElement, "connection") ?? "";
               if (macroConnection == "galaxy" && string.IsNullOrEmpty(macroRef) == false)
               {
-                var cluster = allClusters.FirstOrDefault(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef));
-                if (cluster != null)
+                if (Clusters.Any(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef)) == false)
                 {
-                  cluster.SetPosition(position, name, connectionElement, source, fileName);
+                  Cluster cluster = new(macroRef);
+                  cluster.SetPosition(position, name, element, file.ExtensionId, file.FileName);
                   Clusters.Add(cluster);
-                  cluster.Sectors.ForEach(s => Sectors.Add(s));
+                }
+                else
+                {
+                  Log.Warn($"Cluster with macro {macroRef} already exists");
                 }
               }
             }
           }
-          else if (reference == "destination")
+        }
+        else if (procedureId == "gates")
+        {
+          IEnumerable<XElement> elements = connectionsElement.XPathSelectElements("connection[@ref='destination']");
+          foreach (var element in elements)
           {
-            var galaxyConnection = new GalaxyConnection();
+            GalaxyConnection galaxyConnection = new();
             try
             {
-              galaxyConnection.Load(connectionElement, allClusters, source, fileName, additionalZones);
+              galaxyConnection.Load(element, Clusters, file.ExtensionId, file.FileName);
             }
             catch (Exception ex)
             {
@@ -191,6 +151,10 @@ namespace X4DataLoader
             Connections.Add(galaxyConnection);
           }
         }
+      }
+      else
+      {
+        Log.Warn("Galaxy does not contain connections element");
       }
     }
 

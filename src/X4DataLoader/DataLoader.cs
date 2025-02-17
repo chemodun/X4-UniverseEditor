@@ -21,7 +21,13 @@ namespace X4DataLoader
 
     public event EventHandler<X4DataLoadingEventArgs>? X4DataLoadingEvent;
 
-    public void LoadData(Galaxy galaxy, string coreFolderPath, List<GameFilesStructureItem> gameFilesStructure, bool loadMods = false)
+    public void LoadData(
+      Galaxy galaxy,
+      string coreFolderPath,
+      List<GameFilesStructureItem> gameFilesStructure,
+      List<ProcessingOrderItem> processingOrder,
+      bool loadMods = false
+    )
     {
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
       galaxy.Clear();
@@ -66,8 +72,14 @@ namespace X4DataLoader
         LoadMods(galaxy, coreFolderPath, gameFilesStructure, gameFiles);
       }
       List<string> sources = GameFile.GetExtensions(gameFiles);
-      foreach (GameFilesStructureItem fileDefinition in gameFilesStructure)
+      foreach (ProcessingOrderItem orderItem in processingOrder)
       {
+        GameFilesStructureItem? fileDefinition = gameFilesStructure.FirstOrDefault(f => f.Id == orderItem.Id);
+        if (fileDefinition == null)
+        {
+          Log.Warn($"File definition not found: {orderItem.Id}");
+          continue;
+        }
         List<GameFile> filesToProcess = gameFiles.Where(f => f.Id == fileDefinition.Id).ToList();
         Log.Debug($"Processing {filesToProcess.Count} files for {fileDefinition.Id}");
         foreach (GameFile file in filesToProcess)
@@ -84,7 +96,7 @@ namespace X4DataLoader
             case "colors":
               X4Color.LoadFromXml(file, galaxy);
               X4MappedColor.LoadFromXML(file, galaxy);
-              Log.Debug($"Colors loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Colors loaded (total on stage: {galaxy.Colors.Count}) from: {file.FileName} for {file.ExtensionId}");
               break;
             case "mapDefaults":
               foreach (XElement datasetElement in file.XML.XPathSelectElements("/defaults/dataset"))
@@ -92,34 +104,26 @@ namespace X4DataLoader
                 string? macro = datasetElement.Attribute("macro")?.Value;
                 if (macro != null)
                 {
-                  if (Cluster.IsClusterMacro(macro))
+                  if (galaxy.Clusters.Any(c => StringHelper.EqualsIgnoreCase(c.Macro, macro)))
                   {
-                    Cluster? cluster = new();
                     try
                     {
-                      cluster.Load(datasetElement, galaxy.Translation, file.ExtensionId, file.FileName);
-                      galaxy.Clusters.Add(cluster);
-                      Log.Debug($"Cluster loaded: {cluster.Name}");
+                      Cluster? cluster = Cluster.GetClusterByMacro(galaxy.Clusters, macro);
+                      cluster?.SetDetails(datasetElement, galaxy.Translation, file.ExtensionId, file.FileName);
+                      Log.Debug($"Cluster defaults loaded: {cluster?.Name}");
                     }
                     catch (ArgumentException e)
                     {
                       Log.Error($"Error loading cluster: {e.Message}");
                     }
                   }
-                  else if (Sector.IsSectorMacro(macro))
+                  else if (galaxy.Sectors.Any(s => StringHelper.EqualsIgnoreCase(s.Macro, macro)))
                   {
-                    Sector? sector = new();
                     try
                     {
-                      sector.Load(datasetElement, galaxy.Translation, file.ExtensionId, file.FileName);
-                      galaxy.Sectors.Add(sector);
-                      Cluster? cluster = Cluster.GetClusterById(galaxy.Clusters, sector.ClusterId);
-                      if (cluster != null)
-                      {
-                        cluster.Sectors.Add(sector);
-                        Log.Debug($"Sector added: {sector.Name} to Cluster: {cluster.Name}");
-                      }
-                      Log.Debug($"Sector loaded: {sector.Name}");
+                      Sector? sector = Sector.GetSectorByMacro(galaxy.Sectors, macro);
+                      sector?.SetDetails(datasetElement, galaxy.Translation, file.ExtensionId, file.FileName);
+                      Log.Debug($"Sector defaults loaded: {sector?.Name}");
                     }
                     catch (ArgumentException e)
                     {
@@ -132,11 +136,13 @@ namespace X4DataLoader
               break;
             case "clusters":
               Connection.LoadFromXML(file, galaxy);
-              Log.Debug($"Clusters loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Clusters connections loaded and sectors (total on stage: {galaxy.Sectors.Count}) from: {file.FileName} for {file.ExtensionId}"
+              );
               break;
             case "sectors":
               Connection.LoadFromXML(file, galaxy);
-              Log.Debug($"Sectors loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Sectors connections loaded from: {file.FileName} for {file.ExtensionId}");
               break;
             case "zones":
               Zone.LoadFromXML(file, galaxy);
@@ -152,39 +158,60 @@ namespace X4DataLoader
               break;
             case "races":
               Race.LoadFromXML(file, galaxy);
-              Log.Debug($"Races loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Races loaded (total on stage: {galaxy.Races.Count}) from: {file.FileName} for {file.ExtensionId}");
               break;
             case "factions":
               Faction.LoadFromXML(file, galaxy);
-              Log.Debug(message: $"Factions loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(message: $"Factions loaded (total on stage: {galaxy.Factions.Count}) from: {file.FileName} for {file.ExtensionId}");
               break;
             case "modules":
               StationModule.LoadFromXML(file, galaxy);
-              Log.Debug($"Modules loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Station modules loaded (total on stage: {galaxy.StationModules.Count}) from: {file.FileName} for {file.ExtensionId}"
+              );
               break;
             case "modulegroups":
               StationModuleGroup.LoadFromXML(file, galaxy);
-              Log.Debug($"Module groups loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Station module groups loaded (total on stage: {galaxy.StationModuleGroups.Count}) from: {file.FileName} for {file.ExtensionId}"
+              );
               break;
             case "constructionplans":
               ConstructionPlan.LoadFromXML(file, galaxy);
-              Log.Debug($"Construction plans loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Construction plans loaded (total on stage: {galaxy.ConstructionPlans.Count}) from: {file.FileName} for {file.ExtensionId}"
+              );
               break;
             case "stationgroups":
               StationGroup.LoadFromXML(file, galaxy);
-              Log.Debug($"Station groups loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Station groups loaded (total on stage: {galaxy.StationGroups.Count}): from {file.FileName} for {file.ExtensionId}"
+              );
               break;
             case "stations":
               StationCategory.LoadFromXML(file, galaxy);
-              Log.Debug($"Station categories loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Station categories loaded (total on stage: {galaxy.StationCategories.Count}) from: {file.FileName} for {file.ExtensionId}"
+              );
               break;
             case "god":
               Station.LoadFromXML(file, galaxy);
-              Log.Debug($"Stations loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Stations loaded (total on stage: {galaxy.Stations.Count}) from: {file.FileName} for {file.ExtensionId}");
               break;
             case "galaxy":
-              galaxy.LoadFromXML(file, galaxy);
-              Log.Debug($"Galaxy loaded from: {file.FileName} for {file.ExtensionId}");
+              galaxy.LoadFromXML(file, galaxy, orderItem.ProcedureId);
+              if (orderItem.ProcedureId == "clusters")
+              {
+                Log.Debug(
+                  $"Galaxy and clusters (total on stage: {galaxy.Clusters.Count}) loaded from: {file.FileName} for {file.ExtensionId}"
+                );
+              }
+              else
+              {
+                Log.Debug(
+                  $"Galaxy gate connections (total on stage: {galaxy.Connections.Count}) loaded from: {file.FileName} for {file.ExtensionId}"
+                );
+              }
               break;
           }
         }
@@ -514,6 +541,12 @@ namespace X4DataLoader
     Prefix,
     Suffix,
     Mask,
+  }
+
+  public class ProcessingOrderItem(string id, string procedureId)
+  {
+    public string Id { get; set; } = id;
+    public string ProcedureId { get; set; } = procedureId;
   }
 
   public class GameFilesStructureItem(string id, string folder, string[] possibleNames, MatchingModes matchingMode = MatchingModes.Exact)

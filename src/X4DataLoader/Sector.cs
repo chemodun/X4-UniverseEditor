@@ -9,26 +9,29 @@ using X4DataLoader.Helpers;
 
 namespace X4DataLoader
 {
-  public partial class Sector
+  public partial class Sector(string macro, string ClusterId)
   {
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public string Id { get; private set; }
-    public string ClusterId { get; private set; }
-    public string Macro { get; private set; }
-    public string Reference { get; set; }
-    public Position Position { get; private set; }
-    public string PositionId { get; private set; }
-    public string PositionSource { get; private set; }
-    public string PositionFileName { get; private set; }
+    public string Name { get; private set; } = "";
+    public string Description { get; private set; } = "";
+    public string Id { get; private set; } = macro.Replace("_macro", "");
+    public string ClusterId { get; private set; } = ClusterId;
+    public string Macro { get; private set; } = macro;
+    public string Reference { get; set; } = "";
+    public Position Position { get; private set; } = new Position();
+    public string PositionId { get; private set; } = "";
+    public string PositionSource { get; private set; } = "vanilla";
+    public string PositionFileName { get; private set; } = "";
+    public XElement? PositionXML { get; set; } = null;
     public double Sunlight { get; set; } = 0.0;
     public double Economy { get; set; } = 0.0;
     public double Security { get; set; } = 0.0;
-    public string Source { get; private set; }
-    public string FileName { get; private set; }
-    public XElement? PositionXML { get; set; }
-    public XElement? XML { get; set; }
-
+    public string DetailsMacro { get; private set; } = "";
+    public string DetailsSource { get; private set; } = "vanilla";
+    public string DetailsFileName { get; private set; } = "";
+    public XElement? DetailsXML { get; set; } = null;
+    public string Source { get; private set; } = "vanilla";
+    public string FileName { get; private set; } = "";
+    public XElement? XML { get; set; } = null;
     public List<Zone> Zones { get; private set; } = [];
     public Dictionary<string, Connection> Connections { get; private set; } = [];
     public List<Highway> Highways { get; private set; } = [];
@@ -39,38 +42,17 @@ namespace X4DataLoader
     public Faction? DominantOwnerFaction { get; private set; } = null;
     public X4Color? Color { get; private set; } = null;
 
-    public Sector()
-    {
-      Name = "";
-      Description = "";
-      Id = "";
-      Macro = "";
-      ClusterId = "";
-      Reference = "";
-      Position = new Position();
-      PositionId = "";
-      PositionSource = "vanilla";
-      PositionFileName = "";
-      Source = "vanilla";
-      FileName = "";
-    }
-
-    public void Load(XElement element, Translation translation, string source, string fileName)
+    public void SetDetails(XElement element, Translation translation, string source, string fileName)
     {
       var macro = element.Attribute("macro")?.Value;
-      if (!string.IsNullOrEmpty(macro) && IsSectorMacro(macro))
+      if (!string.IsNullOrEmpty(macro))
       {
         var propertiesElement = element.Element("properties");
         string nameId = propertiesElement?.Element("identification")?.Attribute("name")?.Value ?? "";
         string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
-        if (nameId != null && nameId != "" && descriptionId != null && descriptionId != "")
+        if (!string.IsNullOrEmpty(nameId) && !string.IsNullOrEmpty(descriptionId))
         {
-          Id = macro.Replace("_macro", "");
-          Macro = macro;
           Name = translation.Translate(nameId ?? "");
-          string lowerId = Id.ToLower(CultureInfo.InvariantCulture);
-          int sectorPosition = lowerId.IndexOf("_sector", StringComparison.Ordinal);
-          ClusterId = Id[..sectorPosition];
           Description = translation.Translate(descriptionId);
           XElement? areaElement = propertiesElement?.Element("area");
           if (areaElement != null)
@@ -79,10 +61,11 @@ namespace X4DataLoader
             Economy = StringHelper.ParseDouble(areaElement.Attribute("economy")?.Value, 0.0);
             Security = StringHelper.ParseDouble(areaElement.Attribute("security")?.Value, 0.0);
           }
-          XML = element;
+          DetailsXML = element;
           Console.WriteLine($"Sector Name: {Name}");
-          Source = source;
-          FileName = fileName;
+          DetailsSource = source;
+          DetailsFileName = fileName;
+          DetailsMacro = macro;
         }
         else
         {
@@ -104,10 +87,12 @@ namespace X4DataLoader
       PositionFileName = fileName;
     }
 
-    public static bool IsSectorMacro(string macro)
+    public void Update(string reference, string source, string fileName, XElement element)
     {
-      string macroLower = macro.ToLower(CultureInfo.InvariantCulture);
-      return macroLower.Contains("cluster") && macroLower.EndsWith("_macro") && macroLower.Contains("sector");
+      XML = element;
+      Reference = reference;
+      Source = source;
+      FileName = fileName;
     }
 
     public Connection? GetConnection(string connectionId)

@@ -33,46 +33,21 @@ namespace X4DataLoader
     public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
-      bool modeDiff = false;
-      if (!elements.Any())
-      {
-        elements = file.XML.XPathSelectElements("/diff/add");
-        modeDiff = true;
-      }
       foreach (XElement element in elements)
       {
-        bool modeFull = true;
-        if (modeDiff)
+        Zone? zone = new();
+        zone.Load(element, file.ExtensionId, file.FileName);
+        Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
+          s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
+        );
+        if (sector != null)
         {
-          string selStr = XmlHelper.GetAttribute(element, "sel") ?? "";
-          modeFull = selStr == "/macros" || selStr == "//macros" || selStr.StartsWith("/macros/macro") && !selStr.EndsWith("/connections");
+          sector.AddZone(zone);
+          Log.Debug($"Zone loaded for Sector: {sector.Name}");
         }
-        if (!modeFull)
+        else
         {
-          Log.Warn("Skipping element in diff mode: " + element);
-          continue;
-        }
-        XElement zonesElement = modeDiff ? element : new XElement("zones");
-        if (!modeDiff)
-        {
-          zonesElement.Add(element);
-        }
-        foreach (XElement zoneElement in zonesElement.Elements("macro"))
-        {
-          Zone? zone = new();
-          zone.Load(zoneElement, file.ExtensionId, file.FileName);
-          Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
-            s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
-          );
-          if (sector != null)
-          {
-            sector.AddZone(zone);
-            Log.Debug($"Zone loaded for Sector: {sector.Name}");
-          }
-          else
-          {
-            Log.Warn($"No matching sector found for Zone: {zone.Name}");
-          }
+          Log.Warn($"No matching sector found for Zone: {zone.Name}");
         }
       }
     }
