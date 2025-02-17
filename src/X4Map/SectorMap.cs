@@ -25,7 +25,6 @@ namespace X4Map
     private string _ownerColor = OwnerColorInitial;
     public static readonly string OwnerColorInitial = "#F0F0F0";
     private readonly List<string> StationsToDisplay = ["equipmentdock", "tradestation", "tradingstation", "shipyard", "wharf"];
-    private FactionColors FactionColors = new();
     public bool MapMode = false;
     public double VisualX
     {
@@ -116,20 +115,6 @@ namespace X4Map
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public void SetColors(FactionColors factionColors)
-    {
-      FactionColors = factionColors;
-    }
-
-    public void UpdateSectorColor(string id)
-    {
-      string color = FactionColors.GetColorString(id);
-      if (!String.IsNullOrEmpty(color))
-      {
-        OwnerColor = color;
-      }
-    }
-
     public void Connect(Canvas canvas, Polygon hexagon, bool mapMode = false)
     {
       MapCanvas = canvas;
@@ -153,7 +138,6 @@ namespace X4Map
     {
       InternalSizeKm = sectorMap.InternalSizeKm;
       Sector = sectorMap.Sector;
-      FactionColors = sectorMap.FactionColors;
       OwnerColor = sectorMap.OwnerColor;
       ClearItems();
       foreach (SectorMapItem item in sectorMap.Items)
@@ -171,7 +155,8 @@ namespace X4Map
       Sector = sector;
       ClearItems();
       string sectorOwner = sector?.DominantOwner ?? "";
-      string color = FactionColors.GetColorString(sectorOwner);
+      X4Color x4Color = sector?.Color ?? galaxy.Colors.Find(color => color.Id == "grey_128") ?? new X4Color();
+      string color = $"#{x4Color.Red:X2}{x4Color.Green:X2}{x4Color.Blue:X2}";
       if (!String.IsNullOrEmpty(color))
       {
         OwnerColor = color;
@@ -237,6 +222,7 @@ namespace X4Map
         {
           if (station.Position == null)
             continue;
+          x4Color = station.Color ?? galaxy.Colors.Find(color => color.Id == "grey_64") ?? new X4Color();
           ObjectInSector newObject = new()
           {
             Active = true,
@@ -247,7 +233,7 @@ namespace X4Map
             Type = "station",
             From = galaxy.Extensions.FirstOrDefault(e => e.Id == station.Source)?.Name ?? "Vanilla",
             Id = station.Id,
-            Color = FactionColors.GetColor(station.OwnerId),
+            Color = Color.FromArgb((byte)x4Color.Alpha, (byte)x4Color.Red, (byte)x4Color.Green, (byte)x4Color.Blue),
           };
           if (station.Zone == null && newObject.X == 0 && newObject.Y == 0 && newObject.Z == 0)
           {

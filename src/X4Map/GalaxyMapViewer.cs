@@ -1254,7 +1254,6 @@ namespace X4Map
       SectorMapHelper.VisualSizePx = Width;
       SectorMapHelper.InternalSizeKm = map.SectorRadius;
       SectorMapHelper.ItemSizeMinPx = 4;
-      SectorMapHelper.SetColors(map.FactionColors);
       SectorMapHelper.SetSector(Sector, map.GalaxyData);
       List<ObjectInSector>? extraObjects = map.GetExtraObjects(Sector.Macro);
       foreach (ObjectInSector modObject in extraObjects)
