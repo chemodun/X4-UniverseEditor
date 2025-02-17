@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.5...X4DataTestConsole@v0.2.6) (2025-02-17)
+
+
+### Miscellaneous Chores
+
+* **MainWindow:** add processing order for X4 data loading ([e73e5ed](https://github.com/chemodun/X4-UniverseEditor/commit/e73e5edcfbf50c87378999c9d714eedc72042e70))
+
 ## [0.2.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataTestConsole@v0.2.4...X4DataTestConsole@v0.2.5) (2025-02-17)
 
 
