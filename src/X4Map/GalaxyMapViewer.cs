@@ -90,8 +90,8 @@ namespace X4Map
         }
       }
     }
-    private const int ColumnWidth = 15000000; // 15,000,000 meters for horizontal (X) axis
-    private const int RowHeight = 17320000 / 2; // 17,320,000 meters for vertical (Z) axis
+    public static readonly int ColumnWidth = 15000000; // 15,000,000 meters for horizontal (X) axis
+    public static readonly int RowHeight = 17320000 / 2; // 17,320,000 meters for vertical (Z) axis
 
     public double ScaleFactor = 0.001; // Scaling factor to convert units to pixels
     private double _canvasWidthBase = 0;
@@ -682,7 +682,7 @@ namespace X4Map
       }
     }
 
-    private static readonly string[] _toolTipItems = ["Name", "Source", "Macro", "Coordinates", "X", "Y", "Z"];
+    private static readonly string[] _toolTipItems = ["Name", "Source", "Macro", "Coordinates", "X", "Y", "Z", "Column", "Row"];
     protected virtual string[] ToolTipItems
     {
       get => _toolTipItems;
@@ -1010,6 +1010,24 @@ namespace X4Map
               _ => string.Empty,
             };
             alignRight = true;
+            break;
+          case "Column":
+            if (!isSector)
+            {
+              labelStr = "Column:";
+              position = cluster != null ? cluster.Position : position;
+              textStr = Convert.ToInt32(Position.X / GalaxyMapViewer.ColumnWidth).ToString();
+              alignRight = true;
+            }
+            break;
+          case "Row":
+            if (!isSector)
+            {
+              labelStr = "Row:";
+              position = cluster != null ? cluster.Position : position;
+              textStr = Convert.ToInt32(Position.Z / GalaxyMapViewer.RowHeight).ToString();
+              alignRight = true;
+            }
             break;
           case "Macro":
             if (sector != null && isSector)
