@@ -529,11 +529,9 @@ namespace ChemGateBuilder
       }
     }
 
-    public FactionColors FactionColors = new();
-
     private readonly BitmapImage _appIcon;
 
-    private BackgroundWorker _backgroundWorker;
+    private readonly BackgroundWorker _backgroundWorker;
 
     // Constructor
     public MainWindow()
@@ -713,8 +711,6 @@ namespace ChemGateBuilder
       {
         X4DataVersion = Galaxy.Version;
       }
-      FactionColors.Load(Galaxy.Factions, Galaxy.MappedColors);
-      GatesConnectionCurrent?.SetColors(FactionColors);
       OnPropertyChanged(nameof(IsDataLoaded));
       GateConnectionReset();
       StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);

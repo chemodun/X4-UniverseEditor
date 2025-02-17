@@ -248,12 +248,6 @@ namespace ChemGateBuilder
       SectorOppositeMap.Connect(canvasOpposite, hexagonOpposite);
     }
 
-    public void SetColors(FactionColors factionColors)
-    {
-      SectorDirectMap.SetColors(factionColors);
-      SectorOppositeMap.SetColors(factionColors);
-    }
-
     public void Reset()
     {
       SectorDirect = _sectorDirectDefault;
