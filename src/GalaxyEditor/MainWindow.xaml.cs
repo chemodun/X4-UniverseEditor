@@ -114,7 +114,6 @@ namespace GalaxyEditor
 
     public Galaxy GalaxyData { get; private set; }
 
-    private readonly GalaxyMapViewer _galaxyMapViewer;
     public FactionColors FactionColors = new();
 
     public bool IsDataLoaded
@@ -294,10 +293,10 @@ namespace GalaxyEditor
           _sectorRadius = value;
           OnPropertyChanged(nameof(SectorRadius));
           SaveConfiguration();
-          if (_galaxyMapViewer != null)
+          if (GalaxyMapViewer != null)
           {
-            _galaxyMapViewer.SectorRadius = value;
-            _galaxyMapViewer.UpdateMap();
+            GalaxyMapViewer.SectorRadius = value;
+            GalaxyMapViewer.UpdateMap();
           }
           // if (value > 0 && GatesConnectionCurrent != null)
           // {
@@ -319,10 +318,10 @@ namespace GalaxyEditor
           _mapColorsOpacity = value;
           OnPropertyChanged(nameof(MapColorsOpacity));
           SaveConfiguration();
-          if (_galaxyMapViewer != null)
+          if (GalaxyMapViewer != null)
           {
-            _galaxyMapViewer.MapColorsOpacity = value;
-            _galaxyMapViewer.UpdateMap();
+            GalaxyMapViewer.MapColorsOpacity = value;
+            GalaxyMapViewer.UpdateMap();
           }
         }
       }
@@ -386,11 +385,10 @@ namespace GalaxyEditor
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
       Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
       GalaxyData = new Galaxy();
-      _galaxyMapViewer = (GalaxyMapViewer)FindName("GalaxyMapViewer");
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
-      _galaxyMapViewer.Connect(GalaxyData, galaxyCanvas, MapColorsOpacity, SectorRadius);
-      _galaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
-      _galaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
+      GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity, SectorRadius);
+      GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
+      GalaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
@@ -524,7 +522,7 @@ namespace GalaxyEditor
       Dispatcher.BeginInvoke(
         new Action(() =>
         {
-          _galaxyMapViewer.RefreshGalaxyData();
+          GalaxyMapViewer.RefreshGalaxyData();
         })
       );
       StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
@@ -546,12 +544,12 @@ namespace GalaxyEditor
       {
         X4DataVersion = GalaxyData.Version;
       }
-      _galaxyMapViewer.FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
+      GalaxyMapViewer.FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
       OnPropertyChanged(nameof(IsDataLoaded));
       StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
       if (!inBackground)
       {
-        _galaxyMapViewer.RefreshGalaxyData();
+        GalaxyMapViewer.RefreshGalaxyData();
       }
     }
 
