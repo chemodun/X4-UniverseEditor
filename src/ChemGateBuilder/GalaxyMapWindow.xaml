@@ -31,13 +31,13 @@
                 Value="{Binding HexagonWidth}"
                 TickFrequency="10" IsSnapToTickEnabled="True"
                 TickPlacement="BottomRight"/>
-        <x4map:GalaxyMapViewer x:Name="GalaxyViewer"
+        <x4map:GalaxyMapViewer x:Name="GalaxyMapViewer"
                         Grid.Row="1"
                         HorizontalScrollBarVisibility="Auto"
                         VerticalScrollBarVisibility="Auto"
                         Background="LightGray"
                         >
-            <Canvas x:Name="GalaxyCanvas"
+            <Canvas x:Name="GalaxyMapCanvas"
                 Background="LightGray"
                 />
         </x4map:GalaxyMapViewer>
@@ -59,8 +59,8 @@
                 </Button.Content>
             </Button>
             <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Visibility="{Binding OptionsVisibilityState}" Width="{Binding OptionsWidth}">
-                <GroupBox Header="DLC's" Margin="5" Visibility="{Binding ElementName=GalaxyViewer,  Path=OptionsDLCsVisibilityState}">
-                    <ItemsControl ItemsSource="{Binding ElementName=GalaxyViewer, Path=DLCsOptions}">
+                <GroupBox Header="DLC's" Margin="5" Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsDLCsVisibilityState}">
+                    <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=DLCsOptions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
@@ -68,8 +68,8 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </GroupBox>
-                <GroupBox Header="Mods" Margin="5" Visibility="{Binding ElementName=GalaxyViewer,  Path=OptionsModsVisibilityState}">
-                    <ItemsControl ItemsSource="{Binding ElementName=GalaxyViewer, Path=ModsOptions}">
+                <GroupBox Header="Mods" Margin="5" Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsModsVisibilityState}">
+                    <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=ModsOptions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
@@ -79,7 +79,7 @@
                 </GroupBox>
             </StackPanel>
             <GroupBox Header="Developer options" Margin="5" Grid.Row="2" Visibility="{Binding OptionsVisibilityState}" Width="{Binding OptionsWidth}">
-                <ItemsControl ItemsSource="{Binding ElementName=GalaxyViewer,  Path=DeveloperOptions}">
+                <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer,  Path=DeveloperOptions}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>

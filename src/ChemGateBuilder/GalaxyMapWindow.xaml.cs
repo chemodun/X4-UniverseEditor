@@ -68,8 +68,6 @@ namespace ChemGateBuilder
       }
     }
 
-    public GalaxyMapViewer? GalaxyMapViewer { get; set; } = null;
-
     public GalaxyMapWindow(
       MainWindow mainWindow,
       CollectionViewSource sectorsViewSource,
@@ -83,13 +81,12 @@ namespace ChemGateBuilder
       SectorsList = sectorsViewSource;
       MainWindowReference = mainWindow;
       Galaxy = MainWindowReference.Galaxy;
-      GalaxyMapViewer = (GalaxyMapViewer)FindName("GalaxyViewer");
-      Canvas galaxyCanvas = (Canvas)FindName("GalaxyCanvas");
       GalaxyMapViewer.Connect(
         Galaxy!,
-        galaxyCanvas,
+        GalaxyMapCanvas,
         mainWindow.MapColorsOpacity,
         mainWindow.SectorRadius,
+        false,
         extraObjects,
         extraConnectionsNames
       );
