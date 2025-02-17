@@ -278,11 +278,22 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][0.8.8] - 2025-02-17[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Fixed the issue with the loading created mods to the game - "case" issue
+[/list]
+[*] Improved
+[list]
+[*] Internal procedure of game data loading
+[/list]
+[/list]
 [size=125][u][0.8.6] - 2025-02-14[/u][/size]
 [list]
 [*] Fixed
 [list]
-[*] Fixed the issue with the mod loading
+[*] Fixed the issue with the mod loading to the tool
 [/list]
 [/list]
 [size=125][u][0.8.5] - 2025-02-14[/u][/size]
