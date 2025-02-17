@@ -91,7 +91,7 @@ namespace ChemGateBuilder
         extraConnectionsNames
       );
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = false;
-      GalaxyMapViewer.OnSectorSelected += GalaxyMapViewer_SectorSelected;
+      GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_SectorSelected;
       GalaxyMapViewer.RefreshGalaxyData();
 
       // Set window size to 90% of the main window
