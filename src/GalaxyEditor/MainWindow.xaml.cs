@@ -730,15 +730,7 @@ namespace GalaxyEditor
         OnPropertyChanged(nameof(SelectedSectorItemInfo));
         OnPropertyChanged(nameof(SelectedClusterItemInfo));
         OnPropertyChanged(nameof(SelectedCellItemInfo));
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem = new MenuItem { Header = "Action" };
-        menuItem.Click += (s, args) =>
-        {
-          // Your action code here
-          MessageBox.Show("Action triggered!");
-        };
-        contextMenu.Items.Add(menuItem);
-        contextMenu.IsOpen = true;
+        HexagonContextMenu(null, null, e.PressedCell);
         // Show the cell details
       }
     }
@@ -754,15 +746,7 @@ namespace GalaxyEditor
         OnPropertyChanged(nameof(SelectedSectorItemInfo));
         OnPropertyChanged(nameof(SelectedClusterItemInfo));
         OnPropertyChanged(nameof(SelectedCellItemInfo));
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem = new MenuItem { Header = "Action" };
-        menuItem.Click += (s, args) =>
-        {
-          // Your action code here
-          MessageBox.Show("Action triggered!");
-        };
-        contextMenu.Items.Add(menuItem);
-        contextMenu.IsOpen = true;
+        HexagonContextMenu(null, e.PressedCluster, null);
         // Show the sector details
       }
     }
@@ -775,19 +759,106 @@ namespace GalaxyEditor
         string message = $"Right button pressed on sector: {e.PressedSector.Name}";
         Log.Debug(message);
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSector")!;
+        HexagonContextMenu(e.PressedSector, null, null);
         OnPropertyChanged(nameof(SelectedSectorItemInfo));
         OnPropertyChanged(nameof(SelectedClusterItemInfo));
         OnPropertyChanged(nameof(SelectedCellItemInfo));
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem menuItem = new MenuItem { Header = "Action" };
-        menuItem.Click += (s, args) =>
-        {
-          // Your action code here
-          MessageBox.Show("Action triggered!");
-        };
-        contextMenu.Items.Add(menuItem);
-        contextMenu.IsOpen = true;
+        // MenuItem menuItem = new MenuItem { Header = "Action" };
         // Show the sector details
+      }
+    }
+
+    public void HexagonContextMenu(Sector? sector, Cluster? cluster, GalaxyMapCluster? cell)
+    {
+      System.Windows.Forms.ContextMenuStrip contextMenu = new System.Windows.Forms.ContextMenuStrip();
+      System.Windows.Forms.ToolStripMenuItem menuItem;
+      if (sector != null)
+      {
+        contextMenu.Items.Add(new System.Windows.Forms.ToolStripLabel { Text = $"Sector {sector.Name}" });
+        contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        menuItem = new System.Windows.Forms.ToolStripMenuItem("Edit");
+        menuItem.Click += EditSector_Click;
+        contextMenu.Items.Add(menuItem);
+        menuItem = new System.Windows.Forms.ToolStripMenuItem("Delete");
+        menuItem.Click += DeleteSector_Click;
+        contextMenu.Items.Add(menuItem);
+        cluster = GalaxyMapViewer.SelectedMapCluster?.Cluster;
+      }
+      if (cluster != null)
+      {
+        if (contextMenu.Items.Count > 0)
+        {
+          contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        }
+        contextMenu.Items.Add(new System.Windows.Forms.ToolStripLabel { Text = $"Cluster {cluster.Name}" });
+        contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        menuItem = new System.Windows.Forms.ToolStripMenuItem("Edit");
+        menuItem.Click += EditCluster_Click;
+        contextMenu.Items.Add(menuItem);
+        menuItem = new System.Windows.Forms.ToolStripMenuItem("Delete");
+        menuItem.Click += DeleteCluster_Click;
+        contextMenu.Items.Add(menuItem);
+        contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        menuItem = new System.Windows.Forms.ToolStripMenuItem("Add Sector");
+        menuItem.Click += AddCluster_Click;
+        contextMenu.Items.Add(menuItem);
+      }
+      if (cell != null)
+      {
+        if (contextMenu.Items.Count > 0)
+        {
+          contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        }
+        contextMenu.Items.Add(
+          new System.Windows.Forms.ToolStripLabel { Text = $"Cell [{cell.MapPosition.Column}, {cell.MapPosition.Row}]" }
+        );
+        contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        menuItem = new System.Windows.Forms.ToolStripMenuItem("Add Cluster");
+        menuItem.Click += AddCluster_Click;
+        contextMenu.Items.Add(menuItem);
+      }
+      contextMenu.Show(System.Windows.Forms.Cursor.Position);
+    }
+
+    public void EditSector_Click(object? sender, EventArgs e)
+    {
+      if (GalaxyMapViewer.SelectedMapSector != null)
+      {
+        MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapSector.Sector?.Name}!");
+      }
+    }
+
+    public void DeleteSector_Click(object? sender, EventArgs e)
+    {
+      if (GalaxyMapViewer.SelectedMapSector != null)
+      {
+        MessageBox.Show($"Action triggered - Delete for {GalaxyMapViewer.SelectedMapSector.Sector?.Name}!");
+      }
+    }
+
+    public void EditCluster_Click(object? sender, EventArgs e)
+    {
+      if (GalaxyMapViewer.SelectedMapCluster != null)
+      {
+        MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
+      }
+    }
+
+    public void DeleteCluster_Click(object? sender, EventArgs e)
+    {
+      if (GalaxyMapViewer.SelectedMapCluster != null)
+      {
+        MessageBox.Show($"Action triggered - Delete for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
+      }
+    }
+
+    public void AddCluster_Click(object? sender, EventArgs e)
+    {
+      if (GalaxyMapViewer.SelectedMapCluster != null)
+      {
+        MessageBox.Show(
+          $"Action triggered - Add Cluster for Cell [{GalaxyMapViewer.SelectedMapCluster.MapPosition.Column}, {GalaxyMapViewer.SelectedMapCluster.MapPosition.Row}]!"
+        );
       }
     }
 
