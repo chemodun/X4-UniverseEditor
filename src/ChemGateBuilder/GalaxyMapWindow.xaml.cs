@@ -102,23 +102,23 @@ namespace ChemGateBuilder
     private void GalaxyMapViewer_SectorSelected(object? sender, SectorEventArgs e)
     {
       // Your code to run when the event is raised
-      if (e.SelectedSector != null)
+      if (e.PressedSector != null)
       {
-        Log.Debug($"Selected sector: {e.SelectedSector.Name}");
-        if (SectorsList != null && !String.IsNullOrEmpty(e.SelectedSector.Macro))
+        Log.Debug($"Selected sector: {e.PressedSector.Name}");
+        if (SectorsList != null && !String.IsNullOrEmpty(e.PressedSector.Macro))
         {
           if (SectorsList.View is CollectionView collectionView)
           {
             SectorsListItem? sector = collectionView
               .Cast<SectorsListItem>()
-              .FirstOrDefault(sector => sector.Macro == e.SelectedSector.Macro);
+              .FirstOrDefault(sector => sector.Macro == e.PressedSector.Macro);
             if (sector != null && !sector.Selectable)
             {
               Log.Debug($"Sector {sector.Name} is not selectable. Skipping.");
             }
             else
             {
-              SelectedSector = e.SelectedSector;
+              SelectedSector = e.PressedSector;
               Close();
             }
           }
