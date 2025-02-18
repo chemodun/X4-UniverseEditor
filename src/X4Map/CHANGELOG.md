@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.3.0...X4Map@v0.3.1) (2025-02-18)
+
+
+### Bug Fixes
+
+* **GalaxyMapViewer:** update event handlers to use GalaxyCanvas instead wrongly used GalaxyMapViewer for improved interaction ([d157a36](https://github.com/chemodun/X4-UniverseEditor/commit/d157a3662b9fea2239823686db11b358a57a2ca4))
+
 ## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.2.1...X4Map@v0.3.0) (2025-02-17)
 
 
