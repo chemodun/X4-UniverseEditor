@@ -84,6 +84,51 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Cell" x:Name="RibbonTabCell">
+                <fluent:RibbonGroupBox Header="Main info">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Column:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedCellItemInfo.Row}"/>
+                        <Label Content="Row:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    TextAlignment="Left"
+                                    Text="{Binding SelectedCellItemInfo.Column}"/>
+                        <Label Content="X:" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="0" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedCellItemInfo.X}"/>
+                        <Label Content="Y:" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="1" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedCellItemInfo.Y}"/>
+                        <Label Content="Z:" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5"
+                                    Grid.Row="2" Grid.Column="3"
+                                    HorizontalAlignment="Right"
+                                    TextAlignment="Right"
+                                    Text="{Binding SelectedCellItemInfo.Z}"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Cluster" x:Name="RibbonTabCluster">
                 <fluent:RibbonGroupBox Header="Main info">

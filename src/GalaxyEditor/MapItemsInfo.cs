@@ -1,8 +1,34 @@
 using System.ComponentModel;
 using X4DataLoader;
+using X4Map;
 
 namespace GalaxyEditor
 {
+  public class CellItemInfo(GalaxyMapCluster? cluster)
+  {
+    private readonly GalaxyMapCluster? _cluster = cluster;
+    public string X
+    {
+      get => _cluster?.OriginalX.ToString("N0") ?? "";
+    }
+    public string Y
+    {
+      get => _cluster?.OriginalY.ToString("N0") ?? "";
+    }
+    public string Z
+    {
+      get => _cluster?.OriginalZ.ToString("N0") ?? "";
+    }
+    public string Column
+    {
+      get => _cluster?.Column.ToString("N0") ?? "";
+    }
+    public string Row
+    {
+      get => _cluster?.Row.ToString("N0") ?? "";
+    }
+  }
+
   public class ClusterItemInfo(Cluster? cluster)
   {
     private readonly Cluster? _cluster = cluster;

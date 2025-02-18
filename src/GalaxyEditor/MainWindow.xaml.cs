@@ -393,14 +393,18 @@ namespace GalaxyEditor
         }
       }
     }
+
+    public CellItemInfo SelectedCellItemInfo
+    {
+      get => new(GalaxyMapViewer.SelectedMapCluster);
+    }
     public ClusterItemInfo SelectedClusterItemInfo
     {
-      get => new(GalaxyMapViewer.SelectedCluster?.Cluster);
+      get => new(GalaxyMapViewer.SelectedMapCluster?.Cluster);
     }
-
     public SectorItemInfo SelectedSectorItemInfo
     {
-      get => new(GalaxyMapViewer.SelectedSector?.Sector);
+      get => new(GalaxyMapViewer.SelectedMapSector?.Sector);
     }
     private readonly AssemblyInfo _assemblyInfoData;
     private readonly BitmapImage _appIcon;
@@ -419,9 +423,9 @@ namespace GalaxyEditor
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
       GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity, SectorRadius);
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
-      GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_SectorSelected;
-      GalaxyMapViewer.OnPressedCluster += GalaxyMapViewer_ClusterSelected;
-      GalaxyMapViewer.OnPressedCell += GalaxyMapViewer_CellSelected;
+      GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_SectorPressed;
+      GalaxyMapViewer.OnPressedCluster += GalaxyMapViewer_ClusterPressed;
+      GalaxyMapViewer.OnPressedCell += GalaxyMapViewer_CellPressed;
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
@@ -586,46 +590,55 @@ namespace GalaxyEditor
       }
     }
 
-    private void GalaxyMapViewer_CellSelected(object? sender, CellEventArgs e)
+    private void GalaxyMapViewer_CellPressed(object? sender, CellEventArgs e)
     {
       // Your code to run when the event is raised
-      if (e.SelectedCell != null)
+      if (e.PressedCell != null)
       {
-        Log.Debug($"Selected cell: {e.SelectedCell.Column}, {e.SelectedCell.Row}");
-        StatusBar.SetStatusMessage($"Selected cell: {e.SelectedCell.Column}, {e.SelectedCell.Row}", StatusMessageType.Info);
-        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCells")!;
-        OnPropertyChanged(nameof(SelectedSectorItemInfo));
-        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        string actionString = GalaxyMapViewer.SelectedMapCluster != null ? "Selected" : "Unselected";
+        string message = $"{actionString} cell: {e.PressedCell.Column}, {e.PressedCell.Row}";
+        Log.Debug(message);
+        StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCell")!;
         // Show the cell details
       }
+      OnPropertyChanged(nameof(SelectedSectorItemInfo));
+      OnPropertyChanged(nameof(SelectedClusterItemInfo));
+      OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
-    private void GalaxyMapViewer_ClusterSelected(object? sender, ClusterEventArgs e)
+    private void GalaxyMapViewer_ClusterPressed(object? sender, ClusterEventArgs e)
     {
       // Your code to run when the event is raised
-      if (e.SelectedCluster != null)
+      if (e.PressedCluster != null)
       {
-        Log.Debug($"Selected cluster: {e.SelectedCluster.Name}");
-        StatusBar.SetStatusMessage($"Selected sector: {e.SelectedCluster.Name}", StatusMessageType.Info);
-        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabClusters")!;
-        OnPropertyChanged(nameof(SelectedSectorItemInfo));
-        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        string actionString = GalaxyMapViewer.SelectedMapCluster != null ? "Selected" : "Unselected";
+        string message = $"{actionString} cluster: {e.PressedCluster.Name}";
+        Log.Debug(message);
+        StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCluster")!;
         // Show the sector details
       }
+      OnPropertyChanged(nameof(SelectedSectorItemInfo));
+      OnPropertyChanged(nameof(SelectedClusterItemInfo));
+      OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
-    private void GalaxyMapViewer_SectorSelected(object? sender, SectorEventArgs e)
+    private void GalaxyMapViewer_SectorPressed(object? sender, SectorEventArgs e)
     {
       // Your code to run when the event is raised
-      if (e.SelectedSector != null)
+      if (e.PressedSector != null)
       {
-        Log.Debug($"Selected sector: {e.SelectedSector.Name}");
-        StatusBar.SetStatusMessage($"Selected sector: {e.SelectedSector.Name}", StatusMessageType.Info);
-        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSectors")!;
-        OnPropertyChanged(nameof(SelectedSectorItemInfo));
-        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        string actionString = GalaxyMapViewer.SelectedMapSector != null ? "Selected" : "Unselected";
+        string message = $"{actionString} sector: {e.PressedSector.Name}";
+        Log.Debug(message);
+        StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSector")!;
         // Show the sector details
       }
+      OnPropertyChanged(nameof(SelectedSectorItemInfo));
+      OnPropertyChanged(nameof(SelectedClusterItemInfo));
+      OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
     public void ButtonNewMod_Click(object sender, RoutedEventArgs e) { }
