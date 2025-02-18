@@ -98,11 +98,7 @@ namespace X4Map
     public double ScaleFactor = 0.001; // Scaling factor to convert units to pixels
     private double _canvasWidthBase = 0;
     private double _canvasHeightBase = 0;
-    private int MinCol = 0;
-    private int MaxCol = 0;
-
-    private int MinRow = 0;
-    private int MaxRow = 0;
+    public MapInfo MapInfo { get; set; } = new(0, 0, 0, 0);
     private double scrollHorizontalOffset = 0;
     private double canvasToScrollWidthDelta = 0;
     private double canvasToScrollHeightDelta = 0;
@@ -293,27 +289,27 @@ namespace X4Map
         int col = (int)(cluster.Position.X / ColumnWidth);
         int row = (int)(cluster.Position.Z / RowHeight);
 
-        if (col < MinCol)
+        if (col < MapInfo.ColumnMin)
         {
-          MinCol = col;
+          MapInfo.ColumnMin = col;
         }
-        if (col > MaxCol)
+        if (col > MapInfo.ColumnMax)
         {
-          MaxCol = col;
+          MapInfo.ColumnMax = col;
         }
-        if (row < MinRow)
+        if (row < MapInfo.RowMin)
         {
-          MinRow = row;
+          MapInfo.RowMin = row;
         }
-        if (row > MaxRow)
+        if (row > MapInfo.RowMax)
         {
-          MaxRow = row;
+          MapInfo.RowMax = row;
         }
         MapCells.Add(new GalaxyMapCell(cluster, col, row));
       }
 
-      _canvasWidthBase = (MaxCol - MinCol + 1) * 0.75 + 0.25;
-      _canvasHeightBase = (MaxRow - MinRow) * 0.5 + 1;
+      _canvasWidthBase = (MapInfo.ColumnMax - MapInfo.ColumnMin + 1) * 0.75 + 0.25;
+      _canvasHeightBase = (MapInfo.RowMax - MapInfo.RowMin) * 0.5 + 1;
     }
 
     private void CreateMap()
@@ -332,11 +328,11 @@ namespace X4Map
       GalaxyCanvas.Width = _canvasWidthBase * HexagonWidth * ScaleFactor;
       GalaxyCanvas.Height = _canvasHeightBase * HexagonHeight * ScaleFactor;
 
-      bool isMinColOdd = Math.Abs(MinCol) % 2 == 1;
-      for (int row = MaxRow; row >= MinRow; row--)
+      bool isMinColOdd = Math.Abs(MapInfo.ColumnMin) % 2 == 1;
+      for (int row = MapInfo.RowMax; row >= MapInfo.RowMin; row--)
       {
         bool isRowOdd = Math.Abs(row) % 2 == 1;
-        int startCol = MinCol;
+        int startCol = MapInfo.ColumnMin;
         if (isRowOdd)
         {
           startCol += isMinColOdd ? 0 : 1;
@@ -345,13 +341,15 @@ namespace X4Map
         {
           startCol += isMinColOdd ? 1 : 0;
         }
-        for (int col = startCol; col <= MaxCol; col += 2)
+        for (int col = startCol; col <= MapInfo.ColumnMax; col += 2)
         {
-          Cluster? cluster = GalaxyMapCell.GetCluster(MapCells, col, row);
+          MapPosition mapPosition = new(col, row);
+          Cluster? cluster = GalaxyMapCell.GetCluster(MapCells, mapPosition);
           Position position = cluster != null ? cluster.Position : new Position(col * ColumnWidth, 0, row * RowHeight);
           GalaxyMapCluster clusterMapCluster = new(
-            0.75 * (col - MinCol),
-            (MaxRow - row) * 0.5,
+            0.75 * (col - MapInfo.ColumnMin),
+            (MapInfo.RowMax - row) * 0.5,
+            mapPosition,
             GalaxyCanvas,
             cluster,
             position,
@@ -718,21 +716,35 @@ namespace X4Map
     public GalaxyMapCluster? PressedCell { get; } = selectedCell;
   }
 
+  public class MapInfo(int minCol, int maxCol, int minRow, int maxRow)
+  {
+    public int ColumnMin { get; set; } = minCol;
+    public int ColumnMax { get; set; } = maxCol;
+    public int RowMin { get; set; } = minRow;
+    public int RowMax { get; set; } = maxRow;
+  }
+
+  public class MapPosition(int column, int row)
+  {
+    public int Column { get; set; } = column;
+    public int Row { get; set; } = row;
+  }
+
   class GalaxyMapCell(Cluster cluster, int col, int row)
   {
-    public int X { get; set; } = col;
-    public int Z { get; set; } = row;
+    public MapPosition Position { get; set; } = new(col, row);
     public Cluster Cluster { get; set; } = cluster;
 
-    public static Cluster? GetCluster(List<GalaxyMapCell> cells, int col, int row)
+    public static Cluster? GetCluster(List<GalaxyMapCell> cells, MapPosition position)
     {
-      return cells.Find(cell => cell.X == col && cell.Z == row)?.Cluster;
+      return cells.Find(cell => cell.Position.Column == position.Column && cell.Position.Row == position.Row)?.Cluster;
     }
   }
 
   public class GalaxyMapCluster(
     double x,
     double y,
+    MapPosition mapPosition,
     Canvas canvas,
     Cluster? cluster,
     Position? position,
@@ -796,15 +808,7 @@ namespace X4Map
       }
     }
 
-    public int Column
-    {
-      get { return (int)(OriginalX / GalaxyMapViewer.ColumnWidth); }
-    }
-
-    public int Row
-    {
-      get { return (int)(OriginalZ / GalaxyMapViewer.RowHeight); }
-    }
+    public MapPosition MapPosition { get; set; } = mapPosition;
 
     private static readonly string[] _toolTipItems = ["Name", "Source", "Macro", "Coordinates", "X", "Y", "Z", "Column", "Row"];
     protected virtual string[] ToolTipItems
@@ -848,7 +852,7 @@ namespace X4Map
       if (Cluster != null && Cluster.Sectors.Count == 1)
       {
         Sector sector = Cluster.Sectors[0];
-        GalaxyMapSector clusterMapSector = new(_x, _y, Canvas, Cluster, sector, HexagonWidth, HexagonHeight, ScaleFactor);
+        GalaxyMapSector clusterMapSector = new(_x, _y, this, Canvas, Cluster, sector, HexagonWidth, HexagonHeight, ScaleFactor);
         clusterMapSector.Create(map);
         Sectors.Add(clusterMapSector);
       }
@@ -864,7 +868,10 @@ namespace X4Map
           Tag = Cluster != null ? Cluster.Name : "Empty Map Cell",
           DataContext = Cluster == null ? this : Cluster,
           Points = Points,
-          ToolTip = Cluster != null ? ToolTipCreator(Cluster) : ToolTipCreator(null, null, new Position(OriginalX, 0, OriginalZ)),
+          ToolTip =
+            Cluster != null
+              ? ToolTipCreator(Cluster, null, null, MapPosition)
+              : ToolTipCreator(null, null, new Position(OriginalX, 0, OriginalZ), MapPosition),
         };
         if (Cluster == null)
         {
@@ -1027,6 +1034,7 @@ namespace X4Map
               GalaxyMapSector clusterMapSector = new(
                 x,
                 y,
+                this,
                 Canvas,
                 Cluster,
                 Cluster.Sectors[index],
@@ -1055,7 +1063,7 @@ namespace X4Map
       }
     }
 
-    protected Grid ToolTipCreator(Cluster? cluster, Sector? sector = null, Position? position = null)
+    protected Grid ToolTipCreator(Cluster? cluster, Sector? sector = null, Position? position = null, MapPosition? mapPosition = null)
     {
       Grid toolTipGrid = new()
       {
@@ -1136,18 +1144,18 @@ namespace X4Map
             alignRight = true;
             break;
           case "Column":
-            if (!isSector)
+            if (!isSector && mapPosition != null)
             {
               labelStr = "Column:";
-              textStr = Column.ToString();
+              textStr = mapPosition.Column.ToString();
               alignRight = true;
             }
             break;
           case "Row":
-            if (!isSector)
+            if (!isSector && mapPosition != null)
             {
               labelStr = "Row:";
-              textStr = Row.ToString();
+              textStr = mapPosition.Row.ToString();
               alignRight = true;
             }
             break;
@@ -1295,6 +1303,7 @@ namespace X4Map
   public class GalaxyMapSector(
     double x,
     double y,
+    GalaxyMapCluster owner,
     Canvas canvas,
     Cluster cluster,
     Sector sector,
@@ -1302,9 +1311,10 @@ namespace X4Map
     double hexagonHeight,
     double scaleFactor,
     bool isHalf = false
-  ) : GalaxyMapCluster(x, y, canvas, cluster, sector.Position, hexagonWidth, hexagonHeight, scaleFactor)
+  ) : GalaxyMapCluster(x, y, new MapPosition(0, 0), canvas, cluster, sector.Position, hexagonWidth, hexagonHeight, scaleFactor)
   {
     protected override double Modifier { get; set; } = isHalf ? 0.5 : 1;
+    public GalaxyMapCluster Owner = owner;
     public Sector? Sector = sector;
     public override string Macro => Sector?.Macro ?? "";
     protected Grid? Grid = null;
@@ -1363,7 +1373,7 @@ namespace X4Map
         Tag = Sector.Name,
         DataContext = Sector,
         Points = Points,
-        ToolTip = ToolTipCreator(Cluster, Sector),
+        ToolTip = ToolTipCreator(Cluster, Sector, null, Owner.MapPosition),
       };
       Grid = new()
       {
