@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.3.1...X4Map@v0.3.2) (2025-02-18)
+
+
+### Code Refactoring
+
+* **GalaxyMapViewer:** streamline ans simplify pressed hexagon(cluster, sector) handling and update event argument names for clarity ([150f81d](https://github.com/chemodun/X4-UniverseEditor/commit/150f81ddf509c7c9d57d98f164b8abbc51fd883f))
+
 ## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.3.0...X4Map@v0.3.1) (2025-02-18)
 
 
