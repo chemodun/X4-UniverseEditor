@@ -490,9 +490,12 @@ namespace GalaxyEditor
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
       GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity, SectorRadius);
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
-      GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_SectorPressed;
-      GalaxyMapViewer.OnPressedCluster += GalaxyMapViewer_ClusterPressed;
-      GalaxyMapViewer.OnPressedCell += GalaxyMapViewer_CellPressed;
+      GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_OnPressedSector;
+      GalaxyMapViewer.OnPressedCluster += GalaxyMapViewer_OnPressedCluster;
+      GalaxyMapViewer.OnPressedCell += GalaxyMapViewer_OnPressedCell;
+      GalaxyMapViewer.OnRightPressedSector += GalaxyMapViewer_OnRightPressedSector;
+      GalaxyMapViewer.OnRightPressedCluster += GalaxyMapViewer_OnRightPressedCluster;
+      GalaxyMapViewer.OnRightPressedCell += GalaxyMapViewer_OnRightPressedCell;
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
@@ -665,7 +668,7 @@ namespace GalaxyEditor
       StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
     }
 
-    private void GalaxyMapViewer_CellPressed(object? sender, CellEventArgs e)
+    private void GalaxyMapViewer_OnPressedCell(object? sender, CellEventArgs e)
     {
       // Your code to run when the event is raised
       if (e.PressedCell != null)
@@ -682,7 +685,7 @@ namespace GalaxyEditor
       OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
-    private void GalaxyMapViewer_ClusterPressed(object? sender, ClusterEventArgs e)
+    private void GalaxyMapViewer_OnPressedCluster(object? sender, ClusterEventArgs e)
     {
       // Your code to run when the event is raised
       if (e.PressedCluster != null)
@@ -699,7 +702,7 @@ namespace GalaxyEditor
       OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
-    private void GalaxyMapViewer_SectorPressed(object? sender, SectorEventArgs e)
+    private void GalaxyMapViewer_OnPressedSector(object? sender, SectorEventArgs e)
     {
       // Your code to run when the event is raised
       if (e.PressedSector != null)
@@ -714,6 +717,78 @@ namespace GalaxyEditor
       OnPropertyChanged(nameof(SelectedSectorItemInfo));
       OnPropertyChanged(nameof(SelectedClusterItemInfo));
       OnPropertyChanged(nameof(SelectedCellItemInfo));
+    }
+
+    private void GalaxyMapViewer_OnRightPressedCell(object? sender, CellEventArgs e)
+    {
+      // Your code to run when the event is raised
+      if (e.PressedCell != null)
+      {
+        string message = $"Right button pressed on cell: {e.PressedCell.MapPosition.Column}, {e.PressedCell.MapPosition.Row}";
+        Log.Debug(message);
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCell")!;
+        OnPropertyChanged(nameof(SelectedSectorItemInfo));
+        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        OnPropertyChanged(nameof(SelectedCellItemInfo));
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem = new MenuItem { Header = "Action" };
+        menuItem.Click += (s, args) =>
+        {
+          // Your action code here
+          MessageBox.Show("Action triggered!");
+        };
+        contextMenu.Items.Add(menuItem);
+        contextMenu.IsOpen = true;
+        // Show the cell details
+      }
+    }
+
+    private void GalaxyMapViewer_OnRightPressedCluster(object? sender, ClusterEventArgs e)
+    {
+      // Your code to run when the event is raised
+      if (e.PressedCluster != null)
+      {
+        string message = $"Right button pressed on cluster: {e.PressedCluster.Name}";
+        Log.Debug(message);
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCluster")!;
+        OnPropertyChanged(nameof(SelectedSectorItemInfo));
+        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        OnPropertyChanged(nameof(SelectedCellItemInfo));
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem = new MenuItem { Header = "Action" };
+        menuItem.Click += (s, args) =>
+        {
+          // Your action code here
+          MessageBox.Show("Action triggered!");
+        };
+        contextMenu.Items.Add(menuItem);
+        contextMenu.IsOpen = true;
+        // Show the sector details
+      }
+    }
+
+    private void GalaxyMapViewer_OnRightPressedSector(object? sender, SectorEventArgs e)
+    {
+      // Your code to run when the event is raised
+      if (e.PressedSector != null)
+      {
+        string message = $"Right button pressed on sector: {e.PressedSector.Name}";
+        Log.Debug(message);
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSector")!;
+        OnPropertyChanged(nameof(SelectedSectorItemInfo));
+        OnPropertyChanged(nameof(SelectedClusterItemInfo));
+        OnPropertyChanged(nameof(SelectedCellItemInfo));
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem = new MenuItem { Header = "Action" };
+        menuItem.Click += (s, args) =>
+        {
+          // Your action code here
+          MessageBox.Show("Action triggered!");
+        };
+        contextMenu.Items.Add(menuItem);
+        contextMenu.IsOpen = true;
+        // Show the sector details
+      }
     }
 
     public void ButtonNewMod_Click(object sender, RoutedEventArgs e)

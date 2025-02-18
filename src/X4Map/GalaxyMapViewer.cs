@@ -103,7 +103,9 @@ namespace X4Map
     private double canvasToScrollWidthDelta = 0;
     private double canvasToScrollHeightDelta = 0;
     private double scrollVerticalOffset = 0;
-    private Polygon? _hexagonOnMouseDown = null;
+    public Polygon? HexagonOnMouseRightButtonDown = null;
+    private Polygon? _hexagonOnMouseLeftButtonDown = null;
+
     private Polygon? _hexagonSelected = null;
     private Polygon? _pressedHexagon = null;
     public Polygon? PressedHexagon
@@ -203,6 +205,9 @@ namespace X4Map
     public event EventHandler<SectorEventArgs>? OnPressedSector;
     public event EventHandler<ClusterEventArgs>? OnPressedCluster;
     public event EventHandler<CellEventArgs>? OnPressedCell;
+    public event EventHandler<SectorEventArgs>? OnRightPressedSector;
+    public event EventHandler<ClusterEventArgs>? OnRightPressedCluster;
+    public event EventHandler<CellEventArgs>? OnRightPressedCell;
 
     public void Connect(
       Galaxy galaxy,
@@ -227,6 +232,7 @@ namespace X4Map
       SizeChanged += GalaxyMapViewer_SizeChanged;
       GalaxyCanvas.PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
       GalaxyCanvas.PreviewMouseLeftButtonDown += GalaxyMapViewer_MouseLeftButtonDown;
+      GalaxyCanvas.PreviewMouseRightButtonDown += GalaxyMapViewer_MouseRightButtonDown;
       GalaxyCanvas.MouseMove += GalaxyMapViewer_MouseMove;
       GalaxyCanvas.MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
     }
@@ -549,6 +555,83 @@ namespace X4Map
       }
     }
 
+    private void GalaxyMapViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      var clickedElement = e.OriginalSource as DependencyObject;
+      if (clickedElement is TextBlock textBlock && textBlock.DataContext is Sector _sectorFromTextBlock)
+      {
+        if (textBlock.Parent is Polygon polygon)
+        {
+          HexagonOnMouseRightButtonDown = polygon;
+        }
+        else if (textBlock.Parent is Grid grid)
+        {
+          HexagonOnMouseRightButtonDown = grid.Children[0] as Polygon;
+        }
+      }
+      else if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
+      {
+        HexagonOnMouseRightButtonDown = polygon;
+      }
+      else if (clickedElement is Grid grid && grid.DataContext is Sector _sectorFromGrid)
+      {
+        HexagonOnMouseRightButtonDown = grid.Children[0] as Polygon;
+      }
+      else if (clickedElement is Polygon clusterPolygon && clusterPolygon.DataContext is Cluster _clusterFromPolygon)
+      {
+        GalaxyMapCluster? galaxyCluster = _clusters.Find(cluster => cluster.Macro == _clusterFromPolygon.Macro);
+        if (galaxyCluster != null)
+        {
+          HexagonOnMouseRightButtonDown = galaxyCluster.Hexagon;
+        }
+      }
+      else if (clickedElement is Polygon cellPolygon && cellPolygon.DataContext is GalaxyMapCluster _galaxyClusterFromPolygon)
+      {
+        HexagonOnMouseRightButtonDown = _galaxyClusterFromPolygon.Hexagon;
+      }
+      if (HexagonOnMouseRightButtonDown != null)
+      {
+        Log.Debug($"Right button down on {HexagonOnMouseRightButtonDown.Tag}");
+        if (_editorMode)
+        {
+          if (_hexagonSelected != null && _hexagonSelected != HexagonOnMouseRightButtonDown)
+          {
+            _hexagonSelected.StrokeThickness = 1;
+          }
+          _hexagonSelected = HexagonOnMouseRightButtonDown;
+          if (_hexagonSelected != null)
+          {
+            _hexagonSelected.StrokeThickness = 3;
+          }
+        }
+        if (HexagonOnMouseRightButtonDown.DataContext is Sector sector && sector != null)
+        {
+          SelectedMapSector = _sectors.Find(mapSector => mapSector.Macro == sector.Macro);
+          if (SelectedMapSector != null)
+          {
+            SelectedMapCluster = _clusters.Find(mapCluster => mapCluster.Sectors.Any(mapSector => mapSector.Macro == sector.Macro));
+          }
+          else
+          {
+            SelectedMapCluster = null;
+          }
+          OnRightPressedSector?.Invoke(this, new SectorEventArgs(sector));
+        }
+        else if (HexagonOnMouseRightButtonDown.DataContext is Cluster cluster && cluster != null)
+        {
+          SelectedMapCluster = _clusters.Find(mapCluster => mapCluster.Macro == cluster.Macro);
+          SelectedMapSector = null;
+          OnRightPressedCluster?.Invoke(this, new ClusterEventArgs(cluster));
+        }
+        else if (HexagonOnMouseRightButtonDown.DataContext is GalaxyMapCluster galaxyMapCluster && galaxyMapCluster != null)
+        {
+          SelectedMapCluster = galaxyMapCluster;
+          SelectedMapSector = null;
+          OnRightPressedCell?.Invoke(this, new CellEventArgs(galaxyMapCluster));
+        }
+      }
+    }
+
     private void GalaxyMapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       var clickedElement = e.OriginalSource as DependencyObject;
@@ -556,32 +639,32 @@ namespace X4Map
       {
         if (textBlock.Parent is Polygon polygon)
         {
-          _hexagonOnMouseDown = polygon;
+          _hexagonOnMouseLeftButtonDown = polygon;
         }
         else if (textBlock.Parent is Grid grid)
         {
-          _hexagonOnMouseDown = grid.Children[0] as Polygon;
+          _hexagonOnMouseLeftButtonDown = grid.Children[0] as Polygon;
         }
       }
       else if (clickedElement is Polygon polygon && polygon.DataContext is Sector _sectorFromPolygon)
       {
-        _hexagonOnMouseDown = polygon;
+        _hexagonOnMouseLeftButtonDown = polygon;
       }
       else if (clickedElement is Grid grid && grid.DataContext is Sector _sectorFromGrid)
       {
-        _hexagonOnMouseDown = grid.Children[0] as Polygon;
+        _hexagonOnMouseLeftButtonDown = grid.Children[0] as Polygon;
       }
       else if (clickedElement is Polygon clusterPolygon && clusterPolygon.DataContext is Cluster _clusterFromPolygon)
       {
         GalaxyMapCluster? galaxyCluster = _clusters.Find(cluster => cluster.Macro == _clusterFromPolygon.Macro);
         if (galaxyCluster != null)
         {
-          _hexagonOnMouseDown = galaxyCluster.Hexagon;
+          _hexagonOnMouseLeftButtonDown = galaxyCluster.Hexagon;
         }
       }
       else if (clickedElement is Polygon cellPolygon && cellPolygon.DataContext is GalaxyMapCluster _galaxyClusterFromPolygon)
       {
-        _hexagonOnMouseDown = _galaxyClusterFromPolygon.Hexagon;
+        _hexagonOnMouseLeftButtonDown = _galaxyClusterFromPolygon.Hexagon;
       }
       isPanning = true;
       panStartPoint = e.GetPosition(this);
@@ -602,7 +685,7 @@ namespace X4Map
         {
           return;
         }
-        _hexagonOnMouseDown = null;
+        _hexagonOnMouseLeftButtonDown = null;
         // Adjust the ScrollViewer's offsets
         ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
         ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
@@ -625,19 +708,19 @@ namespace X4Map
         if (_hexagonSelected != null)
         {
           _hexagonSelected.StrokeThickness = 1;
-          _hexagonSelected = _hexagonSelected == _hexagonOnMouseDown ? null : _hexagonOnMouseDown;
+          _hexagonSelected = _hexagonSelected == _hexagonOnMouseLeftButtonDown ? null : _hexagonOnMouseLeftButtonDown;
         }
         else
         {
-          _hexagonSelected = _hexagonOnMouseDown;
+          _hexagonSelected = _hexagonOnMouseLeftButtonDown;
         }
         if (_hexagonSelected != null)
         {
           _hexagonSelected.StrokeThickness = 3;
         }
       }
-      PressedHexagon = _hexagonOnMouseDown;
-      _hexagonOnMouseDown = null;
+      PressedHexagon = _hexagonOnMouseLeftButtonDown;
+      _hexagonOnMouseLeftButtonDown = null;
     }
 
     public void GalaxyMapViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
