@@ -411,11 +411,19 @@ namespace GalaxyEditor
           _currentMod = value;
           OnPropertyChanged(nameof(CurrentMod));
           OnPropertyChanged(nameof(ModOptionsVisibility));
+          OnPropertyChanged(nameof(WindowTitle));
           IsModCanBeSaved = false;
           IsModCanBeSavedAs = false;
-          if (value != null)
+          if (_currentMod != null)
           {
-            LatestModPath = value.Path;
+            _currentMod.PropertyChanged += (sender, e) =>
+            {
+              if (e.PropertyName == "Name" || e.PropertyName == "Id" || e.PropertyName == "Version")
+              {
+                OnPropertyChanged(nameof(WindowTitle));
+              }
+            };
+            LatestModPath = _currentMod.Path;
             IsModCanBeSaved = true;
             IsModCanBeSavedAs = true;
           }
@@ -424,7 +432,7 @@ namespace GalaxyEditor
     }
 
     public bool ModIsLoaded => CurrentMod != null;
-    public Visibility ModOptionsVisibility => ModIsLoaded ? Visibility.Visible : Visibility.Hidden | Visibility.Collapsed;
+    public Visibility ModOptionsVisibility => ModIsLoaded ? Visibility.Visible : Visibility.Collapsed;
     public StatusBarMessage StatusBar { get; set; } = new();
     private int _selectedTabIndex = -1;
     public int SelectedTabIndex
@@ -456,6 +464,19 @@ namespace GalaxyEditor
     private readonly BitmapImage _appIcon;
     private BackgroundWorker _backgroundWorker;
 
+    public string WindowTitle
+    {
+      get
+      {
+        string title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
+        if (CurrentMod != null)
+        {
+          title += $" | Mod: {CurrentMod.Name} v.{CurrentMod.Version} [{CurrentMod.Id}] ({CurrentMod.Path})";
+        }
+        return title;
+      }
+    }
+
     public MainWindow()
     {
       _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
@@ -464,7 +485,7 @@ namespace GalaxyEditor
       DataContext = this;
       _assemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
-      Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
+      // Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
       GalaxyData = new Galaxy();
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
       GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity, SectorRadius);
