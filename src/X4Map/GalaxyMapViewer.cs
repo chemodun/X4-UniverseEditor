@@ -244,10 +244,10 @@ namespace X4Map
       DeveloperOptions.Add(ShowEmptyClusterPlaces);
       ScrollChanged += GalaxyMapViewer_ScrollChanged;
       SizeChanged += GalaxyMapViewer_SizeChanged;
-      PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
-      PreviewMouseLeftButtonDown += GalaxyMapViewer_MouseLeftButtonDown;
-      MouseMove += GalaxyMapViewer_MouseMove;
-      MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
+      GalaxyCanvas.PreviewMouseWheel += GalaxyMapViewer_PreviewMouseWheel;
+      GalaxyCanvas.PreviewMouseLeftButtonDown += GalaxyMapViewer_MouseLeftButtonDown;
+      GalaxyCanvas.MouseMove += GalaxyMapViewer_MouseMove;
+      GalaxyCanvas.MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
     }
 
     public void RefreshGalaxyData()
