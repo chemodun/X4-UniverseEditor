@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.1.1...GalaxyEditor@v0.1.2) (2025-02-18)
+
+
+### Code Refactoring
+
+* **MainWindow:** rename ribbon and tab items for consistency ([97f100b](https://github.com/chemodun/X4-UniverseEditor/commit/97f100b40db2dcc707e7a7100671fb22d29b68e5))
+
+
+### Miscellaneous Chores
+
+* **GalaxyEditor:** add detailed cell information display and update event handling for selection actions ([e997493](https://github.com/chemodun/X4-UniverseEditor/commit/e997493ca7a6e9a7a00cdb0a7e208eb758b41b23))
+
 ## [0.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.1.0...GalaxyEditor@v0.1.1) (2025-02-17)
 
 
