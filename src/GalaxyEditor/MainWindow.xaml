@@ -37,7 +37,7 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <fluent:Ribbon DockPanel.Dock="Top" x:Name="MainRibbon" SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+        <fluent:Ribbon DockPanel.Dock="Top" x:Name="RibbonMain" SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
             <fluent:RibbonTabItem Header="Mod" x:Name="RibbonTabMod">
                 <fluent:RibbonGroupBox Header="Mod Actions">
                     <fluent:Button Header="New"
@@ -83,9 +83,9 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Cell" x:Name="RibbonTabCells">
+            <fluent:RibbonTabItem Header="Cell" x:Name="RibbonTabCell">
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Cluster" x:Name="RibbonTabClusters">
+            <fluent:RibbonTabItem Header="Cluster" x:Name="RibbonTabCluster">
                 <fluent:RibbonGroupBox Header="Main info">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
@@ -132,7 +132,7 @@
                     </Grid>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Sector" x:Name="RibbonTabSectors">
+            <fluent:RibbonTabItem Header="Sector" x:Name="RibbonTabSector">
                 <fluent:RibbonGroupBox Header="Main info">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
@@ -309,7 +309,7 @@
                     </StackPanel>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Help" x:Name="HelpTab">
+            <fluent:RibbonTabItem Header="Help"  x:Name="RibbonTabHelp">
                 <fluent:RibbonGroupBox Header="Help Actions">
                     <fluent:Button Header="Readme" Style="{StaticResource FluentButtonStyle}"
                                     Click="ButtonReadme_Click">

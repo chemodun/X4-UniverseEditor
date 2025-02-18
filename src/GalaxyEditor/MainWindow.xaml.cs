@@ -14,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Fluent;
 using SharedWindows;
 using Utilities.Logging;
 using X4DataLoader;
@@ -516,7 +515,7 @@ namespace GalaxyEditor
         );
         StatusBar.SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
         // Show the ribbon tab options
-        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabConfiguration")!;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabConfiguration")!;
       }
       else
       {
@@ -594,7 +593,7 @@ namespace GalaxyEditor
       {
         Log.Debug($"Selected cell: {e.SelectedCell.Column}, {e.SelectedCell.Row}");
         StatusBar.SetStatusMessage($"Selected cell: {e.SelectedCell.Column}, {e.SelectedCell.Row}", StatusMessageType.Info);
-        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabCells")!;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCells")!;
         OnPropertyChanged(nameof(SelectedSectorItemInfo));
         OnPropertyChanged(nameof(SelectedClusterItemInfo));
         // Show the cell details
@@ -608,7 +607,7 @@ namespace GalaxyEditor
       {
         Log.Debug($"Selected cluster: {e.SelectedCluster.Name}");
         StatusBar.SetStatusMessage($"Selected sector: {e.SelectedCluster.Name}", StatusMessageType.Info);
-        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabClusters")!;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabClusters")!;
         OnPropertyChanged(nameof(SelectedSectorItemInfo));
         OnPropertyChanged(nameof(SelectedClusterItemInfo));
         // Show the sector details
@@ -622,7 +621,7 @@ namespace GalaxyEditor
       {
         Log.Debug($"Selected sector: {e.SelectedSector.Name}");
         StatusBar.SetStatusMessage($"Selected sector: {e.SelectedSector.Name}", StatusMessageType.Info);
-        MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabSectors")!;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSectors")!;
         OnPropertyChanged(nameof(SelectedSectorItemInfo));
         OnPropertyChanged(nameof(SelectedClusterItemInfo));
         // Show the sector details
@@ -680,7 +679,7 @@ namespace GalaxyEditor
         );
         if (confirm == MessageBoxResult.No)
         {
-          MainRibbon.SelectedTabItem = (Fluent.RibbonTabItem)MainRibbon.FindName("RibbonTabX4Data")!;
+          RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabX4Data")!;
           return;
         }
       }
