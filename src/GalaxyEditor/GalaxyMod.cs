@@ -1,6 +1,8 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using Utilities.Logging;
 using X4DataLoader;
@@ -11,7 +13,17 @@ namespace GalaxyEditor
   public class GalaxyMod : INotifyPropertyChanged
   {
     private static readonly string ModFile = "GalaxyMod.json";
-    private static readonly List<string> modAttributesToSave = ["Name", "Id", "Version", "GameVersion", "LanguagePage", "MapInfo"];
+    private static readonly List<string> modAttributesToSave = new()
+    {
+      "Name",
+      "Id",
+      "Version",
+      "GameVersion",
+      "LanguagePage",
+      "MapInfo",
+      "DLCList",
+      "ModList",
+    };
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private string _name = "";
@@ -21,6 +33,16 @@ namespace GalaxyEditor
     private string _path = "";
     private int _languagePage = 999999;
     private MapInfo _mapInfo = new(0, 0, 0, 0);
+    private ExtensionsInfoList _dlcList = new([]);
+    private ExtensionsInfoList _modList = new([]);
+
+    private bool _isModLoading = false;
+
+    public GalaxyMod()
+    {
+      _dlcList.CollectionChanged += OnDLCListChanged;
+      _modList.CollectionChanged += OnModListChanged;
+    }
 
     public string Name
     {
@@ -35,6 +57,7 @@ namespace GalaxyEditor
         }
       }
     }
+
     public string Id
     {
       get => _id;
@@ -48,6 +71,7 @@ namespace GalaxyEditor
         }
       }
     }
+
     public int Version
     {
       get => _version;
@@ -61,6 +85,7 @@ namespace GalaxyEditor
         }
       }
     }
+
     public int GameVersion
     {
       get => gameVersion;
@@ -74,6 +99,7 @@ namespace GalaxyEditor
         }
       }
     }
+
     public int LanguagePage
     {
       get => _languagePage;
@@ -87,6 +113,7 @@ namespace GalaxyEditor
         }
       }
     }
+
     public string Path
     {
       get => _path;
@@ -114,7 +141,61 @@ namespace GalaxyEditor
       }
     }
 
-    public bool Create(MapInfo mapInfo, int gameVersion)
+    public ExtensionsInfoList DLCList
+    {
+      get => _dlcList;
+      set
+      {
+        if (_dlcList != value)
+        {
+          if (_dlcList != null)
+          {
+            _dlcList.CollectionChanged -= OnDLCListChanged;
+          }
+          _dlcList = value;
+          if (_dlcList != null)
+          {
+            _dlcList.CollectionChanged += OnDLCListChanged;
+          }
+          OnPropertyChanged(nameof(DLCList));
+          Save();
+        }
+      }
+    }
+
+    public ExtensionsInfoList ModList
+    {
+      get => _modList;
+      set
+      {
+        if (_modList != value)
+        {
+          if (_modList != null)
+          {
+            _modList.CollectionChanged -= OnModListChanged;
+          }
+          _modList = value;
+          if (_modList != null)
+          {
+            _modList.CollectionChanged += OnModListChanged;
+          }
+          OnPropertyChanged(nameof(ModList));
+          Save();
+        }
+      }
+    }
+
+    private void OnDLCListChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      Save();
+    }
+
+    private void OnModListChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      Save();
+    }
+
+    public bool Create(MapInfo mapInfo, Galaxy galaxyData)
     {
       var dialog = new System.Windows.Forms.FolderBrowserDialog
       {
@@ -144,7 +225,15 @@ namespace GalaxyEditor
         }
         Path = dialog.SelectedPath;
         MapInfo = mapInfo;
-        GameVersion = gameVersion;
+        GameVersion = galaxyData.Version;
+        foreach (var dlc in galaxyData.DLCs)
+        {
+          DLCList.Add(new ExtensionInfo(dlc.Name, dlc.Id, dlc.Version, true));
+        }
+        foreach (var mod in galaxyData.Mods)
+        {
+          ModList.Add(new ExtensionInfo(mod.Name, mod.Id, mod.Version, false));
+        }
         return true;
       }
       else
@@ -155,6 +244,10 @@ namespace GalaxyEditor
 
     public void Save()
     {
+      if (_isModLoading)
+      {
+        return;
+      }
       var options = new JsonSerializerOptions { WriteIndented = true };
 
       var modData = new Dictionary<string, object>();
@@ -209,7 +302,7 @@ namespace GalaxyEditor
         Log.Debug($"Selected file: {dialog.FileName}, Result: {result}");
         if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.FileName))
         {
-          workingPath = System.IO.Path.GetDirectoryName(dialog.FileName) ?? string.Empty;
+          workingPath = dialog.FileName;
         }
         if (string.IsNullOrWhiteSpace(workingPath))
         {
@@ -224,6 +317,7 @@ namespace GalaxyEditor
           Log.Warn($"Loading mod cancelled. Invalid path: {workingPath}");
           return false;
         }
+        workingPath = System.IO.Path.Combine(workingPath, ModFile);
       }
       Path = System.IO.Path.GetDirectoryName(workingPath) ?? string.Empty;
       var jsonString = File.ReadAllText(workingPath);
@@ -233,19 +327,40 @@ namespace GalaxyEditor
         var modData = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
         if (modData != null)
         {
+          _isModLoading = true;
+          Log.Debug($"Mod data loaded. Count: {modData.Count}");
+          var options = new JsonSerializerOptions();
+          options.Converters.Add(new MapInfoJsonConverter());
+          options.Converters.Add(new ExtensionsInfoListJsonConverter());
+          options.Converters.Add(new ExtensionInfoJsonConverter());
           foreach (var property in modAttributesToSave)
           {
             if (modData.TryGetValue(property, out object? value))
             {
               var propInfo = this.GetType().GetProperty(property);
-              propInfo?.SetValue(this, value);
+              Log.Debug($"Setting property: {property}, Value: {value}");
+              if (value is JsonElement jsonElement)
+              {
+                if (propInfo != null)
+                {
+                  var targetType = propInfo.PropertyType;
+                  var convertedValue = JsonSerializer.Deserialize(jsonElement.GetRawText(), targetType, options);
+                  propInfo.SetValue(this, convertedValue);
+                }
+              }
+              else
+              {
+                propInfo?.SetValue(this, value);
+              }
             }
           }
+          _isModLoading = false;
         }
       }
       catch (System.Exception ex)
       {
         Log.Error($"Error loading mod file: {workingPath}", ex);
+        _isModLoading = false;
         return false;
       }
       return true;

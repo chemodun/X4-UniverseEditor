@@ -698,7 +698,7 @@ namespace GalaxyEditor
     public void ButtonNewMod_Click(object sender, RoutedEventArgs e)
     {
       GalaxyMod newMod = new();
-      if (newMod.Create(GalaxyMapViewer.MapInfo, GalaxyMapViewer.GalaxyData.Version))
+      if (newMod.Create(GalaxyMapViewer.MapInfo, GalaxyMapViewer.GalaxyData))
       {
         CurrentMod = newMod;
       }
