@@ -253,6 +253,7 @@ namespace X4Map
         {
           sector.Remove(GalaxyCanvas);
         }
+        MapInfo = new(0, 0, 0, 0);
         _clusters.Clear();
         InterConnections.Clear();
         SectorsItems.Clear();
