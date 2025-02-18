@@ -24,10 +24,16 @@ namespace GalaxyEditor
 {
   public class AppConfig
   {
+    public ModConfig Mod { get; set; } = new ModConfig();
     public EditConfig Edit { get; set; } = new EditConfig();
     public MapConfig Map { get; set; } = new MapConfig();
     public DataConfig Data { get; set; } = new DataConfig();
     public LoggingConfig Logging { get; set; } = new LoggingConfig();
+  }
+
+  public class ModConfig
+  {
+    public string LatestModPath { get; set; } = "";
   }
 
   public class EditConfig
@@ -379,6 +385,46 @@ namespace GalaxyEditor
       }
     }
 
+    private string _latestModPath = "";
+    public string LatestModPath
+    {
+      get => _latestModPath;
+      set
+      {
+        if (_latestModPath != value)
+        {
+          _latestModPath = value;
+          OnPropertyChanged(nameof(LatestModPath));
+          SaveConfiguration();
+        }
+      }
+    }
+
+    private GalaxyMod? _currentMod;
+    public GalaxyMod? CurrentMod
+    {
+      get => _currentMod;
+      set
+      {
+        if (_currentMod != value)
+        {
+          _currentMod = value;
+          OnPropertyChanged(nameof(CurrentMod));
+          OnPropertyChanged(nameof(ModOptionsVisibility));
+          IsModCanBeSaved = false;
+          IsModCanBeSavedAs = false;
+          if (value != null)
+          {
+            LatestModPath = value.Path;
+            IsModCanBeSaved = true;
+            IsModCanBeSavedAs = true;
+          }
+        }
+      }
+    }
+
+    public bool ModIsLoaded => CurrentMod != null;
+    public Visibility ModOptionsVisibility => ModIsLoaded ? Visibility.Visible : Visibility.Hidden | Visibility.Collapsed;
     public StatusBarMessage StatusBar { get; set; } = new();
     private int _selectedTabIndex = -1;
     public int SelectedTabIndex
@@ -460,6 +506,7 @@ namespace GalaxyEditor
           SectorRadius = config.Map.SectorRadius;
           LogLevel = config.Logging.LogLevel;
           LogToFile = config.Logging.LogToFile;
+          LatestModPath = config.Mod.LatestModPath;
         }
       }
       else
@@ -477,6 +524,7 @@ namespace GalaxyEditor
     {
       var config = new AppConfig
       {
+        Mod = new ModConfig { LatestModPath = LatestModPath },
         Data = new DataConfig
         {
           X4DataExtractedPath = X4DataFolder,
@@ -537,7 +585,7 @@ namespace GalaxyEditor
 
     private void LoadX4DataInBackground(object? sender, DoWorkEventArgs e)
     {
-      LoadX4Data(true);
+      LoadX4Data();
     }
 
     private void LoadX4DataInBackgroundProgressChanged(object? sender, ProgressChangedEventArgs e)
@@ -560,12 +608,22 @@ namespace GalaxyEditor
         new Action(() =>
         {
           GalaxyMapViewer.RefreshGalaxyData();
+          if (LatestModPath != "" && File.Exists(LatestModPath))
+          {
+            GalaxyMod mod = new();
+            if (mod.Load(LatestModPath))
+            {
+              CurrentMod = mod;
+              RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
+              StatusBar.SetStatusMessage($"Mod {CurrentMod.Name} from {LatestModPath} loaded successfully!", StatusMessageType.Info);
+            }
+          }
         })
       );
       StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
     }
 
-    private void LoadX4Data(bool inBackground = false)
+    private void LoadX4Data()
     {
       DataLoader dataLoader = new();
       dataLoader.X4DataLoadingEvent += (sender, e) =>
@@ -584,10 +642,6 @@ namespace GalaxyEditor
       GalaxyMapViewer.FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
       OnPropertyChanged(nameof(IsDataLoaded));
       StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
-      if (!inBackground)
-      {
-        GalaxyMapViewer.RefreshGalaxyData();
-      }
     }
 
     private void GalaxyMapViewer_CellPressed(object? sender, CellEventArgs e)
@@ -596,7 +650,7 @@ namespace GalaxyEditor
       if (e.PressedCell != null)
       {
         string actionString = GalaxyMapViewer.SelectedMapCluster != null ? "Selected" : "Unselected";
-        string message = $"{actionString} cell: {e.PressedCell.Column}, {e.PressedCell.Row}";
+        string message = $"{actionString} cell: {e.PressedCell.MapPosition.Column}, {e.PressedCell.MapPosition.Row}";
         Log.Debug(message);
         StatusBar.SetStatusMessage(message, StatusMessageType.Info);
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCell")!;
@@ -641,9 +695,25 @@ namespace GalaxyEditor
       OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
-    public void ButtonNewMod_Click(object sender, RoutedEventArgs e) { }
+    public void ButtonNewMod_Click(object sender, RoutedEventArgs e)
+    {
+      GalaxyMod newMod = new();
+      if (newMod.Create(GalaxyMapViewer.MapInfo, GalaxyMapViewer.GalaxyData.Version))
+      {
+        CurrentMod = newMod;
+      }
+    }
 
-    public void ButtonLoadMod_Click(object sender, RoutedEventArgs e) { }
+    public void ButtonLoadMod_Click(object sender, RoutedEventArgs e)
+    {
+      GalaxyMod? mod = new();
+      if (mod.Load(""))
+      {
+        CurrentMod = mod;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
+        StatusBar.SetStatusMessage($"Mod {CurrentMod.Name} from {LatestModPath} loaded successfully!", StatusMessageType.Info);
+      }
+    }
 
     public void ButtonSaveMod_Click(object sender, RoutedEventArgs e) { }
 

@@ -21,11 +21,11 @@ namespace GalaxyEditor
     }
     public string Column
     {
-      get => _cluster?.Column.ToString("N0") ?? "";
+      get => _cluster?.MapPosition.Column.ToString("N0") ?? "";
     }
     public string Row
     {
-      get => _cluster?.Row.ToString("N0") ?? "";
+      get => _cluster?.MapPosition.Row.ToString("N0") ?? "";
     }
   }
 
