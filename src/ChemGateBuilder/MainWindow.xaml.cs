@@ -676,7 +676,7 @@ namespace ChemGateBuilder
         );
         StatusBar.SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
         // Show the ribbon tab options
-        SelectedTabIndex = 2;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabConfiguration")!;
       }
       else
       {
@@ -768,7 +768,7 @@ namespace ChemGateBuilder
         );
         if (confirm == MessageBoxResult.No)
         {
-          SelectedTabIndex = 1;
+          RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabX4Data")!;
           return;
         }
       }
