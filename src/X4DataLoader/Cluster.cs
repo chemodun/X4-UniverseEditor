@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Utilities.Logging;
 using X4DataLoader.Helpers;
 
@@ -12,10 +13,22 @@ namespace X4DataLoader
   public class Cluster(string macro)
   {
     public string Name { get; private set; } = "";
+    public int NamePageId { get; private set; } = 0;
+    public int NameTextId { get; private set; } = 0;
     public string Description { get; private set; } = "";
+    public int DescriptionPageId { get; private set; } = 0;
+    public int DescriptionTextId { get; private set; } = 0;
+    public string System { get; private set; } = "";
+    public string ImageId { get; private set; } = "";
     public string Id { get; private set; } = macro.Replace("_macro", "");
     public string Macro { get; private set; } = macro;
     public string Reference { get; set; } = "";
+    public string Environment { get; private set; } = "";
+    public int EnvironmentPageId { get; private set; } = 0;
+    public int EnvironmentTextId { get; private set; } = 0;
+    public string Sun { get; private set; } = "";
+    public int SunPageId { get; private set; } = 0;
+    public int SunTextId { get; private set; } = 0;
     public Position Position { get; private set; } = new Position();
     public string PositionId { get; private set; } = "";
     public string PositionSource { get; private set; } = "vanilla";
@@ -38,17 +51,45 @@ namespace X4DataLoader
       var macro = element.Attribute("macro")?.Value;
       if (!string.IsNullOrEmpty(macro))
       {
-        var propertiesElement = element.Element("properties");
-        string nameId = propertiesElement?.Element("identification")?.Attribute("name")?.Value ?? "";
-        string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
+        XElement? propertiesElement = element.Element("properties") ?? throw new ArgumentException("Cluster must have properties");
+        string nameId = propertiesElement.Element("identification")?.Attribute("name")?.Value ?? "";
+        string descriptionId = propertiesElement.Element("identification")?.Attribute("description")?.Value ?? "";
         if (nameId != null && nameId != "" && descriptionId != "")
         {
           DetailsMacro = macro;
           Name = translation.Translate(nameId);
+          var ids = Translation.GetIds(nameId);
+          NamePageId = ids[0];
+          NameTextId = ids[1];
           Description = translation.Translate(descriptionId);
+          ids = Translation.GetIds(descriptionId);
+          DescriptionPageId = ids[0];
+          DescriptionTextId = ids[1];
+          System = propertiesElement.Element("identification")?.Attribute("system")?.Value ?? "";
+          ImageId = propertiesElement.Element("identification")?.Attribute("mage")?.Value ?? "";
           DetailsSource = source;
           DetailsFileName = fileName;
           DetailsXML = element;
+          XElement? systemElement = propertiesElement.Element("system");
+          if (systemElement != null)
+          {
+            XElement? spaceElement = systemElement.Element("space");
+            string environment = spaceElement?.Attribute("environment")?.Value ?? "";
+            Environment = translation.Translate(environment);
+            int[] environmentTextIds = Translation.GetIds(environment);
+            EnvironmentPageId = environmentTextIds[0];
+            EnvironmentTextId = environmentTextIds[1];
+            IEnumerable<XElement> sunElements = systemElement.XPathSelectElements("suns/sun");
+            if (sunElements.Any())
+            {
+              XElement sunElement = sunElements.First();
+              string sun = sunElement.Attribute("class")?.Value ?? "";
+              int[] sunTextIds = Translation.GetIds(sun);
+              Sun = translation.Translate(sun);
+              SunPageId = sunTextIds[0];
+              SunTextId = sunTextIds[1];
+            }
+          }
         }
         else
         {
