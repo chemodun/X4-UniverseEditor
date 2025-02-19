@@ -45,7 +45,7 @@ namespace X4DataLoader
       XML = element;
     }
 
-    public static void LoadFromXml(GameFile file, Galaxy galaxy)
+    public static void LoadFromXML(GameFile file, Galaxy galaxy)
     {
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/colormap/colors/color");
       foreach (XElement element in elements)
@@ -87,7 +87,7 @@ namespace X4DataLoader
       XML = element;
     }
 
-    public static void LoadFromXML(GameFile file, Galaxy galaxy)
+    public static new void LoadFromXML(GameFile file, Galaxy galaxy)
     {
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/colormap/mappings/mapping");
       foreach (XElement element in elements)
