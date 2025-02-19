@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.0...GalaxyEditor@v0.2.1) (2025-02-19)
+
+
+### Miscellaneous Chores
+
+* **GalaxyReferencesHolder:** add WorldParts and AtmosphereParts lists to catalog planets and moons ([843e990](https://github.com/chemodun/X4-UniverseEditor/commit/843e990b12e5db1c11c023efb489ea5857e750a0))
+
 ## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.1.2...GalaxyEditor@v0.2.0) (2025-02-19)
 
 
