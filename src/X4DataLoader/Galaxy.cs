@@ -19,6 +19,8 @@ namespace X4DataLoader
     public List<Cluster> Clusters { get; private set; }
     public List<Sector> Sectors { get; private set; }
     public List<X4Color> Colors { get; private set; } = [];
+    public List<X4Sound> Sounds { get; private set; } = [];
+    public List<X4Icon> Icons { get; private set; } = [];
     public List<X4MappedColor> MappedColors { get; private set; } = [];
     public List<Race> Races { get; private set; } = [];
     public List<Faction> Factions { get; private set; } = [];

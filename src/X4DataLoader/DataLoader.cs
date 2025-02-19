@@ -94,9 +94,17 @@ namespace X4DataLoader
               Log.Debug("Translation loaded.");
               break;
             case "colors":
-              X4Color.LoadFromXml(file, galaxy);
+              X4Color.LoadFromXML(file, galaxy);
               X4MappedColor.LoadFromXML(file, galaxy);
               Log.Debug($"Colors loaded (total on stage: {galaxy.Colors.Count}) from: {file.FileName} for {file.ExtensionId}");
+              break;
+            case "sounds":
+              X4Sound.LoadFromXML(file, galaxy);
+              Log.Debug($"Sounds loaded (total on stage: {galaxy.Sounds.Count}) from: {file.FileName} for {file.ExtensionId}");
+              break;
+            case "icons":
+              X4Icon.LoadFromXML(file, galaxy);
+              Log.Debug($"Icons loaded (total on stage: {galaxy.Icons.Count}) from: {file.FileName} for {file.ExtensionId}");
               break;
             case "mapDefaults":
               foreach (XElement datasetElement in file.XML.XPathSelectElements("/defaults/dataset"))
