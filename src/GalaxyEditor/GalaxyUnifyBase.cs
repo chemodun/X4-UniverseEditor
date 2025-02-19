@@ -31,7 +31,7 @@ namespace GalaxyEditor
     ListOfItems,
   }
 
-  public class GalaxyItemAttribute
+  public class GalaxyUnifyItemAttribute
   {
     public AttributeType Type { get; set; } = AttributeType.String;
     public int Index { get; set; } = -1;
@@ -40,8 +40,8 @@ namespace GalaxyEditor
     public int ValueInt { get; set; } = 0;
     public double ValueDouble { get; set; } = 0;
     public bool ValueBool { get; set; } = false;
-    public GalaxyItemAttribute? ValueItem { get; set; } = null;
-    public List<GalaxyItemAttribute> ValueList { get; set; } = [];
+    public GalaxyUnifyItemAttribute? ValueItem { get; set; } = null;
+    public List<GalaxyUnifyItemAttribute> ValueList { get; set; } = [];
     public List<GalaxyUnifyItem> ValueListOfItems { get; set; } = [];
     public AttributeState State { get; set; } = AttributeState.None;
 
@@ -53,7 +53,7 @@ namespace GalaxyEditor
           ValueItem?.PostInit();
           break;
         case AttributeType.List:
-          foreach (GalaxyItemAttribute item in ValueList)
+          foreach (GalaxyUnifyItemAttribute item in ValueList)
           {
             item.PostInit();
           }
@@ -64,18 +64,16 @@ namespace GalaxyEditor
             item.PostInit();
           }
           break;
-        default:
-          State = AttributeState.Set;
-          break;
       }
+      State = AttributeState.Set;
     }
   }
 
-  public class GalaxyItemAttributeConverter : JsonConverter<GalaxyItemAttribute>
+  public class GalaxyUnifyItemAttributeConverter : JsonConverter<GalaxyUnifyItemAttribute>
   {
-    public override GalaxyItemAttribute Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override GalaxyUnifyItemAttribute Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      var attribute = new GalaxyItemAttribute();
+      var attribute = new GalaxyUnifyItemAttribute();
       while (reader.Read())
       {
         if (reader.TokenType == JsonTokenType.EndObject)
@@ -90,38 +88,38 @@ namespace GalaxyEditor
 
           switch (propertyName)
           {
-            case nameof(GalaxyItemAttribute.Index):
+            case nameof(GalaxyUnifyItemAttribute.Index):
               attribute.Index = reader.GetInt32();
               break;
-            case nameof(GalaxyItemAttribute.Name):
+            case nameof(GalaxyUnifyItemAttribute.Name):
               attribute.Name = reader.GetString() ?? string.Empty;
               break;
-            case nameof(GalaxyItemAttribute.ValueString):
+            case nameof(GalaxyUnifyItemAttribute.ValueString):
               attribute.ValueString = reader.GetString() ?? string.Empty;
               break;
-            case nameof(GalaxyItemAttribute.ValueInt):
+            case nameof(GalaxyUnifyItemAttribute.ValueInt):
               attribute.ValueInt = reader.GetInt32();
               break;
-            case nameof(GalaxyItemAttribute.ValueDouble):
+            case nameof(GalaxyUnifyItemAttribute.ValueDouble):
               attribute.ValueDouble = reader.GetDouble();
               break;
-            case nameof(GalaxyItemAttribute.ValueBool):
+            case nameof(GalaxyUnifyItemAttribute.ValueBool):
               attribute.ValueBool = reader.GetBoolean();
               break;
-            case nameof(GalaxyItemAttribute.ValueItem):
-              attribute.ValueItem = JsonSerializer.Deserialize<GalaxyItemAttribute>(ref reader, options);
+            case nameof(GalaxyUnifyItemAttribute.ValueItem):
+              attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
               break;
-            case nameof(GalaxyItemAttribute.ValueList):
-              attribute.ValueList = JsonSerializer.Deserialize<List<GalaxyItemAttribute>>(ref reader, options) ?? [];
+            case nameof(GalaxyUnifyItemAttribute.ValueList):
+              attribute.ValueList = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
               break;
-            case nameof(GalaxyItemAttribute.ValueListOfItems):
+            case nameof(GalaxyUnifyItemAttribute.ValueListOfItems):
               attribute.ValueListOfItems =
                 JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? new List<GalaxyUnifyItem>();
               break;
-            case nameof(GalaxyItemAttribute.State):
+            case nameof(GalaxyUnifyItemAttribute.State):
               attribute.State = (AttributeState)reader.GetInt32();
               break;
-            case nameof(GalaxyItemAttribute.Type):
+            case nameof(GalaxyUnifyItemAttribute.Type):
               attribute.Type = (AttributeType)reader.GetInt32();
               break;
           }
@@ -130,53 +128,53 @@ namespace GalaxyEditor
       throw new JsonException("Unable to read GalaxyItemAttribute");
     }
 
-    public override void Write(Utf8JsonWriter writer, GalaxyItemAttribute value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, GalaxyUnifyItemAttribute value, JsonSerializerOptions options)
     {
       writer.WriteStartObject();
-      writer.WriteNumber(nameof(GalaxyItemAttribute.Type), (int)value.Type);
-      writer.WriteNumber(nameof(GalaxyItemAttribute.Index), value.Index);
-      writer.WriteString(nameof(GalaxyItemAttribute.Name), value.Name);
+      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Type), (int)value.Type);
+      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Index), value.Index);
+      writer.WriteString(nameof(GalaxyUnifyItemAttribute.Name), value.Name);
       switch (value.Type)
       {
         case AttributeType.String:
-          writer.WriteString(nameof(GalaxyItemAttribute.ValueString), value.ValueString);
+          writer.WriteString(nameof(GalaxyUnifyItemAttribute.ValueString), value.ValueString);
           break;
         case AttributeType.Int:
-          writer.WriteNumber(nameof(GalaxyItemAttribute.ValueInt), value.ValueInt);
+          writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.ValueInt), value.ValueInt);
           break;
         case AttributeType.Double:
-          writer.WriteNumber(nameof(GalaxyItemAttribute.ValueDouble), value.ValueDouble);
+          writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.ValueDouble), value.ValueDouble);
           break;
         case AttributeType.Bool:
-          writer.WriteBoolean(nameof(GalaxyItemAttribute.ValueBool), value.ValueBool);
+          writer.WriteBoolean(nameof(GalaxyUnifyItemAttribute.ValueBool), value.ValueBool);
           break;
         case AttributeType.Item:
-          writer.WritePropertyName(nameof(GalaxyItemAttribute.ValueItem));
+          writer.WritePropertyName(nameof(GalaxyUnifyItemAttribute.ValueItem));
           JsonSerializer.Serialize(writer, value.ValueItem, options);
           break;
         case AttributeType.List:
-          writer.WritePropertyName(nameof(GalaxyItemAttribute.ValueList));
+          writer.WritePropertyName(nameof(GalaxyUnifyItemAttribute.ValueList));
           JsonSerializer.Serialize(writer, value.ValueList, options);
           break;
         case AttributeType.ListOfItems:
-          writer.WritePropertyName(nameof(GalaxyItemAttribute.ValueListOfItems));
+          writer.WritePropertyName(nameof(GalaxyUnifyItemAttribute.ValueListOfItems));
           JsonSerializer.Serialize(writer, value.ValueListOfItems, options);
           break;
       }
-      writer.WriteNumber(nameof(GalaxyItemAttribute.State), (int)value.State);
+      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.State), (int)value.State);
       writer.WriteEndObject();
     }
   }
 
   public class GalaxyUnifyItem : INotifyPropertyChanged
   {
-    public List<GalaxyItemAttribute> Attributes = [];
+    public List<GalaxyUnifyItemAttribute> Attributes = [];
 
     public AttributeState State { get; set; } = AttributeState.None;
 
-    public GalaxyItemAttribute? PreSetAttribute(string name, AttributeType? type)
+    public GalaxyUnifyItemAttribute? PreSetAttribute(string name, AttributeType? type)
     {
-      GalaxyItemAttribute? attribute = Attributes.Find(a => a.Name == name && (type == null || a.Type == type));
+      GalaxyUnifyItemAttribute? attribute = Attributes.Find(a => a.Name == name && (type == null || a.Type == type));
       if (attribute != null)
       {
         return attribute;
@@ -184,7 +182,7 @@ namespace GalaxyEditor
       return null;
     }
 
-    public void PostSetAttribute(GalaxyItemAttribute attribute, bool valueIsEqual)
+    public void PostSetAttribute(GalaxyUnifyItemAttribute attribute, bool valueIsEqual)
     {
       attribute.State = attribute.State switch
       {
@@ -197,7 +195,7 @@ namespace GalaxyEditor
 
     public void SetInt(string name, int value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Int);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Int);
       if (attribute != null)
       {
         bool isEqual = attribute.ValueInt == value;
@@ -209,7 +207,7 @@ namespace GalaxyEditor
 
     public void SetString(string name, string value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.String);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.String);
       if (attribute != null)
       {
         bool isEqual = attribute.ValueString == value;
@@ -221,7 +219,7 @@ namespace GalaxyEditor
 
     public void SetDouble(string name, double value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Double);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Double);
       if (attribute != null)
       {
         bool isEqual = attribute.ValueDouble == value;
@@ -233,7 +231,7 @@ namespace GalaxyEditor
 
     public void SetBool(string name, bool value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Bool);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Bool);
       if (attribute != null)
       {
         bool isEqual = attribute.ValueBool == value;
@@ -243,9 +241,9 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetItem(string name, GalaxyItemAttribute value)
+    public void SetItem(string name, GalaxyUnifyItemAttribute value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Item);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Item);
       if (attribute != null)
       {
         attribute.ValueItem = value;
@@ -254,9 +252,9 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetList(string name, List<GalaxyItemAttribute> value)
+    public void SetList(string name, List<GalaxyUnifyItemAttribute> value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
       if (attribute != null)
       {
         attribute.ValueList = value;
@@ -267,7 +265,7 @@ namespace GalaxyEditor
 
     public void SetListOfItems(string name, List<GalaxyUnifyItem> value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
       if (attribute != null)
       {
         attribute.ValueListOfItems = value;
@@ -276,9 +274,9 @@ namespace GalaxyEditor
       }
     }
 
-    public GalaxyItemAttribute? PreGetAttributeValue(string name, AttributeType type)
+    public GalaxyUnifyItemAttribute? PreGetAttributeValue(string name, AttributeType type)
     {
-      GalaxyItemAttribute? attribute = Attributes.Find(a => a.Name == name && a.Type == type);
+      GalaxyUnifyItemAttribute? attribute = Attributes.Find(a => a.Name == name && a.Type == type);
       if (attribute != null && (attribute.State == AttributeState.Set || attribute.State == AttributeState.Modified))
       {
         return attribute;
@@ -288,7 +286,7 @@ namespace GalaxyEditor
 
     public int? GetInt(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Int);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Int);
       if (attribute != null)
       {
         return attribute.ValueInt;
@@ -298,7 +296,7 @@ namespace GalaxyEditor
 
     public string? GetString(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.String);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.String);
       if (attribute != null)
       {
         return attribute.ValueString;
@@ -308,7 +306,7 @@ namespace GalaxyEditor
 
     public double? GetDouble(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Double);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Double);
       if (attribute != null)
       {
         return attribute.ValueDouble;
@@ -318,7 +316,7 @@ namespace GalaxyEditor
 
     public bool? GetBool(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Bool);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Bool);
       if (attribute != null)
       {
         return attribute.ValueBool;
@@ -326,9 +324,9 @@ namespace GalaxyEditor
       return null;
     }
 
-    public GalaxyItemAttribute? GetItem(string name)
+    public GalaxyUnifyItemAttribute? GetItem(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Item);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Item);
       if (attribute != null)
       {
         return attribute.ValueItem;
@@ -336,9 +334,9 @@ namespace GalaxyEditor
       return null;
     }
 
-    public List<GalaxyItemAttribute> GetList(string name)
+    public List<GalaxyUnifyItemAttribute> GetList(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.List);
       if (attribute != null)
       {
         return attribute.ValueList.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
@@ -348,7 +346,7 @@ namespace GalaxyEditor
 
     public List<GalaxyUnifyItem> GetListOfItems(string name)
     {
-      GalaxyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.ListOfItems);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.ListOfItems);
       if (attribute != null)
       {
         return attribute.ValueListOfItems;
@@ -356,9 +354,9 @@ namespace GalaxyEditor
       return [];
     }
 
-    public void AddToList(string name, GalaxyItemAttribute value)
+    public void AddToList(string name, GalaxyUnifyItemAttribute value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
       if (attribute != null)
       {
         attribute.ValueList.Add(value);
@@ -369,7 +367,7 @@ namespace GalaxyEditor
 
     public void AddToListOfItems(string name, GalaxyUnifyItem value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
       if (attribute != null)
       {
         attribute.ValueListOfItems.Add(value);
@@ -377,9 +375,9 @@ namespace GalaxyEditor
       }
     }
 
-    public void RemoveFromList(string name, GalaxyItemAttribute value)
+    public void RemoveFromList(string name, GalaxyUnifyItemAttribute value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
       if (attribute != null)
       {
         if (value.Index < attribute.ValueList.Count && value.Index >= 0)
@@ -392,7 +390,7 @@ namespace GalaxyEditor
 
     public void RemoveFromListOfItems(string name, GalaxyUnifyItem value)
     {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
       if (attribute != null)
       {
         attribute.ValueListOfItems.Remove(value);
@@ -410,7 +408,7 @@ namespace GalaxyEditor
 
     public void PostInit()
     {
-      foreach (GalaxyItemAttribute attribute in Attributes)
+      foreach (GalaxyUnifyItemAttribute attribute in Attributes)
       {
         attribute.PostInit();
       }
@@ -418,7 +416,7 @@ namespace GalaxyEditor
     }
   }
 
-  public class GalaxyItemInfoJsonConverter : JsonConverter<GalaxyUnifyItem>
+  public class GalaxyUnifyItemJsonConverter : JsonConverter<GalaxyUnifyItem>
   {
     public override GalaxyUnifyItem Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -439,7 +437,7 @@ namespace GalaxyEditor
           {
             case nameof(GalaxyUnifyItem.Attributes):
               item.Attributes =
-                JsonSerializer.Deserialize<List<GalaxyItemAttribute>>(ref reader, options) ?? new List<GalaxyItemAttribute>();
+                JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? new List<GalaxyUnifyItemAttribute>();
               break;
           }
         }
