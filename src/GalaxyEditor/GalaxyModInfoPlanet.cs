@@ -53,6 +53,7 @@ namespace GalaxyEditor
       SetInt("MaxPopulation", moon.MaxPopulation);
       SetString("WorldPart", moon.WorldPart);
       SetString("AtmospherePart", moon.AtmospherePart);
+      PostInit();
     }
 
     public string Name
@@ -236,7 +237,7 @@ namespace GalaxyEditor
         moonInfo.Initialize(moon);
         AddToListOfItems("Moons", moonInfo);
       }
-      SetSet("Moons");
+      PostInit();
     }
   }
 }

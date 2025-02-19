@@ -5,6 +5,7 @@ using System.Security;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
+using Accessibility;
 using Utilities.Logging;
 using X4DataLoader;
 using X4Map;
@@ -44,7 +45,30 @@ namespace GalaxyEditor
     public List<GalaxyUnifyItem> ValueListOfItems { get; set; } = [];
     public AttributeState State { get; set; } = AttributeState.None;
 
-    public void SetSet() => State = AttributeState.Set;
+    public void PostInit()
+    {
+      switch (Type)
+      {
+        case AttributeType.Item:
+          ValueItem?.PostInit();
+          break;
+        case AttributeType.List:
+          foreach (GalaxyItemAttribute item in ValueList)
+          {
+            item.PostInit();
+          }
+          break;
+        case AttributeType.ListOfItems:
+          foreach (GalaxyUnifyItem item in ValueListOfItems)
+          {
+            item.PostInit();
+          }
+          break;
+        default:
+          State = AttributeState.Set;
+          break;
+      }
+    }
   }
 
   public class GalaxyItemAttributeConverter : JsonConverter<GalaxyItemAttribute>
@@ -148,6 +172,8 @@ namespace GalaxyEditor
   {
     public List<GalaxyItemAttribute> Attributes = [];
 
+    public AttributeState State { get; set; } = AttributeState.None;
+
     public GalaxyItemAttribute? PreSetAttribute(string name, AttributeType? type)
     {
       GalaxyItemAttribute? attribute = Attributes.Find(a => a.Name == name && (type == null || a.Type == type));
@@ -167,15 +193,6 @@ namespace GalaxyEditor
         AttributeState.Unset => AttributeState.Modified,
         _ => attribute.State,
       };
-    }
-
-    public void SetSet(string name)
-    {
-      GalaxyItemAttribute? attribute = PreSetAttribute(name, null);
-      if (attribute != null)
-      {
-        attribute.SetSet();
-      }
     }
 
     public void SetInt(string name, int value)
@@ -387,7 +404,17 @@ namespace GalaxyEditor
 
     protected virtual void OnPropertyChanged(string propertyName)
     {
+      State = AttributeState.Modified;
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public void PostInit()
+    {
+      foreach (GalaxyItemAttribute attribute in Attributes)
+      {
+        attribute.PostInit();
+      }
+      State = AttributeState.Set;
     }
   }
 
