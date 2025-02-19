@@ -29,6 +29,11 @@
             <Setter Property="Width" Value="100"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+        <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,6 +47,7 @@
         <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="Cluster Basic Information">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -62,11 +68,14 @@
                 <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">System Id:</Label>
                 <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text"/>
                 <Button Grid.Row="1" Grid.Column="2" Content="New System Id" Click="ButtonAddSystem_Click" Style="{StaticResource ButtonStyle}"/>
-                <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Music:</Label>
-                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding Music, Mode=TwoWay}"/>
-                <Button Grid.Row="1" Grid.Column="5" Content="New Music" Click="ButtonAddMusic_Click" Style="{StaticResource ButtonStyle}"/>
-                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelStyle}">Description:</Label>
-                <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Style="{StaticResource TextBoxStyle}" Text="{Binding Description, Mode=TwoWay}" Height="80" MaxWidth="800" AcceptsReturn="True" TextWrapping="Wrap"/>
+                <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Icon:</Label>
+                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding IconOptions}" SelectedItem="{Binding IconId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text"/>
+                <Button Grid.Row="1" Grid.Column="5" Content="New Icon" Click="ButtonAddIcon_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelStyle}">Music:</Label>
+                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding MusicId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text"/>
+                <Button Grid.Row="2" Grid.Column="2" Content="New Music" Click="ButtonAddMusic_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelStyle}">Description:</Label>
+                <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Style="{StaticResource TextBoxStyle}" Text="{Binding Description, Mode=TwoWay}" Height="80" MaxWidth="800" AcceptsReturn="True" TextWrapping="Wrap"/>
             </Grid>
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="0" Margin="5" Header="Cluster System Information">
@@ -91,30 +100,61 @@
                 <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Environment:</Label>
                 <ComboBox Grid.Row="0" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding EnvironmentOptions}" SelectedItem="{Binding Environment, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Text"/>
                 <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">Planets:</Label>
-                <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" AutoGenerateColumns="False" ItemsSource="{Binding Planets}">
+                <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        IsReadOnly="True"
+                        SelectionMode="Single"
+                        MinHeight="100"
+                        ItemsSource="{Binding Planets}"
+                        SelectedItem="{Binding SelectedPlanet, Mode=TwoWay}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Planet Name" Binding="{Binding Name}" />
-                        <DataGridComboBoxColumn Header="Class" SelectedItemBinding="{Binding Class}" ItemsSource="{Binding DataContext.PlanetClasses, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridComboBoxColumn Header="Geology" SelectedItemBinding="{Binding Geology}" ItemsSource="{Binding DataContext.PlanetGeologies, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridComboBoxColumn Header="Atmosphere" SelectedItemBinding="{Binding Atmosphere}" ItemsSource="{Binding DataContext.PlanetAtmospheres, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridComboBoxColumn Header="Population" SelectedItemBinding="{Binding Population}" ItemsSource="{Binding DataContext.PlanetPopulations, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" />
-                        <DataGridComboBoxColumn Header="Settlements" SelectedItemBinding="{Binding Settlements}" ItemsSource="{Binding DataContext.PlanetSettlements, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridComboBoxColumn Header="Part of" SelectedItemBinding="{Binding PartOf}" ItemsSource="{Binding DataContext.PlanetPartOf, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Class" Binding="{Binding PlanetClass}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Geology" Binding="{Binding Geology}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Atmosphere" Binding="{Binding Atmosphere}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Population" Binding="{Binding Population}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Settlements" Binding="{Binding Settlements}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Part of" Binding="{Binding WorldPart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Atm.Part of" Binding="{Binding AtmospherePart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
+                <StackPanel Grid.Row="2" Grid.Column="5" Orientation="Vertical">
+                    <Button Content="Add Planet" Click="ButtonAddPlanet_Click" Style="{StaticResource ButtonStyle}"/>
+                    <Button Content="Edit Planet" Click="ButtonEditPlanet_Click" Style="{StaticResource ButtonStyle}"/>
+                    <Button Content="Remove Planet" Click="ButtonRemovePlanet_Click" Style="{StaticResource ButtonStyle}"/>
+                </StackPanel>
                 <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelStyle}">Moons:</Label>
-                <DataGrid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" AutoGenerateColumns="False" ItemsSource="{Binding Moons}">
+                <DataGrid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        IsReadOnly="True"
+                        SelectionMode="Single"
+                        MinHeight="100"
+                        ItemsSource="{Binding Moons}"
+                        SelectedItem="{Binding SelectedMoon, Mode=TwoWay}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Moon Name" Binding="{Binding Name}" />
-                        <DataGridComboBoxColumn Header="Geology" SelectedItemBinding="{Binding Geology}" ItemsSource="{Binding DataContext.MoonGeologies, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridComboBoxColumn Header="Atmosphere" SelectedItemBinding="{Binding Atmosphere}" ItemsSource="{Binding DataContext.MoonAtmospheres, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridComboBoxColumn Header="Population" SelectedItemBinding="{Binding Population}" ItemsSource="{Binding DataContext.MoonPopulations, RelativeSource={RelativeSource AncestorType=Window}}" />
-                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" />
-                        <DataGridComboBoxColumn Header="Settlements" SelectedItemBinding="{Binding Settlements}" ItemsSource="{Binding DataContext.MoonSettlements, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Geology" Binding="{Binding Geology}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Atmosphere" Binding="{Binding Atmosphere}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Population" Binding="{Binding Population}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Settlements" Binding="{Binding Settlements}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Part of" Binding="{Binding WorldPart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Atm.Part of" Binding="{Binding AtmospherePart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
+                <StackPanel Grid.Row="4" Grid.Column="5" Orientation="Vertical">
+                    <Button Content="Add Moon" Click="ButtonAddMoon_Click" Style="{StaticResource ButtonStyle}"/>
+                    <Button Content="Edit Moon" Click="ButtonEditMoon_Click" Style="{StaticResource ButtonStyle}"/>
+                    <Button Content="Remove Moon" Click="ButtonRemoveMoon_Click" Style="{StaticResource ButtonStyle}"/>
+                </StackPanel> <!-- Added closing tag for StackPanel -->
             </Grid>
         </GroupBox> <!-- Added this closing tag for GroupBox -->
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel" Click="ButtonCancel_Click" Style="{StaticResource ButtonStyle}"/>
+            <Button Content="Save" Click="ButtonSave_Click" Style="{StaticResource ButtonStyle}"/>
+        </StackPanel> <!-- Added closing tag for StackPanel -->
     </Grid>
 </Window>

@@ -183,10 +183,13 @@ namespace GalaxyEditor
         }
       }
     }
-    private readonly List<GameFilesStructureItem> _x4DataStructure =
+    private readonly List<string> ExtraNeededFilesMasks = [];
+    private readonly List<GameFilesStructureItem> X4DataStructure =
     [
       new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
       new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
+      new GameFilesStructureItem(id: "sounds", folder: "libraries", ["sound_library.xml"]),
+      new GameFilesStructureItem(id: "icons", folder: "libraries", ["icons.xml"]),
       new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
       new GameFilesStructureItem(id: "clusters", folder: "maps/xu_ep2_universe", ["clusters.xml"], MatchingModes.Suffix),
       new GameFilesStructureItem(id: "sectors", folder: "maps/xu_ep2_universe", ["sectors.xml"], MatchingModes.Suffix),
@@ -204,10 +207,12 @@ namespace GalaxyEditor
       new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
       new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
     ];
-    private readonly List<ProcessingOrderItem> _x4PDataProcessingOrder =
+    private readonly List<ProcessingOrderItem> X4PDataProcessingOrder =
     [
       new ProcessingOrderItem("translations", ""),
       new ProcessingOrderItem("colors", ""),
+      new ProcessingOrderItem("sounds", ""),
+      new ProcessingOrderItem("icons", ""),
       new ProcessingOrderItem("galaxy", "clusters"),
       new ProcessingOrderItem("clusters", ""),
       new ProcessingOrderItem("mapDefaults", ""),
@@ -658,7 +663,7 @@ namespace GalaxyEditor
           _backgroundWorker.ReportProgress(0, e.ProcessingFile);
         }
       };
-      dataLoader.LoadData(GalaxyData, X4DataFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData);
+      dataLoader.LoadData(GalaxyData, X4DataFolder, X4DataStructure, X4PDataProcessingOrder, LoadModsData);
 
       if (!X4DataVersionOverride && GalaxyData.Version != 0 && GalaxyData.Version != X4DataVersion)
       {
@@ -858,7 +863,7 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(GalaxyMapViewer.SelectedMapCluster.Cluster, GalaxyData, GalaxyReferences)
+        ClusterEditWindow clusterEditWindow = new(_appIcon, GalaxyMapViewer.SelectedMapCluster.Cluster, GalaxyData, GalaxyReferences)
         {
           Owner = this,
         };
@@ -881,7 +886,7 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(null, GalaxyData, GalaxyReferences) { Owner = this };
+        ClusterEditWindow clusterEditWindow = new(_appIcon, null, GalaxyData, GalaxyReferences) { Owner = this };
         if (clusterEditWindow.ShowDialog() == true)
         {
           MessageBox.Show(
@@ -917,7 +922,10 @@ namespace GalaxyEditor
 
     public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e)
     {
-      X4DataExtractionWindow extractionWindow = new(_appIcon, X4GameFolder, X4DataFolder, LoadModsData) { Owner = this };
+      X4DataExtractionWindow extractionWindow = new(_appIcon, X4GameFolder, X4DataFolder, LoadModsData, ExtraNeededFilesMasks)
+      {
+        Owner = this,
+      };
       if (extractionWindow.ShowDialog() == true)
       {
         if (!string.IsNullOrEmpty(extractionWindow.GameFolder) && Directory.Exists(extractionWindow.GameFolder))
