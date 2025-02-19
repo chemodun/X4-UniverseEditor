@@ -1,5 +1,5 @@
 {
-  "src/X4DataLoader": "0.7.0",
+  "src/X4DataLoader": "0.8.0",
   "src/X4DataTestConsole": "0.2.6",
   "src/ChemGateBuilder": "0.8.8",
   "src/Logger": "0.0.3",
