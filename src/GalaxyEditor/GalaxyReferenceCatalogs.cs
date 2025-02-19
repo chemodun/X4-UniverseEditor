@@ -42,6 +42,8 @@ namespace GalaxyEditor
     public List<CatalogItemWithIntId> MoonSuffixes { get; private set; } = [];
     public List<CatalogItemWithStringId> ClusterMusic { get; private set; } = [];
     public List<CatalogItemString> ClusterIcons { get; private set; } = [];
+    public List<CatalogItemString> WorldParts { get; private set; } = [];
+    public List<CatalogItemString> AtmosphereParts { get; private set; } = [];
 
     public GalaxyReferencesHolder(Galaxy? galaxyData = null)
     {
@@ -50,9 +52,31 @@ namespace GalaxyEditor
         _galaxyData = galaxyData;
         foreach (Cluster clusterItem in galaxyData.Clusters)
         {
-          if (!string.IsNullOrEmpty(clusterItem.System))
+          if (!string.IsNullOrEmpty(clusterItem.System) && !StarSystems.Any(item => item.Text == clusterItem.System))
           {
             StarSystems.Add(new CatalogItemString(clusterItem.System));
+          }
+          foreach (Planet planet in clusterItem.Planets)
+          {
+            if (!string.IsNullOrEmpty(planet.WorldPart) && !WorldParts.Any(item => item.Text == planet.WorldPart))
+            {
+              WorldParts.Add(new CatalogItemString(planet.WorldPart));
+            }
+            if (!string.IsNullOrEmpty(planet.AtmospherePart) && !AtmosphereParts.Any(item => item.Text == planet.AtmospherePart))
+            {
+              AtmosphereParts.Add(new CatalogItemString(planet.AtmospherePart));
+            }
+            foreach (Moon moon in planet.Moons)
+            {
+              if (!string.IsNullOrEmpty(moon.WorldPart) && !WorldParts.Any(item => item.Text == moon.WorldPart))
+              {
+                WorldParts.Add(new CatalogItemString(moon.WorldPart));
+              }
+              if (!string.IsNullOrEmpty(moon.AtmospherePart) && !AtmosphereParts.Any(item => item.Text == moon.AtmospherePart))
+              {
+                AtmosphereParts.Add(new CatalogItemString(moon.AtmospherePart));
+              }
+            }
           }
         }
         PlanetPopulation.Add(new CatalogItemWithIntId(10011, _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 10011)));
