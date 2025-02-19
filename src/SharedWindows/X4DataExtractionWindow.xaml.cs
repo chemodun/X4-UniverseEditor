@@ -16,6 +16,7 @@ namespace SharedWindows
   public partial class X4DataExtractionWindow : Window, INotifyPropertyChanged
   {
     private readonly string X4Executable = "X4.exe";
+    private readonly List<string> NeededFilesMasks = ["maps/xu_ep2_universe/*.xml", "libraries/*.xml", "t/*.xml"];
     private string _extractedDataLocationFolder = string.Empty;
     public string ExtractedDataLocationFolder
     {
@@ -205,12 +206,22 @@ namespace SharedWindows
       get => LoadExtractedDataAfterExtraction ? Path.Combine(ExtractedDataLocationFolder, DataFolder) : string.Empty;
     }
 
-    public X4DataExtractionWindow(BitmapImage icon, string gameFolder, string extractedDataLocationFolder, bool loadMods)
+    public X4DataExtractionWindow(
+      BitmapImage icon,
+      string gameFolder,
+      string extractedDataLocationFolder,
+      bool loadMods,
+      List<string>? extraNeededFilesMasks = null
+    )
     {
       InitializeComponent();
       DataContext = this;
       Icon = icon;
       LoadMods = loadMods;
+      if (extraNeededFilesMasks != null)
+      {
+        NeededFilesMasks.AddRange(extraNeededFilesMasks);
+      }
       if (!string.IsNullOrEmpty(gameFolder) && Directory.Exists(gameFolder))
       {
         GameFolder = gameFolder;
@@ -599,12 +610,11 @@ namespace SharedWindows
       List<CatEntry> catEntries = [];
       if (ExtractOnlyNeededData)
       {
-        catEntries.AddRange(extractor.GetFilesByMask("maps/xu_ep2_universe/*.xml"));
-        catEntries.AddRange(extractor.GetFilesByMask("libraries/*.xml"));
-        catEntries.AddRange(extractor.GetFilesByMask("t/*.xml"));
-        catEntries.AddRange(extractor.GetFilesByMask("extensions/*/maps/xu_ep2_universe/*.xml"));
-        catEntries.AddRange(extractor.GetFilesByMask("extensions/*/libraries/*.xml"));
-        catEntries.AddRange(extractor.GetFilesByMask("extensions/*/t/*.xml"));
+        foreach (string mask in NeededFilesMasks)
+        {
+          catEntries.AddRange(extractor.GetFilesByMask(mask));
+          catEntries.AddRange(extractor.GetFilesByMask($"extensions/*/{mask}"));
+        }
       }
       else
       {
