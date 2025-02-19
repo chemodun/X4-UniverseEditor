@@ -23,6 +23,7 @@ namespace X4DataLoader
     public string Id { get; private set; } = macro.Replace("_macro", "");
     public string Macro { get; private set; } = macro;
     public string Reference { get; set; } = "";
+    public string MusicId { get; private set; } = "";
     public string Environment { get; private set; } = "";
     public int EnvironmentPageId { get; private set; } = 0;
     public int EnvironmentTextId { get; private set; } = 0;
@@ -67,10 +68,15 @@ namespace X4DataLoader
           DescriptionPageId = ids[0];
           DescriptionTextId = ids[1];
           System = propertiesElement.Element("identification")?.Attribute("system")?.Value ?? "";
-          ImageId = propertiesElement.Element("identification")?.Attribute("mage")?.Value ?? "";
+          ImageId = propertiesElement.Element("identification")?.Attribute("image")?.Value ?? "";
           DetailsSource = source;
           DetailsFileName = fileName;
           DetailsXML = element;
+          XElement? musicElement = propertiesElement.XPathSelectElement("sounds/music");
+          if (musicElement != null)
+          {
+            MusicId = musicElement.Attribute("ref")?.Value ?? "";
+          }
           XElement? systemElement = propertiesElement.Element("system");
           if (systemElement != null)
           {
