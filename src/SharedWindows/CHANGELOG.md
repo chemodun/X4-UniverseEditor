@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.3.0...SharedWindows@v0.4.0) (2025-02-19)
+
+
+### Features
+
+* **X4DataExtractionWindow:** enhance file mask handling for data extraction ([09aa4c5](https://github.com/chemodun/X4-UniverseEditor/commit/09aa4c5df7bffc06da697d87c962c4e9b401a59f))
+
 ## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.2.0...SharedWindows@v0.3.0) (2025-02-17)
 
 
