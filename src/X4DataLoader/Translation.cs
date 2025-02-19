@@ -74,6 +74,11 @@ namespace X4DataLoader
       return reference;
     }
 
+    public string TranslateString(string text)
+    {
+      return ResolveNestedReferences(RemoveComments(text));
+    }
+
     public static int[] GetIds(string reference)
     {
       var match = ReferenceRegex.Match(reference);
