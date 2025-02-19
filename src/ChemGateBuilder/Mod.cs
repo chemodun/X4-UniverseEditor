@@ -213,6 +213,9 @@ namespace ChemGateBuilder
                 {
                   var galaxyConnection = new GalaxyConnection();
                   galaxyConnection.Load(element, galaxy.Clusters, file.ExtensionId, file.FileName, zones);
+                  string connectionsText =
+                    $"\n - {galaxyConnection.PathDirect?.Sector?.Name} and {galaxyConnection.PathOpposite?.Sector?.Name}";
+                  Description = Description.Replace(connectionsText, "");
                   Connections.Add(galaxyConnection);
                   GalaxyConnectionData galaxyConnectionData = new(galaxyConnection);
                   GalaxyConnections.Add(galaxyConnectionData);
