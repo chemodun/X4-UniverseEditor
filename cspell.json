@@ -7,6 +7,7 @@
     ],
     "words": [
         "Argb",
+        "atmopart",
         "bbcode",
         "behaviorset",
         "Blockquotes",
@@ -40,6 +41,7 @@
         "mapconstants",
         "mapdefaults",
         "mapob",
+        "maxpopulation",
         "modulegroups",
         "netstandard",
         "palettegen",
