@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.1...GalaxyEditor@v0.3.0) (2025-02-19)
+
+
+### Features
+
+* **GalaxyEditor:** implement PostInit method for initialization and state management in GalaxyModInfo classes ([d920164](https://github.com/chemodun/X4-UniverseEditor/commit/d9201646989fc83482abeb8ca5ae44a71286d0ba))
+
+
+### Code Refactoring
+
+* **GalaxyEditor:** enhance GalaxyUnifyItemAttribute to support multiple value types and improve state management ([1ed6709](https://github.com/chemodun/X4-UniverseEditor/commit/1ed670946f0a1aa0d60eec72a9620f6fa8a6c37c))
+* **GalaxyEditor:** rename files for  UnifyItem classes to streamline codebase ([86090a7](https://github.com/chemodun/X4-UniverseEditor/commit/86090a7dab7297944a9a4164d7d08e93b53077f5))
+* **GalaxyEditor:** update  GalaxyUnifyItemJsonConverter and GalaxyUnifyItemAttributeConverter ([e6011d2](https://github.com/chemodun/X4-UniverseEditor/commit/e6011d290da4e21bd541c5c5d47e6adccf1fa6c5))
+* **GalaxyEditor:** update GalaxyUnifyItemAttribute and GalaxyUnifyItem to use nullable types for better handling of optional values ([e6011d2](https://github.com/chemodun/X4-UniverseEditor/commit/e6011d290da4e21bd541c5c5d47e6adccf1fa6c5))
+
 ## [0.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.0...GalaxyEditor@v0.2.1) (2025-02-19)
 
 
