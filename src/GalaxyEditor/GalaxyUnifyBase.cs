@@ -36,14 +36,14 @@ namespace GalaxyEditor
     public AttributeType Type { get; set; } = AttributeType.String;
     public int Index { get; set; } = -1;
     public string Name { get; set; } = "";
-    private string _valueString = "";
-    private int _valueInt = 0;
-    private double _valueDouble = 0;
-    private bool _valueBool = false;
-    public string ValueString { get; set; } = "";
-    public int ValueInt { get; set; } = 0;
-    public double ValueDouble { get; set; } = 0;
-    public bool ValueBool { get; set; } = false;
+    private string? _valueString = null;
+    private int? _valueInt = null;
+    private double? _valueDouble = null;
+    private bool? _valueBool = null;
+    public string? ValueString { get; set; } = null;
+    public int? ValueInt { get; set; } = null;
+    public double? ValueDouble { get; set; } = null;
+    public bool? ValueBool { get; set; } = null;
     public GalaxyUnifyItemAttribute? ValueItem { get; set; } = null;
     public List<GalaxyUnifyItemAttribute> ValueList { get; set; } = [];
     public List<GalaxyUnifyItem> ValueListOfItems { get; set; } = [];
@@ -101,42 +101,44 @@ namespace GalaxyEditor
         {
           string propertyName = reader.GetString() ?? throw new JsonException("Property name is null");
           reader.Read();
-
           switch (propertyName)
           {
             case nameof(GalaxyUnifyItemAttribute.Index):
               attribute.Index = reader.GetInt32();
               break;
-            case nameof(GalaxyUnifyItemAttribute.Name):
-              attribute.Name = reader.GetString() ?? string.Empty;
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueString):
-              attribute.ValueString = reader.GetString() ?? string.Empty;
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueInt):
-              attribute.ValueInt = reader.GetInt32();
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueDouble):
-              attribute.ValueDouble = reader.GetDouble();
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueBool):
-              attribute.ValueBool = reader.GetBoolean();
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueItem):
-              attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueList):
-              attribute.ValueList = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
-              break;
-            case nameof(GalaxyUnifyItemAttribute.ValueListOfItems):
-              attribute.ValueListOfItems =
-                JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? new List<GalaxyUnifyItem>();
+            case nameof(GalaxyUnifyItemAttribute.Type):
+              attribute.Type = (AttributeType)reader.GetInt32();
               break;
             case nameof(GalaxyUnifyItemAttribute.State):
               attribute.State = (AttributeState)reader.GetInt32();
               break;
-            case nameof(GalaxyUnifyItemAttribute.Type):
-              attribute.Type = (AttributeType)reader.GetInt32();
+            default:
+              attribute.Name = propertyName;
+              switch (attribute.Type)
+              {
+                case AttributeType.String:
+                  attribute.ValueString = reader.GetString() ?? string.Empty;
+                  break;
+                case AttributeType.Int:
+                  attribute.ValueInt = reader.GetInt32();
+                  break;
+                case AttributeType.Double:
+                  attribute.ValueDouble = reader.GetDouble();
+                  break;
+                case AttributeType.Bool:
+                  attribute.ValueBool = reader.GetBoolean();
+                  break;
+                case AttributeType.Item:
+                  attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
+                  break;
+                case AttributeType.List:
+                  attribute.ValueList = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
+                  break;
+                case AttributeType.ListOfItems:
+                  attribute.ValueListOfItems =
+                    JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? new List<GalaxyUnifyItem>();
+                  break;
+              }
               break;
           }
         }
@@ -149,31 +151,39 @@ namespace GalaxyEditor
       writer.WriteStartObject();
       writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Type), (int)value.Type);
       writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Index), value.Index);
-      writer.WriteString(nameof(GalaxyUnifyItemAttribute.Name), value.Name);
       switch (value.Type)
       {
         case AttributeType.String:
-          writer.WriteString(nameof(GalaxyUnifyItemAttribute.ValueString), value.ValueString);
+          writer.WriteString(value.Name, value.ValueString);
           break;
         case AttributeType.Int:
-          writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.ValueInt), value.ValueInt);
+          if (value.ValueInt != null)
+          {
+            writer.WriteNumber(value.Name, value.ValueInt ?? 0);
+          }
           break;
         case AttributeType.Double:
-          writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.ValueDouble), value.ValueDouble);
+          if (value.ValueDouble != null)
+          {
+            writer.WriteNumber(value.Name, value.ValueDouble ?? 0);
+          }
           break;
         case AttributeType.Bool:
-          writer.WriteBoolean(nameof(GalaxyUnifyItemAttribute.ValueBool), value.ValueBool);
+          if (value.ValueBool != null)
+          {
+            writer.WriteBoolean(value.Name, value.ValueBool ?? false);
+          }
           break;
         case AttributeType.Item:
-          writer.WritePropertyName(nameof(GalaxyUnifyItemAttribute.ValueItem));
+          writer.WritePropertyName(value.Name);
           JsonSerializer.Serialize(writer, value.ValueItem, options);
           break;
         case AttributeType.List:
-          writer.WritePropertyName(nameof(GalaxyUnifyItemAttribute.ValueList));
+          writer.WritePropertyName(value.Name);
           JsonSerializer.Serialize(writer, value.ValueList, options);
           break;
         case AttributeType.ListOfItems:
-          writer.WritePropertyName(nameof(GalaxyUnifyItemAttribute.ValueListOfItems));
+          writer.WritePropertyName(value.Name);
           JsonSerializer.Serialize(writer, value.ValueListOfItems, options);
           break;
       }
@@ -459,6 +469,12 @@ namespace GalaxyEditor
 
           switch (propertyName)
           {
+            case nameof(GalaxyUnifyItem.Index):
+              item.Index = reader.GetInt32();
+              break;
+            case nameof(GalaxyUnifyItem.State):
+              item.State = (AttributeState)reader.GetInt32();
+              break;
             case nameof(GalaxyUnifyItem.Attributes):
               item.Attributes =
                 JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? new List<GalaxyUnifyItemAttribute>();
@@ -472,6 +488,8 @@ namespace GalaxyEditor
     public override void Write(Utf8JsonWriter writer, GalaxyUnifyItem value, JsonSerializerOptions options)
     {
       writer.WriteStartObject();
+      writer.WriteNumber(nameof(GalaxyUnifyItem.Index), value.Index);
+      writer.WriteNumber(nameof(GalaxyUnifyItem.State), (int)value.State);
       writer.WritePropertyName(nameof(GalaxyUnifyItem.Attributes));
       JsonSerializer.Serialize(writer, value.Attributes, options);
       writer.WriteEndObject();
