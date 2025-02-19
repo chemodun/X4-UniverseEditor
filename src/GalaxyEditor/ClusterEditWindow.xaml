@@ -1,0 +1,120 @@
+<Window x:Class="GalaxyEditor.ClusterEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterOwner"
+        Title="Cluster Edit Window" MinHeight="320" MinWidth="800"
+        SizeToContent="WidthAndHeight" ResizeMode="CanResizeWithGrip"
+        >
+
+    <Window.Resources>
+        <Style x:Key="GroupBoxStyle" TargetType="GroupBox">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="Cluster Basic Information">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelStyle}">Id:</Label>
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterId, Mode=TwoWay}"/>
+                <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Name:</Label>
+                <TextBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterName, Mode=TwoWay}"/>
+                <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">System Id:</Label>
+                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}"/>
+                <Button Grid.Row="1" Grid.Column="2" Content="New System Id" Click="ButtonAddSystem_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Music:</Label>
+                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding Music, Mode=TwoWay}"/>
+                <Button Grid.Row="1" Grid.Column="5" Content="New Music" Click="ButtonAddMusic_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelStyle}">Description:</Label>
+                <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Style="{StaticResource TextBoxStyle}" Text="{Binding Description, Mode=TwoWay}" Height="80" MaxWidth="800" AcceptsReturn="True" TextWrapping="Wrap"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="5" Header="Cluster System Information">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelStyle}">Sun:</Label>
+                <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SunOptions}" SelectedItem="{Binding Sun, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Text"/>
+                <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Environment:</Label>
+                <ComboBox Grid.Row="0" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding EnvironmentOptions}" SelectedItem="{Binding Environment, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Text"/>
+                <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">Planets:</Label>
+                <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" AutoGenerateColumns="False" ItemsSource="{Binding Planets}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Planet Name" Binding="{Binding Name}" />
+                        <DataGridComboBoxColumn Header="Class" SelectedItemBinding="{Binding Class}" ItemsSource="{Binding DataContext.PlanetClasses, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridComboBoxColumn Header="Geology" SelectedItemBinding="{Binding Geology}" ItemsSource="{Binding DataContext.PlanetGeologies, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridComboBoxColumn Header="Atmosphere" SelectedItemBinding="{Binding Atmosphere}" ItemsSource="{Binding DataContext.PlanetAtmospheres, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridComboBoxColumn Header="Population" SelectedItemBinding="{Binding Population}" ItemsSource="{Binding DataContext.PlanetPopulations, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" />
+                        <DataGridComboBoxColumn Header="Settlements" SelectedItemBinding="{Binding Settlements}" ItemsSource="{Binding DataContext.PlanetSettlements, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridComboBoxColumn Header="Part of" SelectedItemBinding="{Binding PartOf}" ItemsSource="{Binding DataContext.PlanetPartOf, RelativeSource={RelativeSource AncestorType=Window}}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelStyle}">Moons:</Label>
+                <DataGrid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" AutoGenerateColumns="False" ItemsSource="{Binding Moons}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Moon Name" Binding="{Binding Name}" />
+                        <DataGridComboBoxColumn Header="Geology" SelectedItemBinding="{Binding Geology}" ItemsSource="{Binding DataContext.MoonGeologies, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridComboBoxColumn Header="Atmosphere" SelectedItemBinding="{Binding Atmosphere}" ItemsSource="{Binding DataContext.MoonAtmospheres, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridComboBoxColumn Header="Population" SelectedItemBinding="{Binding Population}" ItemsSource="{Binding DataContext.MoonPopulations, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" />
+                        <DataGridComboBoxColumn Header="Settlements" SelectedItemBinding="{Binding Settlements}" ItemsSource="{Binding DataContext.MoonSettlements, RelativeSource={RelativeSource AncestorType=Window}}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox> <!-- Added this closing tag for GroupBox -->
+    </Grid>
+</Window>

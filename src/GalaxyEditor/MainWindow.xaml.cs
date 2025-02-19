@@ -840,7 +840,11 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
+        ClusterEditWindow clusterEditWindow = new(GalaxyMapViewer.SelectedMapCluster.Cluster, GalaxyData) { Owner = this };
+        if (clusterEditWindow.ShowDialog() == true)
+        {
+          MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
+        }
       }
     }
 
@@ -856,9 +860,13 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        MessageBox.Show(
-          $"Action triggered - Add Cluster for Cell [{GalaxyMapViewer.SelectedMapCluster.MapPosition.Column}, {GalaxyMapViewer.SelectedMapCluster.MapPosition.Row}]!"
-        );
+        ClusterEditWindow clusterEditWindow = new(null, GalaxyData) { Owner = this };
+        if (clusterEditWindow.ShowDialog() == true)
+        {
+          MessageBox.Show(
+            $"Action triggered - Add Cluster for Cell [{GalaxyMapViewer.SelectedMapCluster.MapPosition.Column}, {GalaxyMapViewer.SelectedMapCluster.MapPosition.Row}]!"
+          );
+        }
       }
     }
 
