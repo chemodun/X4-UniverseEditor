@@ -49,6 +49,15 @@ namespace X4DataLoader
       }
     }
 
+    public string TranslateByPage(int page, int id)
+    {
+      if (Translations.TryGetValue(page.ToString(), out var pageTranslations) && pageTranslations.TryGetValue(id.ToString(), out var text))
+      {
+        return ResolveNestedReferences(text);
+      }
+      return string.Empty;
+    }
+
     public string Translate(string reference)
     {
       var match = ReferenceRegex.Match(reference);
@@ -63,6 +72,16 @@ namespace X4DataLoader
         }
       }
       return reference;
+    }
+
+    public static int[] GetIds(string reference)
+    {
+      var match = ReferenceRegex.Match(reference);
+      if (match.Success)
+      {
+        return [int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)];
+      }
+      return [0, 0];
     }
 
     private static string RemoveComments(string text)
