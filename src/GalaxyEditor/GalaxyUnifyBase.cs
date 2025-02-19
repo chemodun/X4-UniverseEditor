@@ -36,6 +36,10 @@ namespace GalaxyEditor
     public AttributeType Type { get; set; } = AttributeType.String;
     public int Index { get; set; } = -1;
     public string Name { get; set; } = "";
+    private string _valueString = "";
+    private int _valueInt = 0;
+    private double _valueDouble = 0;
+    private bool _valueBool = false;
     public string ValueString { get; set; } = "";
     public int ValueInt { get; set; } = 0;
     public double ValueDouble { get; set; } = 0;
@@ -49,6 +53,18 @@ namespace GalaxyEditor
     {
       switch (Type)
       {
+        case AttributeType.Int:
+          _valueInt = ValueInt;
+          break;
+        case AttributeType.String:
+          _valueString = ValueString;
+          break;
+        case AttributeType.Double:
+          _valueDouble = ValueDouble;
+          break;
+        case AttributeType.Bool:
+          _valueBool = ValueBool;
+          break;
         case AttributeType.Item:
           ValueItem?.PostInit();
           break;
@@ -168,6 +184,7 @@ namespace GalaxyEditor
 
   public class GalaxyUnifyItem : INotifyPropertyChanged
   {
+    public int Index = -1;
     public List<GalaxyUnifyItemAttribute> Attributes = [];
 
     public AttributeState State { get; set; } = AttributeState.None;
@@ -349,7 +366,7 @@ namespace GalaxyEditor
       GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.ListOfItems);
       if (attribute != null)
       {
-        return attribute.ValueListOfItems;
+        return attribute.ValueListOfItems.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
       }
       return [];
     }
@@ -371,6 +388,7 @@ namespace GalaxyEditor
       if (attribute != null)
       {
         attribute.ValueListOfItems.Add(value);
+        value.Index = attribute.ValueListOfItems.Count - 1;
         OnPropertyChanged(name);
       }
     }
@@ -382,7 +400,8 @@ namespace GalaxyEditor
       {
         if (value.Index < attribute.ValueList.Count && value.Index >= 0)
         {
-          attribute.ValueList.RemoveAt(value.Index);
+          GalaxyUnifyItemAttribute removed = attribute.ValueList[value.Index];
+          removed.State = AttributeState.Unset;
           OnPropertyChanged(name);
         }
       }
@@ -393,7 +412,12 @@ namespace GalaxyEditor
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
       if (attribute != null)
       {
-        attribute.ValueListOfItems.Remove(value);
+        if (value.Index < attribute.ValueList.Count && value.Index >= 0)
+        {
+          GalaxyUnifyItem removed = attribute.ValueListOfItems[value.Index];
+          removed.State = AttributeState.Unset;
+          OnPropertyChanged(name);
+        }
         OnPropertyChanged(name);
       }
     }
