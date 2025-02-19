@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.8.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.7.0...X4DataLoader@v0.8.0) (2025-02-19)
+
+
+### Features
+
+* **Translation:** add methods for page-based translation and ID extraction ([2aaa8f3](https://github.com/chemodun/X4-UniverseEditor/commit/2aaa8f3c148d42da2231e793d4720e46c6624e70))
+* **X4DataLoader:** add Moon and Planet classes for XML loading for Sectors ([3f665ab](https://github.com/chemodun/X4-UniverseEditor/commit/3f665ab082af9798d5770945c5a57a1425c8b8da))
+* **X4DataLoader:** add MusicId property and extract music reference from XML ([58ce790](https://github.com/chemodun/X4-UniverseEditor/commit/58ce7906ee55713be3c3ee22364a8c6f96bde086))
+* **X4DataLoader:** add support for loading sounds and icons from XML ([263ab8b](https://github.com/chemodun/X4-UniverseEditor/commit/263ab8b3d3ea97c7dea72a4cc9598266791d2668))
+* **X4DataLoader:** add TranslateString method for nested reference resolution ([0147e99](https://github.com/chemodun/X4-UniverseEditor/commit/0147e997b009db7c5d11d54683202d68f8e4e447))
+
+
+### Bug Fixes
+
+* **X4DataLoader:** correct method name casing for LoadFromXML in Colors.cs ([8227d6c](https://github.com/chemodun/X4-UniverseEditor/commit/8227d6c87a9775eded163bbda7fc0930012b32ab))
+* **X4DataLoader:** rename Settlement property to Settlements for consistency ([8d7f0d4](https://github.com/chemodun/X4-UniverseEditor/commit/8d7f0d41d8157d21fdf67dc6845199bce6782cb4))
+
+
+### Code Refactoring
+
+* **X4DataLoader:** enhance Cluster and Sector classes to utilize Galaxy for translation ([3f665ab](https://github.com/chemodun/X4-UniverseEditor/commit/3f665ab082af9798d5770945c5a57a1425c8b8da))
+
+
+### Miscellaneous Chores
+
+* **X4DataLoader:** enhance Cluster class with additional properties for translation and identification ([2215e08](https://github.com/chemodun/X4-UniverseEditor/commit/2215e086d55319a3e60a39f5e2b7540fda42373d))
+
 ## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.6.2...X4DataLoader@v0.7.0) (2025-02-17)
 
 
