@@ -11,9 +11,9 @@ namespace GalaxyEditor
     private string _clusterId = "";
     private string _clusterName = "";
     private string _description = "";
-    private string _systemId = "";
-    private DropdownItem _sun = new(0, "");
-    private DropdownItem _environment = new(0, "");
+    private CatalogItemString _systemId = new("");
+    private CatalogItemWithIntId _sun = new(0, "");
+    private CatalogItemWithIntId _environment = new(0, "");
 
     public string ClusterId
     {
@@ -53,7 +53,7 @@ namespace GalaxyEditor
         }
       }
     }
-    public string SystemId
+    public CatalogItemString SystemId
     {
       get => _systemId;
       set
@@ -65,7 +65,7 @@ namespace GalaxyEditor
         }
       }
     }
-    public DropdownItem Sun
+    public CatalogItemWithIntId Sun
     {
       get => _sun;
       set
@@ -78,7 +78,7 @@ namespace GalaxyEditor
       }
     }
 
-    public DropdownItem Environment
+    public CatalogItemWithIntId Environment
     {
       get => _environment;
       set
@@ -91,47 +91,27 @@ namespace GalaxyEditor
       }
     }
 
-    public ObservableCollection<DropdownItem> SunOptions { get; } = [];
-    public ObservableCollection<DropdownItem> EnvironmentOptions { get; } = [];
-    public ObservableCollection<string> SystemOptions { get; } = [];
+    public ObservableCollection<CatalogItemWithIntId> SunOptions { get; } = [];
+    public ObservableCollection<CatalogItemWithIntId> EnvironmentOptions { get; } = [];
+    public ObservableCollection<CatalogItemString> SystemOptions { get; } = [];
 
-    public ClusterEditWindow(Cluster? cluster, Galaxy galaxyData)
+    public ClusterEditWindow(Cluster? cluster, Galaxy galaxyData, GalaxyReferencesHolder galaxyReferences)
     {
       InitializeComponent();
       DataContext = this;
-      for (int textId = 12000; textId < 13000; textId++)
-      {
-        string text = galaxyData.Translation.TranslateByPage(1042, textId);
-        if (text != "")
-        {
-          EnvironmentOptions.Add(new DropdownItem(textId, text));
-        }
-      }
-      for (int textId = 13000; textId < 14000; textId++)
-      {
-        string text = galaxyData.Translation.TranslateByPage(1042, textId);
-        if (text != "")
-        {
-          SunOptions.Add(new DropdownItem(textId, text));
-        }
-      }
-      foreach (Cluster clusterItem in galaxyData.Clusters)
-      {
-        if (!string.IsNullOrEmpty(clusterItem.System))
-        {
-          SystemOptions.Add(clusterItem.System);
-        }
-      }
+      SunOptions = new ObservableCollection<CatalogItemWithIntId>(galaxyReferences.StarClasses);
+      EnvironmentOptions = new ObservableCollection<CatalogItemWithIntId>(galaxyReferences.Environments);
+      SystemOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.StarSystems);
       if (cluster != null)
       {
         ClusterId = cluster.Id;
         ClusterName = cluster.Name;
         Description = cluster.Description;
-        SystemId = cluster.System;
-        Sun = SunOptions.FirstOrDefault(s => s.Id == cluster.SunTextId) ?? new DropdownItem(cluster.SunTextId, cluster.Sun);
+        SystemId = SystemOptions.FirstOrDefault(s => s.Text == cluster.System) ?? new CatalogItemString(cluster.System);
+        Sun = SunOptions.FirstOrDefault(s => s.Id == cluster.SunTextId) ?? new CatalogItemWithIntId(cluster.SunTextId, cluster.Sun);
         Environment =
           EnvironmentOptions.FirstOrDefault(e => e.Id == cluster.EnvironmentTextId)
-          ?? new DropdownItem(cluster.EnvironmentTextId, cluster.Environment);
+          ?? new CatalogItemWithIntId(cluster.EnvironmentTextId, cluster.Environment);
       }
       else
       {
@@ -162,11 +142,5 @@ namespace GalaxyEditor
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-  }
-
-  public class DropdownItem(int id, string text)
-  {
-    public int Id { get; set; } = id;
-    public string Text { get; set; } = text;
   }
 }

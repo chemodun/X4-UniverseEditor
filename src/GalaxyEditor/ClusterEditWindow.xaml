@@ -60,7 +60,7 @@
                 <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Name:</Label>
                 <TextBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterName, Mode=TwoWay}"/>
                 <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">System Id:</Label>
-                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text"/>
                 <Button Grid.Row="1" Grid.Column="2" Content="New System Id" Click="ButtonAddSystem_Click" Style="{StaticResource ButtonStyle}"/>
                 <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Music:</Label>
                 <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding Music, Mode=TwoWay}"/>

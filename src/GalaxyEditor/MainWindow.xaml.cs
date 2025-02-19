@@ -124,6 +124,7 @@ namespace GalaxyEditor
 
     public FactionColors FactionColors = new();
 
+    public GalaxyReferencesHolder GalaxyReferences { get; private set; } = new();
     public bool IsDataLoaded
     {
       get => GalaxyData != null && GalaxyData.Clusters.Count > 0;
@@ -665,6 +666,7 @@ namespace GalaxyEditor
       }
       GalaxyMapViewer.FactionColors.Load(GalaxyData.Factions, GalaxyData.MappedColors);
       OnPropertyChanged(nameof(IsDataLoaded));
+      GalaxyReferences = new GalaxyReferencesHolder(GalaxyData);
       StatusBar.SetStatusMessage("X4 data loaded successfully.", StatusMessageType.Info);
     }
 
@@ -774,7 +776,13 @@ namespace GalaxyEditor
       System.Windows.Forms.ToolStripMenuItem menuItem;
       if (sector != null)
       {
-        contextMenu.Items.Add(new System.Windows.Forms.ToolStripLabel { Text = $"Sector {sector.Name}" });
+        contextMenu.Items.Add(
+          new System.Windows.Forms.ToolStripLabel
+          {
+            Text = $"Sector {sector.Name}",
+            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold),
+          }
+        );
         contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menuItem = new System.Windows.Forms.ToolStripMenuItem("Edit");
         menuItem.Click += EditSector_Click;
@@ -790,7 +798,13 @@ namespace GalaxyEditor
         {
           contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         }
-        contextMenu.Items.Add(new System.Windows.Forms.ToolStripLabel { Text = $"Cluster {cluster.Name}" });
+        contextMenu.Items.Add(
+          new System.Windows.Forms.ToolStripLabel
+          {
+            Text = $"Cluster {cluster.Name}",
+            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold),
+          }
+        );
         contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menuItem = new System.Windows.Forms.ToolStripMenuItem("Edit");
         menuItem.Click += EditCluster_Click;
@@ -810,7 +824,11 @@ namespace GalaxyEditor
           contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         }
         contextMenu.Items.Add(
-          new System.Windows.Forms.ToolStripLabel { Text = $"Cell [{cell.MapPosition.Column}, {cell.MapPosition.Row}]" }
+          new System.Windows.Forms.ToolStripLabel
+          {
+            Text = $"Cell [{cell.MapPosition.Column}, {cell.MapPosition.Row}]",
+            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold),
+          }
         );
         contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menuItem = new System.Windows.Forms.ToolStripMenuItem("Add Cluster");
@@ -840,7 +858,10 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(GalaxyMapViewer.SelectedMapCluster.Cluster, GalaxyData) { Owner = this };
+        ClusterEditWindow clusterEditWindow = new(GalaxyMapViewer.SelectedMapCluster.Cluster, GalaxyData, GalaxyReferences)
+        {
+          Owner = this,
+        };
         if (clusterEditWindow.ShowDialog() == true)
         {
           MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
@@ -860,7 +881,7 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(null, GalaxyData) { Owner = this };
+        ClusterEditWindow clusterEditWindow = new(null, GalaxyData, GalaxyReferences) { Owner = this };
         if (clusterEditWindow.ShowDialog() == true)
         {
           MessageBox.Show(
