@@ -110,12 +110,12 @@
                         SelectedItem="{Binding SelectedPlanet, Mode=TwoWay}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Class" Binding="{Binding PlanetClass}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Geology" Binding="{Binding Geology}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Atmosphere" Binding="{Binding Atmosphere}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Population" Binding="{Binding Population}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Settlements" Binding="{Binding Settlements}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Class" Binding="{Binding ClassString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Geology" Binding="{Binding GeologyString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Atmosphere" Binding="{Binding AtmosphereString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Population" Binding="{Binding PopulationString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulationString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Settlements" Binding="{Binding SettlementsString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                         <DataGridTextColumn Header="Part of" Binding="{Binding WorldPart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                         <DataGridTextColumn Header="Atm.Part of" Binding="{Binding AtmospherePart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                     </DataGrid.Columns>
@@ -136,11 +136,11 @@
                         SelectedItem="{Binding SelectedMoon, Mode=TwoWay}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Geology" Binding="{Binding Geology}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Atmosphere" Binding="{Binding Atmosphere}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Population" Binding="{Binding Population}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulation}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
-                        <DataGridTextColumn Header="Settlements" Binding="{Binding Settlements}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Geology" Binding="{Binding GeologyString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Atmosphere" Binding="{Binding AtmosphereString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Population" Binding="{Binding PopulationString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Max.Population" Binding="{Binding MaxPopulationString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
+                        <DataGridTextColumn Header="Settlements" Binding="{Binding SettlementsString}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                         <DataGridTextColumn Header="Part of" Binding="{Binding WorldPart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                         <DataGridTextColumn Header="Atm.Part of" Binding="{Binding AtmospherePart}" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" />
                     </DataGrid.Columns>

@@ -20,8 +20,8 @@ namespace GalaxyEditor
     private CatalogItemWithStringId _musicId = new("", "");
     private CatalogItemWithIntId _sun = new(0, "");
     private CatalogItemWithIntId _environment = new(0, "");
-    private PlanetObject? _selectedPlanet = null;
-    private MoonObject? _selectedMoon = null;
+    private UnifyItemPlanet? _selectedPlanet = null;
+    private UnifyItemMoon? _selectedMoon = null;
 
     public string ClusterId
     {
@@ -123,7 +123,7 @@ namespace GalaxyEditor
       }
     }
 
-    public PlanetObject? SelectedPlanet
+    public UnifyItemPlanet? SelectedPlanet
     {
       get => _selectedPlanet;
       set
@@ -137,7 +137,7 @@ namespace GalaxyEditor
       }
     }
 
-    public MoonObject? SelectedMoon
+    public UnifyItemMoon? SelectedMoon
     {
       get => _selectedMoon;
       set
@@ -155,8 +155,8 @@ namespace GalaxyEditor
     public ObservableCollection<CatalogItemString> SystemOptions { get; } = [];
     public ObservableCollection<CatalogItemWithStringId> MusicOptions { get; } = [];
     public ObservableCollection<CatalogItemString> IconOptions { get; } = [];
-    public ObservableCollection<PlanetObject> Planets { get; } = [];
-    public ObservableCollection<MoonObject> Moons { get; } = [];
+    public ObservableCollection<UnifyItemPlanet> Planets { get; } = [];
+    public ObservableCollection<UnifyItemMoon> Moons { get; } = [];
 
     public ClusterEditWindow(BitmapImage icon, Cluster? cluster, Galaxy galaxyData, GalaxyReferencesHolder galaxyReferences)
     {
@@ -205,7 +205,10 @@ namespace GalaxyEditor
       }
       foreach (Planet planet in Cluster.Planets)
       {
-        PlanetObject planetObject = new(planet, GalaxyData, GalaxyReferences);
+        // PlanetObject planetObject = new(planet, GalaxyData, GalaxyReferences);
+        UnifyItemPlanet planetObject = new();
+        planetObject.Connect(GalaxyData.Translation, GalaxyReferences);
+        planetObject.Initialize(planet);
         Planets.Add(planetObject);
       }
       if (Planets.Count > 0)
@@ -218,15 +221,13 @@ namespace GalaxyEditor
     {
       Moons.Clear();
       SelectedMoon = null;
-      if (SelectedPlanet == null || SelectedPlanet.Moon == null)
+      if (SelectedPlanet == null)
       {
         return;
       }
-      Planet planet = (Planet)SelectedPlanet.Moon;
-      foreach (Moon moon in planet.Moons)
+      foreach (UnifyItemMoon moon in SelectedPlanet.Moons)
       {
-        MoonObject moonObject = new(moon, GalaxyData, GalaxyReferences);
-        Moons.Add(moonObject);
+        Moons.Add(moon);
       }
       if (Moons.Count > 0)
       {
@@ -295,75 +296,6 @@ namespace GalaxyEditor
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-  }
-
-  public class MoonObject(Moon moon, Galaxy galaxyData, GalaxyReferencesHolder galaxyReferences) : INotifyPropertyChanged
-  {
-    public virtual Moon Moon { get; protected set; } = moon;
-    protected Galaxy GalaxyData { get; private set; } = galaxyData;
-    protected GalaxyReferencesHolder GalaxyReferences { get; private set; } = galaxyReferences;
-
-    public string Name
-    {
-      get
-      {
-        if (Moon.NameIsUnique)
-        {
-          return Moon.Name;
-        }
-        else
-        {
-          return GalaxyData.Translation.TranslateString(Moon.NameContent);
-        }
-      }
-    }
-    public string Geology
-    {
-      get => GalaxyReferences.PlanetGeology.FirstOrDefault(a => a.Id == Moon.Geology)?.Text ?? "";
-    }
-    public string Atmosphere
-    {
-      get => GalaxyReferences.PlanetAtmosphere.FirstOrDefault(a => a.Id == Moon.Atmosphere)?.Text ?? "";
-    }
-    public string Settlements
-    {
-      get => GalaxyReferences.PlanetSettlements.FirstOrDefault(a => a.Id == Moon.Settlements)?.Text ?? "";
-    }
-    public string Population
-    {
-      get => GalaxyReferences.PlanetPopulation.FirstOrDefault(a => a.Id == Moon.Population)?.Text ?? "";
-    }
-    public string MaxPopulation
-    {
-      get => Moon.MaxPopulation.ToString("N0");
-    }
-    public string WorldPart
-    {
-      get => Moon.WorldPart;
-    }
-    public string AtmospherePart
-    {
-      get => Moon.AtmospherePart;
-    }
-    public event PropertyChangedEventHandler? PropertyChanged = delegate { };
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-  }
-
-  public class PlanetObject(Planet planet, Galaxy galaxyData, GalaxyReferencesHolder galaxyReferences)
-    : MoonObject(planet, galaxyData, galaxyReferences)
-  {
-    public string PlanetClass
-    {
-      get
-      {
-        Planet planet = (Planet)Moon;
-        return GalaxyReferences.PlanetClasses.FirstOrDefault(a => a.Id == planet.PlanetClass)?.Text ?? "";
-      }
     }
   }
 }
