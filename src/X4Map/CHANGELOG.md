@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.3.2...X4Map@v0.4.0) (2025-02-19)
+
+
+### Features
+
+* **GalaxyEditor:** add right-click event handling for galaxy map elements with empty context menu ([7ad9055](https://github.com/chemodun/X4-UniverseEditor/commit/7ad90558777d477f6fc74854adc52161f89498e1))
+
+
+### Bug Fixes
+
+* **X4Map:** initialize MapInfo to default values in GalaxyMapViewer ([11020dc](https://github.com/chemodun/X4-UniverseEditor/commit/11020dc1bd2f567d5e414e951070d9507e0b6b01))
+
+
+### Code Refactoring
+
+* **X4Map:** encapsulate map boundaries and positions in MapInfo and MapPosition classes ([e6061e4](https://github.com/chemodun/X4-UniverseEditor/commit/e6061e441adc3bbde65dd7c106b4ce21554536ee))
+* **X4Map:** move GalaxyMapCluster and GalaxyMapSector into separate files ([f6508ea](https://github.com/chemodun/X4-UniverseEditor/commit/f6508eabd573ab32e96cfdff3e8a4ec7a7450400))
+
 ## [0.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.3.1...X4Map@v0.3.2) (2025-02-18)
 
 
