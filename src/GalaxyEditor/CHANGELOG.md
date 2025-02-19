@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.1.2...GalaxyEditor@v0.2.0) (2025-02-19)
+
+
+### Features
+
+* **ClusterEditWindow:** Make planets and moons visible ([63ce126](https://github.com/chemodun/X4-UniverseEditor/commit/63ce1262097e56bd3b2457fb91374f85ed718156))
+* **GalaxyEditor:** add ExtensionInfo and ExtensionsInfoList classes for mod extension management, and realized saving and loading them to/from config ([8469779](https://github.com/chemodun/X4-UniverseEditor/commit/84697799b0a170b1075aa4d2fb8aa8269dc1c84a))
+* **GalaxyEditor:** add GalaxyReferencesHolder and catalog item classes for managing references for galaxy items attributes ([80214d1](https://github.com/chemodun/X4-UniverseEditor/commit/80214d12e48c7386ec410bb016e088b07e1d599e))
+* **GalaxyEditor:** add mod options UI and functionality for mod management ([4e5442a](https://github.com/chemodun/X4-UniverseEditor/commit/4e5442ad2edea622c2e9e544e93346e99cd44181))
+* **GalaxyEditor:** add right-click event handling for galaxy map elements with empty context menu ([7ad9055](https://github.com/chemodun/X4-UniverseEditor/commit/7ad90558777d477f6fc74854adc52161f89498e1))
+* **GalaxyEditor:** implement ClusterEditWindow for editing and adding clusters ([e1637a7](https://github.com/chemodun/X4-UniverseEditor/commit/e1637a74fe0fe01d61c5e6a3df73c9d380826b67))
+* **GalaxyEditor:** implement context menu for hexagon elements with edit, delete, and add options ([3194747](https://github.com/chemodun/X4-UniverseEditor/commit/3194747b7df570183b9e61c1c23112743a0bd003))
+* **GalaxyEditor:** implement GalaxyMod class for mod management ([6c52b95](https://github.com/chemodun/X4-UniverseEditor/commit/6c52b95fe2472811ca4496e966daa1797bdf19a3))
+* **GalaxyReferencesHolder:** add support for ClusterMusic and ClusterIcons properties, and some elements manually added (like None) ([9657c22](https://github.com/chemodun/X4-UniverseEditor/commit/9657c2250087132b93fa7deb41884df25a3b2186))
+* **MainWindow:** update data structures to include sounds and icons, and refactor variable names for consistency ([63ce126](https://github.com/chemodun/X4-UniverseEditor/commit/63ce1262097e56bd3b2457fb91374f85ed718156))
+
+
+### Code Refactoring
+
+* **GalaxyEditor:** change the ribbon content height and adopt controls ([14efaac](https://github.com/chemodun/X4-UniverseEditor/commit/14efaac22cd61c5eccc7c9f740320fe91306f0c9))
+* **GalaxyEditor:** update ClusterEditWindow to use CatalogItem types and integrate GalaxyReferencesHolder for improved data management ([bfbb8b3](https://github.com/chemodun/X4-UniverseEditor/commit/bfbb8b3b4293d1feb7ecf4e59937735971f3b03c))
+* **GalaxyEditor:** update window title to reflect current mod details and improve property change notifications ([14efaac](https://github.com/chemodun/X4-UniverseEditor/commit/14efaac22cd61c5eccc7c9f740320fe91306f0c9))
+
 ## [0.1.2](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.1.1...GalaxyEditor@v0.1.2) (2025-02-18)
 
 
