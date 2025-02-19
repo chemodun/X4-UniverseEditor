@@ -42,10 +42,11 @@ namespace X4DataLoader
     public string FileName { get; private set; } = "";
     public XElement? XML { get; set; } = null;
     public List<Sector> Sectors { get; private set; } = [];
+    public List<Planet> Planets { get; private set; } = [];
     public Dictionary<string, Connection> Connections { get; private set; } = [];
     public List<Highway> Highways { get; private set; } = [];
 
-    public void SetDetails(XElement element, Translation translation, string source, string fileName)
+    public void SetDetails(XElement element, Galaxy galaxy, string source, string fileName)
     {
       Log.Debug($"Loading cluster data for {source} from {fileName}");
       var macro = element.Attribute("macro")?.Value;
@@ -57,11 +58,11 @@ namespace X4DataLoader
         if (nameId != null && nameId != "" && descriptionId != "")
         {
           DetailsMacro = macro;
-          Name = translation.Translate(nameId);
+          Name = galaxy.Translation.Translate(nameId);
           var ids = Translation.GetIds(nameId);
           NamePageId = ids[0];
           NameTextId = ids[1];
-          Description = translation.Translate(descriptionId);
+          Description = galaxy.Translation.Translate(descriptionId);
           ids = Translation.GetIds(descriptionId);
           DescriptionPageId = ids[0];
           DescriptionTextId = ids[1];
@@ -75,7 +76,7 @@ namespace X4DataLoader
           {
             XElement? spaceElement = systemElement.Element("space");
             string environment = spaceElement?.Attribute("environment")?.Value ?? "";
-            Environment = translation.Translate(environment);
+            Environment = galaxy.Translation.Translate(environment);
             int[] environmentTextIds = Translation.GetIds(environment);
             EnvironmentPageId = environmentTextIds[0];
             EnvironmentTextId = environmentTextIds[1];
@@ -85,10 +86,11 @@ namespace X4DataLoader
               XElement sunElement = sunElements.First();
               string sun = sunElement.Attribute("class")?.Value ?? "";
               int[] sunTextIds = Translation.GetIds(sun);
-              Sun = translation.Translate(sun);
+              Sun = galaxy.Translation.Translate(sun);
               SunPageId = sunTextIds[0];
               SunTextId = sunTextIds[1];
             }
+            Planets = Planet.LoadFromXML(systemElement, source, fileName, galaxy, nameId);
           }
         }
         else

@@ -109,7 +109,7 @@ namespace X4DataLoader
                     try
                     {
                       Cluster? cluster = Cluster.GetClusterByMacro(galaxy.Clusters, macro);
-                      cluster?.SetDetails(datasetElement, galaxy.Translation, file.ExtensionId, file.FileName);
+                      cluster?.SetDetails(datasetElement, galaxy, file.ExtensionId, file.FileName);
                       Log.Debug($"Cluster defaults loaded: {cluster?.Name}");
                     }
                     catch (ArgumentException e)
@@ -122,7 +122,7 @@ namespace X4DataLoader
                     try
                     {
                       Sector? sector = Sector.GetSectorByMacro(galaxy.Sectors, macro);
-                      sector?.SetDetails(datasetElement, galaxy.Translation, file.ExtensionId, file.FileName);
+                      sector?.SetDetails(datasetElement, galaxy, file.ExtensionId, file.FileName);
                       Log.Debug($"Sector defaults loaded: {sector?.Name}");
                     }
                     catch (ArgumentException e)

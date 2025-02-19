@@ -42,7 +42,7 @@ namespace X4DataLoader
     public Faction? DominantOwnerFaction { get; private set; } = null;
     public X4Color? Color { get; private set; } = null;
 
-    public void SetDetails(XElement element, Translation translation, string source, string fileName)
+    public void SetDetails(XElement element, Galaxy galaxy, string source, string fileName)
     {
       var macro = element.Attribute("macro")?.Value;
       if (!string.IsNullOrEmpty(macro))
@@ -52,8 +52,8 @@ namespace X4DataLoader
         string descriptionId = propertiesElement?.Element("identification")?.Attribute("description")?.Value ?? "";
         if (!string.IsNullOrEmpty(nameId) && !string.IsNullOrEmpty(descriptionId))
         {
-          Name = translation.Translate(nameId ?? "");
-          Description = translation.Translate(descriptionId);
+          Name = galaxy.Translation.Translate(nameId ?? "");
+          Description = galaxy.Translation.Translate(descriptionId);
           XElement? areaElement = propertiesElement?.Element("area");
           if (areaElement != null)
           {
