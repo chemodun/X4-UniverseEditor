@@ -16,7 +16,7 @@ namespace X4DataLoader
     public int NameSuffixId { get; private set; } = 0;
     public int Geology { get; private set; } = 0;
     public int Atmosphere { get; private set; } = 0;
-    public int Settlement { get; private set; } = 0;
+    public int Settlements { get; private set; } = 0;
     public int Population { get; private set; } = 0;
     public int MaxPopulation { get; private set; } = 0;
     public string WorldPart { get; private set; } = "";
@@ -53,11 +53,11 @@ namespace X4DataLoader
         int[] values = Translation.GetIds(atmosphere);
         Atmosphere = values[1];
       }
-      string settlement = XmlHelper.GetAttribute(element, "settlement") ?? "";
+      string settlement = XmlHelper.GetAttribute(element, "settlements") ?? "";
       if (settlement != "")
       {
         int[] values = Translation.GetIds(settlement);
-        Settlement = values[1];
+        Settlements = values[1];
       }
       string population = XmlHelper.GetAttribute(element, "population") ?? "";
       if (population != "")
