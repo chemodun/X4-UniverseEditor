@@ -213,14 +213,14 @@ namespace GalaxyEditor
 
     public List<UnifyItemMoon> Moons
     {
-      get => GetListOfItems("Moons").Cast<UnifyItemMoon>().ToList();
+      get => (GetList("Moons") as IEnumerable<GalaxyUnifyItem>)?.Cast<UnifyItemMoon>().ToList() ?? [];
     }
 
     public UnifyItemPlanet()
       : base()
     {
       Attributes.Add(new() { Name = "Class", Type = AttributeType.Int });
-      Attributes.Add(new() { Name = "Moons", Type = AttributeType.ListOfItems });
+      Attributes.Add(new() { Name = "Moons", Type = AttributeType.List });
     }
 
     public void Initialize(Planet planet)
@@ -235,7 +235,7 @@ namespace GalaxyEditor
           moonInfo.Connect(TranslationObject, GalaxyReferences);
         }
         moonInfo.Initialize(moon);
-        AddToListOfItems("Moons", moonInfo);
+        AddToList("Moons", moonInfo);
       }
       PostInit();
     }

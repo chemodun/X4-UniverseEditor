@@ -26,9 +26,9 @@ namespace GalaxyEditor
     Int,
     Double,
     Bool,
+    Attribute,
     Item,
     List,
-    ListOfItems,
   }
 
   public class GalaxyUnifyItemAttribute
@@ -44,9 +44,9 @@ namespace GalaxyEditor
     public int? ValueInt { get; set; } = null;
     public double? ValueDouble { get; set; } = null;
     public bool? ValueBool { get; set; } = null;
-    public GalaxyUnifyItemAttribute? ValueItem { get; set; } = null;
+    public GalaxyUnifyItemAttribute? ValueAttribute { get; set; } = null;
+    public GalaxyUnifyItem? ValueItem { get; set; } = null;
     public List<GalaxyUnifyItemAttribute> ValueList { get; set; } = [];
-    public List<GalaxyUnifyItem> ValueListOfItems { get; set; } = [];
     public AttributeState State { get; set; } = AttributeState.None;
 
     public void PostInit()
@@ -65,17 +65,14 @@ namespace GalaxyEditor
         case AttributeType.Bool:
           _valueBool = ValueBool;
           break;
+        case AttributeType.Attribute:
+          ValueAttribute?.PostInit();
+          break;
         case AttributeType.Item:
           ValueItem?.PostInit();
           break;
         case AttributeType.List:
           foreach (GalaxyUnifyItemAttribute item in ValueList)
-          {
-            item.PostInit();
-          }
-          break;
-        case AttributeType.ListOfItems:
-          foreach (GalaxyUnifyItem item in ValueListOfItems)
           {
             item.PostInit();
           }
@@ -128,15 +125,14 @@ namespace GalaxyEditor
                 case AttributeType.Bool:
                   attribute.ValueBool = reader.GetBoolean();
                   break;
+                case AttributeType.Attribute:
+                  attribute.ValueAttribute = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
+                  break;
                 case AttributeType.Item:
-                  attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
+                  attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItem>(ref reader, options);
                   break;
                 case AttributeType.List:
                   attribute.ValueList = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
-                  break;
-                case AttributeType.ListOfItems:
-                  attribute.ValueListOfItems =
-                    JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? new List<GalaxyUnifyItem>();
                   break;
               }
               break;
@@ -174,6 +170,10 @@ namespace GalaxyEditor
             writer.WriteBoolean(value.Name, value.ValueBool ?? false);
           }
           break;
+        case AttributeType.Attribute:
+          writer.WritePropertyName(value.Name);
+          JsonSerializer.Serialize(writer, value.ValueAttribute, options);
+          break;
         case AttributeType.Item:
           writer.WritePropertyName(value.Name);
           JsonSerializer.Serialize(writer, value.ValueItem, options);
@@ -181,10 +181,6 @@ namespace GalaxyEditor
         case AttributeType.List:
           writer.WritePropertyName(value.Name);
           JsonSerializer.Serialize(writer, value.ValueList, options);
-          break;
-        case AttributeType.ListOfItems:
-          writer.WritePropertyName(value.Name);
-          JsonSerializer.Serialize(writer, value.ValueListOfItems, options);
           break;
       }
       writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.State), (int)value.State);
@@ -270,10 +266,10 @@ namespace GalaxyEditor
 
     public void SetItem(string name, GalaxyUnifyItemAttribute value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Item);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Attribute);
       if (attribute != null)
       {
-        attribute.ValueItem = value;
+        attribute.ValueAttribute = value;
         PostSetAttribute(attribute, false);
         OnPropertyChanged(name);
       }
@@ -285,17 +281,6 @@ namespace GalaxyEditor
       if (attribute != null)
       {
         attribute.ValueList = value;
-        PostSetAttribute(attribute, false);
-        OnPropertyChanged(name);
-      }
-    }
-
-    public void SetListOfItems(string name, List<GalaxyUnifyItem> value)
-    {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
-      if (attribute != null)
-      {
-        attribute.ValueListOfItems = value;
         PostSetAttribute(attribute, false);
         OnPropertyChanged(name);
       }
@@ -353,35 +338,36 @@ namespace GalaxyEditor
 
     public GalaxyUnifyItemAttribute? GetItem(string name)
     {
-      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Item);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Attribute);
       if (attribute != null)
       {
-        return attribute.ValueItem;
+        return attribute.ValueAttribute;
       }
       return null;
     }
 
-    public List<GalaxyUnifyItemAttribute> GetList(string name)
+    public object? GetList(string name)
     {
       GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.List);
       if (attribute != null)
       {
-        return attribute.ValueList.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
+        List<GalaxyUnifyItemAttribute> list = attribute
+          .ValueList.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified)
+          .ToList();
+        if (list.Count == 0)
+        {
+          return null;
+        }
+        if (list.First().Type == AttributeType.Item)
+        {
+          return list.Select(a => a.ValueItem).ToList();
+        }
+        return list;
       }
-      return [];
+      return null;
     }
 
-    public List<GalaxyUnifyItem> GetListOfItems(string name)
-    {
-      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.ListOfItems);
-      if (attribute != null)
-      {
-        return attribute.ValueListOfItems.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
-      }
-      return [];
-    }
-
-    public void AddToList(string name, GalaxyUnifyItemAttribute value)
+    public int AddToList(string name, GalaxyUnifyItemAttribute value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
       if (attribute != null)
@@ -389,18 +375,16 @@ namespace GalaxyEditor
         attribute.ValueList.Add(value);
         value.Index = attribute.ValueList.Count - 1;
         OnPropertyChanged(name);
+        return value.Index;
       }
+      return -1;
     }
 
-    public void AddToListOfItems(string name, GalaxyUnifyItem value)
+    public int AddToList(string name, GalaxyUnifyItem value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
-      if (attribute != null)
-      {
-        attribute.ValueListOfItems.Add(value);
-        value.Index = attribute.ValueListOfItems.Count - 1;
-        OnPropertyChanged(name);
-      }
+      GalaxyUnifyItemAttribute newItem = new() { Type = AttributeType.Item, ValueItem = value };
+      value.Index = AddToList(name, newItem);
+      return value.Index;
     }
 
     public void RemoveFromList(string name, GalaxyUnifyItemAttribute value)
@@ -417,15 +401,16 @@ namespace GalaxyEditor
       }
     }
 
-    public void RemoveFromListOfItems(string name, GalaxyUnifyItem value)
+    public void RemoveFromList(string name, GalaxyUnifyItem value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListOfItems);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
       if (attribute != null)
       {
         if (value.Index < attribute.ValueList.Count && value.Index >= 0)
         {
-          GalaxyUnifyItem removed = attribute.ValueListOfItems[value.Index];
+          GalaxyUnifyItemAttribute removed = attribute.ValueList[value.Index];
           removed.State = AttributeState.Unset;
+          value.State = AttributeState.Unset;
           OnPropertyChanged(name);
         }
         OnPropertyChanged(name);
