@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using X4DataLoader;
 
 namespace GalaxyEditor
 {
@@ -186,6 +187,14 @@ namespace GalaxyEditor
     public List<GalaxyUnifyItemAttribute> Attributes = [];
 
     public AttributeState State { get; set; } = AttributeState.None;
+    protected Translation? TranslationObject = null;
+    protected GalaxyReferencesHolder? GalaxyReferences;
+
+    public void Connect(Translation translation, GalaxyReferencesHolder galaxyReferences)
+    {
+      TranslationObject = translation;
+      GalaxyReferences = galaxyReferences;
+    }
 
     public GalaxyUnifyItemAttribute? PreSetAttribute(string name, AttributeType? type)
     {

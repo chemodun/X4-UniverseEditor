@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Utilities.Logging;
@@ -11,7 +12,8 @@ namespace GalaxyEditor
   {
     private Galaxy GalaxyData { get; set; } = new();
     private GalaxyReferencesHolder GalaxyReferences { get; set; } = new();
-    private Cluster? Cluster = null;
+
+    // private Cluster? Cluster = null;
     private string _clusterId = "";
     private string _clusterName = "";
     private string _description = "";
@@ -25,12 +27,12 @@ namespace GalaxyEditor
 
     public string ClusterId
     {
-      get => _clusterId;
+      get => Cluster.ClusterId;
       set
       {
-        if (_clusterId != value)
+        if (Cluster.ClusterId != value)
         {
-          _clusterId = value;
+          Cluster.ClusterId = value;
           OnPropertyChanged(nameof(ClusterId));
         }
       }
@@ -38,12 +40,12 @@ namespace GalaxyEditor
 
     public string ClusterName
     {
-      get => _clusterName;
+      get => Cluster.Name;
       set
       {
-        if (_clusterName != value)
+        if (Cluster.Name != value)
         {
-          _clusterName = value;
+          Cluster.Name = value;
           OnPropertyChanged(nameof(ClusterName));
         }
       }
@@ -51,12 +53,12 @@ namespace GalaxyEditor
 
     public string Description
     {
-      get => _description;
+      get => Cluster.Description;
       set
       {
-        if (_description != value)
+        if (Cluster.Description != value)
         {
-          _description = value;
+          Cluster.Description = value;
           OnPropertyChanged(nameof(Description));
         }
       }
@@ -69,6 +71,7 @@ namespace GalaxyEditor
         if (_systemId != value)
         {
           _systemId = value;
+          Cluster.System = value.Text;
           OnPropertyChanged(nameof(SystemId));
         }
       }
@@ -81,6 +84,7 @@ namespace GalaxyEditor
         if (_iconId != value)
         {
           _iconId = value;
+          Cluster.ImageId = value.Text;
           OnPropertyChanged(nameof(IconId));
         }
       }
@@ -93,6 +97,7 @@ namespace GalaxyEditor
         if (_musicId != value)
         {
           _musicId = value;
+          Cluster.MusicId = value.Id;
           OnPropertyChanged(nameof(MusicId));
         }
       }
@@ -105,6 +110,7 @@ namespace GalaxyEditor
         if (_sun != value)
         {
           _sun = value;
+          Cluster.SunTextId = value.Id;
           OnPropertyChanged(nameof(Sun));
         }
       }
@@ -118,6 +124,7 @@ namespace GalaxyEditor
         if (_environment != value)
         {
           _environment = value;
+          Cluster.EnvironmentTextId = value.Id;
           OnPropertyChanged(nameof(Environment));
         }
       }
@@ -150,6 +157,8 @@ namespace GalaxyEditor
       }
     }
 
+    public UnifyItemCluster Cluster { get; set; } = new();
+
     public ObservableCollection<CatalogItemWithIntId> SunOptions { get; } = [];
     public ObservableCollection<CatalogItemWithIntId> EnvironmentOptions { get; } = [];
     public ObservableCollection<CatalogItemString> SystemOptions { get; } = [];
@@ -170,46 +179,47 @@ namespace GalaxyEditor
       SystemOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.StarSystems);
       IconOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.ClusterIcons);
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
+      Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
       if (cluster != null)
       {
-        Cluster = cluster;
-        ClusterId = cluster.Id;
-        ClusterName = cluster.Name;
-        Description = cluster.Description;
-        FillPlanets();
-        FillMoons();
-        SystemId = SystemOptions.FirstOrDefault(s => s.Text == cluster.System) ?? new CatalogItemString(cluster.System);
-        IconId = IconOptions.FirstOrDefault(i => i.Text == cluster.ImageId) ?? new CatalogItemString(cluster.ImageId);
-        MusicId =
-          MusicOptions.FirstOrDefault(m => m.Id == cluster.MusicId) ?? new CatalogItemWithStringId(cluster.MusicId, cluster.MusicId);
-        Sun = SunOptions.FirstOrDefault(s => s.Id == cluster.SunTextId) ?? new CatalogItemWithIntId(cluster.SunTextId, cluster.Sun);
-        Environment =
-          EnvironmentOptions.FirstOrDefault(e => e.Id == cluster.EnvironmentTextId)
-          ?? new CatalogItemWithIntId(cluster.EnvironmentTextId, cluster.Environment);
+        Cluster.Initialize(cluster);
       }
-      else
+      CatalogItemString? systemId = SystemOptions.FirstOrDefault(s => s.Text == Cluster.System);
+      if (systemId != null)
       {
-        ClusterId = "";
-        ClusterName = "";
-        Description = "";
+        SystemId = systemId;
       }
+      CatalogItemString? iconId = IconOptions.FirstOrDefault(i => i.Text == Cluster.ImageId);
+      if (iconId != null)
+      {
+        IconId = iconId;
+      }
+      CatalogItemWithStringId? musicId = MusicOptions.FirstOrDefault(m => m.Id == Cluster.MusicId);
+      if (musicId != null)
+      {
+        MusicId = musicId;
+      }
+      CatalogItemWithIntId? sun = SunOptions.FirstOrDefault(s => s.Id == Cluster.SunTextId);
+      if (sun != null)
+      {
+        Sun = sun;
+      }
+      CatalogItemWithIntId? environment = EnvironmentOptions.FirstOrDefault(e => e.Id == Cluster.EnvironmentTextId);
+      if (environment != null)
+      {
+        Environment = environment;
+      }
+      FillPlanets();
+      FillMoons();
     }
 
     public void FillPlanets()
     {
       Planets.Clear();
       SelectedPlanet = null;
-      if (Cluster == null)
+      foreach (UnifyItemPlanet planet in Cluster.Planets)
       {
-        return;
-      }
-      foreach (Planet planet in Cluster.Planets)
-      {
-        // PlanetObject planetObject = new(planet, GalaxyData, GalaxyReferences);
-        UnifyItemPlanet planetObject = new();
-        planetObject.Connect(GalaxyData.Translation, GalaxyReferences);
-        planetObject.Initialize(planet);
-        Planets.Add(planetObject);
+        Planets.Add(planet);
       }
       if (Planets.Count > 0)
       {

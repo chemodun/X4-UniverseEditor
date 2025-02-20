@@ -4,9 +4,6 @@ namespace GalaxyEditor
 {
   public class UnifyItemMoon : GalaxyUnifyItem
   {
-    protected Translation? TranslationObject = null;
-    protected GalaxyReferencesHolder? GalaxyReferences;
-
     public UnifyItemMoon()
     {
       Attributes =
@@ -23,12 +20,6 @@ namespace GalaxyEditor
         new() { Name = "WorldPart", Type = AttributeType.String },
         new() { Name = "AtmospherePart", Type = AttributeType.String },
       ];
-    }
-
-    public void Connect(Translation translation, GalaxyReferencesHolder galaxyReferences)
-    {
-      TranslationObject = translation;
-      GalaxyReferences = galaxyReferences;
     }
 
     public void Initialize(Moon moon)
