@@ -367,25 +367,24 @@ namespace GalaxyEditor
       return null;
     }
 
-    public object? GetList(string name)
+    public List<GalaxyUnifyItemAttribute> GetList(string name)
     {
       GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.List);
       if (attribute != null)
       {
-        List<GalaxyUnifyItemAttribute> list = attribute
-          .ValueList.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified)
-          .ToList();
-        if (list.Count == 0)
-        {
-          return null;
-        }
-        if (list.First().Type == AttributeType.Item)
-        {
-          return list.Select(a => a.ValueItem).ToList();
-        }
-        return list;
+        return attribute.ValueList.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
       }
-      return null;
+      return [];
+    }
+
+    public List<GalaxyUnifyItem> GetListOfItems(string name)
+    {
+      List<GalaxyUnifyItemAttribute> list = GetList(name);
+      if (list.Count > 0)
+      {
+        return list.Select(a => a.ValueItem).Where(a => a != null).Cast<GalaxyUnifyItem>().ToList();
+      }
+      return [];
     }
 
     public int AddToList(string name, GalaxyUnifyItemAttribute value)

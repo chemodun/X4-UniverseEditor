@@ -213,7 +213,7 @@ namespace GalaxyEditor
 
     public List<UnifyItemMoon> Moons
     {
-      get => (GetList("Moons") as IEnumerable<GalaxyUnifyItem>)?.Cast<UnifyItemMoon>().ToList() ?? [];
+      get => GetListOfItems("Moons").Cast<UnifyItemMoon>().ToList();
     }
 
     public UnifyItemPlanet()
