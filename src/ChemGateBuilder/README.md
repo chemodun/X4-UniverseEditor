@@ -278,6 +278,13 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.8.9] - 2025-02-20
+
+- Added
+  - Hyperion pack DLC support
+- Fixed
+  - Fixed the issue with broken `content.xml` file after mod edit
+
 ### [0.8.8] - 2025-02-17
 
 - Fixed
