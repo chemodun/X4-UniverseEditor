@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using X4DataLoader;
 
 namespace GalaxyEditor
@@ -55,37 +57,22 @@ namespace GalaxyEditor
       {
         Set("Name", value);
         Set("NameIsUnique", true);
-        OnPropertyChanged(nameof(Name));
       }
     }
     public bool NameIsUnique
     {
       get => GetBool("NameIsUnique") ?? false;
-      set
-      {
-        Set("NameIsUnique", value);
-        OnPropertyChanged(nameof(Name));
-      }
+      set { Set("NameIsUnique", value); }
     }
     public int NameSuffixId
     {
       get => GetInt("NameSuffixId") ?? 0;
-      set
-      {
-        Set("NameSuffixId", value);
-        OnPropertyChanged(nameof(NameSuffixId));
-        OnPropertyChanged(nameof(Name));
-      }
+      set { Set("NameSuffixId", value); }
     }
     public int Geology
     {
       get => GetInt("Geology") ?? 0;
-      set
-      {
-        Set("Geology", value);
-        OnPropertyChanged(nameof(Geology));
-        OnPropertyChanged(nameof(GeologyString));
-      }
+      set { Set("Geology", value); }
     }
     public string GeologyString
     {
@@ -95,12 +82,7 @@ namespace GalaxyEditor
     public int Atmosphere
     {
       get => GetInt("Atmosphere") ?? 0;
-      set
-      {
-        Set("Atmosphere", value);
-        OnPropertyChanged(nameof(Atmosphere));
-        OnPropertyChanged(nameof(AtmosphereString));
-      }
+      set { Set("Atmosphere", value); }
     }
 
     public string AtmosphereString
@@ -111,12 +93,7 @@ namespace GalaxyEditor
     public int Settlements
     {
       get => GetInt("Settlements") ?? 0;
-      set
-      {
-        Set("Settlements", value);
-        OnPropertyChanged(nameof(Settlements));
-        OnPropertyChanged(nameof(SettlementsString));
-      }
+      set { Set("Settlements", value); }
     }
 
     public string SettlementsString
@@ -127,12 +104,7 @@ namespace GalaxyEditor
     public int Population
     {
       get => GetInt("Population") ?? 0;
-      set
-      {
-        Set("Population", value);
-        OnPropertyChanged(nameof(Population));
-        OnPropertyChanged(nameof(PopulationString));
-      }
+      set { Set("Population", value); }
     }
     public string PopulationString
     {
@@ -142,12 +114,7 @@ namespace GalaxyEditor
     public int MaxPopulation
     {
       get => GetInt("MaxPopulation") ?? 0;
-      set
-      {
-        Set("MaxPopulation", value);
-        OnPropertyChanged(nameof(MaxPopulation));
-        OnPropertyChanged(nameof(MaxPopulationString));
-      }
+      set { Set("MaxPopulation", value); }
     }
     public string MaxPopulationString
     {
@@ -157,21 +124,26 @@ namespace GalaxyEditor
     public string WorldPart
     {
       get => GetString("WorldPart") ?? "";
-      set
-      {
-        Set("WorldPart", value);
-        OnPropertyChanged(nameof(WorldPart));
-      }
+      set { Set("WorldPart", value); }
     }
 
     public string AtmospherePart
     {
       get => GetString("AtmospherePart") ?? "";
-      set
-      {
-        Set("AtmospherePart", value);
-        OnPropertyChanged(nameof(AtmospherePart));
-      }
+      set { Set("AtmospherePart", value); }
+    }
+  }
+
+  public class UnifyItemMoonJsonConverter : JsonConverter<UnifyItemMoon>
+  {
+    public override UnifyItemMoon Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      return (UnifyItemMoon)GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, UnifyItemMoon value, JsonSerializerOptions options)
+    {
+      GalaxyUnifyItem.JsonWrite(writer, value, options);
     }
   }
 
@@ -180,12 +152,7 @@ namespace GalaxyEditor
     public int Class
     {
       get => GetInt("Class") ?? 0;
-      set
-      {
-        Set("Class", value);
-        OnPropertyChanged(nameof(Class));
-        OnPropertyChanged(nameof(ClassString));
-      }
+      set { Set("Class", value); }
     }
 
     public string ClassString
@@ -220,6 +187,19 @@ namespace GalaxyEditor
         AddToList("Moons", moonInfo);
       }
       PostInit();
+    }
+  }
+
+  public class UnifyItemPlanetJsonConverter : JsonConverter<UnifyItemPlanet>
+  {
+    public override UnifyItemPlanet Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      return (UnifyItemPlanet)GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, UnifyItemPlanet value, JsonSerializerOptions options)
+    {
+      GalaxyUnifyItem.JsonWrite(writer, value, options);
     }
   }
 }

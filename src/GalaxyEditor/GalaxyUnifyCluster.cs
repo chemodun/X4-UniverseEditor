@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using X4DataLoader;
 
 namespace GalaxyEditor
@@ -59,105 +60,74 @@ namespace GalaxyEditor
     public string ClusterId
     {
       get => GetString("ClusterId") ?? "";
-      set
-      {
-        Set("ClusterId", value);
-        OnPropertyChanged(nameof(ClusterId));
-      }
+      set { Set("ClusterId", value); }
     }
     public double X
     {
       get => GetDouble("X") ?? 0;
-      set
-      {
-        Set("X", value);
-        OnPropertyChanged(nameof(X));
-      }
+      set { Set("X", value); }
     }
     public double Y
     {
       get => GetDouble("Y") ?? 0;
-      set
-      {
-        Set("Y", value);
-        OnPropertyChanged(nameof(Y));
-      }
+      set { Set("Y", value); }
     }
     public double Z
     {
       get => GetDouble("Z") ?? 0;
-      set
-      {
-        Set("Z", value);
-        OnPropertyChanged(nameof(Z));
-      }
+      set { Set("Z", value); }
     }
     public string Name
     {
       get => GetString("Name") ?? "";
-      set
-      {
-        Set("Name", value);
-        OnPropertyChanged(nameof(Name));
-      }
+      set { Set("Name", value); }
     }
     public string Description
     {
       get => GetString("Description") ?? "";
-      set
-      {
-        Set("Description", value);
-        OnPropertyChanged(nameof(Description));
-      }
+      set { Set("Description", value); }
     }
     public string System
     {
       get => GetString("System") ?? "";
-      set
-      {
-        Set("System", value);
-        OnPropertyChanged(nameof(System));
-      }
+      set { Set("System", value); }
     }
     public string ImageId
     {
       get => GetString("ImageId") ?? "";
-      set
-      {
-        Set("ImageId", value);
-        OnPropertyChanged(nameof(ImageId));
-      }
+      set { Set("ImageId", value); }
     }
     public string MusicId
     {
       get => GetString("MusicId") ?? "";
-      set
-      {
-        Set("MusicId", value);
-        OnPropertyChanged(nameof(MusicId));
-      }
+      set { Set("MusicId", value); }
     }
     public int SunTextId
     {
       get => GetInt("SunTextId") ?? 0;
-      set
-      {
-        Set("SunTextId", value);
-        OnPropertyChanged(nameof(SunTextId));
-      }
+      set { Set("SunTextId", value); }
     }
     public int EnvironmentTextId
     {
       get => GetInt("EnvironmentTextId") ?? 0;
-      set
-      {
-        Set("EnvironmentTextId", value);
-        OnPropertyChanged(nameof(EnvironmentTextId));
-      }
+      set { Set("EnvironmentTextId", value); }
     }
     public List<UnifyItemPlanet> Planets
     {
       get => GetListOfItems("Planets").Cast<UnifyItemPlanet>().ToList();
+    }
+  }
+
+  public class UnifyItemClusterJsonConverter : JsonConverter<UnifyItemCluster>
+  {
+    public override UnifyItemCluster Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      return (UnifyItemCluster)GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, UnifyItemCluster value, JsonSerializerOptions options)
+    {
+      GalaxyUnifyItem.JsonWrite(writer, value, options);
     }
   }
 }

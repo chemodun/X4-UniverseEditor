@@ -292,6 +292,13 @@ namespace GalaxyEditor
 
     public void ButtonSave_Click(object sender, RoutedEventArgs e)
     {
+      var options = new JsonSerializerOptions { WriteIndented = true };
+      options.Converters.Add(new GalaxyUnifyItemAttributeConverter());
+      options.Converters.Add(new GalaxyUnifyItemJsonConverter());
+      options.Converters.Add(new UnifyItemMoonJsonConverter());
+      options.Converters.Add(new UnifyItemPlanetJsonConverter());
+      options.Converters.Add(new UnifyItemClusterJsonConverter());
+      var jsonString = JsonSerializer.Serialize(Cluster, options);
       Log.Debug("ButtonSave_Click");
     }
 

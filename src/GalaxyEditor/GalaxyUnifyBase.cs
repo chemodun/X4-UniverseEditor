@@ -137,8 +137,13 @@ namespace GalaxyEditor
 
     public override void Write(Utf8JsonWriter writer, GalaxyUnifyItemAttribute value, JsonSerializerOptions options)
     {
+      if (value.State == AttributeState.None || value.State == AttributeState.Set)
+      {
+        return;
+      }
       writer.WriteStartObject();
       writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Type), (int)value.Type);
+      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.State), (int)value.State);
       writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Index), value.Index);
       switch (value.Type)
       {
@@ -176,7 +181,6 @@ namespace GalaxyEditor
           JsonSerializer.Serialize(writer, value.ValueList, options);
           break;
       }
-      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.State), (int)value.State);
       writer.WriteEndObject();
     }
   }
@@ -225,7 +229,10 @@ namespace GalaxyEditor
         bool isEqual = attribute.ValueInt == value;
         attribute.ValueInt = value;
         PostSetAttribute(attribute, isEqual);
-        OnPropertyChanged(name);
+        if (!isEqual)
+        {
+          OnPropertyChanged(name);
+        }
       }
     }
 
@@ -237,7 +244,10 @@ namespace GalaxyEditor
         bool isEqual = attribute.ValueString == value;
         attribute.ValueString = value;
         PostSetAttribute(attribute, isEqual);
-        OnPropertyChanged(name);
+        if (!isEqual)
+        {
+          OnPropertyChanged(name);
+        }
       }
     }
 
@@ -249,7 +259,10 @@ namespace GalaxyEditor
         bool isEqual = attribute.ValueDouble == value;
         attribute.ValueDouble = value;
         PostSetAttribute(attribute, isEqual);
-        OnPropertyChanged(name);
+        if (!isEqual)
+        {
+          OnPropertyChanged(name);
+        }
       }
     }
 
@@ -261,14 +274,17 @@ namespace GalaxyEditor
         bool isEqual = attribute.ValueBool == value;
         attribute.ValueBool = value;
         PostSetAttribute(attribute, isEqual);
-        OnPropertyChanged(name);
+        if (!isEqual)
+        {
+          OnPropertyChanged(name);
+        }
       }
     }
 
     public void Set(string name, GalaxyUnifyItemAttribute value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Attribute);
-      if (attribute != null)
+      if (attribute != null) //ToDo - check if value is equal
       {
         attribute.ValueAttribute = value;
         PostSetAttribute(attribute, false);
@@ -454,11 +470,8 @@ namespace GalaxyEditor
       }
       State = AttributeState.Set;
     }
-  }
 
-  public class GalaxyUnifyItemJsonConverter : JsonConverter<GalaxyUnifyItem>
-  {
-    public override GalaxyUnifyItem Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public static GalaxyUnifyItem JsonRead(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
       var item = new GalaxyUnifyItem();
       while (reader.Read())
@@ -491,14 +504,31 @@ namespace GalaxyEditor
       throw new JsonException("Unable to read GalaxyItemInfo");
     }
 
-    public override void Write(Utf8JsonWriter writer, GalaxyUnifyItem value, JsonSerializerOptions options)
+    public static void JsonWrite(Utf8JsonWriter writer, GalaxyUnifyItem value, JsonSerializerOptions options)
     {
+      if (value.State == AttributeState.None || value.State == AttributeState.Set)
+      {
+        return;
+      }
       writer.WriteStartObject();
-      writer.WriteNumber(nameof(GalaxyUnifyItem.Index), value.Index);
       writer.WriteNumber(nameof(GalaxyUnifyItem.State), (int)value.State);
+      writer.WriteNumber(nameof(GalaxyUnifyItem.Index), value.Index);
       writer.WritePropertyName(nameof(GalaxyUnifyItem.Attributes));
       JsonSerializer.Serialize(writer, value.Attributes, options);
       writer.WriteEndObject();
+    }
+  }
+
+  public class GalaxyUnifyItemJsonConverter : JsonConverter<GalaxyUnifyItem>
+  {
+    public override GalaxyUnifyItem Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      return GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, GalaxyUnifyItem value, JsonSerializerOptions options)
+    {
+      GalaxyUnifyItem.JsonWrite(writer, value, options);
     }
   }
 }
