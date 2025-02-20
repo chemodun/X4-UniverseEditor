@@ -42,17 +42,17 @@ namespace GalaxyEditor
 
     public void Initialize(Moon moon)
     {
-      SetString("Name", moon.Name);
-      SetBool("NameIsUnique", moon.NameIsUnique);
-      SetString("NameContent", moon.NameContent);
-      SetInt("NameSuffixId", moon.NameSuffixId);
-      SetInt("Geology", moon.Geology);
-      SetInt("Atmosphere", moon.Atmosphere);
-      SetInt("Settlements", moon.Settlements);
-      SetInt("Population", moon.Population);
-      SetInt("MaxPopulation", moon.MaxPopulation);
-      SetString("WorldPart", moon.WorldPart);
-      SetString("AtmospherePart", moon.AtmospherePart);
+      Set("Name", moon.Name);
+      Set("NameIsUnique", moon.NameIsUnique);
+      Set("NameContent", moon.NameContent);
+      Set("NameSuffixId", moon.NameSuffixId);
+      Set("Geology", moon.Geology);
+      Set("Atmosphere", moon.Atmosphere);
+      Set("Settlements", moon.Settlements);
+      Set("Population", moon.Population);
+      Set("MaxPopulation", moon.MaxPopulation);
+      Set("WorldPart", moon.WorldPart);
+      Set("AtmospherePart", moon.AtmospherePart);
       PostInit();
     }
 
@@ -71,8 +71,8 @@ namespace GalaxyEditor
       }
       set
       {
-        SetString("Name", value);
-        SetBool("NameIsUnique", true);
+        Set("Name", value);
+        Set("NameIsUnique", true);
         OnPropertyChanged(nameof(Name));
       }
     }
@@ -81,7 +81,7 @@ namespace GalaxyEditor
       get => GetBool("NameIsUnique") ?? false;
       set
       {
-        SetBool("NameIsUnique", value);
+        Set("NameIsUnique", value);
         OnPropertyChanged(nameof(Name));
       }
     }
@@ -90,7 +90,7 @@ namespace GalaxyEditor
       get => GetInt("NameSuffixId") ?? 0;
       set
       {
-        SetInt("NameSuffixId", value);
+        Set("NameSuffixId", value);
         OnPropertyChanged(nameof(NameSuffixId));
         OnPropertyChanged(nameof(Name));
       }
@@ -100,7 +100,7 @@ namespace GalaxyEditor
       get => GetInt("Geology") ?? 0;
       set
       {
-        SetInt("Geology", value);
+        Set("Geology", value);
         OnPropertyChanged(nameof(Geology));
         OnPropertyChanged(nameof(GeologyString));
       }
@@ -115,7 +115,7 @@ namespace GalaxyEditor
       get => GetInt("Atmosphere") ?? 0;
       set
       {
-        SetInt("Atmosphere", value);
+        Set("Atmosphere", value);
         OnPropertyChanged(nameof(Atmosphere));
         OnPropertyChanged(nameof(AtmosphereString));
       }
@@ -131,7 +131,7 @@ namespace GalaxyEditor
       get => GetInt("Settlements") ?? 0;
       set
       {
-        SetInt("Settlements", value);
+        Set("Settlements", value);
         OnPropertyChanged(nameof(Settlements));
         OnPropertyChanged(nameof(SettlementsString));
       }
@@ -147,7 +147,7 @@ namespace GalaxyEditor
       get => GetInt("Population") ?? 0;
       set
       {
-        SetInt("Population", value);
+        Set("Population", value);
         OnPropertyChanged(nameof(Population));
         OnPropertyChanged(nameof(PopulationString));
       }
@@ -162,7 +162,7 @@ namespace GalaxyEditor
       get => GetInt("MaxPopulation") ?? 0;
       set
       {
-        SetInt("MaxPopulation", value);
+        Set("MaxPopulation", value);
         OnPropertyChanged(nameof(MaxPopulation));
         OnPropertyChanged(nameof(MaxPopulationString));
       }
@@ -177,7 +177,7 @@ namespace GalaxyEditor
       get => GetString("WorldPart") ?? "";
       set
       {
-        SetString("WorldPart", value);
+        Set("WorldPart", value);
         OnPropertyChanged(nameof(WorldPart));
       }
     }
@@ -187,7 +187,7 @@ namespace GalaxyEditor
       get => GetString("AtmospherePart") ?? "";
       set
       {
-        SetString("AtmospherePart", value);
+        Set("AtmospherePart", value);
         OnPropertyChanged(nameof(AtmospherePart));
       }
     }
@@ -200,7 +200,7 @@ namespace GalaxyEditor
       get => GetInt("Class") ?? 0;
       set
       {
-        SetInt("Class", value);
+        Set("Class", value);
         OnPropertyChanged(nameof(Class));
         OnPropertyChanged(nameof(ClassString));
       }
@@ -226,7 +226,7 @@ namespace GalaxyEditor
     public void Initialize(Planet planet)
     {
       base.Initialize(planet);
-      SetInt("Class", planet.PlanetClass);
+      Set("Class", planet.PlanetClass);
       foreach (Moon moon in planet.Moons)
       {
         UnifyItemMoon moonInfo = new();

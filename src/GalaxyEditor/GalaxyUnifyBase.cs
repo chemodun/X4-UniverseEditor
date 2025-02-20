@@ -216,7 +216,7 @@ namespace GalaxyEditor
       };
     }
 
-    public void SetInt(string name, int value)
+    public void Set(string name, int value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Int);
       if (attribute != null)
@@ -228,7 +228,7 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetString(string name, string value)
+    public void Set(string name, string value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.String);
       if (attribute != null)
@@ -240,7 +240,7 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetDouble(string name, double value)
+    public void Set(string name, double value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Double);
       if (attribute != null)
@@ -252,7 +252,7 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetBool(string name, bool value)
+    public void Set(string name, bool value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Bool);
       if (attribute != null)
@@ -264,7 +264,7 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetItem(string name, GalaxyUnifyItemAttribute value)
+    public void Set(string name, GalaxyUnifyItemAttribute value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Attribute);
       if (attribute != null)
@@ -275,7 +275,18 @@ namespace GalaxyEditor
       }
     }
 
-    public void SetList(string name, List<GalaxyUnifyItemAttribute> value)
+    public void Set(string name, GalaxyUnifyItem value)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.Item);
+      if (attribute != null)
+      {
+        attribute.ValueItem = value;
+        PostSetAttribute(attribute, false);
+        OnPropertyChanged(name);
+      }
+    }
+
+    public void Set(string name, List<GalaxyUnifyItemAttribute> value)
     {
       GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
       if (attribute != null)
@@ -336,12 +347,22 @@ namespace GalaxyEditor
       return null;
     }
 
-    public GalaxyUnifyItemAttribute? GetItem(string name)
+    public GalaxyUnifyItemAttribute? GetAttribute(string name)
     {
       GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Attribute);
       if (attribute != null)
       {
         return attribute.ValueAttribute;
+      }
+      return null;
+    }
+
+    public GalaxyUnifyItem? GetItem(string name)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Item);
+      if (attribute != null)
+      {
+        return attribute.ValueItem;
       }
       return null;
     }
