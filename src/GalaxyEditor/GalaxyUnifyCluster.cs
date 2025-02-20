@@ -27,7 +27,7 @@ namespace GalaxyEditor
       ];
     }
 
-    public void Initialize(Cluster? cluster)
+    public void Initialize(Cluster? cluster, Position? position = null)
     {
       Cluster = cluster;
       if (Cluster != null)
@@ -54,13 +54,23 @@ namespace GalaxyEditor
           }
         }
       }
+      else if (position != null)
+      {
+        Set("X", position.X);
+        Set("Y", position.Y);
+        Set("Z", position.Z);
+      }
       PostInit();
     }
 
     public string ClusterId
     {
       get => GetString("ClusterId") ?? "";
-      set { Set("ClusterId", value); }
+      set
+      {
+        Set("ClusterId", value);
+        ItemId = value;
+      }
     }
     public double X
     {
@@ -115,6 +125,17 @@ namespace GalaxyEditor
     public List<UnifyItemPlanet> Planets
     {
       get => GetListOfItems("Planets").Cast<UnifyItemPlanet>().ToList();
+    }
+
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+    {
+      if (Cluster == null)
+      {
+        SetModified("X");
+        SetModified("Y");
+        SetModified("Z");
+      }
+      base.Write(writer, options);
     }
   }
 

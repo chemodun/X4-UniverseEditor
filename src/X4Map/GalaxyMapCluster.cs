@@ -43,7 +43,7 @@ namespace X4Map
       get { return _y * HexagonHeight * ScaleFactor; }
     }
 
-    protected virtual Position Position { get; set; } = cluster?.Position ?? position ?? new();
+    public virtual Position Position { get; set; } = cluster?.Position ?? position ?? new();
     public double OriginalX
     {
       get

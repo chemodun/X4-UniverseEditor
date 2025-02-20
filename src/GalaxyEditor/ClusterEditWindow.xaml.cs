@@ -12,11 +12,6 @@ namespace GalaxyEditor
   {
     private Galaxy GalaxyData { get; set; } = new();
     private GalaxyReferencesHolder GalaxyReferences { get; set; } = new();
-
-    // private Cluster? Cluster = null;
-    private string _clusterId = "";
-    private string _clusterName = "";
-    private string _description = "";
     private CatalogItemString _systemId = new("");
     private CatalogItemString _iconId = new("");
     private CatalogItemWithStringId _musicId = new("", "");
@@ -167,7 +162,13 @@ namespace GalaxyEditor
     public ObservableCollection<UnifyItemPlanet> Planets { get; } = [];
     public ObservableCollection<UnifyItemMoon> Moons { get; } = [];
 
-    public ClusterEditWindow(BitmapImage icon, Cluster? cluster, Galaxy galaxyData, GalaxyReferencesHolder galaxyReferences)
+    public ClusterEditWindow(
+      BitmapImage icon,
+      Cluster? cluster,
+      Position? position,
+      Galaxy galaxyData,
+      GalaxyReferencesHolder galaxyReferences
+    )
     {
       InitializeComponent();
       DataContext = this;
@@ -180,10 +181,7 @@ namespace GalaxyEditor
       IconOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.ClusterIcons);
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
       Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
-      if (cluster != null)
-      {
-        Cluster.Initialize(cluster);
-      }
+      Cluster.Initialize(cluster, position);
       CatalogItemString? systemId = SystemOptions.FirstOrDefault(s => s.Text == Cluster.System);
       if (systemId != null)
       {

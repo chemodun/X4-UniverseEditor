@@ -863,7 +863,7 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(_appIcon, GalaxyMapViewer.SelectedMapCluster.Cluster, GalaxyData, GalaxyReferences)
+        ClusterEditWindow clusterEditWindow = new(_appIcon, GalaxyMapViewer.SelectedMapCluster.Cluster, null, GalaxyData, GalaxyReferences)
         {
           Owner = this,
         };
@@ -886,7 +886,10 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(_appIcon, null, GalaxyData, GalaxyReferences) { Owner = this };
+        ClusterEditWindow clusterEditWindow = new(_appIcon, null, GalaxyMapViewer.SelectedMapCluster.Position, GalaxyData, GalaxyReferences)
+        {
+          Owner = this,
+        };
         if (clusterEditWindow.ShowDialog() == true)
         {
           MessageBox.Show(
