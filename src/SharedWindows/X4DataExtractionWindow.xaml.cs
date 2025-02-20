@@ -16,7 +16,7 @@ namespace SharedWindows
   public partial class X4DataExtractionWindow : Window, INotifyPropertyChanged
   {
     private readonly string X4Executable = "X4.exe";
-    private readonly List<string> NeededFilesMasks = ["maps/xu_ep2_universe/*.xml", "libraries/*.xml", "t/*.xml"];
+    private readonly List<string> NeededFilesMasks = ["maps/xu_ep2_universe/*.xml", "libraries/*.*", "t/*.xml"];
     private string _extractedDataLocationFolder = string.Empty;
     public string ExtractedDataLocationFolder
     {
