@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.1...GalaxyEditor@v0.3.0) (2025-02-20)
+
+
+### Features
+
+* **GalaxyEditor:** enhance JSON serialization for UnifyItemCluster and related classes ([e46ad93](https://github.com/chemodun/X4-UniverseEditor/commit/e46ad93c285518ac8e79780fe03a9b08e213c7d5))
+* **GalaxyEditor:** implement PostInit method for initialization and state management in GalaxyModInfo classes ([d920164](https://github.com/chemodun/X4-UniverseEditor/commit/d9201646989fc83482abeb8ca5ae44a71286d0ba))
+* **GalaxyEditor:** implement UnifyItemCluster class for enhanced cluster management and initialization ([1340ec7](https://github.com/chemodun/X4-UniverseEditor/commit/1340ec7088c32bc6fb30a99d7ec5be804c883892))
+
+
+### Bug Fixes
+
+* **GalaxyUnify:** make GetItem return an UnifyItem and add GetAttribute to return and attribute ... ([943b84c](https://github.com/chemodun/X4-UniverseEditor/commit/943b84c96dc6cdb668a275400c5cb47e609dee19))
+
+
+### Code Refactoring
+
+* **GalaxyEditor:** enhance GalaxyUnifyItemAttribute to support multiple value types and improve state management ([1ed6709](https://github.com/chemodun/X4-UniverseEditor/commit/1ed670946f0a1aa0d60eec72a9620f6fa8a6c37c))
+* **GalaxyEditor:** remove unused using directives from GalaxyUnifyBase and GalaxyUnifyPlanet for cleaner code ([e8091e9](https://github.com/chemodun/X4-UniverseEditor/commit/e8091e99b9ed3a7ea67a081266109e9f14bcadcc))
+* **GalaxyEditor:** rename files for  UnifyItem classes to streamline codebase ([86090a7](https://github.com/chemodun/X4-UniverseEditor/commit/86090a7dab7297944a9a4164d7d08e93b53077f5))
+* **GalaxyEditor:** return back separate lists for attributes and items in GalaxyUnifyItemAttribute ([4e5d7fd](https://github.com/chemodun/X4-UniverseEditor/commit/4e5d7fde48c574327d0ab955e50152b75ba84951))
+* **GalaxyEditor:** simplify JSON read/write methods in GalaxyUnify classes for improved clarity and maintainability ([fe78101](https://github.com/chemodun/X4-UniverseEditor/commit/fe78101742b85b8ab983e0b76ff63f0105ad814e))
+* **GalaxyEditor:** update  GalaxyUnifyItemJsonConverter and GalaxyUnifyItemAttributeConverter ([e6011d2](https://github.com/chemodun/X4-UniverseEditor/commit/e6011d290da4e21bd541c5c5d47e6adccf1fa6c5))
+* **GalaxyEditor:** update GalaxyUnifyItemAttribute and GalaxyUnifyItem to use nullable types for better handling of optional values ([e6011d2](https://github.com/chemodun/X4-UniverseEditor/commit/e6011d290da4e21bd541c5c5d47e6adccf1fa6c5))
+* **GalaxyEditor:** update GalaxyUnifyItemAttribute to support new Attribute type and streamline list handling. There a ValueList can handle as attributes as well an items too ([ee4121d](https://github.com/chemodun/X4-UniverseEditor/commit/ee4121dbb854e3db232202cc011982de36c5f1d0))
+* **GalaxyEditor:** update GetList method to return a list of GalaxyUnifyItemAttribute and introduce GetListOfItems for improved item retrieval ([5304a4f](https://github.com/chemodun/X4-UniverseEditor/commit/5304a4ff1b04ed25c6f2d812d6c31c69c11111a2))
+* **GalaxyUnify:** consolidate attribute setting methods into a single Set method for improved code clarity and maintainability ([943b84c](https://github.com/chemodun/X4-UniverseEditor/commit/943b84c96dc6cdb668a275400c5cb47e609dee19))
+
 ## [0.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.0...GalaxyEditor@v0.2.1) (2025-02-19)
 
 
