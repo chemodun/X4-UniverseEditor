@@ -21,7 +21,8 @@ namespace GalaxyEditor
     Bool,
     Attribute,
     Item,
-    List,
+    ListAttributes,
+    ListItems,
   }
 
   public class GalaxyUnifyItemAttribute
@@ -39,7 +40,8 @@ namespace GalaxyEditor
     public bool? ValueBool { get; set; } = null;
     public GalaxyUnifyItemAttribute? ValueAttribute { get; set; } = null;
     public GalaxyUnifyItem? ValueItem { get; set; } = null;
-    public List<GalaxyUnifyItemAttribute> ValueList { get; set; } = [];
+    public List<GalaxyUnifyItemAttribute> ListAttributes { get; set; } = [];
+    public List<GalaxyUnifyItem> ListItems { get; set; } = [];
     public AttributeState State { get; set; } = AttributeState.None;
 
     public void PostInit()
@@ -64,8 +66,8 @@ namespace GalaxyEditor
         case AttributeType.Item:
           ValueItem?.PostInit();
           break;
-        case AttributeType.List:
-          foreach (GalaxyUnifyItemAttribute item in ValueList)
+        case AttributeType.ListAttributes:
+          foreach (GalaxyUnifyItemAttribute item in ListAttributes)
           {
             item.PostInit();
           }
@@ -124,8 +126,11 @@ namespace GalaxyEditor
                 case AttributeType.Item:
                   attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItem>(ref reader, options);
                   break;
-                case AttributeType.List:
-                  attribute.ValueList = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
+                case AttributeType.ListAttributes:
+                  attribute.ListAttributes = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
+                  break;
+                case AttributeType.ListItems:
+                  attribute.ListItems = JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? [];
                   break;
               }
               break;
@@ -176,9 +181,13 @@ namespace GalaxyEditor
           writer.WritePropertyName(value.Name);
           JsonSerializer.Serialize(writer, value.ValueItem, options);
           break;
-        case AttributeType.List:
+        case AttributeType.ListAttributes:
           writer.WritePropertyName(value.Name);
-          JsonSerializer.Serialize(writer, value.ValueList, options);
+          JsonSerializer.Serialize(writer, value.ListAttributes, options);
+          break;
+        case AttributeType.ListItems:
+          writer.WritePropertyName(value.Name);
+          JsonSerializer.Serialize(writer, value.ListItems, options);
           break;
       }
       writer.WriteEndObject();
@@ -214,7 +223,7 @@ namespace GalaxyEditor
     {
       attribute.State = attribute.State switch
       {
-        AttributeState.None => AttributeState.Set,
+        AttributeState.None => AttributeState.Modified,
         AttributeState.Set => valueIsEqual ? AttributeState.Set : AttributeState.Modified,
         AttributeState.Unset => AttributeState.Modified,
         _ => attribute.State,
@@ -305,10 +314,21 @@ namespace GalaxyEditor
 
     public void Set(string name, List<GalaxyUnifyItemAttribute> value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListAttributes);
       if (attribute != null)
       {
-        attribute.ValueList = value;
+        attribute.ListAttributes = value;
+        PostSetAttribute(attribute, false);
+        OnPropertyChanged(name);
+      }
+    }
+
+    public void Set(string name, List<GalaxyUnifyItem> value)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListItems);
+      if (attribute != null)
+      {
+        attribute.ListItems = value;
         PostSetAttribute(attribute, false);
         OnPropertyChanged(name);
       }
@@ -384,33 +404,33 @@ namespace GalaxyEditor
       return null;
     }
 
-    public List<GalaxyUnifyItemAttribute> GetList(string name)
+    public List<GalaxyUnifyItemAttribute> GetListOfAttributes(string name)
     {
-      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.ListAttributes);
       if (attribute != null)
       {
-        return attribute.ValueList.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
+        return attribute.ListAttributes.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
       }
       return [];
     }
 
     public List<GalaxyUnifyItem> GetListOfItems(string name)
     {
-      List<GalaxyUnifyItemAttribute> list = GetList(name);
-      if (list.Count > 0)
+      GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.ListItems);
+      if (attribute != null)
       {
-        return list.Select(a => a.ValueItem).Where(a => a != null).Cast<GalaxyUnifyItem>().ToList();
+        return attribute.ListItems.Where(a => a.State == AttributeState.Set || a.State == AttributeState.Modified).ToList();
       }
       return [];
     }
 
     public int AddToList(string name, GalaxyUnifyItemAttribute value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListAttributes);
       if (attribute != null)
       {
-        attribute.ValueList.Add(value);
-        value.Index = attribute.ValueList.Count - 1;
+        attribute.ListAttributes.Add(value);
+        value.Index = attribute.ListAttributes.Count - 1;
         OnPropertyChanged(name);
         return value.Index;
       }
@@ -419,19 +439,25 @@ namespace GalaxyEditor
 
     public int AddToList(string name, GalaxyUnifyItem value)
     {
-      GalaxyUnifyItemAttribute newItem = new() { Type = AttributeType.Item, ValueItem = value };
-      value.Index = AddToList(name, newItem);
-      return value.Index;
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListItems);
+      if (attribute != null)
+      {
+        attribute.ListItems.Add(value);
+        value.Index = attribute.ListItems.Count - 1;
+        OnPropertyChanged(name);
+        return value.Index;
+      }
+      return -1;
     }
 
     public void RemoveFromList(string name, GalaxyUnifyItemAttribute value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListAttributes);
       if (attribute != null)
       {
-        if (value.Index < attribute.ValueList.Count && value.Index >= 0)
+        if (value.Index < attribute.ListAttributes.Count && value.Index >= 0)
         {
-          GalaxyUnifyItemAttribute removed = attribute.ValueList[value.Index];
+          GalaxyUnifyItemAttribute removed = attribute.ListAttributes[value.Index];
           removed.State = AttributeState.Unset;
           OnPropertyChanged(name);
         }
@@ -440,17 +466,15 @@ namespace GalaxyEditor
 
     public void RemoveFromList(string name, GalaxyUnifyItem value)
     {
-      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.List);
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListItems);
       if (attribute != null)
       {
-        if (value.Index < attribute.ValueList.Count && value.Index >= 0)
+        if (value.Index < attribute.ListItems.Count && value.Index >= 0)
         {
-          GalaxyUnifyItemAttribute removed = attribute.ValueList[value.Index];
+          GalaxyUnifyItem removed = attribute.ListItems[value.Index];
           removed.State = AttributeState.Unset;
-          value.State = AttributeState.Unset;
           OnPropertyChanged(name);
         }
-        OnPropertyChanged(name);
       }
     }
 

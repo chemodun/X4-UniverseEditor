@@ -23,7 +23,7 @@ namespace GalaxyEditor
         new() { Name = "MusicId", Type = AttributeType.String },
         new() { Name = "SunTextId", Type = AttributeType.Int },
         new() { Name = "EnvironmentTextId", Type = AttributeType.Int },
-        new() { Name = "Planets", Type = AttributeType.List },
+        new() { Name = "Planets", Type = AttributeType.ListAttributes },
       ];
     }
 

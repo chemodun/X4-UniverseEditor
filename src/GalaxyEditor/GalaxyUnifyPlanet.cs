@@ -171,7 +171,7 @@ namespace GalaxyEditor
       : base()
     {
       Attributes.Add(new() { Name = "Class", Type = AttributeType.Int });
-      Attributes.Add(new() { Name = "Moons", Type = AttributeType.List });
+      Attributes.Add(new() { Name = "Moons", Type = AttributeType.ListAttributes });
     }
 
     public void Initialize(Planet planet)
