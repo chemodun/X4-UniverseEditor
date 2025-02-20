@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.8.0...X4DataLoader@v0.9.0) (2025-02-20)
+
+
+### Features
+
+* **Galaxy:** add new DLC entry for mini expansion in Galaxy class ([f9dd9e2](https://github.com/chemodun/X4-UniverseEditor/commit/f9dd9e2c1262e4b6b3fff5aeb29414818a3ec96f))
+
 ## [0.8.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.7.0...X4DataLoader@v0.8.0) (2025-02-19)
 
 
