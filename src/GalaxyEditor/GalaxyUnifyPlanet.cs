@@ -138,12 +138,14 @@ namespace GalaxyEditor
   {
     public override UnifyItemMoon Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      return (UnifyItemMoon)GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+      var item = new UnifyItemMoon();
+      item.Read(ref reader, typeToConvert, options);
+      return item;
     }
 
     public override void Write(Utf8JsonWriter writer, UnifyItemMoon value, JsonSerializerOptions options)
     {
-      GalaxyUnifyItem.JsonWrite(writer, value, options);
+      value.Write(writer, options);
     }
   }
 
@@ -194,12 +196,14 @@ namespace GalaxyEditor
   {
     public override UnifyItemPlanet Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      return (UnifyItemPlanet)GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+      var item = new UnifyItemPlanet();
+      item.Read(ref reader, typeToConvert, options);
+      return item;
     }
 
     public override void Write(Utf8JsonWriter writer, UnifyItemPlanet value, JsonSerializerOptions options)
     {
-      GalaxyUnifyItem.JsonWrite(writer, value, options);
+      value.Write(writer, options);
     }
   }
 }

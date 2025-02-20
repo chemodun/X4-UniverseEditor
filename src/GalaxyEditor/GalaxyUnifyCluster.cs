@@ -122,12 +122,14 @@ namespace GalaxyEditor
   {
     public override UnifyItemCluster Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      return (UnifyItemCluster)GalaxyUnifyItem.JsonRead(ref reader, typeToConvert, options);
+      var item = new UnifyItemCluster();
+      item.Read(ref reader, typeToConvert, options);
+      return item;
     }
 
     public override void Write(Utf8JsonWriter writer, UnifyItemCluster value, JsonSerializerOptions options)
     {
-      GalaxyUnifyItem.JsonWrite(writer, value, options);
+      value.Write(writer, options);
     }
   }
 }
