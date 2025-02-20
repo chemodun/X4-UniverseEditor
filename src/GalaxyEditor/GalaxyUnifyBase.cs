@@ -75,18 +75,14 @@ namespace GalaxyEditor
       }
       State = AttributeState.Set;
     }
-  }
 
-  public class GalaxyUnifyItemAttributeConverter : JsonConverter<GalaxyUnifyItemAttribute>
-  {
-    public override GalaxyUnifyItemAttribute Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      var attribute = new GalaxyUnifyItemAttribute();
       while (reader.Read())
       {
         if (reader.TokenType == JsonTokenType.EndObject)
         {
-          return attribute;
+          return;
         }
 
         if (reader.TokenType == JsonTokenType.PropertyName)
@@ -96,41 +92,41 @@ namespace GalaxyEditor
           switch (propertyName)
           {
             case nameof(GalaxyUnifyItemAttribute.Index):
-              attribute.Index = reader.GetInt32();
+              Index = reader.GetInt32();
               break;
             case nameof(GalaxyUnifyItemAttribute.Type):
-              attribute.Type = (AttributeType)reader.GetInt32();
+              Type = (AttributeType)reader.GetInt32();
               break;
             case nameof(GalaxyUnifyItemAttribute.State):
-              attribute.State = (AttributeState)reader.GetInt32();
+              State = (AttributeState)reader.GetInt32();
               break;
             default:
-              attribute.Name = propertyName;
-              switch (attribute.Type)
+              Name = propertyName;
+              switch (Type)
               {
                 case AttributeType.String:
-                  attribute.ValueString = reader.GetString() ?? string.Empty;
+                  ValueString = reader.GetString() ?? string.Empty;
                   break;
                 case AttributeType.Int:
-                  attribute.ValueInt = reader.GetInt32();
+                  ValueInt = reader.GetInt32();
                   break;
                 case AttributeType.Double:
-                  attribute.ValueDouble = reader.GetDouble();
+                  ValueDouble = reader.GetDouble();
                   break;
                 case AttributeType.Bool:
-                  attribute.ValueBool = reader.GetBoolean();
+                  ValueBool = reader.GetBoolean();
                   break;
                 case AttributeType.Attribute:
-                  attribute.ValueAttribute = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
+                  ValueAttribute = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(ref reader, options);
                   break;
                 case AttributeType.Item:
-                  attribute.ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItem>(ref reader, options);
+                  ValueItem = JsonSerializer.Deserialize<GalaxyUnifyItem>(ref reader, options);
                   break;
                 case AttributeType.ListAttributes:
-                  attribute.ListAttributes = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
+                  ListAttributes = JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? [];
                   break;
                 case AttributeType.ListItems:
-                  attribute.ListItems = JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? [];
+                  ListItems = JsonSerializer.Deserialize<List<GalaxyUnifyItem>>(ref reader, options) ?? [];
                   break;
               }
               break;
@@ -140,57 +136,75 @@ namespace GalaxyEditor
       throw new JsonException("Unable to read GalaxyItemAttribute");
     }
 
-    public override void Write(Utf8JsonWriter writer, GalaxyUnifyItemAttribute value, JsonSerializerOptions options)
+    public void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
     {
-      if (value.State == AttributeState.None || value.State == AttributeState.Set)
+      if (State == AttributeState.None || State == AttributeState.Set)
       {
         return;
       }
       writer.WriteStartObject();
-      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Type), (int)value.Type);
-      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.State), (int)value.State);
-      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Index), value.Index);
-      switch (value.Type)
+      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Type), (int)Type);
+      writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.State), (int)State);
+      if (Index >= 0)
+      {
+        writer.WriteNumber(nameof(GalaxyUnifyItemAttribute.Index), Index);
+      }
+      switch (Type)
       {
         case AttributeType.String:
-          writer.WriteString(value.Name, value.ValueString);
+          writer.WriteString(Name, ValueString);
           break;
         case AttributeType.Int:
-          if (value.ValueInt != null)
+          if (ValueInt != null)
           {
-            writer.WriteNumber(value.Name, value.ValueInt ?? 0);
+            writer.WriteNumber(Name, ValueInt ?? 0);
           }
           break;
         case AttributeType.Double:
-          if (value.ValueDouble != null)
+          if (ValueDouble != null)
           {
-            writer.WriteNumber(value.Name, value.ValueDouble ?? 0);
+            writer.WriteNumber(Name, ValueDouble ?? 0);
           }
           break;
         case AttributeType.Bool:
-          if (value.ValueBool != null)
+          if (ValueBool != null)
           {
-            writer.WriteBoolean(value.Name, value.ValueBool ?? false);
+            writer.WriteBoolean(Name, ValueBool ?? false);
           }
           break;
         case AttributeType.Attribute:
-          writer.WritePropertyName(value.Name);
-          JsonSerializer.Serialize(writer, value.ValueAttribute, options);
+          writer.WritePropertyName(Name);
+          JsonSerializer.Serialize(writer, ValueAttribute, options);
           break;
         case AttributeType.Item:
-          writer.WritePropertyName(value.Name);
-          JsonSerializer.Serialize(writer, value.ValueItem, options);
+          writer.WritePropertyName(Name);
+          JsonSerializer.Serialize(writer, ValueItem, options);
           break;
         case AttributeType.ListAttributes:
-          writer.WritePropertyName(value.Name);
-          JsonSerializer.Serialize(writer, value.ListAttributes, options);
+          writer.WritePropertyName(Name);
+          JsonSerializer.Serialize(writer, ListAttributes, options);
           break;
         case AttributeType.ListItems:
-          writer.WritePropertyName(value.Name);
-          JsonSerializer.Serialize(writer, value.ListItems, options);
+          writer.WritePropertyName(Name);
+          JsonSerializer.Serialize(writer, ListItems, options);
           break;
       }
       writer.WriteEndObject();
+    }
+  }
+
+  public class GalaxyUnifyItemAttributeConverter : JsonConverter<GalaxyUnifyItemAttribute>
+  {
+    public override GalaxyUnifyItemAttribute Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      var attribute = new GalaxyUnifyItemAttribute();
+      attribute.Read(ref reader, typeToConvert, options);
+      return attribute;
+    }
+
+    public override void Write(Utf8JsonWriter writer, GalaxyUnifyItemAttribute value, JsonSerializerOptions options)
+    {
+      value.Write(writer, options);
     }
   }
 
@@ -198,6 +212,7 @@ namespace GalaxyEditor
   {
     public int Index = -1;
     public List<GalaxyUnifyItemAttribute> Attributes = [];
+    public string ItemId = "";
 
     public AttributeState State { get; set; } = AttributeState.None;
     protected Translation? TranslationObject = null;
@@ -217,6 +232,15 @@ namespace GalaxyEditor
         return attribute;
       }
       return null;
+    }
+
+    public void SetModified(string name)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, null);
+      if (attribute != null)
+      {
+        attribute.State = AttributeState.Modified;
+      }
     }
 
     public void PostSetAttribute(GalaxyUnifyItemAttribute attribute, bool valueIsEqual)
@@ -511,6 +535,9 @@ namespace GalaxyEditor
 
           switch (propertyName)
           {
+            case nameof(GalaxyUnifyItem.ItemId):
+              ItemId = reader.GetString() ?? string.Empty;
+              break;
             case nameof(GalaxyUnifyItem.Index):
               Index = reader.GetInt32();
               break;
@@ -527,15 +554,22 @@ namespace GalaxyEditor
       throw new JsonException("Unable to read GalaxyItemInfo");
     }
 
-    public void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+    public virtual void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
     {
       if (State == AttributeState.None || State == AttributeState.Set)
       {
         return;
       }
       writer.WriteStartObject();
+      if (!string.IsNullOrEmpty(ItemId))
+      {
+        writer.WriteString(nameof(GalaxyUnifyItem.ItemId), ItemId);
+      }
+      if (Index >= 0)
+      {
+        writer.WriteNumber(nameof(GalaxyUnifyItem.Index), Index);
+      }
       writer.WriteNumber(nameof(GalaxyUnifyItem.State), (int)State);
-      writer.WriteNumber(nameof(GalaxyUnifyItem.Index), Index);
       writer.WritePropertyName(nameof(GalaxyUnifyItem.Attributes));
       JsonSerializer.Serialize(writer, Attributes, options);
       writer.WriteEndObject();
