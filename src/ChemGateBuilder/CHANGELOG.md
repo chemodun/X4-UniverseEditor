@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.9](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.8...ChemGateBuilder@v0.8.9) (2025-02-20)
+
+
+### Bug Fixes
+
+* **ChemGateBuilder:** remove connection pairs from the mod Description on loading the mod. To fix the mess on writing Description after mod edit ... Closes [#94](https://github.com/chemodun/X4-UniverseEditor/issues/94) ([d5b81d0](https://github.com/chemodun/X4-UniverseEditor/commit/d5b81d03564bf0005e877ca5b76de5daa61e8f6e))
+
+
+### Code Refactoring
+
+* **GalaxyMapWindow:** update event argument names for sector selection clarity ([7bc0afa](https://github.com/chemodun/X4-UniverseEditor/commit/7bc0afa3aee539f7bd48bbc0e42b71f6393e8e1e))
+* **MainWindow:** rename ribbon and tab items for consistency and clarity ([6cb678b](https://github.com/chemodun/X4-UniverseEditor/commit/6cb678bd7d7a6b2368fdb6aea8385d850a382381))
+
 ## [0.8.8](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.7...ChemGateBuilder@v0.8.8) (2025-02-17)
 
 
