@@ -1,13 +1,4 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Security;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows.Forms;
-using Utilities.Logging;
 using X4DataLoader;
-using X4Map;
 
 namespace GalaxyEditor
 {
