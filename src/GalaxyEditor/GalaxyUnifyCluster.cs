@@ -23,7 +23,7 @@ namespace GalaxyEditor
         new("MusicId", AttributeType.String),
         new("SunTextId", AttributeType.Int, true),
         new("EnvironmentTextId", AttributeType.Int, true),
-        new("Planets", AttributeType.ListAttributes),
+        new("Planets", AttributeType.ListItems),
       ];
     }
 
@@ -127,7 +127,12 @@ namespace GalaxyEditor
       get => GetListOfItems("Planets").Cast<UnifyItemPlanet>().ToList();
     }
 
-    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
+    public override void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+      base.Read(ref reader, typeToConvert, options);
+    }
+
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string? type = null)
     {
       if (Cluster == null)
       {
@@ -135,7 +140,7 @@ namespace GalaxyEditor
         SetModified("Y");
         SetModified("Z");
       }
-      base.Write(writer, options, GetType().FullName ?? "");
+      base.Write(writer, options, type ?? "Cluster");
     }
 
     public static UnifyItemCluster? SearchById(List<UnifyItemCluster> clusters, string clusterId)

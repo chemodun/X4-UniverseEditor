@@ -133,9 +133,9 @@ namespace GalaxyEditor
       set { Set("AtmospherePart", value); }
     }
 
-    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string? type = null)
     {
-      base.Write(writer, options, GetType().FullName ?? "");
+      base.Write(writer, options, type ?? "Moon");
     }
   }
 
@@ -196,9 +196,9 @@ namespace GalaxyEditor
       PostInit();
     }
 
-    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string? type = null)
     {
-      base.Write(writer, options, GetType().FullName ?? "");
+      base.Write(writer, options, "Planet");
     }
   }
 
