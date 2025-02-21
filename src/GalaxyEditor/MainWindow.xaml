@@ -370,7 +370,7 @@
                                     SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
                                     ItemsSource="{Binding X4DataVersions}">
                         </ComboBox>
-                        <Label Content="Load Mods Data:" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelInRibbonStyle}"/>
+                        <Label Content="Load other mods Data:" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelInRibbonStyle}"/>
                         <CheckBox Margin="1"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
@@ -378,6 +378,27 @@
                                 Grid.Column="1"
                                 IsChecked="{Binding LoadModsData}"
                                 ToolTip="Load Mods data, not only official DLC's"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Mod related">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Content="Autoload latest mod:" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelInRibbonStyle}"/>
+                        <CheckBox Margin="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                IsChecked="{Binding AutoLoadLatestMod}"
+                                ToolTip="Automatically load the latest mod on startup."/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Map related">

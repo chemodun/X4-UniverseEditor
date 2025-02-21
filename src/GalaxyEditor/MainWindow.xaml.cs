@@ -34,6 +34,7 @@ namespace GalaxyEditor
   public class ModConfig
   {
     public string LatestModPath { get; set; } = "";
+    public bool AutoLoadLatestMod { get; set; } = false;
   }
 
   public class EditConfig
@@ -406,6 +407,21 @@ namespace GalaxyEditor
       }
     }
 
+    private bool _autoLoadLatestMod = false;
+    public bool AutoLoadLatestMod
+    {
+      get => _autoLoadLatestMod;
+      set
+      {
+        if (_autoLoadLatestMod != value)
+        {
+          _autoLoadLatestMod = value;
+          OnPropertyChanged(nameof(AutoLoadLatestMod));
+          SaveConfiguration();
+        }
+      }
+    }
+
     private GalaxyMod? _currentMod;
     public GalaxyMod? CurrentMod
     {
@@ -532,6 +548,7 @@ namespace GalaxyEditor
             X4GameFolder = config.Data.X4GameFolder;
           }
           LoadModsData = config.Data.LoadModsData;
+          AutoLoadLatestMod = config.Mod.AutoLoadLatestMod;
           MapColorsOpacity = config.Map.MapColorsOpacity;
           SectorRadius = config.Map.SectorRadius;
           LogLevel = config.Logging.LogLevel;
@@ -554,7 +571,7 @@ namespace GalaxyEditor
     {
       var config = new AppConfig
       {
-        Mod = new ModConfig { LatestModPath = LatestModPath },
+        Mod = new ModConfig { LatestModPath = LatestModPath, AutoLoadLatestMod = AutoLoadLatestMod },
         Data = new DataConfig
         {
           X4DataExtractedPath = X4DataFolder,
@@ -638,15 +655,9 @@ namespace GalaxyEditor
         new Action(() =>
         {
           GalaxyMapViewer.RefreshGalaxyData();
-          if (LatestModPath != "" && File.Exists(LatestModPath))
+          if (AutoLoadLatestMod && LatestModPath != "" && Directory.Exists(LatestModPath))
           {
-            GalaxyMod mod = new();
-            if (mod.Load(LatestModPath))
-            {
-              CurrentMod = mod;
-              RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
-              StatusBar.SetStatusMessage($"Mod {CurrentMod.Name} from {LatestModPath} loaded successfully!", StatusMessageType.Info);
-            }
+            ButtonLoadMod_Click(this, new RoutedEventArgs(Button.ClickEvent));
           }
         })
       );
@@ -954,7 +965,12 @@ namespace GalaxyEditor
     public void ButtonLoadMod_Click(object sender, RoutedEventArgs e)
     {
       GalaxyMod? mod = new();
-      if (mod.Load(""))
+      string modPath = string.Empty;
+      if (sender == this && AutoLoadLatestMod && !string.IsNullOrEmpty(LatestModPath) && Directory.Exists(LatestModPath))
+      {
+        modPath = LatestModPath;
+      }
+      if (mod.Load(modPath))
       {
         CurrentMod = mod;
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
