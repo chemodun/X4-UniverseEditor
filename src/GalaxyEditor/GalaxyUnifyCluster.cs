@@ -137,6 +137,16 @@ namespace GalaxyEditor
       }
       base.Write(writer, options);
     }
+
+    public static UnifyItemCluster? SearchById(List<UnifyItemCluster> clusters, string clusterId)
+    {
+      return clusters.FirstOrDefault(a => a.ClusterId == clusterId);
+    }
+
+    public static UnifyItemCluster? SearchByPosition(List<UnifyItemCluster> clusters, Position position)
+    {
+      return clusters.FirstOrDefault(a => a.X == position.X && a.Y == position.Y && a.Z == position.Z);
+    }
   }
 
   public class UnifyItemClusterJsonConverter : JsonConverter<UnifyItemCluster>
