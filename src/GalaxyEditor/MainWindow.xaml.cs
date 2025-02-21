@@ -863,13 +863,35 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(_appIcon, GalaxyMapViewer.SelectedMapCluster.Cluster, null, GalaxyData, GalaxyReferences)
+        if (CurrentMod == null)
+        {
+          MessageBox.Show("No mod loaded to edit the cluster!");
+          return;
+        }
+        UnifyItemCluster? cluster = UnifyItemCluster.SearchById(CurrentMod.Clusters, GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? "");
+        ClusterEditWindow clusterEditWindow = new(
+          _appIcon,
+          cluster,
+          GalaxyMapViewer.SelectedMapCluster.Cluster,
+          null,
+          GalaxyData,
+          GalaxyReferences
+        )
         {
           Owner = this,
         };
         if (clusterEditWindow.ShowDialog() == true)
         {
-          MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
+          if (cluster != null)
+          {
+            Log.Debug($"Updating cluster {cluster.Name} ...");
+            cluster.UpdateFrom(clusterEditWindow.Cluster);
+          }
+          else
+          {
+            Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
+            CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
+          }
         }
       }
     }
@@ -886,15 +908,36 @@ namespace GalaxyEditor
     {
       if (GalaxyMapViewer.SelectedMapCluster != null)
       {
-        ClusterEditWindow clusterEditWindow = new(_appIcon, null, GalaxyMapViewer.SelectedMapCluster.Position, GalaxyData, GalaxyReferences)
+        if (CurrentMod == null)
+        {
+          MessageBox.Show("No mod loaded to edit the cluster!");
+          return;
+        }
+        UnifyItemCluster? cluster = UnifyItemCluster.SearchByPosition(CurrentMod.Clusters, GalaxyMapViewer.SelectedMapCluster.Position);
+
+        ClusterEditWindow clusterEditWindow = new(
+          _appIcon,
+          cluster,
+          null,
+          GalaxyMapViewer.SelectedMapCluster.Position,
+          GalaxyData,
+          GalaxyReferences
+        )
         {
           Owner = this,
         };
         if (clusterEditWindow.ShowDialog() == true)
         {
-          MessageBox.Show(
-            $"Action triggered - Add Cluster for Cell [{GalaxyMapViewer.SelectedMapCluster.MapPosition.Column}, {GalaxyMapViewer.SelectedMapCluster.MapPosition.Row}]!"
-          );
+          if (cluster != null)
+          {
+            Log.Debug($"Updating cluster {cluster.Name} ...");
+            cluster.UpdateFrom(clusterEditWindow.Cluster);
+          }
+          else
+          {
+            Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
+            CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
+          }
         }
       }
     }

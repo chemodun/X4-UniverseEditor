@@ -164,6 +164,7 @@ namespace GalaxyEditor
 
     public ClusterEditWindow(
       BitmapImage icon,
+      UnifyItemCluster? unifyCluster,
       Cluster? cluster,
       Position? position,
       Galaxy galaxyData,
@@ -180,8 +181,15 @@ namespace GalaxyEditor
       SystemOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.StarSystems);
       IconOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.ClusterIcons);
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
-      Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
-      Cluster.Initialize(cluster, position);
+      if (unifyCluster != null)
+      {
+        Cluster.UpdateFrom(unifyCluster);
+      }
+      if (cluster != null)
+      {
+        Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
+        Cluster.Initialize(cluster, position);
+      }
       CatalogItemString? systemId = SystemOptions.FirstOrDefault(s => s.Text == Cluster.System);
       if (systemId != null)
       {
@@ -297,12 +305,15 @@ namespace GalaxyEditor
       options.Converters.Add(new UnifyItemPlanetJsonConverter());
       options.Converters.Add(new UnifyItemClusterJsonConverter());
       var jsonString = JsonSerializer.Serialize(Cluster, options);
+      DialogResult = true;
+      Close();
       Log.Debug("ButtonSave_Click");
     }
 
     public void ButtonCancel_Click(object sender, RoutedEventArgs e)
     {
       Log.Debug("ButtonCancel_Click");
+      DialogResult = false;
       Close();
     }
 
