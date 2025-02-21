@@ -10,10 +10,10 @@ namespace GalaxyEditor
     {
       Attributes =
       [
-        new("Name", AttributeType.String),
+        new("Name", AttributeType.String, true, "name"),
         new("NameContent", AttributeType.String),
         new("NameIsUnique", AttributeType.Bool, true),
-        new("NameSuffixId", AttributeType.String),
+        new("NameSuffixId", AttributeType.String, true, "name"),
         new("Geology", AttributeType.Int, true),
         new("Atmosphere", AttributeType.Int, true),
         new("Settlements", AttributeType.Int, true),
