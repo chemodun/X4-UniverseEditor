@@ -677,6 +677,7 @@ namespace GalaxyEditor
               State = (AttributeState)reader.GetInt32();
               break;
             case nameof(GalaxyUnifyItem.Attributes):
+              // List<object> attributes = JsonSerializer.Deserialize<List<object>>(ref reader, options) ?? new List<object>();
               Attributes =
                 JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? new List<GalaxyUnifyItemAttribute>();
               break;
@@ -686,13 +687,14 @@ namespace GalaxyEditor
       throw new JsonException("Unable to read GalaxyItemInfo");
     }
 
-    public virtual void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+    public virtual void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
     {
       if (State == AttributeState.None || State == AttributeState.Set)
       {
         return;
       }
       writer.WriteStartObject();
+      writer.WriteString("$type", type ?? GetType().FullName);
       if (!string.IsNullOrEmpty(ItemId))
       {
         writer.WriteString(nameof(GalaxyUnifyItem.ItemId), ItemId);

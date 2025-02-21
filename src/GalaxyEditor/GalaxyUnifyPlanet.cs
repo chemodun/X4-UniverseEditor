@@ -10,17 +10,17 @@ namespace GalaxyEditor
     {
       Attributes =
       [
-        new() { Name = "Name", Type = AttributeType.String },
-        new() { Name = "NameContent", Type = AttributeType.String },
-        new() { Name = "NameIsUnique", Type = AttributeType.Bool },
-        new() { Name = "NameSuffixId", Type = AttributeType.String },
-        new() { Name = "Geology", Type = AttributeType.Int },
-        new() { Name = "Atmosphere", Type = AttributeType.Int },
-        new() { Name = "Settlements", Type = AttributeType.Int },
-        new() { Name = "Population", Type = AttributeType.Int },
-        new() { Name = "MaxPopulation", Type = AttributeType.Int },
-        new() { Name = "WorldPart", Type = AttributeType.String },
-        new() { Name = "AtmospherePart", Type = AttributeType.String },
+        new("Name", AttributeType.String),
+        new("NameContent", AttributeType.String),
+        new("NameIsUnique", AttributeType.Bool, true),
+        new("NameSuffixId", AttributeType.String),
+        new("Geology", AttributeType.Int, true),
+        new("Atmosphere", AttributeType.Int, true),
+        new("Settlements", AttributeType.Int, true),
+        new("Population", AttributeType.Int, true),
+        new("MaxPopulation", AttributeType.Int),
+        new("WorldPart", AttributeType.String),
+        new("AtmospherePart", AttributeType.String),
       ];
     }
 
@@ -132,6 +132,11 @@ namespace GalaxyEditor
       get => GetString("AtmospherePart") ?? "";
       set { Set("AtmospherePart", value); }
     }
+
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
+    {
+      base.Write(writer, options, GetType().FullName ?? "");
+    }
   }
 
   public class UnifyItemMoonJsonConverter : JsonConverter<UnifyItemMoon>
@@ -170,8 +175,8 @@ namespace GalaxyEditor
     public UnifyItemPlanet()
       : base()
     {
-      Attributes.Add(new() { Name = "Class", Type = AttributeType.Int });
-      Attributes.Add(new() { Name = "Moons", Type = AttributeType.ListAttributes });
+      Attributes.Add(new("Class", AttributeType.Int));
+      Attributes.Add(new("Moons", AttributeType.ListItems));
     }
 
     public void Initialize(Planet planet)
@@ -189,6 +194,11 @@ namespace GalaxyEditor
         AddToList("Moons", moonInfo);
       }
       PostInit();
+    }
+
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
+    {
+      base.Write(writer, options, GetType().FullName ?? "");
     }
   }
 

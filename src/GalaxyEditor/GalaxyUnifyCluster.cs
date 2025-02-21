@@ -12,18 +12,18 @@ namespace GalaxyEditor
     {
       Attributes =
       [
-        new() { Name = "ClusterId", Type = AttributeType.String },
-        new() { Name = "X", Type = AttributeType.Double },
-        new() { Name = "Y", Type = AttributeType.Double },
-        new() { Name = "Z", Type = AttributeType.Double },
-        new() { Name = "Name", Type = AttributeType.String },
-        new() { Name = "Description", Type = AttributeType.String },
-        new() { Name = "System", Type = AttributeType.String },
-        new() { Name = "ImageId", Type = AttributeType.String },
-        new() { Name = "MusicId", Type = AttributeType.String },
-        new() { Name = "SunTextId", Type = AttributeType.Int },
-        new() { Name = "EnvironmentTextId", Type = AttributeType.Int },
-        new() { Name = "Planets", Type = AttributeType.ListAttributes },
+        new("ClusterId", AttributeType.String, true),
+        new("X", AttributeType.Double, true),
+        new("Y", AttributeType.Double, true),
+        new("Z", AttributeType.Double, true),
+        new("Name", AttributeType.String, true),
+        new("Description", AttributeType.String, true),
+        new("System", AttributeType.String),
+        new("ImageId", AttributeType.String),
+        new("MusicId", AttributeType.String),
+        new("SunTextId", AttributeType.Int, true),
+        new("EnvironmentTextId", AttributeType.Int, true),
+        new("Planets", AttributeType.ListAttributes),
       ];
     }
 
@@ -127,7 +127,7 @@ namespace GalaxyEditor
       get => GetListOfItems("Planets").Cast<UnifyItemPlanet>().ToList();
     }
 
-    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
     {
       if (Cluster == null)
       {
@@ -135,7 +135,7 @@ namespace GalaxyEditor
         SetModified("Y");
         SetModified("Z");
       }
-      base.Write(writer, options);
+      base.Write(writer, options, GetType().FullName ?? "");
     }
 
     public static UnifyItemCluster? SearchById(List<UnifyItemCluster> clusters, string clusterId)
