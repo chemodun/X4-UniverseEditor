@@ -25,11 +25,13 @@ namespace GalaxyEditor
     ListItems,
   }
 
-  public class GalaxyUnifyItemAttribute
+  public class GalaxyUnifyItemAttribute(string name, AttributeType type, bool isMandatory = false)
   {
-    public AttributeType Type { get; set; } = AttributeType.String;
+    public AttributeType Type { get; set; } = type;
+    public AttributeState State { get; set; } = AttributeState.None;
     public int Index { get; set; } = -1;
-    public string Name { get; set; } = "";
+    public bool IsMandatory { get; set; } = isMandatory;
+    public string Name { get; set; } = name;
     private string? _valueString = null;
     private int? _valueInt = null;
     private double? _valueDouble = null;
@@ -42,7 +44,6 @@ namespace GalaxyEditor
     public GalaxyUnifyItem? ValueItem { get; set; } = null;
     public List<GalaxyUnifyItemAttribute> ListAttributes { get; set; } = [];
     public List<GalaxyUnifyItem> ListItems { get; set; } = [];
-    public AttributeState State { get; set; } = AttributeState.None;
 
     public void PostInit()
     {
@@ -112,10 +113,16 @@ namespace GalaxyEditor
           }
           break;
         case AttributeType.Attribute:
-          ValueAttribute?.UpdateFrom(other.ValueAttribute ?? new GalaxyUnifyItemAttribute());
+          if (ValueAttribute != null && other.ValueAttribute != null)
+          {
+            ValueAttribute.UpdateFrom(other.ValueAttribute);
+          }
           break;
         case AttributeType.Item:
-          ValueItem?.UpdateFrom(other.ValueItem ?? new GalaxyUnifyItem());
+          if (ValueItem != null && other.ValueItem != null)
+          {
+            ValueItem?.UpdateFrom(other.ValueItem);
+          }
           break;
         case AttributeType.ListAttributes:
           for (int i = 0; i < ListAttributes.Count; i++)
@@ -129,7 +136,12 @@ namespace GalaxyEditor
           }
           for (int i = ListAttributes.Count; i < other.ListAttributes.Count; i++)
           {
-            GalaxyUnifyItemAttribute attribute = new GalaxyUnifyItemAttribute();
+            GalaxyUnifyItemAttribute otherAttribute = other.ListAttributes[i];
+            GalaxyUnifyItemAttribute attribute = new GalaxyUnifyItemAttribute(
+              otherAttribute.Name,
+              otherAttribute.Type,
+              otherAttribute.IsMandatory
+            );
             attribute.UpdateFrom(other.ListAttributes[i]);
             ListAttributes.Add(attribute);
           }
@@ -275,7 +287,7 @@ namespace GalaxyEditor
   {
     public override GalaxyUnifyItemAttribute Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      var attribute = new GalaxyUnifyItemAttribute();
+      var attribute = new GalaxyUnifyItemAttribute("", AttributeType.String);
       attribute.Read(ref reader, typeToConvert, options);
       return attribute;
     }
