@@ -25,12 +25,13 @@ namespace GalaxyEditor
     ListItems,
   }
 
-  public class GalaxyUnifyItemAttribute(string name, AttributeType type, bool isMandatory = false)
+  public class GalaxyUnifyItemAttribute(string name, AttributeType type, bool isMandatory = false, string group = "")
   {
     public AttributeType Type { get; set; } = type;
     public AttributeState State { get; set; } = AttributeState.None;
     public int Index { get; set; } = -1;
     public bool IsMandatory { get; set; } = isMandatory;
+    public string Group { get; set; } = group;
     public string Name { get; set; } = name;
     private string? _valueString = null;
     private int? _valueInt = null;
@@ -83,9 +84,34 @@ namespace GalaxyEditor
       State = AttributeState.Set;
     }
 
+    public bool IsHasValue()
+    {
+      switch (Type)
+      {
+        case AttributeType.String:
+          return !string.IsNullOrEmpty(ValueString);
+        case AttributeType.Int:
+          return ValueInt != null;
+        case AttributeType.Double:
+          return ValueDouble != null;
+        case AttributeType.Bool:
+          return ValueBool != null;
+        case AttributeType.Attribute:
+          return ValueAttribute != null;
+        case AttributeType.Item:
+          return ValueItem != null;
+        case AttributeType.ListAttributes:
+          return ListAttributes.Count > 0;
+        case AttributeType.ListItems:
+          return ListItems.Count > 0;
+      }
+      return false;
+    }
+
     public void UpdateFrom(GalaxyUnifyItemAttribute other)
     {
       State = other.State;
+      Index = other.Index;
       switch (Type)
       {
         case AttributeType.String:
@@ -140,7 +166,8 @@ namespace GalaxyEditor
             GalaxyUnifyItemAttribute attribute = new GalaxyUnifyItemAttribute(
               otherAttribute.Name,
               otherAttribute.Type,
-              otherAttribute.IsMandatory
+              otherAttribute.IsMandatory,
+              otherAttribute.Group
             );
             attribute.UpdateFrom(other.ListAttributes[i]);
             ListAttributes.Add(attribute);
@@ -652,7 +679,12 @@ namespace GalaxyEditor
         GalaxyUnifyItemAttribute? attribute = PreSetAttribute(otherAttribute.Name, otherAttribute.Type);
         if (attribute == null)
         {
-          attribute = new GalaxyUnifyItemAttribute(otherAttribute.Name, otherAttribute.Type, otherAttribute.IsMandatory);
+          attribute = new GalaxyUnifyItemAttribute(
+            otherAttribute.Name,
+            otherAttribute.Type,
+            otherAttribute.IsMandatory,
+            otherAttribute.Group
+          );
           Attributes.Add(attribute);
         }
         attribute.UpdateFrom(otherAttribute);
@@ -695,6 +727,26 @@ namespace GalaxyEditor
         }
         return null;
       }
+    }
+
+    public bool IsReady()
+    {
+      List<GalaxyUnifyItemAttribute> mandatoryAttributes = Attributes.Where(a => a.IsMandatory).ToList();
+      List<string> groups = mandatoryAttributes.Select(a => a.Group).Distinct().ToList().Where(g => !string.IsNullOrEmpty(g)).ToList();
+      foreach (string group in groups)
+      {
+        List<GalaxyUnifyItemAttribute> groupAttributes = mandatoryAttributes.Where(a => a.Group == group).ToList();
+        if (!groupAttributes.Any(a => a.IsHasValue()))
+        {
+          return false;
+        }
+      }
+      List<GalaxyUnifyItemAttribute> noGroupAttributes = mandatoryAttributes.Where(a => a.Group == "").ToList();
+      if (noGroupAttributes.All(a => a.IsHasValue()))
+      {
+        return true;
+      }
+      return false;
     }
 
     public virtual void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
