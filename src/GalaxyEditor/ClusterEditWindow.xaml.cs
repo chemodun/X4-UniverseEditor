@@ -320,7 +320,7 @@ namespace GalaxyEditor
       options.Converters.Add(new UnifyItemPlanetJsonConverter());
       options.Converters.Add(new UnifyItemClusterJsonConverter());
       var jsonString = JsonSerializer.Serialize(Cluster, options);
-      var deserializedCluster = JsonSerializer.Deserialize<GalaxyUnifyItem>(jsonString, options);
+      var deserializedCluster = JsonSerializer.Deserialize<UnifyItemCluster>(jsonString, options);
       DialogResult = true;
       Close();
       Log.Debug("ButtonSave_Click");
