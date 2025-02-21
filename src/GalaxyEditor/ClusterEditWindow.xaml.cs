@@ -154,6 +154,7 @@ namespace GalaxyEditor
 
     public UnifyItemCluster Cluster { get; set; } = new();
     public bool IsChanged { get; set; } = false;
+    public bool IsReady { get; set; } = false;
     public bool IsNew { get; set; } = false;
     public ObservableCollection<CatalogItemWithIntId> SunOptions { get; } = [];
     public ObservableCollection<CatalogItemWithIntId> EnvironmentOptions { get; } = [];
@@ -182,7 +183,6 @@ namespace GalaxyEditor
       SystemOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.StarSystems);
       IconOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.ClusterIcons);
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
-      Cluster.PropertyChanged += Cluster_PropertyChanged;
       if (unifyCluster != null)
       {
         Cluster.UpdateFrom(unifyCluster);
@@ -221,6 +221,7 @@ namespace GalaxyEditor
       }
       FillPlanets();
       FillMoons();
+      Cluster.PropertyChanged += Cluster_PropertyChanged;
     }
 
     public void FillPlanets()
@@ -262,6 +263,20 @@ namespace GalaxyEditor
       {
         IsChanged = isChanged;
         OnPropertyChanged(nameof(IsChanged));
+      }
+      if (IsChanged)
+      {
+        bool isReady = Cluster.IsReady();
+        if (IsReady != isReady)
+        {
+          IsReady = isReady;
+          OnPropertyChanged(nameof(IsReady));
+        }
+      }
+      else
+      {
+        IsReady = false;
+        OnPropertyChanged(nameof(IsReady));
       }
       OnPropertyChanged(nameof(Cluster) + "." + e.PropertyName);
     }

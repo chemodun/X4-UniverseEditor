@@ -154,7 +154,7 @@
         </GroupBox> <!-- Added this closing tag for GroupBox -->
         <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Cancel" Click="ButtonCancel_Click" Style="{StaticResource ButtonStyle}"/>
-            <Button Content="Save" Click="ButtonSave_Click" Style="{StaticResource ButtonStyle}" IsEnabled="{Binding IsChanged}"/>
+            <Button Content="Save" Click="ButtonSave_Click" Style="{StaticResource ButtonStyle}" IsEnabled="{Binding IsReady}"/>
         </StackPanel> <!-- Added closing tag for StackPanel -->
     </Grid>
 </Window>
