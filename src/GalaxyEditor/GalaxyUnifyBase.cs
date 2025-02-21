@@ -72,8 +72,86 @@ namespace GalaxyEditor
             item.PostInit();
           }
           break;
+        case AttributeType.ListItems:
+          foreach (GalaxyUnifyItem item in ListItems)
+          {
+            item.PostInit();
+          }
+          break;
       }
       State = AttributeState.Set;
+    }
+
+    public void UpdateFrom(GalaxyUnifyItemAttribute other)
+    {
+      State = other.State;
+      switch (Type)
+      {
+        case AttributeType.String:
+          if (ValueString != other.ValueString)
+          {
+            ValueString = other.ValueString;
+          }
+          break;
+        case AttributeType.Int:
+          if (ValueInt != other.ValueInt)
+          {
+            ValueInt = other.ValueInt;
+          }
+          break;
+        case AttributeType.Double:
+          if (ValueDouble != other.ValueDouble)
+          {
+            ValueDouble = other.ValueDouble;
+          }
+          break;
+        case AttributeType.Bool:
+          if (ValueBool != other.ValueBool)
+          {
+            ValueBool = other.ValueBool;
+          }
+          break;
+        case AttributeType.Attribute:
+          ValueAttribute?.UpdateFrom(other.ValueAttribute ?? new GalaxyUnifyItemAttribute());
+          break;
+        case AttributeType.Item:
+          ValueItem?.UpdateFrom(other.ValueItem ?? new GalaxyUnifyItem());
+          break;
+        case AttributeType.ListAttributes:
+          for (int i = 0; i < ListAttributes.Count; i++)
+          {
+            GalaxyUnifyItemAttribute attribute = ListAttributes[i];
+            GalaxyUnifyItemAttribute? otherAttribute = other.ListAttributes.Find(a => a.Index == attribute.Index);
+            if (otherAttribute != null)
+            {
+              attribute.UpdateFrom(otherAttribute);
+            }
+          }
+          for (int i = ListAttributes.Count; i < other.ListAttributes.Count; i++)
+          {
+            GalaxyUnifyItemAttribute attribute = new GalaxyUnifyItemAttribute();
+            attribute.UpdateFrom(other.ListAttributes[i]);
+            ListAttributes.Add(attribute);
+          }
+          break;
+        case AttributeType.ListItems:
+          for (int i = 0; i < ListItems.Count; i++)
+          {
+            GalaxyUnifyItem item = ListItems[i];
+            GalaxyUnifyItem? otherItem = other.ListItems.Find(a => a.Index == item.Index);
+            if (otherItem != null)
+            {
+              item.UpdateFrom(otherItem);
+            }
+          }
+          for (int i = ListItems.Count; i < other.ListItems.Count; i++)
+          {
+            GalaxyUnifyItem item = new GalaxyUnifyItem();
+            item.UpdateFrom(other.ListItems[i]);
+            ListItems.Add(item);
+          }
+          break;
+      }
     }
 
     public void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -502,12 +580,54 @@ namespace GalaxyEditor
       }
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged = delegate { };
-
-    protected virtual void OnPropertyChanged(string propertyName)
+    public void UpdateInList(string name, GalaxyUnifyItemAttribute value)
     {
-      State = AttributeState.Modified;
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListAttributes);
+      if (attribute != null)
+      {
+        if (value.Index < attribute.ListAttributes.Count && value.Index >= 0)
+        {
+          GalaxyUnifyItemAttribute updated = attribute.ListAttributes[value.Index];
+          updated.UpdateFrom(value);
+          OnPropertyChanged(name);
+        }
+      }
+    }
+
+    public void UpdateInList(string name, GalaxyUnifyItem value)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, AttributeType.ListItems);
+      if (attribute != null)
+      {
+        if (value.Index < attribute.ListItems.Count && value.Index >= 0)
+        {
+          GalaxyUnifyItem updated = attribute.ListItems[value.Index];
+          updated.UpdateFrom(value);
+          OnPropertyChanged(name);
+        }
+      }
+    }
+
+    public void UpdateFrom(GalaxyUnifyItem other)
+    {
+      if (State == AttributeState.Set || State == AttributeState.None)
+      {
+        return;
+      }
+      State = other.State;
+      ItemId = other.ItemId;
+      Index = other.Index;
+      foreach (
+        GalaxyUnifyItemAttribute attribute in Attributes.Where(a => a.State == AttributeState.Unset || a.State == AttributeState.Modified)
+      )
+      {
+        GalaxyUnifyItemAttribute? otherAttribute = other.PreSetAttribute(attribute.Name, attribute.Type);
+        if (otherAttribute != null)
+        {
+          attribute.UpdateFrom(otherAttribute);
+        }
+      }
+      throw new JsonException("Unable to read GalaxyItemInfo");
     }
 
     public void PostInit()
@@ -573,6 +693,14 @@ namespace GalaxyEditor
       writer.WritePropertyName(nameof(GalaxyUnifyItem.Attributes));
       JsonSerializer.Serialize(writer, Attributes, options);
       writer.WriteEndObject();
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged = delegate { };
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+      State = AttributeState.Modified;
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
   }
 
