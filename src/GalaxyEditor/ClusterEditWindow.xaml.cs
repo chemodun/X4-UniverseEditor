@@ -153,7 +153,8 @@ namespace GalaxyEditor
     }
 
     public UnifyItemCluster Cluster { get; set; } = new();
-
+    public bool IsChanged { get; set; } = false;
+    public bool IsNew { get; set; } = false;
     public ObservableCollection<CatalogItemWithIntId> SunOptions { get; } = [];
     public ObservableCollection<CatalogItemWithIntId> EnvironmentOptions { get; } = [];
     public ObservableCollection<CatalogItemString> SystemOptions { get; } = [];
@@ -181,6 +182,7 @@ namespace GalaxyEditor
       SystemOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.StarSystems);
       IconOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.ClusterIcons);
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
+      Cluster.PropertyChanged += Cluster_PropertyChanged;
       if (unifyCluster != null)
       {
         Cluster.UpdateFrom(unifyCluster);
@@ -189,6 +191,11 @@ namespace GalaxyEditor
       {
         Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
         Cluster.Initialize(cluster, position);
+      }
+      else
+      {
+        IsNew = true;
+        OnPropertyChanged(nameof(IsNew));
       }
       CatalogItemString? systemId = SystemOptions.FirstOrDefault(s => s.Text == Cluster.System);
       if (systemId != null)
@@ -249,6 +256,17 @@ namespace GalaxyEditor
       {
         SelectedMoon = Moons.First();
       }
+    }
+
+    private void Cluster_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+      bool isChanged = Cluster.State != AttributeState.Set;
+      if (IsChanged != isChanged)
+      {
+        IsChanged = isChanged;
+        OnPropertyChanged(nameof(IsChanged));
+      }
+      OnPropertyChanged(nameof(Cluster) + "." + e.PropertyName);
     }
 
     public void ButtonAddSystem_Click(object sender, RoutedEventArgs e)
