@@ -185,6 +185,8 @@ namespace GalaxyEditor
       }
     }
 
+    public List<UnifyItemCluster> Clusters { get; set; } = [];
+
     private void OnDLCListChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
       Save();
