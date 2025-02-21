@@ -159,7 +159,7 @@ namespace GalaxyEditor
           for (int i = ListItems.Count; i < other.ListItems.Count; i++)
           {
             GalaxyUnifyItem item = new GalaxyUnifyItem();
-            item.UpdateFrom(other.ListItems[i]);
+            item.CopyFrom(other.ListItems[i]);
             ListItems.Add(item);
           }
           break;
@@ -307,6 +307,7 @@ namespace GalaxyEditor
     public AttributeState State { get; set; } = AttributeState.None;
     protected Translation? TranslationObject = null;
     protected GalaxyReferencesHolder? GalaxyReferences;
+    public static readonly Dictionary<string, Type> TypeMappings = new() { { "Item", typeof(GalaxyUnifyItem) } };
 
     public void Connect(Translation translation, GalaxyReferencesHolder galaxyReferences)
     {
@@ -639,7 +640,23 @@ namespace GalaxyEditor
           attribute.UpdateFrom(otherAttribute);
         }
       }
-      throw new JsonException("Unable to read GalaxyItemInfo");
+    }
+
+    public void CopyFrom(GalaxyUnifyItem other)
+    {
+      State = other.State;
+      ItemId = other.ItemId;
+      Index = other.Index;
+      foreach (GalaxyUnifyItemAttribute otherAttribute in other.Attributes)
+      {
+        GalaxyUnifyItemAttribute? attribute = PreSetAttribute(otherAttribute.Name, otherAttribute.Type);
+        if (attribute == null)
+        {
+          attribute = new GalaxyUnifyItemAttribute(otherAttribute.Name, otherAttribute.Type, otherAttribute.IsMandatory);
+          Attributes.Add(attribute);
+        }
+        attribute.UpdateFrom(otherAttribute);
+      }
     }
 
     public void PostInit()
@@ -651,7 +668,36 @@ namespace GalaxyEditor
       State = AttributeState.Set;
     }
 
-    public void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public static GalaxyUnifyItem? ReadByType(
+      ref Utf8JsonReader reader,
+      Type typeToConvert,
+      JsonSerializerOptions options,
+      Dictionary<string, Type> typeMapping
+    )
+    {
+      using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
+      {
+        JsonElement root = doc.RootElement;
+
+        if (root.TryGetProperty("$type", out JsonElement typeElement))
+        {
+          string? typeName = typeElement.GetString();
+          if (
+            typeName != null
+            && GalaxyUnifyItem.TypeMappings.TryGetValue(typeName, out Type? targetType)
+            && targetType != null
+            && targetType != typeToConvert
+          )
+          {
+            GalaxyUnifyItem? result = JsonSerializer.Deserialize(root.GetRawText(), targetType, options) as GalaxyUnifyItem;
+            return result;
+          }
+        }
+        return null;
+      }
+    }
+
+    public virtual void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
       while (reader.Read())
       {
@@ -677,9 +723,23 @@ namespace GalaxyEditor
               State = (AttributeState)reader.GetInt32();
               break;
             case nameof(GalaxyUnifyItem.Attributes):
-              // List<object> attributes = JsonSerializer.Deserialize<List<object>>(ref reader, options) ?? new List<object>();
-              Attributes =
-                JsonSerializer.Deserialize<List<GalaxyUnifyItemAttribute>>(ref reader, options) ?? new List<GalaxyUnifyItemAttribute>();
+              List<object> attributes = JsonSerializer.Deserialize<List<object>>(ref reader, options) ?? new List<object>();
+              foreach (object attribute in attributes)
+              {
+                string? attributeString = attribute.ToString();
+                if (!string.IsNullOrEmpty(attributeString))
+                {
+                  GalaxyUnifyItemAttribute? itemAttribute = JsonSerializer.Deserialize<GalaxyUnifyItemAttribute>(attributeString, options);
+                  if (itemAttribute != null)
+                  {
+                    GalaxyUnifyItemAttribute? attributeExisting = Attributes.Find(a => a.Name == itemAttribute.Name) ?? itemAttribute;
+                    if (attributeExisting != null)
+                    {
+                      attributeExisting.UpdateFrom(itemAttribute);
+                    }
+                  }
+                }
+              }
               break;
           }
         }
@@ -687,14 +747,14 @@ namespace GalaxyEditor
       throw new JsonException("Unable to read GalaxyItemInfo");
     }
 
-    public virtual void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string type = "")
+    public virtual void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string? type = null)
     {
       if (State == AttributeState.None || State == AttributeState.Set)
       {
         return;
       }
       writer.WriteStartObject();
-      writer.WriteString("$type", type ?? GetType().FullName);
+      writer.WriteString("$type", type ?? "Item");
       if (!string.IsNullOrEmpty(ItemId))
       {
         writer.WriteString(nameof(GalaxyUnifyItem.ItemId), ItemId);
@@ -720,11 +780,35 @@ namespace GalaxyEditor
 
   public class GalaxyUnifyItemJsonConverter : JsonConverter<GalaxyUnifyItem>
   {
+    private static readonly Dictionary<string, Type> TypeMappings = new()
+    {
+      { "Moon", typeof(UnifyItemMoon) },
+      { "Planet", typeof(UnifyItemPlanet) },
+      { "Cluster", typeof(UnifyItemCluster) },
+    };
+
     public override GalaxyUnifyItem Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-      var item = new GalaxyUnifyItem();
-      item.Read(ref reader, typeToConvert, options);
-      return item;
+      GalaxyUnifyItem? result = null;
+      using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
+      {
+        JsonElement root = doc.RootElement;
+
+        if (root.TryGetProperty("$type", out JsonElement typeElement))
+        {
+          string typeName = typeElement.GetString() ?? throw new JsonException("Type name is null");
+          if (TypeMappings.TryGetValue(typeName, out Type? targetType) && targetType != null)
+          {
+            result = (GalaxyUnifyItem)JsonSerializer.Deserialize(root.GetRawText(), targetType, options)!;
+          }
+        }
+      }
+      if (result == null)
+      {
+        result = new GalaxyUnifyItem();
+        result.Read(ref reader, typeToConvert, options);
+      }
+      return result;
     }
 
     public override void Write(Utf8JsonWriter writer, GalaxyUnifyItem value, JsonSerializerOptions options)
