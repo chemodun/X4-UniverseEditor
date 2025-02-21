@@ -187,12 +187,9 @@ namespace GalaxyEditor
       {
         Cluster.UpdateFrom(unifyCluster);
       }
-      if (cluster != null)
-      {
-        Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
-        Cluster.Initialize(cluster, position);
-      }
-      else
+      Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
+      Cluster.Initialize(cluster, position);
+      if (cluster == null)
       {
         IsNew = true;
         OnPropertyChanged(nameof(IsNew));
@@ -323,6 +320,7 @@ namespace GalaxyEditor
       options.Converters.Add(new UnifyItemPlanetJsonConverter());
       options.Converters.Add(new UnifyItemClusterJsonConverter());
       var jsonString = JsonSerializer.Serialize(Cluster, options);
+      var deserializedCluster = JsonSerializer.Deserialize<GalaxyUnifyItem>(jsonString, options);
       DialogResult = true;
       Close();
       Log.Debug("ButtonSave_Click");
