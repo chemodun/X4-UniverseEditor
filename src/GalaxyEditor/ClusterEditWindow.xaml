@@ -65,15 +65,15 @@
                 <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterId, Mode=TwoWay}" IsEnabled="{Binding IsNew}"/>
                 <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Name:</Label>
                 <TextBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterName, Mode=TwoWay}"/>
-                <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">System Id:</Label>
-                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text"/>
-                <Button Grid.Row="1" Grid.Column="2" Content="New System Id" Click="ButtonAddSystem_Click" Style="{StaticResource ButtonStyle}"/>
-                <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Icon:</Label>
-                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding IconOptions}" SelectedItem="{Binding IconId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text"/>
-                <Button Grid.Row="1" Grid.Column="5" Content="New Icon" Click="ButtonAddIcon_Click" Style="{StaticResource ButtonStyle}"/>
-                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelStyle}">Music:</Label>
-                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding MusicId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text"/>
-                <Button Grid.Row="2" Grid.Column="2" Content="New Music" Click="ButtonAddMusic_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">Icon:</Label>
+                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding IconOptions}" SelectedItem="{Binding IconId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text"/>
+                <Button Grid.Row="1" Grid.Column="2" Content="New Icon" Click="ButtonAddIcon_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Music:</Label>
+                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding MusicId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text"/>
+                <Button Grid.Row="1" Grid.Column="5" Content="New Music" Click="ButtonAddMusic_Click" Style="{StaticResource ButtonStyle}"/>
+                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelStyle}">System Id:</Label>
+                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text"/>
+                <Button Grid.Row="2" Grid.Column="2" Content="New System Id" Click="ButtonAddSystem_Click" Style="{StaticResource ButtonStyle}"/>
                 <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelStyle}">Description:</Label>
                 <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Style="{StaticResource TextBoxStyle}" Text="{Binding Description, Mode=TwoWay}" Height="80" MaxWidth="800" AcceptsReturn="True" TextWrapping="Wrap"/>
             </Grid>
