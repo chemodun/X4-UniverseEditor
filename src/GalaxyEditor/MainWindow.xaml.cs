@@ -879,24 +879,18 @@ namespace GalaxyEditor
           MessageBox.Show("No mod loaded to edit the cluster!");
           return;
         }
-        UnifyItemCluster? cluster = UnifyItemCluster.SearchById(CurrentMod.Clusters, GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? "");
-        ClusterEditWindow clusterEditWindow = new(
-          _appIcon,
-          cluster,
-          GalaxyMapViewer.SelectedMapCluster.Cluster,
-          null,
-          GalaxyData,
-          GalaxyReferences
-        )
-        {
-          Owner = this,
-        };
+        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(
+          CurrentMod.Clusters,
+          GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? ""
+        );
+        Cluster? cluster = GalaxyData.GetClusterById(GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? "");
+        ClusterEditWindow clusterEditWindow = new(_appIcon, unifyCluster, cluster, null, GalaxyData, GalaxyReferences) { Owner = this };
         if (clusterEditWindow.ShowDialog() == true)
         {
-          if (cluster != null)
+          if (unifyCluster != null)
           {
-            Log.Debug($"Updating cluster {cluster.Name} ...");
-            cluster.UpdateFrom(clusterEditWindow.Cluster);
+            Log.Debug($"Updating cluster {unifyCluster.Name} ...");
+            unifyCluster.UpdateFrom(clusterEditWindow.Cluster);
           }
           else
           {
@@ -948,6 +942,7 @@ namespace GalaxyEditor
           {
             Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
             CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
+            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
           }
         }
       }
