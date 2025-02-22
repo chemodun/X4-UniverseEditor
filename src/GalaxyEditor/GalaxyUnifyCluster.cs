@@ -7,6 +7,7 @@ namespace GalaxyEditor
   public class UnifyItemCluster : GalaxyUnifyItem
   {
     protected Cluster? Cluster = null;
+    protected bool FromEmptyCell = false;
 
     public UnifyItemCluster()
     {
@@ -59,6 +60,7 @@ namespace GalaxyEditor
         Set("X", position.X);
         Set("Y", position.Y);
         Set("Z", position.Z);
+        FromEmptyCell = true;
       }
       PostInit();
     }
@@ -130,7 +132,7 @@ namespace GalaxyEditor
     public Cluster GetCluster()
     {
       Cluster ??= new Cluster(ClusterId + "_macro") { Source = "New" };
-      if (IsModified("X") || IsModified("Y") || IsModified("Z"))
+      if (IsModified("X") || IsModified("Y") || IsModified("Z") || FromEmptyCell)
         Cluster.Position = new Position(X, Y, Z);
       if (IsModified("Name"))
         Cluster.Name = Name;
