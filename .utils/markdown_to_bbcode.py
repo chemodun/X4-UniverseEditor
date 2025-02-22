@@ -97,12 +97,13 @@ def convert_markdown_to_bbcode(markdown_text, repo_name=None, bbcode_type='egoso
     def replace_block_code(match):
         lang = match.group(1) if match.group(1) else ''
         code = match.group(2)
+        indent = match.group(3)
         if bbcode_type != 'nexus' and lang:
-            return f"[code={lang}]\n{code}\n[/code]"
+            return f"[code={lang}]\n{code}\n{indent}[/code]"
         else:
-            return f"[code]\n{code}\n[/code]"
+            return f"[code]\n{code}\n{indent}[/code]"
 
-    bbcode_text = re.sub(r'```(\w+)?\n([\s\S]*?)\n```', replace_block_code, bbcode_text)
+    bbcode_text = re.sub(r'```(\w+)?\n([\s\S]*?)\n(\s*)```', replace_block_code, bbcode_text)
 
     # 7. Links
     # Convert [text](url) to [url=url]text[/url]
