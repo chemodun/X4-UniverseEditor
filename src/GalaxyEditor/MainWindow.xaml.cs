@@ -788,6 +788,10 @@ namespace GalaxyEditor
 
     public void HexagonContextMenu(Sector? sector, Cluster? cluster, GalaxyMapCluster? cell)
     {
+      if (CurrentMod == null)
+      {
+        return;
+      }
       System.Windows.Forms.ContextMenuStrip contextMenu = new System.Windows.Forms.ContextMenuStrip();
       System.Windows.Forms.ToolStripMenuItem menuItem;
       if (sector != null)
@@ -821,13 +825,16 @@ namespace GalaxyEditor
             Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold),
           }
         );
-        contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
-        menuItem = new System.Windows.Forms.ToolStripMenuItem("Edit");
-        menuItem.Click += EditCluster_Click;
-        contextMenu.Items.Add(menuItem);
-        menuItem = new System.Windows.Forms.ToolStripMenuItem("Delete");
-        menuItem.Click += DeleteCluster_Click;
-        contextMenu.Items.Add(menuItem);
+        if (cluster.Source == "New")
+        {
+          contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+          menuItem = new System.Windows.Forms.ToolStripMenuItem("Edit");
+          menuItem.Click += EditCluster_Click;
+          contextMenu.Items.Add(menuItem);
+          menuItem = new System.Windows.Forms.ToolStripMenuItem("Delete");
+          menuItem.Click += DeleteCluster_Click;
+          contextMenu.Items.Add(menuItem);
+        }
         contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menuItem = new System.Windows.Forms.ToolStripMenuItem("Add Sector");
         menuItem.Click += AddCluster_Click;
@@ -891,11 +898,13 @@ namespace GalaxyEditor
           {
             Log.Debug($"Updating cluster {unifyCluster.Name} ...");
             unifyCluster.UpdateFrom(clusterEditWindow.Cluster);
+            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, unifyCluster.GetCluster());
           }
           else
           {
             Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
             CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
+            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
           }
         }
       }
@@ -903,9 +912,27 @@ namespace GalaxyEditor
 
     public void DeleteCluster_Click(object? sender, EventArgs e)
     {
-      if (GalaxyMapViewer.SelectedMapCluster != null)
+      if (CurrentMod != null && GalaxyMapViewer.SelectedMapCluster != null)
       {
-        MessageBox.Show($"Action triggered - Delete for {GalaxyMapViewer.SelectedMapCluster.Cluster?.Name}!");
+        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(
+          CurrentMod.Clusters,
+          GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? ""
+        );
+        if (unifyCluster != null)
+        {
+          MessageBoxResult result = MessageBox.Show(
+            $"Are you sure you want to delete the cluster {unifyCluster.Name}?",
+            "Confirm Delete",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning
+          );
+          if (result == MessageBoxResult.Yes)
+          {
+            Log.Debug($"Deleting cluster {unifyCluster.Name} ...");
+            CurrentMod.Clusters.Remove(unifyCluster);
+            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, null);
+          }
+        }
       }
     }
 
@@ -918,11 +945,9 @@ namespace GalaxyEditor
           MessageBox.Show("No mod loaded to edit the cluster!");
           return;
         }
-        UnifyItemCluster? cluster = UnifyItemCluster.SearchByPosition(CurrentMod.Clusters, GalaxyMapViewer.SelectedMapCluster.Position);
-
         ClusterEditWindow clusterEditWindow = new(
           _appIcon,
-          cluster,
+          null,
           null,
           GalaxyMapViewer.SelectedMapCluster.Position,
           GalaxyData,
@@ -933,17 +958,9 @@ namespace GalaxyEditor
         };
         if (clusterEditWindow.ShowDialog() == true)
         {
-          if (cluster != null)
-          {
-            Log.Debug($"Updating cluster {cluster.Name} ...");
-            cluster.UpdateFrom(clusterEditWindow.Cluster);
-          }
-          else
-          {
-            Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
-            CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
-            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
-          }
+          Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
+          CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
+          GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
         }
       }
     }
