@@ -127,6 +127,29 @@ namespace GalaxyEditor
       get => GetListOfItems("Planets").Cast<UnifyItemPlanet>().ToList();
     }
 
+    public Cluster GetCluster()
+    {
+      Cluster ??= new Cluster(ClusterId + "_macro") { Source = "New" };
+      if (IsModified("X") || IsModified("Y") || IsModified("Z"))
+        Cluster.Position = new Position(X, Y, Z);
+      if (IsModified("Name"))
+        Cluster.Name = Name;
+      if (IsModified("Description"))
+        Cluster.Description = Description;
+      if (IsModified("System"))
+        Cluster.System = System;
+      if (IsModified("ImageId"))
+        Cluster.ImageId = ImageId;
+      if (IsModified("MusicId"))
+        Cluster.MusicId = MusicId;
+      if (IsModified("SunTextId"))
+        Cluster.SunTextId = SunTextId;
+      if (IsModified("EnvironmentTextId"))
+        Cluster.EnvironmentTextId = EnvironmentTextId;
+      // Cluster.Planets = Planets.Select(a => a.GetPlanet()).ToList();
+      return Cluster;
+    }
+
     public override void Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
       base.Read(ref reader, typeToConvert, options);
