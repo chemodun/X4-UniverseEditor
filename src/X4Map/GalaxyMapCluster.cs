@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -320,6 +321,31 @@ namespace X4Map
             }
           }
         }
+      }
+    }
+
+    public void ReAssign(GalaxyMapViewer map, Cluster? cluster)
+    {
+      Cluster = cluster;
+      if (Hexagon != null)
+      {
+        Hexagon.ToolTip =
+          Cluster != null
+            ? ToolTipCreator(Cluster, null, null, MapPosition)
+            : ToolTipCreator(null, null, new Position(OriginalX, 0, OriginalZ), MapPosition);
+        if (Cluster == null)
+        {
+          Hexagon.StrokeDashArray = [2, 2]; // Dash pattern: 2 units dash, 2 units gap
+          Hexagon.Visibility = map.ShowEmptyClusterPlaces.IsChecked ? Visibility.Visible : Visibility.Hidden;
+        }
+        else
+        {
+          Hexagon.StrokeDashArray = null;
+          Hexagon.Visibility = Visibility.Visible;
+        }
+        Hexagon.Stroke = Cluster != null ? Brushes.Black : Brushes.DarkGray;
+        Hexagon.Tag = Cluster != null ? Cluster.Name : "Empty Map Cell";
+        Hexagon.DataContext = Cluster == null ? this : Cluster;
       }
     }
 
