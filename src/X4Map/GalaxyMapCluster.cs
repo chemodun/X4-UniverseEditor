@@ -343,7 +343,7 @@ namespace X4Map
           Hexagon.StrokeDashArray = null;
           Hexagon.Visibility = Visibility.Visible;
         }
-        Hexagon.Stroke = Cluster != null ? Brushes.Black : Brushes.DarkGray;
+        Hexagon.Stroke = Cluster != null ? (Cluster.Source == "New" ? Brushes.DarkGreen : Brushes.Black) : Brushes.DarkGray;
         Hexagon.Tag = Cluster != null ? Cluster.Name : "Empty Map Cell";
         Hexagon.DataContext = Cluster == null ? this : Cluster;
       }
@@ -394,14 +394,34 @@ namespace X4Map
         string labelStr = string.Empty;
         string textStr = string.Empty;
         bool alignRight = false;
+        bool centered = false;
+        Brush foreground = Brushes.Black;
+        if (!isSector && cluster != null && cluster.Source == "New")
+        {
+          foreground = Brushes.DarkGreen;
+        }
         switch (toolTipItem)
         {
           case "Cluster":
             isSector = false;
             break;
           case "Name":
-            labelStr =
-              sector != null && isSector ? $"Sector: {sector.Name}" : (cluster != null ? $"Cluster: {cluster.Name}" : "Empty Cluster Cell");
+            if (sector != null && isSector)
+            {
+              labelStr = "Sector:";
+              textStr = sector.Name;
+              centered = true;
+            }
+            else if (cluster != null)
+            {
+              labelStr = "Cluster:";
+              textStr = cluster.Name;
+              centered = true;
+            }
+            else
+            {
+              labelStr = "Empty Cluster Cell";
+            }
             break;
           case "Source":
             if (sector != null && isSector)
@@ -504,6 +524,16 @@ namespace X4Map
         {
           toolTipGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
           int row = toolTipGrid.RowDefinitions.Count - 1;
+          StackPanel? stackPanel = null;
+          if (centered)
+          {
+            stackPanel = new()
+            {
+              Orientation = Orientation.Horizontal,
+              HorizontalAlignment = HorizontalAlignment.Center,
+              VerticalAlignment = VerticalAlignment.Center,
+            };
+          }
           if (!string.IsNullOrEmpty(labelStr))
           {
             TextBlock label = new()
@@ -511,20 +541,28 @@ namespace X4Map
               Text = labelStr,
               FontWeight = FontWeights.DemiBold,
               Background = Brushes.Transparent,
+              Foreground = Brushes.Black,
               VerticalAlignment = VerticalAlignment.Center,
               HorizontalAlignment = HorizontalAlignment.Stretch,
               TextAlignment = TextAlignment.Left,
               Margin = new Thickness(5, 0, 5, 0),
               FontSize = 10,
             };
-            Grid.SetRow(label, row);
-            Grid.SetColumn(label, 0);
-            if (string.IsNullOrEmpty(textStr))
+            if (centered)
             {
-              Grid.SetColumnSpan(label, 2);
-              label.TextAlignment = TextAlignment.Center;
+              stackPanel?.Children.Add(label);
             }
-            toolTipGrid.Children.Add(label);
+            else
+            {
+              Grid.SetRow(label, row);
+              Grid.SetColumn(label, 0);
+              if (string.IsNullOrEmpty(textStr))
+              {
+                Grid.SetColumnSpan(label, 2);
+                label.TextAlignment = TextAlignment.Center;
+              }
+              toolTipGrid.Children.Add(label);
+            }
           }
           if (!string.IsNullOrEmpty(textStr))
           {
@@ -532,15 +570,27 @@ namespace X4Map
             {
               Text = textStr,
               Background = Brushes.Transparent,
+              Foreground = foreground,
               VerticalAlignment = VerticalAlignment.Center,
               HorizontalAlignment = HorizontalAlignment.Stretch,
               TextAlignment = alignRight ? TextAlignment.Right : TextAlignment.Left,
               Margin = new Thickness(5, 0, 5, 0),
               FontSize = 10,
             };
-            Grid.SetRow(text, row);
-            Grid.SetColumn(text, 1);
-            toolTipGrid.Children.Add(text);
+            if (centered)
+            {
+              stackPanel?.Children.Add(text);
+              Grid.SetRow(stackPanel, row);
+              Grid.SetColumn(stackPanel, 0);
+              Grid.SetColumnSpan(stackPanel, 2);
+              toolTipGrid.Children.Add(stackPanel);
+            }
+            else
+            {
+              Grid.SetRow(text, row);
+              Grid.SetColumn(text, 1);
+              toolTipGrid.Children.Add(text);
+            }
           }
         }
       }
