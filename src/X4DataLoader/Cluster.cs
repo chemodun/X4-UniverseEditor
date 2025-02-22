@@ -12,25 +12,25 @@ namespace X4DataLoader
 {
   public class Cluster(string macro)
   {
-    public string Name { get; private set; } = "";
-    public int NamePageId { get; private set; } = 0;
-    public int NameTextId { get; private set; } = 0;
-    public string Description { get; private set; } = "";
-    public int DescriptionPageId { get; private set; } = 0;
-    public int DescriptionTextId { get; private set; } = 0;
-    public string System { get; private set; } = "";
-    public string ImageId { get; private set; } = "";
+    public string Name { get; set; } = "";
+    public int NamePageId { get; set; } = 0;
+    public int NameTextId { get; set; } = 0;
+    public string Description { get; set; } = "";
+    public int DescriptionPageId { get; set; } = 0;
+    public int DescriptionTextId { get; set; } = 0;
+    public string System { get; set; } = "";
+    public string ImageId { get; set; } = "";
     public string Id { get; private set; } = macro.Replace("_macro", "");
     public string Macro { get; private set; } = macro;
     public string Reference { get; set; } = "";
-    public string MusicId { get; private set; } = "";
+    public string MusicId { get; set; } = "";
     public string Environment { get; private set; } = "";
-    public int EnvironmentPageId { get; private set; } = 0;
-    public int EnvironmentTextId { get; private set; } = 0;
+    public int EnvironmentPageId { get; set; } = 0;
+    public int EnvironmentTextId { get; set; } = 0;
     public string Sun { get; private set; } = "";
-    public int SunPageId { get; private set; } = 0;
-    public int SunTextId { get; private set; } = 0;
-    public Position Position { get; private set; } = new Position();
+    public int SunPageId { get; set; } = 0;
+    public int SunTextId { get; set; } = 0;
+    public Position Position { get; set; } = new Position();
     public string PositionId { get; private set; } = "";
     public string PositionSource { get; private set; } = "vanilla";
     public string PositionFileName { get; private set; } = "";
@@ -39,7 +39,7 @@ namespace X4DataLoader
     public string DetailsSource { get; private set; } = "vanilla";
     public string DetailsFileName { get; private set; } = "";
     public XElement? DetailsXML { get; set; } = null;
-    public string Source { get; private set; } = "vanilla";
+    public string Source { get; set; } = "vanilla";
     public string FileName { get; private set; } = "";
     public XElement? XML { get; set; } = null;
     public List<Sector> Sectors { get; private set; } = [];
