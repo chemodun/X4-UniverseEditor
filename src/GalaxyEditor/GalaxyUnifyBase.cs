@@ -486,6 +486,26 @@ namespace GalaxyEditor
       return null;
     }
 
+    public bool IsModified(string name)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, null);
+      if (attribute != null)
+      {
+        return attribute.State == AttributeState.Modified;
+      }
+      return false;
+    }
+
+    public bool isUnset(string name)
+    {
+      GalaxyUnifyItemAttribute? attribute = PreSetAttribute(name, null);
+      if (attribute != null)
+      {
+        return attribute.State == AttributeState.Unset;
+      }
+      return false;
+    }
+
     public int? GetInt(string name)
     {
       GalaxyUnifyItemAttribute? attribute = PreGetAttributeValue(name, AttributeType.Int);
