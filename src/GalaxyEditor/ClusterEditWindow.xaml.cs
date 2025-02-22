@@ -185,7 +185,7 @@ namespace GalaxyEditor
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
       if (unifyCluster != null)
       {
-        Cluster.UpdateFrom(unifyCluster);
+        Cluster.CopyFrom(unifyCluster);
       }
       Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
       Cluster.Initialize(cluster, position);
@@ -328,14 +328,6 @@ namespace GalaxyEditor
 
     public void ButtonSave_Click(object sender, RoutedEventArgs e)
     {
-      var options = new JsonSerializerOptions { WriteIndented = true };
-      options.Converters.Add(new GalaxyUnifyItemAttributeConverter());
-      options.Converters.Add(new GalaxyUnifyItemJsonConverter());
-      options.Converters.Add(new UnifyItemMoonJsonConverter());
-      options.Converters.Add(new UnifyItemPlanetJsonConverter());
-      options.Converters.Add(new UnifyItemClusterJsonConverter());
-      var jsonString = JsonSerializer.Serialize(Cluster, options);
-      var deserializedCluster = JsonSerializer.Deserialize<UnifyItemCluster>(jsonString, options);
       DialogResult = true;
       Close();
       Log.Debug("ButtonSave_Click");
