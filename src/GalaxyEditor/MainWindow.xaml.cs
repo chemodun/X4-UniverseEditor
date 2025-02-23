@@ -835,6 +835,13 @@ namespace GalaxyEditor
           menuItem.Click += DeleteCluster_Click;
           contextMenu.Items.Add(menuItem);
         }
+        else
+        {
+          contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+          menuItem = new System.Windows.Forms.ToolStripMenuItem("View");
+          menuItem.Click += ViewCluster_Click;
+          contextMenu.Items.Add(menuItem);
+        }
         contextMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
         menuItem = new System.Windows.Forms.ToolStripMenuItem("Add Sector");
         menuItem.Click += AddCluster_Click;
@@ -874,6 +881,35 @@ namespace GalaxyEditor
       if (GalaxyMapViewer.SelectedMapSector != null)
       {
         MessageBox.Show($"Action triggered - Delete for {GalaxyMapViewer.SelectedMapSector.Sector?.Name}!");
+      }
+    }
+
+    public void ViewCluster_Click(object? sender, EventArgs e)
+    {
+      if (GalaxyMapViewer.SelectedMapCluster != null)
+      {
+        if (CurrentMod == null)
+        {
+          MessageBox.Show("No mod loaded to edit the cluster!");
+          return;
+        }
+        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(
+          CurrentMod.Clusters,
+          GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? ""
+        );
+        Cluster? cluster = GalaxyData.GetClusterById(GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? "");
+        ClusterEditWindow clusterEditWindow = new(_appIcon, unifyCluster, cluster, null, GalaxyData, GalaxyReferences, null, false)
+        {
+          Owner = this,
+        };
+        if (clusterEditWindow.ShowDialog() == true)
+        {
+          Log.Debug($"Pressed Save on cluster {unifyCluster?.Name ?? cluster?.Name} ...");
+        }
+        else
+        {
+          Log.Debug($"Pressed Cancel on cluster {unifyCluster?.Name ?? cluster?.Name} ...");
+        }
       }
     }
 

@@ -15,8 +15,8 @@ namespace GalaxyEditor
     private CatalogItemString _systemId = new("");
     private CatalogItemString _iconId = new("");
     private CatalogItemWithStringId _musicId = new("", "");
-    private CatalogItemWithIntId _sun = new(0, "");
-    private CatalogItemWithIntId _environment = new(0, "");
+    private CatalogItemWithTextReference _sun = new("", "", 0, 0);
+    private CatalogItemWithTextReference _environment = new("", "", 0, 0);
     private UnifyItemPlanet? _selectedPlanet = null;
     private UnifyItemMoon? _selectedMoon = null;
 
@@ -97,7 +97,7 @@ namespace GalaxyEditor
         }
       }
     }
-    public CatalogItemWithIntId Sun
+    public CatalogItemWithTextReference Sun
     {
       get => _sun;
       set
@@ -105,13 +105,13 @@ namespace GalaxyEditor
         if (_sun != value)
         {
           _sun = value;
-          Cluster.SunTextId = value.Id;
+          Cluster.SunReference = value.Reference;
           OnPropertyChanged(nameof(Sun));
         }
       }
     }
 
-    public CatalogItemWithIntId Environment
+    public CatalogItemWithTextReference Environment
     {
       get => _environment;
       set
@@ -119,7 +119,7 @@ namespace GalaxyEditor
         if (_environment != value)
         {
           _environment = value;
-          Cluster.EnvironmentTextId = value.Id;
+          Cluster.EnvironmentReference = value.Reference;
           OnPropertyChanged(nameof(Environment));
         }
       }
@@ -156,8 +156,11 @@ namespace GalaxyEditor
     public bool IsChanged { get; set; } = false;
     public bool IsReady { get; set; } = false;
     public bool IsNew { get; set; } = false;
-    public ObservableCollection<CatalogItemWithIntId> SunOptions { get; } = [];
-    public ObservableCollection<CatalogItemWithIntId> EnvironmentOptions { get; } = [];
+    public bool IsEditMode { get; set; } = false;
+    public Visibility EditVisibility => IsEditMode ? Visibility.Visible : Visibility.Hidden;
+    public int DataGridsSpan => IsEditMode ? 5 : 6;
+    public ObservableCollection<CatalogItemWithTextReference> SunOptions { get; } = [];
+    public ObservableCollection<CatalogItemWithTextReference> EnvironmentOptions { get; } = [];
     public ObservableCollection<CatalogItemString> SystemOptions { get; } = [];
     public ObservableCollection<CatalogItemWithStringId> MusicOptions { get; } = [];
     public ObservableCollection<CatalogItemString> IconOptions { get; } = [];
@@ -171,16 +174,18 @@ namespace GalaxyEditor
       Position? position,
       Galaxy galaxyData,
       GalaxyReferencesHolder galaxyReferences,
-      string? clusterId = null
+      string? clusterId = null,
+      bool editMode = true
     )
     {
       InitializeComponent();
       DataContext = this;
+      IsEditMode = editMode;
       Icon = icon;
       GalaxyData = galaxyData;
       GalaxyReferences = galaxyReferences;
-      SunOptions = new ObservableCollection<CatalogItemWithIntId>(galaxyReferences.StarClasses);
-      EnvironmentOptions = new ObservableCollection<CatalogItemWithIntId>(galaxyReferences.Environments);
+      SunOptions = new ObservableCollection<CatalogItemWithTextReference>(galaxyReferences.StarClasses);
+      EnvironmentOptions = new ObservableCollection<CatalogItemWithTextReference>(galaxyReferences.Environments);
       SystemOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.StarSystems);
       IconOptions = new ObservableCollection<CatalogItemString>(galaxyReferences.ClusterIcons);
       MusicOptions = new ObservableCollection<CatalogItemWithStringId>(galaxyReferences.ClusterMusic);
@@ -210,12 +215,15 @@ namespace GalaxyEditor
       {
         MusicId = musicId;
       }
-      CatalogItemWithIntId? sun = SunOptions.FirstOrDefault(s => s.Id == Cluster.SunTextId);
+      CatalogItemWithTextReference? sun = CatalogItemWithTextReference.FindByReference([.. SunOptions], Cluster.SunReference);
       if (sun != null)
       {
         Sun = sun;
       }
-      CatalogItemWithIntId? environment = EnvironmentOptions.FirstOrDefault(e => e.Id == Cluster.EnvironmentTextId);
+      CatalogItemWithTextReference? environment = CatalogItemWithTextReference.FindByReference(
+        [.. EnvironmentOptions],
+        Cluster.EnvironmentReference
+      );
       if (environment != null)
       {
         Environment = environment;
