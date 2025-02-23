@@ -1,4 +1,5 @@
 using System.Media;
+using System.Numerics;
 using X4DataLoader;
 
 namespace GalaxyEditor
@@ -9,11 +10,23 @@ namespace GalaxyEditor
     public bool Added { get; set; } = false;
   }
 
-  public class CatalogItemWithIntId(int id, string text)
+  public class CatalogItemWithTextReference(string text, string reference = "", int pageId = 0, int textId = 0)
   {
-    public int Id { get; private set; } = id;
+    public string Reference { get; private set; } = string.IsNullOrEmpty(reference) ? $"{{{pageId},{textId}}}" : reference;
+    public int PageId { get; private set; } = pageId == 0 ? Translation.GetIds(reference)[0] : pageId;
+    public int TextId { get; private set; } = textId == 0 ? Translation.GetIds(reference)[1] : textId;
     public string Text { get; private set; } = text;
     public bool Added { get; set; } = false;
+
+    public static CatalogItemWithTextReference? FindByReference(List<CatalogItemWithTextReference>? list, string reference)
+    {
+      return list?.FirstOrDefault(item => item.Reference == reference);
+    }
+
+    public static CatalogItemWithTextReference? FindByPageAndTextId(List<CatalogItemWithTextReference>? list, int pageId, int textId)
+    {
+      return list?.FirstOrDefault(item => item.PageId == pageId && item.TextId == textId);
+    }
   }
 
   public class CatalogItemWithStringId(string id, string text)
@@ -30,26 +43,41 @@ namespace GalaxyEditor
     private readonly Galaxy _galaxyData = new();
 
     public List<CatalogItemString> StarSystems { get; private set; } = [];
-    public List<CatalogItemWithIntId> StarClasses { get; private set; } = [];
-    public List<CatalogItemWithIntId> Environments { get; private set; } = [];
-    public List<CatalogItemWithIntId> PlanetClasses { get; private set; } = [];
-    public List<CatalogItemWithIntId> PlanetGeology { get; private set; } = [];
-    public List<CatalogItemWithIntId> PlanetAtmosphere { get; private set; } = [];
-    public List<CatalogItemWithIntId> PlanetSettlements { get; private set; } = [];
-    public List<CatalogItemWithIntId> PlanetPopulation { get; private set; } = [];
-    public List<CatalogItemWithIntId> StarSuffixes { get; private set; } = [];
-    public List<CatalogItemWithIntId> PlanetSuffixes { get; private set; } = [];
-    public List<CatalogItemWithIntId> MoonSuffixes { get; private set; } = [];
+    public List<CatalogItemWithTextReference> StarClasses { get; private set; } = [];
+    public List<CatalogItemWithTextReference> Environments { get; private set; } = [];
+    public List<CatalogItemWithTextReference> PlanetClasses { get; private set; } = [];
+    public List<CatalogItemWithTextReference> PlanetGeology { get; private set; } = [];
+    public List<CatalogItemWithTextReference> PlanetAtmosphere { get; private set; } = [];
+    public List<CatalogItemWithTextReference> PlanetSettlements { get; private set; } = [];
+    public List<CatalogItemWithTextReference> PlanetPopulation { get; private set; } = [];
+    public List<CatalogItemWithTextReference> StarSuffixes { get; private set; } = [];
+    public List<CatalogItemWithTextReference> PlanetSuffixes { get; private set; } = [];
+    public List<CatalogItemWithTextReference> MoonSuffixes { get; private set; } = [];
     public List<CatalogItemWithStringId> ClusterMusic { get; private set; } = [];
     public List<CatalogItemString> ClusterIcons { get; private set; } = [];
     public List<CatalogItemString> WorldParts { get; private set; } = [];
     public List<CatalogItemString> AtmosphereParts { get; private set; } = [];
+
+    private readonly CatalogItemWithTextReference NoneItem = new("None", "", 0, 0);
+    private readonly CatalogItemWithTextReference UnInhabitedItem = new("Uninhabited", "", 0, 0);
 
     public GalaxyReferencesHolder(Galaxy? galaxyData = null)
     {
       if (galaxyData != null)
       {
         _galaxyData = galaxyData;
+        NoneItem = new CatalogItemWithTextReference(
+          _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 10011),
+          "",
+          GalaxyItemsAttributesPage,
+          10011
+        );
+        UnInhabitedItem = new CatalogItemWithTextReference(
+          _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 16011),
+          "",
+          GalaxyItemsAttributesPage,
+          16011
+        );
         foreach (Cluster clusterItem in galaxyData.Clusters)
         {
           if (!string.IsNullOrEmpty(clusterItem.System) && !StarSystems.Any(item => item.Text == clusterItem.System))
@@ -79,24 +107,24 @@ namespace GalaxyEditor
             }
           }
         }
-        PlanetPopulation.Add(new CatalogItemWithIntId(10011, _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 10011)));
-        PlanetPopulation.Add(new CatalogItemWithIntId(16011, _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 16011)));
-        PlanetPopulation.Add(new CatalogItemWithIntId(10021, "Inhabited"));
+        PlanetPopulation.Add(NoneItem);
+        PlanetPopulation.Add(UnInhabitedItem);
+        PlanetPopulation.Add(new CatalogItemWithTextReference("Inhabited", "", GalaxyItemsAttributesPage, 10021));
         for (int textId = 11000; textId < 12000; textId++)
         {
           string text = galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, textId);
           if (text != "")
           {
-            PlanetAtmosphere.Add(new CatalogItemWithIntId(textId, text));
+            PlanetAtmosphere.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsAttributesPage, textId));
           }
         }
-        PlanetAtmosphere.Add(new CatalogItemWithIntId(10011, _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 10011)));
+        PlanetAtmosphere.Add(NoneItem);
         for (int textId = 12000; textId < 13000; textId++)
         {
           string text = galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, textId);
           if (text != "")
           {
-            Environments.Add(new CatalogItemWithIntId(textId, text));
+            Environments.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsAttributesPage, textId));
           }
         }
         for (int textId = 13000; textId < 14000; textId++)
@@ -104,7 +132,7 @@ namespace GalaxyEditor
           string text = _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, textId);
           if (text != "")
           {
-            StarClasses.Add(new CatalogItemWithIntId(textId, text));
+            StarClasses.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsAttributesPage, textId));
           }
         }
         for (int textId = 14000; textId < 15000; textId++)
@@ -112,7 +140,7 @@ namespace GalaxyEditor
           string text = _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, textId);
           if (text != "")
           {
-            PlanetClasses.Add(new CatalogItemWithIntId(textId, text));
+            PlanetClasses.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsAttributesPage, textId));
           }
         }
         for (int textId = 15000; textId < 16000; textId++)
@@ -120,24 +148,25 @@ namespace GalaxyEditor
           string text = _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, textId);
           if (text != "")
           {
-            PlanetGeology.Add(new CatalogItemWithIntId(textId, text));
+            PlanetGeology.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsAttributesPage, textId));
           }
         }
+        PlanetGeology.Add(NoneItem);
         for (int textId = 16000; textId < 17000; textId++)
         {
           string text = _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, textId);
           if (text != "")
           {
-            PlanetSettlements.Add(new CatalogItemWithIntId(textId, text));
+            PlanetSettlements.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsAttributesPage, textId));
           }
         }
-        PlanetSettlements.Add(new CatalogItemWithIntId(10011, _galaxyData.Translation.TranslateByPage(GalaxyItemsAttributesPage, 10011)));
+        PlanetSettlements.Add(NoneItem);
         for (int textId = 1; textId < 121; textId++)
         {
           string text = _galaxyData.Translation.TranslateByPage(GalaxyItemsSuffixesPage, textId);
           if (text != "")
           {
-            StarSuffixes.Add(new CatalogItemWithIntId(textId, text));
+            StarSuffixes.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsSuffixesPage, textId));
           }
         }
         for (int textId = 101; textId < 121; textId++)
@@ -145,7 +174,7 @@ namespace GalaxyEditor
           string text = _galaxyData.Translation.TranslateByPage(GalaxyItemsSuffixesPage, textId);
           if (text != "")
           {
-            PlanetSuffixes.Add(new CatalogItemWithIntId(textId, text));
+            PlanetSuffixes.Add(new CatalogItemWithTextReference(text, "", GalaxyItemsSuffixesPage, textId));
           }
         }
         for (int textId = 1; textId < 21; textId++)
@@ -153,7 +182,7 @@ namespace GalaxyEditor
           string text = _galaxyData.Translation.TranslateByPage(20402, textId);
           if (text != "")
           {
-            MoonSuffixes.Add(new CatalogItemWithIntId(textId, text));
+            MoonSuffixes.Add(new CatalogItemWithTextReference(text, "", 20402, textId));
           }
         }
         foreach (X4Sound sound in galaxyData.Sounds)
