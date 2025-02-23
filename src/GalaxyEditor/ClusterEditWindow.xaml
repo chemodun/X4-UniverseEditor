@@ -62,7 +62,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelStyle}">Id:</Label>
-                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterId, Mode=TwoWay}" IsEnabled="{Binding IsNew}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterId, Mode=TwoWay}" IsEnabled="false"/>
                 <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Name:</Label>
                 <TextBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterName, Mode=TwoWay}"/>
                 <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">Icon:</Label>

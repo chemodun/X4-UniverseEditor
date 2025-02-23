@@ -28,7 +28,7 @@
         </Style>
         <Style x:Key="TextBoxInRibbonStyle" TargetType="TextBox">
             <Setter Property="MinWidth" Value="60"/>
-            <Setter Property="MaxWidth" Value="120"/>
+            <Setter Property="MaxWidth" Value="160"/>
             <Setter Property="Margin" Value="3"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="TextAlignment" Value="Left"/>
@@ -162,6 +162,27 @@
                         <TextBox Grid.Row="3" Grid.Column="3"
                                 Style="{StaticResource TextBoxInRibbonStyleRight}"
                                 Text="{Binding CurrentMod.MapInfo.RowMax, Mode=TwoWay}"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                    <fluent:RibbonGroupBox Header="Mod: templates options" Visibility="{Binding ModOptionsVisibility}">
+                    <!-- Add buttons or controls for mod options here -->
+                     <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Cluster Id:" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelInRibbonStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource TextBoxInRibbonStyle}"
+                                Text="{Binding CurrentMod.TemplateConfig.ClusterId, Mode=TwoWay}"/>
+                        <Label Content="Sector Id:" Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelInRibbonStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                                Style="{StaticResource TextBoxInRibbonStyle}"
+                                Text="{Binding CurrentMod.TemplateConfig.SectorId, Mode=TwoWay}"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Program" HorizontalAlignment="Right">

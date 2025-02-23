@@ -28,7 +28,7 @@ namespace GalaxyEditor
       ];
     }
 
-    public void Initialize(Cluster? cluster, Position? position = null)
+    public void Initialize(Cluster? cluster, Position? position = null, string? clusterId = null)
     {
       Cluster = cluster;
       if (Cluster != null)
@@ -57,6 +57,7 @@ namespace GalaxyEditor
       }
       else if (position != null)
       {
+        Set("ClusterId", clusterId ?? "");
         Set("X", position.X);
         Set("Y", position.Y);
         Set("Z", position.Z);
@@ -159,8 +160,9 @@ namespace GalaxyEditor
 
     public override void Write(Utf8JsonWriter writer, JsonSerializerOptions options, string? type = null)
     {
-      if (Cluster == null)
+      if (FromEmptyCell)
       {
+        SetModified("ClusterId");
         SetModified("X");
         SetModified("Y");
         SetModified("Z");

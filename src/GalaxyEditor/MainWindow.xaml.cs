@@ -792,7 +792,7 @@ namespace GalaxyEditor
       {
         return;
       }
-      System.Windows.Forms.ContextMenuStrip contextMenu = new System.Windows.Forms.ContextMenuStrip();
+      System.Windows.Forms.ContextMenuStrip contextMenu = new();
       System.Windows.Forms.ToolStripMenuItem menuItem;
       if (sector != null)
       {
@@ -951,7 +951,8 @@ namespace GalaxyEditor
           null,
           GalaxyMapViewer.SelectedMapCluster.Position,
           GalaxyData,
-          GalaxyReferences
+          GalaxyReferences,
+          CurrentMod.NewClusterId
         )
         {
           Owner = this,

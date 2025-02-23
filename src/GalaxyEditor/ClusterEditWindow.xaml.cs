@@ -170,7 +170,8 @@ namespace GalaxyEditor
       Cluster? cluster,
       Position? position,
       Galaxy galaxyData,
-      GalaxyReferencesHolder galaxyReferences
+      GalaxyReferencesHolder galaxyReferences,
+      string? clusterId = null
     )
     {
       InitializeComponent();
@@ -188,7 +189,7 @@ namespace GalaxyEditor
         Cluster.CopyFrom(unifyCluster);
       }
       Cluster.Connect(GalaxyData.Translation, GalaxyReferences);
-      Cluster.Initialize(cluster, position);
+      Cluster.Initialize(cluster, position, clusterId);
       if (cluster == null)
       {
         IsNew = true;
