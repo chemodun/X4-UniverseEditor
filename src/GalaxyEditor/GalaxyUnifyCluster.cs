@@ -22,8 +22,8 @@ namespace GalaxyEditor
         new("System", AttributeType.String),
         new("ImageId", AttributeType.String),
         new("MusicId", AttributeType.String),
-        new("SunTextId", AttributeType.Int, true),
-        new("EnvironmentTextId", AttributeType.Int, true),
+        new("SunReference", AttributeType.String, true),
+        new("EnvironmentReference", AttributeType.String, true),
         new("Planets", AttributeType.ListItems),
       ];
     }
@@ -42,8 +42,8 @@ namespace GalaxyEditor
         Set("System", Cluster.System);
         Set("ImageId", Cluster.ImageId);
         Set("MusicId", Cluster.MusicId);
-        Set("SunTextId", Cluster.SunTextId);
-        Set("EnvironmentTextId", Cluster.EnvironmentTextId);
+        Set("SunReference", Cluster.SunReference);
+        Set("EnvironmentReference", Cluster.EnvironmentReference);
         if (TranslationObject != null && GalaxyReferences != null && Cluster.Planets.Count > 0)
         {
           foreach (Planet planet in Cluster.Planets)
@@ -115,15 +115,23 @@ namespace GalaxyEditor
       get => GetString("MusicId") ?? "";
       set { Set("MusicId", value); }
     }
-    public int SunTextId
+    public string SunReference
     {
-      get => GetInt("SunTextId") ?? 0;
-      set { Set("SunTextId", value); }
+      get => GetString("SunReference") ?? "";
+      set { Set("SunReference", value); }
     }
-    public int EnvironmentTextId
+    public string Sun
     {
-      get => GetInt("EnvironmentTextId") ?? 0;
-      set { Set("EnvironmentTextId", value); }
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.StarClasses, SunReference)?.Text ?? "";
+    }
+    public string EnvironmentReference
+    {
+      get => GetString("EnvironmentReference") ?? "";
+      set { Set("EnvironmentReference", value); }
+    }
+    public string Environment
+    {
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.Environments, EnvironmentReference)?.Text ?? "";
     }
     public List<UnifyItemPlanet> Planets
     {
@@ -145,10 +153,10 @@ namespace GalaxyEditor
         Cluster.ImageId = ImageId;
       if (IsModified("MusicId"))
         Cluster.MusicId = MusicId;
-      if (IsModified("SunTextId"))
-        Cluster.SunTextId = SunTextId;
-      if (IsModified("EnvironmentTextId"))
-        Cluster.EnvironmentTextId = EnvironmentTextId;
+      if (IsModified("SunReference"))
+        Cluster.SunReference = SunReference;
+      if (IsModified("EnvironmentReference"))
+        Cluster.EnvironmentReference = EnvironmentReference;
       // Cluster.Planets = Planets.Select(a => a.GetPlanet()).ToList();
       return Cluster;
     }

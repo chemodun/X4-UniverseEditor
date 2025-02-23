@@ -14,10 +14,10 @@ namespace GalaxyEditor
         new("NameContent", AttributeType.String),
         new("NameIsUnique", AttributeType.Bool, true),
         new("NameSuffixId", AttributeType.String, true, "name"),
-        new("Geology", AttributeType.Int, true),
-        new("Atmosphere", AttributeType.Int, true),
-        new("Settlements", AttributeType.Int, true),
-        new("Population", AttributeType.Int, true),
+        new("GeologyReference", AttributeType.String, true),
+        new("AtmosphereReference", AttributeType.String, true),
+        new("SettlementsReference", AttributeType.String, true),
+        new("PopulationReference", AttributeType.String, true),
         new("MaxPopulation", AttributeType.Int),
         new("WorldPart", AttributeType.String),
         new("AtmospherePart", AttributeType.String),
@@ -30,10 +30,10 @@ namespace GalaxyEditor
       Set("NameIsUnique", moon.NameIsUnique);
       Set("NameContent", moon.NameContent);
       Set("NameSuffixId", moon.NameSuffixId);
-      Set("Geology", moon.Geology);
-      Set("Atmosphere", moon.Atmosphere);
-      Set("Settlements", moon.Settlements);
-      Set("Population", moon.Population);
+      Set("GeologyReference", moon.GeologyReference);
+      Set("AtmosphereReference", moon.AtmosphereReference);
+      Set("SettlementsReference", moon.SettlementsReference);
+      Set("PopulationReference", moon.PopulationReference);
       Set("MaxPopulation", moon.MaxPopulation);
       Set("WorldPart", moon.WorldPart);
       Set("AtmospherePart", moon.AtmospherePart);
@@ -69,46 +69,46 @@ namespace GalaxyEditor
       get => GetInt("NameSuffixId") ?? 0;
       set { Set("NameSuffixId", value); }
     }
-    public int Geology
+    public string Geology
     {
-      get => GetInt("Geology") ?? 0;
-      set { Set("Geology", value); }
+      get => GetString("GeologyReference") ?? "";
+      set { Set("GeologyReference", value); }
     }
     public string GeologyString
     {
-      get => GalaxyReferences?.PlanetGeology.FirstOrDefault(a => a.Id == Geology)?.Text ?? "";
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.PlanetGeology, Geology)?.Text ?? "";
     }
 
-    public int Atmosphere
+    public string Atmosphere
     {
-      get => GetInt("Atmosphere") ?? 0;
-      set { Set("Atmosphere", value); }
+      get => GetString("AtmosphereReference") ?? "";
+      set { Set("AtmosphereReference", value); }
     }
 
     public string AtmosphereString
     {
-      get => GalaxyReferences?.PlanetAtmosphere.FirstOrDefault(a => a.Id == Atmosphere)?.Text ?? "";
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.PlanetAtmosphere, Atmosphere)?.Text ?? "";
     }
 
-    public int Settlements
+    public string Settlements
     {
-      get => GetInt("Settlements") ?? 0;
-      set { Set("Settlements", value); }
+      get => GetString("SettlementsReference") ?? "";
+      set { Set("SettlementsReference", value); }
     }
 
     public string SettlementsString
     {
-      get => GalaxyReferences?.PlanetSettlements.FirstOrDefault(a => a.Id == Settlements)?.Text ?? "";
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.PlanetSettlements, Settlements)?.Text ?? "";
     }
 
-    public int Population
+    public string Population
     {
-      get => GetInt("Population") ?? 0;
-      set { Set("Population", value); }
+      get => GetString("PopulationReference") ?? "";
+      set { Set("PopulationReference", value); }
     }
     public string PopulationString
     {
-      get => GalaxyReferences?.PlanetPopulation.FirstOrDefault(a => a.Id == Population)?.Text ?? "";
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.PlanetPopulation, Population)?.Text ?? "";
     }
 
     public int MaxPopulation
@@ -156,15 +156,15 @@ namespace GalaxyEditor
 
   public class UnifyItemPlanet : UnifyItemMoon
   {
-    public int Class
+    public string Class
     {
-      get => GetInt("Class") ?? 0;
-      set { Set("Class", value); }
+      get => GetString("ClassReference") ?? "";
+      set { Set("ClassReference", value); }
     }
 
     public string ClassString
     {
-      get => GalaxyReferences?.PlanetClasses.FirstOrDefault(a => a.Id == Class)?.Text ?? "";
+      get => CatalogItemWithTextReference.FindByReference(GalaxyReferences?.PlanetClasses, Class)?.Text ?? "";
     }
 
     public List<UnifyItemMoon> Moons
@@ -175,14 +175,14 @@ namespace GalaxyEditor
     public UnifyItemPlanet()
       : base()
     {
-      Attributes.Add(new("Class", AttributeType.Int));
+      Attributes.Add(new("ClassReference", AttributeType.String, true));
       Attributes.Add(new("Moons", AttributeType.ListItems));
     }
 
     public void Initialize(Planet planet)
     {
       base.Initialize(planet);
-      Set("Class", planet.PlanetClass);
+      Set("ClassReference", planet.PlanetClassReference);
       foreach (Moon moon in planet.Moons)
       {
         UnifyItemMoon moonInfo = new();
