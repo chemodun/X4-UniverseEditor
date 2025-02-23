@@ -14,10 +14,10 @@ namespace X4DataLoader
     public bool NameIsUnique { get; private set; } = false;
     public string NameSuffix { get; private set; } = "";
     public int NameSuffixId { get; private set; } = 0;
-    public int Geology { get; private set; } = 0;
-    public int Atmosphere { get; private set; } = 0;
-    public int Settlements { get; private set; } = 0;
-    public int Population { get; private set; } = 0;
+    public string GeologyReference { get; set; } = "";
+    public string AtmosphereReference { get; set; } = "";
+    public string SettlementsReference { get; set; } = "";
+    public string PopulationReference { get; set; } = "";
     public int MaxPopulation { get; private set; } = 0;
     public string WorldPart { get; private set; } = "";
     public string AtmospherePart { get; private set; } = "";
@@ -44,26 +44,22 @@ namespace X4DataLoader
       string geology = XmlHelper.GetAttribute(element, "geology") ?? "";
       if (geology != "")
       {
-        int[] values = Translation.GetIds(geology);
-        Geology = values[1];
+        GeologyReference = Translation.ClearReference(geology);
       }
       string atmosphere = XmlHelper.GetAttribute(element, "atmosphere") ?? "";
       if (atmosphere != "")
       {
-        int[] values = Translation.GetIds(atmosphere);
-        Atmosphere = values[1];
+        AtmosphereReference = Translation.ClearReference(atmosphere);
       }
       string settlement = XmlHelper.GetAttribute(element, "settlements") ?? "";
       if (settlement != "")
       {
-        int[] values = Translation.GetIds(settlement);
-        Settlements = values[1];
+        SettlementsReference = Translation.ClearReference(settlement);
       }
       string population = XmlHelper.GetAttribute(element, "population") ?? "";
       if (population != "")
       {
-        int[] values = Translation.GetIds(population);
-        Population = values[1];
+        PopulationReference = Translation.ClearReference(population);
       }
       MaxPopulation = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "maxpopulation"));
       WorldPart = XmlHelper.GetAttribute(element, "part") ?? "";
@@ -76,7 +72,7 @@ namespace X4DataLoader
 
   public class Planet() : Moon
   {
-    public int PlanetClass { get; private set; } = 0;
+    public string PlanetClassReference { get; private set; } = "";
     public List<Moon> Moons { get; private set; } = [];
 
     public override void Load(XElement element, string source, string fileName, Galaxy galaxy, string ownerNameContent)
@@ -85,8 +81,7 @@ namespace X4DataLoader
       string planetClass = XmlHelper.GetAttribute(element, "class") ?? "";
       if (planetClass != "")
       {
-        int[] values = Translation.GetIds(planetClass);
-        PlanetClass = values[1];
+        PlanetClassReference = Translation.ClearReference(planetClass);
       }
       IEnumerable<XElement> moonElements = element.XPathSelectElements("moons/moon");
       foreach (XElement moonElement in moonElements)

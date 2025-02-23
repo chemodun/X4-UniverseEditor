@@ -13,11 +13,9 @@ namespace X4DataLoader
   public class Cluster(string macro)
   {
     public string Name { get; set; } = "";
-    public int NamePageId { get; set; } = 0;
-    public int NameTextId { get; set; } = 0;
+    public string NameReference { get; set; } = "";
     public string Description { get; set; } = "";
-    public int DescriptionPageId { get; set; } = 0;
-    public int DescriptionTextId { get; set; } = 0;
+    public string DescriptionReference { get; set; } = "";
     public string System { get; set; } = "";
     public string ImageId { get; set; } = "";
     public string Id { get; private set; } = macro.Replace("_macro", "");
@@ -25,11 +23,9 @@ namespace X4DataLoader
     public string Reference { get; set; } = "";
     public string MusicId { get; set; } = "";
     public string Environment { get; private set; } = "";
-    public int EnvironmentPageId { get; set; } = 0;
-    public int EnvironmentTextId { get; set; } = 0;
+    public string EnvironmentReference { get; set; } = "";
     public string Sun { get; private set; } = "";
-    public int SunPageId { get; set; } = 0;
-    public int SunTextId { get; set; } = 0;
+    public string SunReference { get; set; } = "";
     public Position Position { get; set; } = new Position();
     public string PositionId { get; private set; } = "";
     public string PositionSource { get; private set; } = "vanilla";
@@ -60,13 +56,9 @@ namespace X4DataLoader
         {
           DetailsMacro = macro;
           Name = galaxy.Translation.Translate(nameId);
-          var ids = Translation.GetIds(nameId);
-          NamePageId = ids[0];
-          NameTextId = ids[1];
+          NameReference = Translation.ClearReference(nameId);
           Description = galaxy.Translation.Translate(descriptionId);
-          ids = Translation.GetIds(descriptionId);
-          DescriptionPageId = ids[0];
-          DescriptionTextId = ids[1];
+          DescriptionReference = Translation.ClearReference(descriptionId);
           System = propertiesElement.Element("identification")?.Attribute("system")?.Value ?? "";
           ImageId = propertiesElement.Element("identification")?.Attribute("image")?.Value ?? "";
           DetailsSource = source;
@@ -81,20 +73,16 @@ namespace X4DataLoader
           if (systemElement != null)
           {
             XElement? spaceElement = systemElement.Element("space");
-            string environment = spaceElement?.Attribute("environment")?.Value ?? "";
-            Environment = galaxy.Translation.Translate(environment);
-            int[] environmentTextIds = Translation.GetIds(environment);
-            EnvironmentPageId = environmentTextIds[0];
-            EnvironmentTextId = environmentTextIds[1];
+            string environmentId = spaceElement?.Attribute("environment")?.Value ?? "";
+            Environment = galaxy.Translation.Translate(environmentId);
+            EnvironmentReference = Translation.ClearReference(environmentId);
             IEnumerable<XElement> sunElements = systemElement.XPathSelectElements("suns/sun");
             if (sunElements.Any())
             {
               XElement sunElement = sunElements.First();
-              string sun = sunElement.Attribute("class")?.Value ?? "";
-              int[] sunTextIds = Translation.GetIds(sun);
-              Sun = galaxy.Translation.Translate(sun);
-              SunPageId = sunTextIds[0];
-              SunTextId = sunTextIds[1];
+              string sunId = sunElement.Attribute("class")?.Value ?? "";
+              Sun = galaxy.Translation.Translate(sunId);
+              SunReference = Translation.ClearReference(sunId);
             }
             Planets = Planet.LoadFromXML(systemElement, source, fileName, galaxy, nameId);
           }
