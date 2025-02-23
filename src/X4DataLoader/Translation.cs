@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Utilities.Logging;
@@ -87,6 +88,12 @@ namespace X4DataLoader
         return [int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)];
       }
       return [0, 0];
+    }
+
+    public static string ClearReference(string reference)
+    {
+      int[] ids = GetIds(reference);
+      return $"{{{ids[0]},{ids[1]}}}";
     }
 
     private static string RemoveComments(string text)
