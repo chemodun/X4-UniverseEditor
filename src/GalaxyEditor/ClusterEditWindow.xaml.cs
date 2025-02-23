@@ -157,7 +157,7 @@ namespace GalaxyEditor
     public bool IsReady { get; set; } = false;
     public bool IsNew { get; set; } = false;
     public bool IsEditMode { get; set; } = false;
-    public Visibility EditVisibility => IsEditMode ? Visibility.Visible : Visibility.Hidden;
+    public Visibility EditVisibility => IsEditMode ? Visibility.Visible : Visibility.Collapsed;
     public int DataGridsSpan => IsEditMode ? 5 : 6;
     public ObservableCollection<CatalogItemWithTextReference> SunOptions { get; } = [];
     public ObservableCollection<CatalogItemWithTextReference> EnvironmentOptions { get; } = [];
@@ -290,6 +290,15 @@ namespace GalaxyEditor
       OnPropertyChanged(nameof(Cluster) + "." + e.PropertyName);
     }
 
+    protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+    {
+      base.OnPreviewKeyDown(e);
+      if (e.Key == System.Windows.Input.Key.Escape)
+      {
+        ButtonCancel_Click(this, new RoutedEventArgs());
+      }
+    }
+
     public void ButtonAddSystem_Click(object sender, RoutedEventArgs e)
     {
       Log.Debug("ButtonAddSystem_Click");
@@ -345,6 +354,13 @@ namespace GalaxyEditor
     public void ButtonCancel_Click(object sender, RoutedEventArgs e)
     {
       Log.Debug("ButtonCancel_Click");
+      if (
+        IsChanged
+        && MessageBox.Show("Are you sure you want to exit without saving?", "Confirm Exit", MessageBoxButton.YesNo) == MessageBoxResult.No
+      )
+      {
+        return;
+      }
       DialogResult = false;
       Close();
     }
