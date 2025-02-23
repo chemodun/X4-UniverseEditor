@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Utilities.Logging;
 using X4DataLoader;
@@ -23,6 +25,7 @@ namespace GalaxyEditor
       "MapInfo",
       "DLCList",
       "ModList",
+      "TemplateConfig",
     };
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -35,6 +38,7 @@ namespace GalaxyEditor
     private MapInfo _mapInfo = new(0, 0, 0, 0);
     private ExtensionsInfoList _dlcList = new([]);
     private ExtensionsInfoList _modList = new([]);
+    private TemplateConfig _templateConfig = new();
 
     private bool _isModLoading = false;
 
@@ -42,6 +46,7 @@ namespace GalaxyEditor
     {
       _dlcList.CollectionChanged += OnDLCListChanged;
       _modList.CollectionChanged += OnModListChanged;
+      _templateConfig.PropertyChanged += OnTemplateConfigChanged;
     }
 
     public string Name
@@ -185,6 +190,27 @@ namespace GalaxyEditor
       }
     }
 
+    public TemplateConfig TemplateConfig
+    {
+      get => _templateConfig;
+      set
+      {
+        if (_templateConfig != value)
+        {
+          if (_templateConfig != null)
+          {
+            _templateConfig.PropertyChanged -= OnTemplateConfigChanged;
+          }
+          _templateConfig = value;
+          if (_templateConfig != null)
+          {
+            _templateConfig.PropertyChanged += OnTemplateConfigChanged;
+          }
+          OnPropertyChanged(nameof(TemplateConfig));
+        }
+      }
+    }
+
     public List<UnifyItemCluster> Clusters { get; set; } = [];
 
     private void OnDLCListChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -196,6 +222,13 @@ namespace GalaxyEditor
     {
       Save();
     }
+
+    private void OnTemplateConfigChanged(object? sender, PropertyChangedEventArgs e)
+    {
+      Save();
+    }
+
+    public string NewClusterId => TemplateConfig.GetClusterId(Id, Clusters.Count + 1);
 
     public bool Create(MapInfo mapInfo, Galaxy galaxyData)
     {
@@ -369,6 +402,99 @@ namespace GalaxyEditor
     }
 
     protected void OnPropertyChanged(string propertyName)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+  }
+
+  public class TemplateConfig : INotifyPropertyChanged
+  {
+    private string _clusterId = "Cluster_{ModId}_{ClusterId:3}";
+    private string _sectorId = "Cluster_{ModId}_{ClusterId:3}_Sector_{ModId}_{SectorId:3}";
+    public string ClusterId
+    {
+      get => _clusterId;
+      set
+      {
+        _clusterId = value;
+        OnPropertyChanged(nameof(ClusterId));
+      }
+    }
+    public string SectorId
+    {
+      get => _sectorId;
+      set
+      {
+        _sectorId = value;
+        OnPropertyChanged(nameof(SectorId));
+      }
+    }
+
+    private static string ProcessStringParam(string template, string paramId, string value)
+    {
+      Regex regex = new($"{{{paramId}:?(\\d+)?}}");
+      string result = template;
+      foreach (Match match in regex.Matches(template))
+      {
+        if (match.Groups.Count == 2)
+        {
+          if (!string.IsNullOrWhiteSpace(match.Groups[1].Value))
+          {
+            int length = int.Parse(match.Groups[1].Value);
+            if (length > 0)
+            {
+              string newValue = value.PadRight(length, '_')[..length];
+              result = result.Replace(match.Value, newValue);
+            }
+          }
+          else
+          {
+            result = result.Replace(match.Value, value);
+          }
+        }
+      }
+      return result;
+    }
+
+    private static string ProcessIntParam(string template, string paramId, int value)
+    {
+      Regex regex = new($"{{{paramId}:?(\\d+)?}}");
+      string result = template;
+      foreach (Match match in regex.Matches(template))
+      {
+        if (match.Groups.Count == 2)
+        {
+          if (!string.IsNullOrWhiteSpace(match.Groups[1].Value))
+          {
+            int length = int.Parse(match.Groups[1].Value);
+            if (length > 0)
+            {
+              string newValue = value.ToString().PadLeft(length, '0');
+              result = result.Replace(match.Value, newValue);
+            }
+          }
+          else
+          {
+            result = result.Replace(match.Value, value.ToString());
+          }
+        }
+      }
+      return result;
+    }
+
+    public string GetClusterId(string modId, int clusterId)
+    {
+      return ProcessStringParam(ProcessIntParam(ClusterId, "ClusterId", clusterId), "ModId", modId);
+    }
+
+    public string GetSectorId(string modId, int clusterId, int sectorId)
+    {
+      return ProcessStringParam(ProcessIntParam(ProcessIntParam(SectorId, "ClusterId", clusterId), "SectorId", sectorId), "ModId", modId);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged = delegate { };
+
+    protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
