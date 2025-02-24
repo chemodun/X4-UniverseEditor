@@ -23,6 +23,7 @@ namespace X4Unpack
     protected string _folderPath;
     protected readonly Dictionary<string, CatEntry> _catalog;
     public int FileCount => _catalog.Count;
+    private Regex catEntryRegex = new(@"^(.+?)\s(\d+)\s(\d+)\s([0-9a-fA-F]{32})$");
 
     public ContentExtractor(string folderPath, string pattern = "*.cat", bool excludeSignatures = true)
     {
@@ -54,29 +55,29 @@ namespace X4Unpack
       long offset = 0;
       foreach (var line in File.ReadLines(catFilePath))
       {
-        var parts = line.Split(' ');
-        if (parts.Length >= 4)
+        if (string.IsNullOrWhiteSpace(line))
         {
-          if (parts.Length > 4)
-          {
-            Log.Warn($"Warning: Unexpected number of parts in line: {line}");
-            string[] newParts = { string.Join(" ", parts[0..(parts.Length - 3)]), parts[^3], parts[^2], parts[^1] };
-            parts = newParts;
-          }
-          long fileSize = long.TryParse(parts[1], out long sizeValue) ? sizeValue : 0;
-          long unixTime = long.TryParse(parts[2], out long timeValue) ? timeValue : 0;
-          string filePath = parts[0];
-          _catalog[filePath] = new CatEntry
-          {
-            FilePath = filePath,
-            FileSize = fileSize,
-            FileOffset = offset,
-            FileDate = DateTimeOffset.FromUnixTimeSeconds(unixTime).DateTime,
-            FileHash = parts[3],
-            DatFilePath = datFilePath,
-          };
-          offset += fileSize;
+          continue;
         }
+        Match? match = catEntryRegex.Match(line);
+        if (!match.Success || match.Groups.Count < 5 || !match.Groups.Values.All(g => g.Success))
+        {
+          Log.Warn($"Warning: Invalid line in catalog file: {line}");
+          continue;
+        }
+        long fileSize = long.TryParse(match.Groups[2].Value, out long sizeValue) ? sizeValue : 0;
+        long unixTime = long.TryParse(match.Groups[3].Value, out long timeValue) ? timeValue : 0;
+        string filePath = match.Groups[1].Value;
+        _catalog[filePath] = new CatEntry
+        {
+          FilePath = filePath,
+          FileSize = fileSize,
+          FileOffset = offset,
+          FileDate = DateTimeOffset.FromUnixTimeSeconds(unixTime).DateTime,
+          FileHash = match.Groups[4].Value,
+          DatFilePath = datFilePath,
+        };
+        offset += fileSize;
       }
     }
 
@@ -136,6 +137,11 @@ namespace X4Unpack
 
       byte[] buffer = new byte[entry.FileSize];
       datFileStream.Read(buffer, 0, buffer.Length);
+      // Remove BOM if present
+      if (buffer.Length >= 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF)
+      {
+        buffer = buffer.Skip(3).ToArray();
+      }
       return buffer;
     }
 
