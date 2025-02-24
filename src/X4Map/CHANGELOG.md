@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.4.0...X4Map@v0.5.0) (2025-02-24)
+
+
+### Features
+
+* **ClusterEditWindow:** add position parameter to Cluster initialization and update related methods ([ff5a253](https://github.com/chemodun/X4-UniverseEditor/commit/ff5a253cd7569d9445e8345c193278608ed0c6e0))
+* **GalaxyMapCluster:** implement ReAssign method for cluster visualization and tooltip updates ([f57bb7c](https://github.com/chemodun/X4-UniverseEditor/commit/f57bb7c075b4277359ee99598c5716a224d9ef00))
+
+
+### Code Refactoring
+
+* **GalaxyMapCluster:** enhance tooltip display for new clusters with improved styling and alignment ([90915e1](https://github.com/chemodun/X4-UniverseEditor/commit/90915e11cd69f5fd717b1fc27ae5fead2a297681))
+
 ## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.3.2...X4Map@v0.4.0) (2025-02-19)
 
 
