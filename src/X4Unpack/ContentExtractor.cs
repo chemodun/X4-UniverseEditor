@@ -22,6 +22,7 @@ namespace X4Unpack
   {
     protected string _folderPath;
     protected readonly Dictionary<string, CatEntry> _catalog;
+    public int FileCount => _catalog.Count;
 
     public ContentExtractor(string folderPath, string pattern = "*.cat", bool excludeSignatures = true)
     {
@@ -59,13 +60,7 @@ namespace X4Unpack
           if (parts.Length > 4)
           {
             Log.Warn($"Warning: Unexpected number of parts in line: {line}");
-            string[] newParts =
-            {
-              string.Join(" ", parts[0..(parts.Length - 3)]),
-              parts[parts.Length - 3],
-              parts[parts.Length - 2],
-              parts[parts.Length - 1],
-            };
+            string[] newParts = { string.Join(" ", parts[0..(parts.Length - 3)]), parts[^3], parts[^2], parts[^1] };
             parts = newParts;
           }
           long fileSize = long.TryParse(parts[1], out long sizeValue) ? sizeValue : 0;
@@ -96,6 +91,11 @@ namespace X4Unpack
       {
         Log.Warn($"File {filePath} not found in catalog.");
       }
+    }
+
+    public bool FolderExists(string folderPath)
+    {
+      return _catalog.Any(e => e.Key.StartsWith(folderPath, StringComparison.OrdinalIgnoreCase));
     }
 
     public List<CatEntry> GetFolderEntries(string folderPath)
@@ -129,6 +129,16 @@ namespace X4Unpack
       }
     }
 
+    public static byte[] GetEntryData(CatEntry entry)
+    {
+      using var datFileStream = new FileStream(entry.DatFilePath, FileMode.Open, FileAccess.Read);
+      datFileStream.Seek(entry.FileOffset, SeekOrigin.Begin);
+
+      byte[] buffer = new byte[entry.FileSize];
+      datFileStream.Read(buffer, 0, buffer.Length);
+      return buffer;
+    }
+
     public virtual void ExtractEntry(CatEntry entry, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
       string outputFilePath = Path.Combine(outputDirectory, entry.FilePath);
@@ -137,11 +147,8 @@ namespace X4Unpack
         Log.Warn($"File {entry.FilePath} already exists in output directory. Skipping extraction.");
         return;
       }
-      using var datFileStream = new FileStream(entry.DatFilePath, FileMode.Open, FileAccess.Read);
-      datFileStream.Seek(entry.FileOffset, SeekOrigin.Begin);
 
-      byte[] buffer = new byte[entry.FileSize];
-      datFileStream.Read(buffer, 0, buffer.Length);
+      byte[] buffer = GetEntryData(entry);
 
       if (!skipHashCheck)
       {
