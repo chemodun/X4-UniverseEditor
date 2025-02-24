@@ -119,7 +119,8 @@ namespace X4DataLoader
           }
           catch (ArgumentException e)
           {
-            throw new ArgumentException($"Error loading EntryPointPath for Highway ${Macro}: {e.Message}");
+            Log.Warn($"Error loading EntryPointPath for Highway ${Macro}: {e.Message}");
+            continue;
           }
           pointPath = EntryPointPath;
         }
@@ -132,7 +133,8 @@ namespace X4DataLoader
           }
           catch (ArgumentException e)
           {
-            throw new ArgumentException($"Error loading ExitPointPath for Highway ${Macro}: {e.Message}");
+            Log.Warn($"Error loading ExitPointPath for Highway {Macro}: {e.Message}");
+            continue;
           }
           pointPath = ExitPointPath;
         }
@@ -254,11 +256,11 @@ namespace X4DataLoader
         Cluster.Sectors.FirstOrDefault(s => StringHelper.EqualsIgnoreCase(s.PositionId, pathParts[0]))
         ?? throw new ArgumentException($"Sector with PositionId {pathParts[1]} not found in Cluster {Cluster.Name}");
 
-      if (additionalZones != null)
+      if (additionalZones != null && additionalZones.Count > 0)
       {
         Zone =
           additionalZones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.PositionId, pathParts[1]))
-          ?? throw new ArgumentException($"Zone with PositionId {pathParts[2]} not found in AdditionalZones");
+          ?? throw new ArgumentException($"Zone with PositionId {pathParts[1]} not found in AdditionalZones");
         if (GateMacro != "")
         {
           Gate =
@@ -270,7 +272,7 @@ namespace X4DataLoader
       {
         Zone =
           Sector.Zones.FirstOrDefault(z => StringHelper.EqualsIgnoreCase(z.PositionId, pathParts[1]))
-          ?? throw new ArgumentException($"Zone with PositionId {pathParts[2]} not found in Sector {Sector.Name}");
+          ?? throw new ArgumentException($"Zone with PositionId {pathParts[1]} not found in Sector {Sector.Name}");
         if (GateMacro != "")
         {
           Gate =
