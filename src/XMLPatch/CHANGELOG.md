@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.3...XMLPatch@v0.1.4) (2025-02-24)
+
+
+### Bug Fixes
+
+* **XMLPatch:** improve element replacement logic and logging ([779a906](https://github.com/chemodun/X4-UniverseEditor/commit/779a906f4e4e93c4e67b24e3338a142256083ba2))
+
 ## [0.1.3](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.2...XMLPatch@v0.1.3) (2025-02-24)
 
 
