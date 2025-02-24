@@ -9,164 +9,275 @@
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
-        Title="Chem Gate Builder" MinWidth="1200" MinHeight="940"
+        Title="Chem Gate Builder"
+        MinWidth="1200"
+        MinHeight="940"
         Icon="{StaticResource BuilderIcon}"
         WindowStartupLocation="CenterScreen"
         Name="ChemGateBuilder">
-        <!-- DataContext="{Binding Main, Source={StaticResource Locator}}" -->
+    <!-- DataContext="{Binding Main, Source={StaticResource Locator}}" -->
     <Window.Resources>
         <DataTemplate x:Key="SectorTemplate">
-            <StackPanel Orientation="Horizontal" Margin="0">
-                <TextBlock Text="{Binding Name}" Margin="0" Width="200"/>
-                <TextBlock Text="{Binding Source}" Margin="0" Foreground="DarkGray" />
+            <StackPanel Orientation="Horizontal"
+                        Margin="0">
+                <TextBlock Text="{Binding Name}"
+                           Margin="0"
+                           Width="200"/>
+                <TextBlock Text="{Binding Source}"
+                           Margin="0"
+                           Foreground="DarkGray"/>
             </StackPanel>
         </DataTemplate>
-        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter" />
-        <Style x:Key="SectorComboBoxItemStyle" TargetType="ComboBoxItem">
+        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter"/>
+        <Style x:Key="SectorComboBoxItemStyle"
+               TargetType="ComboBoxItem">
             <Style.Triggers>
-                <DataTrigger Binding="{Binding Selectable}" Value="False">
-                    <Setter Property="Foreground" Value="Gray"/>
-                    <Setter Property="IsEnabled" Value="False"/>
+                <DataTrigger Binding="{Binding Selectable}"
+                             Value="False">
+                    <Setter Property="Foreground"
+                            Value="Gray"/>
+                    <Setter Property="IsEnabled"
+                            Value="False"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="RightAlignedTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="TextAlignment" Value="Right"/>
+        <Style x:Key="RightAlignedTextBlockStyle"
+               TargetType="TextBlock">
+            <Setter Property="TextAlignment"
+                    Value="Right"/>
         </Style>
-        <Style x:Key="RightAlignedTextBoxStyle" TargetType="TextBox">
-            <Setter Property="TextAlignment" Value="Right"/>
+        <Style x:Key="RightAlignedTextBoxStyle"
+               TargetType="TextBox">
+            <Setter Property="TextAlignment"
+                    Value="Right"/>
         </Style>
-        <Style x:Key="DataGridCenterColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Style x:Key="DataGridCenterColumnHeaderStyle"
+               TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center"/>
         </Style>
-        <Style x:Key="IntegerTextBoxStyle" TargetType="TextBox">
-            <Setter Property="local:TextBoxExtensions.IsIntegerOnly" Value="True"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="MinWidth" Value="40"/>
-            <Setter Property="TextAlignment" Value="Right"/>
+        <Style x:Key="IntegerTextBoxStyle"
+               TargetType="TextBox">
+            <Setter Property="local:TextBoxExtensions.IsIntegerOnly"
+                    Value="True"/>
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="MinWidth"
+                    Value="40"/>
+            <Setter Property="TextAlignment"
+                    Value="Right"/>
         </Style>
-        <Style x:Key="CoordinatesTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="local:TextBoxExtensions.MinValue" Value="{Binding SectorRadiusNegative}"/>
-            <Setter Property="local:TextBoxExtensions.MaxValue" Value="{Binding SectorRadius}"/>
+        <Style x:Key="CoordinatesTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource IntegerTextBoxStyle}">
+            <Setter Property="Margin"
+                    Value="2"/>
+            <Setter Property="local:TextBoxExtensions.MinValue"
+                    Value="{Binding SectorRadiusNegative}"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue"
+                    Value="{Binding SectorRadius}"/>
         </Style>
-        <Style x:Key="PositionTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
-            <Setter Property="local:TextBoxExtensions.MinValue" Value="-999"/>
-            <Setter Property="local:TextBoxExtensions.MaxValue" Value="999"/>
+        <Style x:Key="PositionTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource IntegerTextBoxStyle}">
+            <Setter Property="local:TextBoxExtensions.MinValue"
+                    Value="-999"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue"
+                    Value="999"/>
         </Style>
-        <Style x:Key="RotationTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
-            <Setter Property="local:TextBoxExtensions.MinValue" Value="-180"/>
-            <Setter Property="local:TextBoxExtensions.MaxValue" Value="180"/>
+        <Style x:Key="RotationTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource IntegerTextBoxStyle}">
+            <Setter Property="local:TextBoxExtensions.MinValue"
+                    Value="-180"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue"
+                    Value="180"/>
         </Style>
-        <Style x:Key="InternalRadiusTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource IntegerTextBoxStyle}">
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="local:TextBoxExtensions.MinValue" Value="{Binding MinInternalSectorSizeKm}"/>
-            <Setter Property="local:TextBoxExtensions.MaxValue" Value="{Binding MaxInternalSectorSizeKm}"/>
+        <Style x:Key="InternalRadiusTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource IntegerTextBoxStyle}">
+            <Setter Property="Margin"
+                    Value="2"/>
+            <Setter Property="local:TextBoxExtensions.MinValue"
+                    Value="{Binding MinInternalSectorSizeKm}"/>
+            <Setter Property="local:TextBoxExtensions.MaxValue"
+                    Value="{Binding MaxInternalSectorSizeKm}"/>
         </Style>
-        <Style x:Key="FluentButtonStyle" TargetType="fluent:Button">
-            <Setter Property="Width" Value="60"/>
+        <Style x:Key="FluentButtonStyle"
+               TargetType="fluent:Button">
+            <Setter Property="Width"
+                    Value="60"/>
         </Style>
-        <Style x:Key="FontAwesomeIconStyle" TargetType="fa:IconImage">
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Foreground" Value="Gray"/>
+        <Style x:Key="FontAwesomeIconStyle"
+               TargetType="fa:IconImage">
+            <Setter Property="Width"
+                    Value="20"/>
+            <Setter Property="Height"
+                    Value="20"/>
+            <Setter Property="Foreground"
+                    Value="Gray"/>
         </Style>
-        <Style x:Key="SectorCanvasStyle" TargetType="Canvas">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="MinWidth" Value="200"/>
-            <Setter Property="MinHeight" Value="200"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="Margin" Value="5"/>
+        <Style x:Key="SectorCanvasStyle"
+               TargetType="Canvas">
+            <Setter Property="Background"
+                    Value="White"/>
+            <Setter Property="MinWidth"
+                    Value="200"/>
+            <Setter Property="MinHeight"
+                    Value="200"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="Margin"
+                    Value="5"/>
         </Style>
-        <Style x:Key="SectorHexagonStyle" TargetType="Polygon">
-            <Setter Property="Stroke" Value="DarkGray"/>
-            <Setter Property="StrokeThickness" Value="2"/>
+        <Style x:Key="SectorHexagonStyle"
+               TargetType="Polygon">
+            <Setter Property="Stroke"
+                    Value="DarkGray"/>
+            <Setter Property="StrokeThickness"
+                    Value="2"/>
         </Style>
-        <Style x:Key="SectorInternalRadius" TargetType="Slider">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Width" Value="150"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TickFrequency" Value="10"/>
-            <Setter Property="IsSnapToTickEnabled" Value="True"/>
-            <Setter Property="TickPlacement" Value="BottomRight"/>
+        <Style x:Key="SectorInternalRadius"
+               TargetType="Slider">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="Width"
+                    Value="150"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
+            <Setter Property="TickFrequency"
+                    Value="10"/>
+            <Setter Property="IsSnapToTickEnabled"
+                    Value="True"/>
+            <Setter Property="TickPlacement"
+                    Value="BottomRight"/>
         </Style>
-        <Style x:Key="StatusMessageStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="Black"/> <!-- Default color -->
+        <Style x:Key="StatusMessageStyle"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="Black"/>
+            <!-- Default color -->
             <Style.Triggers>
-                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Info">
-                    <Setter Property="Foreground" Value="Blue"/>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}"
+                             Value="Info">
+                    <Setter Property="Foreground"
+                            Value="Blue"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Warning">
-                    <Setter Property="Foreground" Value="DarkOrange"/>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}"
+                             Value="Warning">
+                    <Setter Property="Foreground"
+                            Value="DarkOrange"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}" Value="Error">
-                    <Setter Property="Foreground" Value="DarkRed"/>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}"
+                             Value="Error">
+                    <Setter Property="Foreground"
+                            Value="DarkRed"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
     <DockPanel>
-        <fluent:Ribbon DockPanel.Dock="Top" x:Name="RibbonMain" SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
-            <fluent:RibbonTabItem Header="Mod" x:Name="RibbonTabMod">
+        <fluent:Ribbon DockPanel.Dock="Top"
+                       x:Name="RibbonMain"
+                       SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+            <fluent:RibbonTabItem Header="Mod"
+                                  x:Name="RibbonTabMod">
                 <fluent:RibbonGroupBox Header="Mod Actions">
                     <fluent:Button Header="New"
-                                    IsEnabled="{Binding IsGateCanBeCreated}"
-                                    Click="ButtonNewMod_Click"
-                                    Style="{StaticResource FluentButtonStyle}">
+                                   IsEnabled="{Binding IsGateCanBeCreated}"
+                                   Click="ButtonNewMod_Click"
+                                   Visibility="{Binding ExtractedVisibility}"
+                                   Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
-                            <fa:IconImage Icon="FileCirclePlus" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="FileCirclePlus"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                     <fluent:Button Header="Load"
-                                    IsEnabled="{Binding IsDataLoaded}"
-                                    Click="ButtonLoadMod_Click"
-                                    Style="{StaticResource FluentButtonStyle}">
+                                   IsEnabled="{Binding IsDataLoaded}"
+                                   Click="ButtonLoadMod_Click"
+                                   Visibility="{Binding ExtractedVisibility}"
+                                   Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
-                            <fa:IconImage Icon="FileArrowUp" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="FileArrowUp"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                     <fluent:Button Header="Save"
-                                    IsEnabled="{Binding IsModCanBeSaved}"
-                                    Click="ButtonSaveMod_Click"
-                                    Style="{StaticResource FluentButtonStyle}">
+                                   IsEnabled="{Binding IsModCanBeSaved}"
+                                   Click="ButtonSaveMod_Click"
+                                   Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
-                            <fa:IconImage Icon="FileArrowDown" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="FileArrowDown"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                     <fluent:Button Header="Save as"
-                                    IsEnabled="{Binding IsModCanBeSavedAs}"
-                                    Click="ButtonSaveModAs_Click"
-                                    Style="{StaticResource FluentButtonStyle}">
+                                   IsEnabled="{Binding IsModCanBeSavedAs}"
+                                   Click="ButtonSaveModAs_Click"
+                                   Visibility="{Binding ExtractedVisibility}"
+                                   Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
-                            <fa:IconImage Icon="FilePen" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="FilePen"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Program">
                     <fluent:Button Header="Exit"
-                                    Click="ButtonExit_Click"
-                                    Style="{StaticResource FluentButtonStyle}">
+                                   Click="ButtonExit_Click"
+                                   Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
-                            <fa:IconImage  Icon="XMark" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="XMark"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="X4 Data" x:Name="RibbonTabX4Data">
+            <fluent:RibbonTabItem Header="X4 Data"
+                                  x:Name="RibbonTabX4Data"
+                                  Visibility="{Binding ExtractedVisibility}">
                 <fluent:RibbonGroupBox Header="X4 Data">
                     <fluent:Button Header="Extract"
-                                    Style="{StaticResource FluentButtonStyle}"
-                                    Click="ButtonExtractX4Data_Click">
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonExtractX4Data_Click">
                         <fluent:Button.Icon>
                             <StaticResource ResourceKey="XIcon"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Configuration" x:Name="RibbonTabConfiguration">
+            <fluent:RibbonTabItem Header="Configuration"
+                                  x:Name="RibbonTabConfiguration">
+                <fluent:RibbonGroupBox Header="Mode related">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Direct mode:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="2"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding DirectMode}"
+                                  ToolTip="Work without extraction"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="X4 Data related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
@@ -179,61 +290,111 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Content="X4 Data Folder:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <Label Content="X4 Data Folder:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding ExtractedVisibility}"/>
                         <fluent:Button Header="{Binding X4DataFolderPath}"
-                                        Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
-                                        Click="SelectX4DataFolder_Click" SizeDefinition="Middle"
-                                        MinWidth= "100"
-                                        MaxWidth="200" HorizontalAlignment="Left"
-                                        ToolTip="{Binding X4DataFolderPath}">
+                                       Grid.Row="0"
+                                       Grid.Column="1"
+                                       Grid.ColumnSpan="2"
+                                       Click="SelectX4DataFolder_Click"
+                                       SizeDefinition="Middle"
+                                       MinWidth="100"
+                                       MaxWidth="200"
+                                       HorizontalAlignment="Left"
+                                       ToolTip="{Binding X4DataFolderPath}"
+                                       Visibility="{Binding ExtractedVisibility}">
                             <fluent:Button.Icon>
                                 <StaticResource ResourceKey="XIcon"/>
                             </fluent:Button.Icon>
                         </fluent:Button>
-                        <Label Content="X4 Data Version:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <Label Content="X4 Game Folder:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding GameFolderVisibility}"/>
+                        <fluent:Button Header="{Binding X4GameFolderPath}"
+                                       Grid.Row="0"
+                                       Grid.Column="1"
+                                       Grid.ColumnSpan="2"
+                                       Click="SelectX4GameFolder_Click"
+                                       SizeDefinition="Middle"
+                                       MinWidth="100"
+                                       MaxWidth="200"
+                                       HorizontalAlignment="Left"
+                                       ToolTip="{Binding X4GameFolderPath}"
+                                       Visibility="{Binding GameFolderVisibility}">
+                            <fluent:Button.Icon>
+                                <StaticResource ResourceKey="XIcon"/>
+                            </fluent:Button.Icon>
+                        </fluent:Button>
+                        <Label Content="X4 Data Version:"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
                         <CheckBox Margin="1"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    IsChecked="{Binding X4DataVersionOverride}"
-                                    ToolTip="Override the detected version"/>
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding X4DataVersionOverride}"
+                                  Visibility="{Binding ExtractedVisibility}"
+                                  ToolTip="Override the detected version"/>
                         <ComboBox x:Name="X4DataVersionComboBox"
-                                    Grid.Row="1" Grid.Column="2"
-                                    Margin="0"
-                                    SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
-                                    ItemsSource="{Binding X4DataVersions}">
-                        </ComboBox>
-                        <Label Content="Load Mods Data:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  Margin="0"
+                                  IsEnabled="{Binding NoDirectMode}"
+                                  SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
+                                  ItemsSource="{Binding X4DataVersions}"/>
+                        <Label Content="Load Mods Data:"
+                               Grid.Row="2"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
                         <CheckBox Margin="1"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                IsChecked="{Binding LoadModsData}"
-                                ToolTip="Load Mods data, not only official DLC's"/>
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="2"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding LoadModsData}"
+                                  ToolTip="Load Mods data, not only official DLC's"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Edit related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Gates Active by Default:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <CheckBox Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="2" IsChecked="{Binding GatesActiveByDefault}"/>
-                        <Label Content="Gates Minimal Distance Between, km:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                        <TextBlock VerticalAlignment="Center" Margin="5"
-                                    Grid.Row="1" Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    TextAlignment="Right"
-                                    Text="{Binding GatesMinimalDistanceBetween}" />
+                        <Label Content="Gates Active by Default:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="0"
+                                  Grid.Column="2"
+                                  IsChecked="{Binding GatesActiveByDefault}"/>
+                        <Label Content="Gates Minimal Distance Between, km:"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="5"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   TextAlignment="Right"
+                                   Text="{Binding GatesMinimalDistanceBetween}"/>
                         <Slider x:Name="GatesMinimalDistanceSlider"
                                 Margin="2"
                                 HorizontalAlignment="Stretch"
@@ -244,27 +405,32 @@
                                 Minimum="0"
                                 Maximum="100"
                                 Value="{Binding GatesMinimalDistanceBetween, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Grid.Row="1" Grid.Column="2"
-                                />
+                                Grid.Row="1"
+                                Grid.Column="2"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Map related">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Colors opacity:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <TextBlock VerticalAlignment="Center" Margin="5"
-                                    Grid.Row="0" Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    TextAlignment="Right"
-                                    Text="{Binding MapColorsOpacity, StringFormat='{}{0:F2}'}"/>
+                        <Label Content="Colors opacity:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="5"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   TextAlignment="Right"
+                                   Text="{Binding MapColorsOpacity, StringFormat='{}{0:F2}'}"/>
                         <Slider x:Name="MapColorsOpacitySlider"
                                 Margin="2"
                                 HorizontalAlignment="Stretch"
@@ -275,14 +441,19 @@
                                 Minimum="0"
                                 Maximum="1"
                                 Value="{Binding MapColorsOpacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Grid.Row="0" Grid.Column="2"
-                                />
-                        <Label Content="Sector Radius, km:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                        <TextBlock VerticalAlignment="Center" Margin="5"
-                                    Grid.Row="1" Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    TextAlignment="Right"
-                                    Text="{Binding SectorRadius}"/>
+                                Grid.Row="0"
+                                Grid.Column="2"/>
+                        <Label Content="Sector Radius, km:"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="5"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   TextAlignment="Right"
+                                   Text="{Binding SectorRadius}"/>
                         <Slider x:Name="SectorRadiusSlider"
                                 Margin="2"
                                 HorizontalAlignment="Stretch"
@@ -293,522 +464,745 @@
                                 Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
                                 Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
                                 Value="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Grid.Row="1" Grid.Column="2"
-                                />
+                                Grid.Row="1"
+                                Grid.Column="2"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Logging Options">
                     <StackPanel>
-                        <ComboBox
-                            x:Name="LoggingLevelComboBox"
-                            Margin="5"
-                            SelectedValuePath="Content"
-                            SelectedValue="{Binding LogLevel, Mode=TwoWay}">
+                        <ComboBox x:Name="LoggingLevelComboBox"
+                                  Margin="5"
+                                  SelectedValuePath="Content"
+                                  SelectedValue="{Binding LogLevel, Mode=TwoWay}">
                             <ComboBoxItem Content="Error"/>
                             <ComboBoxItem Content="Warning"/>
                             <ComboBoxItem Content="Info"/>
                             <ComboBoxItem Content="Debug"/>
                         </ComboBox>
-                        <CheckBox Content="Enable Writing to File" Margin="5" IsChecked="{Binding LogToFile}"/>
+                        <CheckBox Content="Enable Writing to File"
+                                  Margin="5"
+                                  IsChecked="{Binding LogToFile}"/>
                     </StackPanel>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Help"  x:Name="RibbonTabHelp">
+            <fluent:RibbonTabItem Header="Help"
+                                  x:Name="RibbonTabHelp">
                 <fluent:RibbonGroupBox Header="Help Actions">
-                    <fluent:Button Header="Readme" Style="{StaticResource FluentButtonStyle}"
-                                    Click="ButtonReadme_Click">
+                    <fluent:Button Header="Readme"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonReadme_Click">
                         <fluent:Button.Icon>
-                            <fa:IconImage Icon="Readme" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="Readme"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="About" Style="{StaticResource FluentButtonStyle}"
-                                    Click="ButtonAbout_Click">
+                    <fluent:Button Header="About"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonAbout_Click">
                         <fluent:Button.Icon>
-                            <fa:IconImage Icon="InfoCircle" Style="{StaticResource FontAwesomeIconStyle}"/>
+                            <fa:IconImage Icon="InfoCircle"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <DockPanel LastChildFill="True" IsEnabled="{Binding IsDataLoaded}" x:Name="MainDockPanel">
+        <DockPanel LastChildFill="True"
+                   IsEnabled="{Binding IsDataLoaded}"
+                   x:Name="MainDockPanel">
             <!-- StatusBar Docked to Bottom -->
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
                     <TextBlock Text="{Binding StatusBar.StatusMessage}"
-                        Style ="{StaticResource StatusMessageStyle}"/>
+                               Style="{StaticResource StatusMessageStyle}"/>
                 </StatusBarItem>
             </StatusBar>
-            <GroupBox Header="{Binding ChemGateKeeperMod.Title}" DockPanel.Dock="Top" Margin="5">
-                <DockPanel  VerticalAlignment="Stretch" LastChildFill="True">
-                    <GroupBox Header="Gates" Margin="5" DockPanel.Dock="Bottom">
-                        <StackPanel Orientation="Vertical" Margin="5">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <GroupBox Header="Gate Direct" Grid.Column="0" Margin="5">
-                                <StackPanel>
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Label Content="Sector:" Grid.Column="0" VerticalAlignment="Center"/>
-                                        <!-- Sector Direct ComboBox -->
-                                        <ComboBox
-                                            x:Name="SectorDirectComboBox"
-                                            Grid.Column="1"
-                                            Margin="5"
-                                            ItemsSource="{Binding SectorsDirectViewSource.View}"
-                                            SelectedItem="{Binding GatesConnectionCurrent.SectorDirect, Mode=TwoWay}"
-                                            ItemContainerStyle="{StaticResource SectorComboBoxItemStyle}"
-                                            SelectedValuePath="Macro"
-                                            ItemTemplate="{StaticResource SectorTemplate}" />
-                                        <Button x:Name="ButtonSectorDirectSelectFromMap"
-                                                Grid.Column="2"
-                                                Width="24" Height="24"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                Margin="5"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
-                                                Cursor="Hand"
-                                                ToolTip="Expand"
-                                                Click="ButtonSectorDirectSelectFromMap_Click">
-                                            <fa:IconImage Icon="MapLocationDot"
-                                                        Style="{StaticResource FontAwesomeIconStyle}"/>
-                                        </Button>
-                                    </Grid>
-                                    <GroupBox Header="Sector Info" Margin="5">
-                                        <!-- <DockPanel> -->
+            <GroupBox Header="{Binding ChemGateKeeperMod.Title}"
+                      DockPanel.Dock="Top"
+                      Margin="5">
+                <DockPanel VerticalAlignment="Stretch"
+                           LastChildFill="True">
+                    <GroupBox Header="Gates"
+                              Margin="5"
+                              DockPanel.Dock="Bottom">
+                        <StackPanel Orientation="Vertical"
+                                    Margin="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <GroupBox Header="Gate Direct"
+                                          Grid.Column="0"
+                                          Margin="5">
+                                    <StackPanel>
+                                        <Grid Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="Sector:"
+                                                   Grid.Column="0"
+                                                   VerticalAlignment="Center"/>
+                                            <!-- Sector Direct ComboBox -->
+                                            <ComboBox x:Name="SectorDirectComboBox"
+                                                      Grid.Column="1"
+                                                      Margin="5"
+                                                      ItemsSource="{Binding SectorsDirectViewSource.View}"
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirect, Mode=TwoWay}"
+                                                      ItemContainerStyle="{StaticResource SectorComboBoxItemStyle}"
+                                                      SelectedValuePath="Macro"
+                                                      ItemTemplate="{StaticResource SectorTemplate}"/>
+                                            <Button x:Name="ButtonSectorDirectSelectFromMap"
+                                                    Grid.Column="2"
+                                                    Width="24"
+                                                    Height="24"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Margin="5"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Cursor="Hand"
+                                                    ToolTip="Expand"
+                                                    Click="ButtonSectorDirectSelectFromMap_Click">
+                                                <fa:IconImage Icon="MapLocationDot"
+                                                              Style="{StaticResource FontAwesomeIconStyle}"/>
+                                            </Button>
+                                        </Grid>
+                                        <GroupBox Header="Sector Info"
+                                                  Margin="5">
+                                            <!-- <DockPanel> -->
                                             <!-- <StackPanel Orientation="Vertical"> -->
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <Canvas x:Name="SectorDirectCanvas"
-                                                    Grid.Column="0" Grid.Row="0"
-                                                    Style="{StaticResource SectorCanvasStyle}"
-                                                    SizeChanged="SectorDirectCanvas_SizeChanged">
-                                                <!-- Hexagonal Sector Representation -->
-                                                <Polygon x:Name="SectorDirectHexagon" Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
-                                                        Style="{StaticResource SectorHexagonStyle}"
-                                                        Canvas.Left="{Binding GatesConnectionCurrent.SectorDirectMap.VisualX}"
-                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}"
-                                                        >
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Canvas x:Name="SectorDirectCanvas"
+                                                        Grid.Column="0"
+                                                        Grid.Row="0"
+                                                        Style="{StaticResource SectorCanvasStyle}"
+                                                        SizeChanged="SectorDirectCanvas_SizeChanged">
+                                                    <!-- Hexagonal Sector Representation -->
+                                                    <Polygon x:Name="SectorDirectHexagon"
+                                                             Points="{Binding GatesConnectionCurrent.SectorDirectMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                             Style="{StaticResource SectorHexagonStyle}"
+                                                             Canvas.Left="{Binding GatesConnectionCurrent.SectorDirectMap.VisualX}"
+                                                             Canvas.Top="{Binding GatesConnectionCurrent.SectorDirectMap.VisualY}">
                                                         <Polygon.Fill>
-                                                            <SolidColorBrush Color="{Binding GatesConnectionCurrent.SectorDirectMap.OwnerColor}" Opacity="{Binding MapColorsOpacity}"/>
+                                                            <SolidColorBrush Color="{Binding GatesConnectionCurrent.SectorDirectMap.OwnerColor}"
+                                                                             Opacity="{Binding MapColorsOpacity}"/>
                                                         </Polygon.Fill>
-                                                        </Polygon>
-                                                <!-- Gates Representation -->
-                                                <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorDirectMap.Items}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Canvas />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Image
-                                                                Width="{Binding ItemSizePx}"
-                                                                Height="{Binding ItemSizePx}"
-                                                                Source="{Binding ObjectImage}"
-                                                                Stretch="Uniform"
-                                                                PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
-                                                                MouseMove="SectorDirectMapItem_MouseMove"
-                                                                MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
-                                                                <!-- <Image.Source>
+                                                    </Polygon>
+                                                    <!-- Gates Representation -->
+                                                    <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorDirectMap.Items}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <Canvas/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Image Width="{Binding ItemSizePx}"
+                                                                       Height="{Binding ItemSizePx}"
+                                                                       Source="{Binding ObjectImage}"
+                                                                       Stretch="Uniform"
+                                                                       PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
+                                                                       MouseMove="SectorDirectMapItem_MouseMove"
+                                                                       MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
+                                                                    <!-- <Image.Source>
                                                                     <StaticResource ResourceKey="{Binding ObjectImage}"/>
                                                                 </Image.Source> -->
-                                                                <!-- Positioning the Image using RenderTransform -->
-                                                                <Image.RenderTransform>
-                                                                    <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
-                                                                </Image.RenderTransform>
-
-                                                                <!-- Binding Tooltip -->
-                                                                <Image.ToolTip>
-                                                                    <ToolTip Content="{Binding ToolTip}" />
-                                                                </Image.ToolTip>
-                                                            </Image>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </Canvas>
-                                            <Button x:Name="ButtonSectorDirectMapExpand"
-                                                Grid.Column="0" Grid.Row="0"
-                                                Width="24" Height="24"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Top"
-                                                Margin="5"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
-                                                Cursor="Hand"
-                                                ToolTip="Expand"
-                                                Click="ButtonSectorDirectMapExpand_Click">
-                                                <fa:IconImage Icon="Expand"
-                                                            Style="{StaticResource FontAwesomeIconStyle}"/>
-                                            </Button>
-                                            <StackPanel Orientation="Horizontal" Margin="5"
-                                                        Grid.Column="0" Grid.Row="1">
-                                                <TextBlock Margin="0" VerticalAlignment="Center"
-                                                            Text="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
-                                                <Slider x:Name="SectorDirectRadiusSlider"
-                                                        Style="{StaticResource SectorInternalRadius}"
-                                                        Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
-                                                        Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
-                                                        Value="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, Mode=TwoWay}"
-                                                />
-                                            </StackPanel>
-                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectObjects}"
-                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedObject, Mode=TwoWay}"
-                                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                      AutoGenerateColumns="False"
-                                                      Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                                                      Margin="5"
-                                                      CanUserAddRows="False"
-                                                      IsReadOnly="True"
-                                                      SelectionMode="Single"
-                                                      MinHeight="160">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
-                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="200"/>
-                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="200"/>
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </Grid>
-                                    </GroupBox>
-                                    <GroupBox Header="Gate Parameters" Margin="5" x:Name="GroupBoxGateDirect">
+                                                                    <!-- Positioning the Image using RenderTransform -->
+                                                                    <Image.RenderTransform>
+                                                                        <TranslateTransform X="{Binding X}"
+                                                                                            Y="{Binding Y}"/>
+                                                                    </Image.RenderTransform>
+                                                                    <!-- Binding Tooltip -->
+                                                                    <Image.ToolTip>
+                                                                        <ToolTip Content="{Binding ToolTip}"/>
+                                                                    </Image.ToolTip>
+                                                                </Image>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Canvas>
+                                                <Button x:Name="ButtonSectorDirectMapExpand"
+                                                        Grid.Column="0"
+                                                        Grid.Row="0"
+                                                        Width="24"
+                                                        Height="24"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="5"
+                                                        Background="Transparent"
+                                                        BorderBrush="Transparent"
+                                                        Cursor="Hand"
+                                                        ToolTip="Expand"
+                                                        Click="ButtonSectorDirectMapExpand_Click">
+                                                    <fa:IconImage Icon="Expand"
+                                                                  Style="{StaticResource FontAwesomeIconStyle}"/>
+                                                </Button>
+                                                <StackPanel Orientation="Horizontal"
+                                                            Margin="5"
+                                                            Grid.Column="0"
+                                                            Grid.Row="1">
+                                                    <TextBlock Margin="0"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, StringFormat='Radius: {0} km'}"/>
+                                                    <Slider x:Name="SectorDirectRadiusSlider"
+                                                            Style="{StaticResource SectorInternalRadius}"
+                                                            Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                                                            Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
+                                                            Value="{Binding GatesConnectionCurrent.SectorDirectMap.InternalSizeKm, Mode=TwoWay}"/>
+                                                </StackPanel>
+                                                <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorDirectObjects}"
+                                                          SelectedItem="{Binding GatesConnectionCurrent.SectorDirectSelectedObject, Mode=TwoWay}"
+                                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                          AutoGenerateColumns="False"
+                                                          Grid.Column="1"
+                                                          Grid.Row="0"
+                                                          Grid.RowSpan="2"
+                                                          Margin="5"
+                                                          CanUserAddRows="False"
+                                                          IsReadOnly="True"
+                                                          SelectionMode="Single"
+                                                          MinHeight="160">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Type"
+                                                                            Binding="{Binding Type}"
+                                                                            Width="50"/>
+                                                        <DataGridTextColumn Header="X"
+                                                                            Binding="{Binding X}"
+                                                                            Width="40"
+                                                                            ElementStyle="{StaticResource RightAlignedTextBlockStyle}"
+                                                                            HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                        <DataGridTextColumn Header="Y"
+                                                                            Binding="{Binding Y}"
+                                                                            Width="40"
+                                                                            ElementStyle="{StaticResource RightAlignedTextBlockStyle}"
+                                                                            HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                        <DataGridTextColumn Header="Z"
+                                                                            Binding="{Binding Z}"
+                                                                            Width="40"
+                                                                            ElementStyle="{StaticResource RightAlignedTextBlockStyle}"
+                                                                            HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                        <DataGridTextColumn Header="Info"
+                                                                            Binding="{Binding Info}"
+                                                                            Width="200"/>
+                                                        <DataGridTextColumn Header="Id"
+                                                                            Binding="{Binding Id}"
+                                                                            Width="200"/>
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </Grid>
+                                        </GroupBox>
+                                        <GroupBox Header="Gate Parameters"
+                                                  Margin="5"
+                                                  x:Name="GroupBoxGateDirect">
+                                            <Grid Margin="5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Label Content="Gate Coordinates (km):"
+                                                       Grid.Row="0"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <Label Content="X:"
+                                                       Grid.Row="0"
+                                                       Grid.Column="1"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="0"
+                                                         Grid.Column="2"
+                                                         Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Y:"
+                                                       Grid.Row="0"
+                                                       Grid.Column="3"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="0"
+                                                         Grid.Column="4"
+                                                         Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Z:"
+                                                       Grid.Row="0"
+                                                       Grid.Column="5"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="0"
+                                                         Grid.Column="6"
+                                                         Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Position (m):"
+                                                       Grid.Row="1"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <Label Content="X:"
+                                                       Grid.Row="1"
+                                                       Grid.Column="1"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="1"
+                                                         Grid.Column="2"
+                                                         Style="{StaticResource PositionTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Y:"
+                                                       Grid.Row="1"
+                                                       Grid.Column="3"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="1"
+                                                         Grid.Column="4"
+                                                         Style="{StaticResource PositionTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Z:"
+                                                       Grid.Row="1"
+                                                       Grid.Column="5"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="1"
+                                                         Grid.Column="6"
+                                                         Style="{StaticResource PositionTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Rotation (°):"
+                                                       Grid.Row="2"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <Label Content="Roll:"
+                                                       Grid.Row="2"
+                                                       Grid.Column="1"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="2"
+                                                         Grid.Column="2"
+                                                         Style="{StaticResource RotationTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Pitch:"
+                                                       Grid.Row="2"
+                                                       Grid.Column="3"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="2"
+                                                         Grid.Column="4"
+                                                         Style="{StaticResource RotationTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Yaw:"
+                                                       Grid.Row="2"
+                                                       Grid.Column="5"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="2"
+                                                         Grid.Column="6"
+                                                         Style="{StaticResource RotationTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Active:"
+                                                       Grid.Row="3"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <CheckBox Grid.Row="3"
+                                                          Grid.Column="1"
+                                                          VerticalAlignment="Center"
+                                                          IsChecked="{Binding GatesConnectionCurrent.GateDirect.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Macro:"
+                                                       Grid.Row="3"
+                                                       Grid.Column="2"
+                                                       VerticalAlignment="Center"/>
+                                                <ComboBox HorizontalAlignment="Stretch"
+                                                          MinWidth="100"
+                                                          Margin="5"
+                                                          Grid.Row="3"
+                                                          Grid.Column="3"
+                                                          Grid.ColumnSpan="4"
+                                                          SelectedItem="{Binding GatesConnectionCurrent.GateDirect.GateMacro, Mode=TwoWay}"
+                                                          ItemsSource="{Binding GateMacros}"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Gate Opposite"
+                                          Grid.Column="1"
+                                          Margin="5">
+                                    <StackPanel>
                                         <Grid Margin="5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Label Content="Gate Coordinates (km):" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <Label Content="X:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="2"
-                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Y:" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="4"
-                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Z:" Grid.Row="0" Grid.Column="5" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="6"
-                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Position (m):" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <Label Content="X:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="1" Grid.Column="2"
-                                                    Style="{StaticResource PositionTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Y:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="1" Grid.Column="4"
-                                                    Style="{StaticResource PositionTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Z:" Grid.Row="1" Grid.Column="5" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="1" Grid.Column="6"
-                                                    Style="{StaticResource PositionTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Rotation (°):" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <Label Content="Roll:" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="2" Grid.Column="2"
-                                                    Style="{StaticResource RotationTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Pitch:" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="2" Grid.Column="4"
-                                                    Style="{StaticResource RotationTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Yaw:" Grid.Row="2" Grid.Column="5" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="2" Grid.Column="6"
-                                                    Style="{StaticResource RotationTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateDirect.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Active:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
-                                                    IsChecked="{Binding GatesConnectionCurrent.GateDirect.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Macro:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
-                                            <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
-                                                SelectedItem="{Binding GatesConnectionCurrent.GateDirect.GateMacro, Mode=TwoWay}"
-                                                ItemsSource="{Binding GateMacros}" />
+                                            <Label Content="Sector:"
+                                                   Grid.Column="0"
+                                                   VerticalAlignment="Center"/>
+                                            <!-- Sector Opposite ComboBox -->
+                                            <ComboBox x:Name="SectorOppositeComboBox"
+                                                      Margin="5"
+                                                      Grid.Column="1"
+                                                      ItemsSource="{Binding SectorsOppositeViewSource.View}"
+                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorOpposite, Mode=TwoWay}"
+                                                      ItemContainerStyle="{StaticResource SectorComboBoxItemStyle}"
+                                                      SelectedValuePath="Macro"
+                                                      ItemTemplate="{StaticResource SectorTemplate}"/>
+                                            <Button x:Name="ButtonSectorOppositeSelectFromMap"
+                                                    Grid.Column="2"
+                                                    Width="24"
+                                                    Height="24"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Margin="5"
+                                                    Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    Cursor="Hand"
+                                                    ToolTip="Expand"
+                                                    Click="ButtonSectorOppositeSelectFromMap_Click">
+                                                <fa:IconImage Icon="MapLocationDot"
+                                                              Style="{StaticResource FontAwesomeIconStyle}"/>
+                                            </Button>
                                         </Grid>
-                                    </GroupBox>
-                                </StackPanel>
-                            </GroupBox>
-                            <GroupBox Header="Gate Opposite" Grid.Column="1" Margin="5">
-                                <StackPanel>
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Label Content="Sector:" Grid.Column="0" VerticalAlignment="Center"/>
-                                        <!-- Sector Opposite ComboBox -->
-                                        <ComboBox
-                                            x:Name="SectorOppositeComboBox"
-                                            Margin="5"
-                                            Grid.Column="1"
-                                            ItemsSource="{Binding SectorsOppositeViewSource.View}"
-                                            SelectedItem="{Binding GatesConnectionCurrent.SectorOpposite, Mode=TwoWay}"
-                                            ItemContainerStyle="{StaticResource SectorComboBoxItemStyle}"
-                                            SelectedValuePath="Macro"
-                                            ItemTemplate="{StaticResource SectorTemplate}" />
-                                        <Button x:Name="ButtonSectorOppositeSelectFromMap"
-                                                Grid.Column="2"
-                                                Width="24" Height="24"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                Margin="5"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
-                                                Cursor="Hand"
-                                                ToolTip="Expand"
-                                                Click="ButtonSectorOppositeSelectFromMap_Click">
-                                            <fa:IconImage Icon="MapLocationDot"
-                                                        Style="{StaticResource FontAwesomeIconStyle}"/>
-                                        </Button>
-                                    </Grid>
-                                    <GroupBox Header="Sector Info" Margin="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <Canvas x:Name="SectorOppositeCanvas"
-                                                Grid.Column="0" Grid.Row="0"
-                                                Style="{StaticResource SectorCanvasStyle}"
-                                                SizeChanged="SectorOppositeCanvas_SizeChanged">
-                                                <!-- Hexagonal Sector Representation -->
-                                                <Polygon x:Name="SectorOppositeHexagon" Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
-                                                        Style="{StaticResource SectorHexagonStyle}"
-                                                        Canvas.Left="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualX}"
-                                                        Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}"
-                                                        >
-                                                    <Polygon.Fill>
-                                                        <SolidColorBrush Color="{Binding GatesConnectionCurrent.SectorOppositeMap.OwnerColor}" Opacity="{Binding MapColorsOpacity}"/>
-                                                    </Polygon.Fill>
-                                                </Polygon>
-                                                <!-- Gates Representation -->
-                                                <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeMap.Items}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Canvas />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <Image
-                                                                Width="{Binding ItemSizePx}"
-                                                                Height="{Binding ItemSizePx}"
-                                                                Source="{Binding ObjectImage}"
-                                                                Stretch="Uniform"
-                                                                PreviewMouseLeftButtonDown="SectorOppositeMapItem_MouseLeftButtonDown"
-                                                                MouseMove="SectorOppositeMapItem_MouseMove"
-                                                                MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp">
-                                                                <!-- <Image.Source>
+                                        <GroupBox Header="Sector Info"
+                                                  Margin="5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Canvas x:Name="SectorOppositeCanvas"
+                                                        Grid.Column="0"
+                                                        Grid.Row="0"
+                                                        Style="{StaticResource SectorCanvasStyle}"
+                                                        SizeChanged="SectorOppositeCanvas_SizeChanged">
+                                                    <!-- Hexagonal Sector Representation -->
+                                                    <Polygon x:Name="SectorOppositeHexagon"
+                                                             Points="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                                                             Style="{StaticResource SectorHexagonStyle}"
+                                                             Canvas.Left="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualX}"
+                                                             Canvas.Top="{Binding GatesConnectionCurrent.SectorOppositeMap.VisualY}">
+                                                        <Polygon.Fill>
+                                                            <SolidColorBrush Color="{Binding GatesConnectionCurrent.SectorOppositeMap.OwnerColor}"
+                                                                             Opacity="{Binding MapColorsOpacity}"/>
+                                                        </Polygon.Fill>
+                                                    </Polygon>
+                                                    <!-- Gates Representation -->
+                                                    <ItemsControl ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeMap.Items}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <Canvas/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Image Width="{Binding ItemSizePx}"
+                                                                       Height="{Binding ItemSizePx}"
+                                                                       Source="{Binding ObjectImage}"
+                                                                       Stretch="Uniform"
+                                                                       PreviewMouseLeftButtonDown="SectorOppositeMapItem_MouseLeftButtonDown"
+                                                                       MouseMove="SectorOppositeMapItem_MouseMove"
+                                                                       MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp">
+                                                                    <!-- <Image.Source>
                                                                     <StaticResource ResourceKey="{Binding ObjectImage}"/>
                                                                 </Image.Source> -->
-                                                                <!-- Positioning the Image using RenderTransform -->
-                                                                <Image.RenderTransform>
-                                                                    <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
-                                                                </Image.RenderTransform>
-
-                                                                <!-- Binding Tooltip -->
-                                                                <Image.ToolTip>
-                                                                    <ToolTip Content="{Binding ToolTip}" />
-                                                                </Image.ToolTip>
-                                                            </Image>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </Canvas>
-                                            <Button x:Name="ButtonSectorOppositeMapExpand"
-                                                Grid.Column="0" Grid.Row="0"
-                                                Width="24" Height="24"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Top"
-                                                Margin="5"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
-                                                Cursor="Hand"
-                                                ToolTip="Expand"
-                                                Click="ButtonSectorOppositeMapExpand_Click">
-                                                <fa:IconImage Icon="Expand"
-                                                            Style="{StaticResource FontAwesomeIconStyle}"/>
-                                            </Button>
-                                            <StackPanel Orientation="Horizontal"
-                                                        Grid.Column="0" Grid.Row="1"
-                                                        Margin="5">
-                                                <TextBlock Margin="0" VerticalAlignment="Center"
-                                                            Text="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, StringFormat='Radius: {0} km'}" />
-                                                <Slider x:Name="SectorOppositeRadiusSlider"
-                                                        Style="{StaticResource SectorInternalRadius}"
-                                                        Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
-                                                        Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
-                                                        Value="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, Mode=TwoWay}"
-                                                />
-                                            </StackPanel>
-                                            <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeObjects}"
-                                                      SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedObject, Mode=TwoWay}"
-                                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                      AutoGenerateColumns="False"
-                                                      Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                                                      Margin="5"
-                                                      CanUserAddRows="False"
-                                                      IsReadOnly="True"
-                                                      SelectionMode="Single"
-                                                      MinHeight="160">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="50"/>
-                                                    <DataGridTextColumn Header="X" Binding="{Binding X}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Z" Binding="{Binding Z}" Width="40" ElementStyle="{StaticResource RightAlignedTextBlockStyle}" HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
-                                                    <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="200"/>
-                                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="200"/>
-                                                </DataGrid.Columns>
-                                            </DataGrid>
-                                        </Grid>
-                                    </GroupBox>
-                                    <GroupBox Header="Gate Parameters" Margin="5" x:Name="GroupBoxGateOpposite">
-                                        <Grid Margin="5">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-                                            <Label Content="Gate Coordinates (km):" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <Label Content="X:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="2"
-                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Y:" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="4"
-                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Z:" Grid.Row="0" Grid.Column="5" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="6"
-                                                    Style="{StaticResource CoordinatesTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Position (m):" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <Label Content="X:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="1" Grid.Column="2"
-                                                    Style="{StaticResource PositionTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Y:" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="1" Grid.Column="4"
-                                                    Style="{StaticResource PositionTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Z:" Grid.Row="1" Grid.Column="5" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="1" Grid.Column="6"
-                                                    Style="{StaticResource PositionTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Rotation (°):" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <Label Content="Roll:" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="2" Grid.Column="2"
-                                                    Style="{StaticResource RotationTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Pitch:" Grid.Row="2" Grid.Column="3" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="2" Grid.Column="4"
-                                                    Style="{StaticResource RotationTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Yaw:" Grid.Row="2" Grid.Column="5" VerticalAlignment="Center"/>
-                                            <TextBox Grid.Row="2" Grid.Column="6"
-                                                    Style="{StaticResource RotationTextBoxStyle}"
-                                                    Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Active:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
-                                            <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
-                                                    IsChecked="{Binding GatesConnectionCurrent.GateOpposite.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <Label Content="Gate Macro:" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"/>
-                                            <ComboBox HorizontalAlignment="Stretch" MinWidth="100" Margin="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
-                                                SelectedItem="{Binding GatesConnectionCurrent.GateOpposite.GateMacro, Mode=TwoWay}"
-                                            ItemsSource="{Binding GateMacros}" />
-                                        </Grid>
-                                    </GroupBox>
-                                </StackPanel>
-                            </GroupBox>
-                        </Grid>
-                        <StackPanel Orientation="Horizontal" Margin="0" HorizontalAlignment="Right">
-                            <Button x:Name="ButtonReset"
-                                    Content="Reset"
-                                    Margin="0,0,5,0"
-                                    Width="100"
-                                    IsEnabled="{Binding GatesConnectionCurrent.IsChanged}"
-                                    Click="ButtonReset_Click"/>
-                            <Button x:Name="ButtonSave"
-                                    Content="{Binding ButtonSaveContent}"
-                                    Margin="5,0,0,0"
-                                    Width="100"
-                                    IsEnabled="{Binding GatesConnectionCurrent.IsReadyToSave}"
-                                    Click="ButtonSave_Click"/>
-                        </StackPanel>
+                                                                    <!-- Positioning the Image using RenderTransform -->
+                                                                    <Image.RenderTransform>
+                                                                        <TranslateTransform X="{Binding X}"
+                                                                                            Y="{Binding Y}"/>
+                                                                    </Image.RenderTransform>
+                                                                    <!-- Binding Tooltip -->
+                                                                    <Image.ToolTip>
+                                                                        <ToolTip Content="{Binding ToolTip}"/>
+                                                                    </Image.ToolTip>
+                                                                </Image>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Canvas>
+                                                <Button x:Name="ButtonSectorOppositeMapExpand"
+                                                        Grid.Column="0"
+                                                        Grid.Row="0"
+                                                        Width="24"
+                                                        Height="24"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="5"
+                                                        Background="Transparent"
+                                                        BorderBrush="Transparent"
+                                                        Cursor="Hand"
+                                                        ToolTip="Expand"
+                                                        Click="ButtonSectorOppositeMapExpand_Click">
+                                                    <fa:IconImage Icon="Expand"
+                                                                  Style="{StaticResource FontAwesomeIconStyle}"/>
+                                                </Button>
+                                                <StackPanel Orientation="Horizontal"
+                                                            Grid.Column="0"
+                                                            Grid.Row="1"
+                                                            Margin="5">
+                                                    <TextBlock Margin="0"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, StringFormat='Radius: {0} km'}"/>
+                                                    <Slider x:Name="SectorOppositeRadiusSlider"
+                                                            Style="{StaticResource SectorInternalRadius}"
+                                                            Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
+                                                            Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
+                                                            Value="{Binding GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm, Mode=TwoWay}"/>
+                                                </StackPanel>
+                                                <DataGrid ItemsSource="{Binding GatesConnectionCurrent.SectorOppositeObjects}"
+                                                          SelectedItem="{Binding GatesConnectionCurrent.SectorOppositeSelectedObject, Mode=TwoWay}"
+                                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                          AutoGenerateColumns="False"
+                                                          Grid.Column="1"
+                                                          Grid.Row="0"
+                                                          Grid.RowSpan="2"
+                                                          Margin="5"
+                                                          CanUserAddRows="False"
+                                                          IsReadOnly="True"
+                                                          SelectionMode="Single"
+                                                          MinHeight="160">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Type"
+                                                                            Binding="{Binding Type}"
+                                                                            Width="50"/>
+                                                        <DataGridTextColumn Header="X"
+                                                                            Binding="{Binding X}"
+                                                                            Width="40"
+                                                                            ElementStyle="{StaticResource RightAlignedTextBlockStyle}"
+                                                                            HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                        <DataGridTextColumn Header="Y"
+                                                                            Binding="{Binding Y}"
+                                                                            Width="40"
+                                                                            ElementStyle="{StaticResource RightAlignedTextBlockStyle}"
+                                                                            HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                        <DataGridTextColumn Header="Z"
+                                                                            Binding="{Binding Z}"
+                                                                            Width="40"
+                                                                            ElementStyle="{StaticResource RightAlignedTextBlockStyle}"
+                                                                            HeaderStyle="{StaticResource DataGridCenterColumnHeaderStyle}"/>
+                                                        <DataGridTextColumn Header="Info"
+                                                                            Binding="{Binding Info}"
+                                                                            Width="200"/>
+                                                        <DataGridTextColumn Header="Id"
+                                                                            Binding="{Binding Id}"
+                                                                            Width="200"/>
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </Grid>
+                                        </GroupBox>
+                                        <GroupBox Header="Gate Parameters"
+                                                  Margin="5"
+                                                  x:Name="GroupBoxGateOpposite">
+                                            <Grid Margin="5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Label Content="Gate Coordinates (km):"
+                                                       Grid.Row="0"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <Label Content="X:"
+                                                       Grid.Row="0"
+                                                       Grid.Column="1"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="0"
+                                                         Grid.Column="2"
+                                                         Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Y:"
+                                                       Grid.Row="0"
+                                                       Grid.Column="3"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="0"
+                                                         Grid.Column="4"
+                                                         Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Z:"
+                                                       Grid.Row="0"
+                                                       Grid.Column="5"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="0"
+                                                         Grid.Column="6"
+                                                         Style="{StaticResource CoordinatesTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Coordinates.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Position (m):"
+                                                       Grid.Row="1"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <Label Content="X:"
+                                                       Grid.Row="1"
+                                                       Grid.Column="1"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="1"
+                                                         Grid.Column="2"
+                                                         Style="{StaticResource PositionTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Position.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Y:"
+                                                       Grid.Row="1"
+                                                       Grid.Column="3"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="1"
+                                                         Grid.Column="4"
+                                                         Style="{StaticResource PositionTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Z:"
+                                                       Grid.Row="1"
+                                                       Grid.Column="5"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="1"
+                                                         Grid.Column="6"
+                                                         Style="{StaticResource PositionTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Position.Z, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Rotation (°):"
+                                                       Grid.Row="2"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <Label Content="Roll:"
+                                                       Grid.Row="2"
+                                                       Grid.Column="1"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="2"
+                                                         Grid.Column="2"
+                                                         Style="{StaticResource RotationTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Roll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Pitch:"
+                                                       Grid.Row="2"
+                                                       Grid.Column="3"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="2"
+                                                         Grid.Column="4"
+                                                         Style="{StaticResource RotationTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Yaw:"
+                                                       Grid.Row="2"
+                                                       Grid.Column="5"
+                                                       VerticalAlignment="Center"/>
+                                                <TextBox Grid.Row="2"
+                                                         Grid.Column="6"
+                                                         Style="{StaticResource RotationTextBoxStyle}"
+                                                         Text="{Binding GatesConnectionCurrent.GateOpposite.Rotation.Yaw, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Active:"
+                                                       Grid.Row="3"
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center"/>
+                                                <CheckBox Grid.Row="3"
+                                                          Grid.Column="1"
+                                                          VerticalAlignment="Center"
+                                                          IsChecked="{Binding GatesConnectionCurrent.GateOpposite.Active, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Label Content="Gate Macro:"
+                                                       Grid.Row="3"
+                                                       Grid.Column="2"
+                                                       VerticalAlignment="Center"/>
+                                                <ComboBox HorizontalAlignment="Stretch"
+                                                          MinWidth="100"
+                                                          Margin="5"
+                                                          Grid.Row="3"
+                                                          Grid.Column="3"
+                                                          Grid.ColumnSpan="4"
+                                                          SelectedItem="{Binding GatesConnectionCurrent.GateOpposite.GateMacro, Mode=TwoWay}"
+                                                          ItemsSource="{Binding GateMacros}"/>
+                                            </Grid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </GroupBox>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0"
+                                        HorizontalAlignment="Right">
+                                <Button x:Name="ButtonReset"
+                                        Content="Reset"
+                                        Margin="0,0,5,0"
+                                        Width="100"
+                                        IsEnabled="{Binding GatesConnectionCurrent.IsChanged}"
+                                        Click="ButtonReset_Click"/>
+                                <Button x:Name="ButtonSave"
+                                        Content="{Binding ButtonSaveContent}"
+                                        Margin="5,0,0,0"
+                                        Width="100"
+                                        IsEnabled="{Binding GatesConnectionCurrent.IsReadyToSave}"
+                                        Click="ButtonSave_Click"/>
+                            </StackPanel>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Gate Connections" DockPanel.Dock="Top" Margin="5" MinHeight="125" VerticalAlignment="Stretch">
-                        <Grid Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <GroupBox Header="Gate Connections"
+                              DockPanel.Dock="Top"
+                              Margin="5"
+                              MinHeight="125"
+                              VerticalAlignment="Stretch">
+                        <Grid Margin="5"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
                             </Grid.ColumnDefinitions>
                             <DataGrid x:Name="DataGridGalaxyConnections"
-                                    ItemsSource="{Binding ChemGateKeeperMod.GalaxyConnections}"
-                                    SelectedItem="{Binding CurrentGalaxyConnection, Mode=TwoWay}"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    AutoGenerateColumns="False"
-                                    HorizontalAlignment="Stretch"
-                                    Margin="5"
-                                    CanUserAddRows="False"
-                                    IsReadOnly="True"
-                                    SelectionMode="Single"
-                                    MinHeight="80"
-                                    IsEnabled="{Binding ChangingGalaxyConnectionIsPossible}">
+                                      ItemsSource="{Binding ChemGateKeeperMod.GalaxyConnections}"
+                                      SelectedItem="{Binding CurrentGalaxyConnection, Mode=TwoWay}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      AutoGenerateColumns="False"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="5"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      MinHeight="80"
+                                      IsEnabled="{Binding ChangingGalaxyConnectionIsPossible}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="From Sector" Binding="{Binding SectorDirectName}" Width="*"/>
-                                    <DataGridTextColumn Header="X,km" Binding="{Binding GateDirectX}" Width="*"/>
-                                    <DataGridTextColumn Header="Y,km" Binding="{Binding GateDirectY}" Width="*"/>
-                                    <DataGridTextColumn Header="Z,km" Binding="{Binding GateDirectZ}" Width="*"/>
-                                    <DataGridTextColumn Header="Active" Binding="{Binding GateDirectActive}" Width="*"/>
-                                    <DataGridTextColumn Header="To Sector" Binding="{Binding SectorOppositeName}" Width="*"/>
-                                    <DataGridTextColumn Header="X,km" Binding="{Binding GateOppositeX}" Width="*"/>
-                                    <DataGridTextColumn Header="Y,km" Binding="{Binding GateOppositeY}" Width="*"/>
-                                    <DataGridTextColumn Header="Z,km" Binding="{Binding GateOppositeZ}" Width="*"/>
-                                    <DataGridTextColumn Header="Active" Binding="{Binding GateOppositeActive}" Width="*"/>
+                                    <DataGridTextColumn Header="From Sector"
+                                                        Binding="{Binding SectorDirectName}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="X,km"
+                                                        Binding="{Binding GateDirectX}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Y,km"
+                                                        Binding="{Binding GateDirectY}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Z,km"
+                                                        Binding="{Binding GateDirectZ}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Active"
+                                                        Binding="{Binding GateDirectActive}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="To Sector"
+                                                        Binding="{Binding SectorOppositeName}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="X,km"
+                                                        Binding="{Binding GateOppositeX}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Y,km"
+                                                        Binding="{Binding GateOppositeY}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Z,km"
+                                                        Binding="{Binding GateOppositeZ}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Active"
+                                                        Binding="{Binding GateOppositeActive}"
+                                                        Width="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <StackPanel Orientation="Vertical" Grid.Column="1" Margin="5">
+                            <StackPanel Orientation="Vertical"
+                                        Grid.Column="1"
+                                        Margin="5">
                                 <Button x:Name="ButtonGateNew"
                                         Content="New Gate"
                                         Margin="0,0,0,5"

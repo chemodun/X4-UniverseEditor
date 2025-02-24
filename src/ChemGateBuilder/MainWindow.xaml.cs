@@ -19,10 +19,16 @@ namespace ChemGateBuilder
 {
   public class AppConfig
   {
+    public ModeConfig Mode { get; set; } = new ModeConfig();
     public EditConfig Edit { get; set; } = new EditConfig();
     public MapConfig Map { get; set; } = new MapConfig();
     public DataConfig Data { get; set; } = new DataConfig();
     public LoggingConfig Logging { get; set; } = new LoggingConfig();
+  }
+
+  public class ModeConfig
+  {
+    public bool DirectMode { get; set; } = false;
   }
 
   public class EditConfig
@@ -94,6 +100,26 @@ namespace ChemGateBuilder
   {
     private readonly string _configFileName;
 
+    private bool _directMode = true;
+    public bool DirectMode
+    {
+      get => _directMode;
+      set
+      {
+        if (_directMode != value)
+        {
+          _directMode = value;
+          OnPropertyChanged(nameof(DirectMode));
+          OnPropertyChanged(nameof(NoDirectMode));
+          OnPropertyChanged(nameof(ExtractedVisibility));
+          OnPropertyChanged(nameof(GameFolderVisibility));
+          SaveConfiguration();
+        }
+      }
+    }
+    public bool NoDirectMode => !DirectMode;
+    public Visibility ExtractedVisibility => DirectMode ? Visibility.Collapsed : Visibility.Visible;
+    public Visibility GameFolderVisibility => DirectMode ? Visibility.Visible : Visibility.Collapsed;
     private string _x4GameFolder = "";
     public string X4GameFolder
     {
@@ -104,6 +130,7 @@ namespace ChemGateBuilder
         {
           _x4GameFolder = value;
           OnPropertyChanged(nameof(X4GameFolder));
+          OnPropertyChanged(nameof(X4GameFolderPath));
           SaveConfiguration();
         }
       }
@@ -450,6 +477,27 @@ namespace ChemGateBuilder
         }
       }
     }
+    public string X4GameFolderPath
+    {
+      get
+      {
+        if (Directory.Exists(X4GameFolder))
+        {
+          if (ValidateX4GameFolder(X4GameFolder, out _))
+          {
+            return System.IO.Path.GetFullPath(X4GameFolder);
+          }
+          else
+          {
+            return "Please set it!";
+          }
+        }
+        else
+        {
+          return "Please set it!";
+        }
+      }
+    }
 
     private void HandleValidationError(string message)
     {
@@ -602,6 +650,7 @@ namespace ChemGateBuilder
 
         if (config != null)
         {
+          DirectMode = config.Mode.DirectMode;
           X4DataFolder = config.Data.X4DataExtractedPath;
           X4DataVersionOverride = config.Data.X4DataVersionOverride;
           if (X4DataVersionOverride)
@@ -638,6 +687,7 @@ namespace ChemGateBuilder
     {
       var config = new AppConfig
       {
+        Mode = new ModeConfig { DirectMode = DirectMode },
         Data = new DataConfig
         {
           X4DataExtractedPath = X4DataFolder,
@@ -736,11 +786,40 @@ namespace ChemGateBuilder
       OnPropertyChanged(nameof(IsDataLoaded));
       GateConnectionReset();
       StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
+      if (DirectMode)
+      {
+        string modPath = Path.Combine(X4GameFolder, "extensions", ChemGateKeeper.ModId);
+        if (Directory.Exists(modPath) && File.Exists(Path.Combine(modPath, "content.xml")))
+        {
+          ModLoad(modPath);
+        }
+      }
     }
 
     private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
     {
       return DataLoader.ValidateDataFolder(folderPath, out errorMessage);
+    }
+
+    private static bool ValidateX4GameFolder(string folderPath, out string errorMessage)
+    {
+      if (string.IsNullOrEmpty(folderPath))
+      {
+        errorMessage = "The X4 Program folder is not set.";
+        return false;
+      }
+      if (!Directory.Exists(folderPath))
+      {
+        errorMessage = "The X4 Program folder does not exist.";
+        return false;
+      }
+      if (!File.Exists(Path.Combine(folderPath, X4DataExtractionWindow.X4Executable)))
+      {
+        errorMessage = "The X4 Program folder does not contain the X4 executable file.";
+        return false;
+      }
+      errorMessage = "";
+      return true;
     }
 
     private void SelectX4DataFolder_Click(object? sender, RoutedEventArgs? e)
@@ -810,6 +889,46 @@ namespace ChemGateBuilder
       }
     }
 
+    private void SelectX4GameFolder_Click(object? sender, RoutedEventArgs? e)
+    {
+      System.Windows.Forms.OpenFileDialog dialog = new()
+      {
+        InitialDirectory = string.IsNullOrEmpty(X4GameFolder)
+          ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
+          : X4GameFolder,
+        Filter = $"X4 Foundations|{X4DataExtractionWindow.X4Executable}",
+        Title = "Select the X4: Foundations executable",
+      };
+
+      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+      if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
+      {
+        Log.Warn("No game folder selected");
+        return;
+      }
+      try
+      {
+        string selectedPath = Path.GetDirectoryName(dialog.FileName) ?? "";
+        if (ValidateX4GameFolder(selectedPath, out string errorMessage))
+        {
+          X4GameFolder = selectedPath;
+          StatusBar.SetStatusMessage("X4 Game folder set successfully.", StatusMessageType.Info);
+          LoadX4DataInBackgroundStart();
+        }
+        else
+        {
+          StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
+          MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+          // Optionally, prompt again
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error selecting game folder", ex);
+        return;
+      }
+    }
+
     private void LoadX4Data()
     {
       DataLoader dataLoader = new();
@@ -820,7 +939,14 @@ namespace ChemGateBuilder
           _backgroundWorker.ReportProgress(0, e.ProcessingFile);
         }
       };
-      dataLoader.LoadData(Galaxy, X4DataFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData);
+      if (DirectMode)
+      {
+        dataLoader.LoadData(Galaxy, X4GameFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData, true, [ChemGateKeeper.ModId]);
+      }
+      else
+      {
+        dataLoader.LoadData(Galaxy, X4DataFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData);
+      }
     }
 
     // Filter methods
@@ -1299,12 +1425,17 @@ namespace ChemGateBuilder
 
     public void ButtonLoadMod_Click(object sender, RoutedEventArgs e)
     {
+      ModLoad();
+    }
+
+    public void ModLoad(string path = "")
+    {
       if (Galaxy == null)
       {
         StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
         return;
       }
-      ChemGateKeeper newMod = new();
+      ChemGateKeeper newMod = new(path);
       newMod.SetGameVersion(_x4DataVersion);
       if (newMod.LoadData(Galaxy, ChemGateKeeperMod))
       {

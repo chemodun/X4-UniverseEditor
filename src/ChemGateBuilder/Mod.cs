@@ -15,11 +15,16 @@ namespace ChemGateBuilder
 {
   public class ChemGateKeeper : INotifyPropertyChanged
   {
+    public static readonly string ModId = "chem_gate_keeper";
+    public static readonly string ModName = "Chem Gate Keeper";
+    public static readonly string ModDescription = "This extension adds new gate connections between sectors";
+    public static readonly string ModAuthor = "Chem O`Dun";
     public string ModFolderPath { get; private set; } = "";
-    private string Id = "chem_gate_keeper";
-    private string Name = "Chem Gate Keeper";
-    private string Description = "This extension adds new gate connections between sectors";
-    private string Author = "Chem O`Dun";
+    private bool SelectFolder = true;
+    private string Id = ModId;
+    private string Name = ModName;
+    private string Description = ModDescription;
+    private string Author = ModAuthor;
     private int _version = 100;
     private int VersionInitial = 0;
     private string _date = "2021-09-01";
@@ -73,8 +78,10 @@ namespace ChemGateBuilder
     public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = [];
     public XElement? XML = null;
 
-    public ChemGateKeeper()
+    public ChemGateKeeper(string path = "")
     {
+      ModFolderPath = path;
+      SelectFolder = !File.Exists(Path.Combine(ModFolderPath, "content.xml"));
       XML = null;
       Date = DateTime.Now.ToString("yyyy-MM-dd");
     }
@@ -86,24 +93,30 @@ namespace ChemGateBuilder
 
     public bool LoadData(Galaxy galaxy, ChemGateKeeper? previousMod = null)
     {
-      string currentPath = previousMod != null ? previousMod.ModFolderPath : "";
-
-      System.Windows.Forms.OpenFileDialog dialog = new()
+      string currentPath = previousMod != null ? previousMod.ModFolderPath : ModFolderPath;
+      if (SelectFolder)
       {
-        InitialDirectory = string.IsNullOrEmpty(currentPath)
-          ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-          : currentPath,
-        Filter = "Mod Content File|content.xml",
-        Title = "Select a File",
-      };
-      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-      if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
+        System.Windows.Forms.OpenFileDialog dialog = new()
+        {
+          InitialDirectory = string.IsNullOrEmpty(currentPath)
+            ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+            : currentPath,
+          Filter = "Mod Content File|content.xml",
+          Title = "Select a File",
+        };
+        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+        if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
+        {
+          return false;
+        }
+        currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
+      }
+      else
       {
-        return false;
+        currentPath = ModFolderPath;
       }
       try
       {
-        currentPath = Path.GetDirectoryName(dialog.FileName) ?? "";
         XDocument? docContent;
         try
         {
