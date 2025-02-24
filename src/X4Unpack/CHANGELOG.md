@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.1...X4Unpack@v0.3.2) (2025-02-24)
+
+
+### Code Refactoring
+
+* **ContentExtractor:** add FileCount property and FolderExists method; refactor entry data extraction ([b8398af](https://github.com/chemodun/X4-UniverseEditor/commit/b8398affbb85e4acc3dec26b573a63a227084a41))
+* **ContentExtractor:** enhance catalog entry parsing with regex validation and handle empty lines ([5f0f29d](https://github.com/chemodun/X4-UniverseEditor/commit/5f0f29dcaa529d5b73d9012e9f876d2138ca3d2b))
+
 ## [0.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.0...X4Unpack@v0.3.1) (2025-02-13)
 
 
