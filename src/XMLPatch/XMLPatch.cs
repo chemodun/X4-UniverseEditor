@@ -83,27 +83,30 @@ namespace Utilities.X4XMLPatch
         var newElements = addElement.Elements();
         foreach (var newElem in newElements)
         {
-          XElement cloned = new XElement(newElem);
+          XElement cloned = new(newElem);
+          string clonedInfo = GetElementInfo(cloned);
+          string targetInfo = GetElementInfo(targetElement);
+          string targetParentInfo = GetElementInfo(targetElement.Parent);
           cloned.Add(new XAttribute("_source", SourceId));
           if (pos == "before")
           {
             targetElement.AddBeforeSelf(cloned);
-            Log.Debug($"Added new element '{cloned.Name}' before '{targetElement.Name}' in '{targetElement.Parent?.Name}'.");
+            Log.Debug($"Added new element '{clonedInfo}' before '{targetInfo}' in '{targetParentInfo}'.");
           }
           else if (pos == "after")
           {
             targetElement.AddAfterSelf(cloned);
-            Log.Debug($"Added new element '{cloned.Name}' after '{targetElement.Name}' in '{targetElement.Parent?.Name}'.");
+            Log.Debug($"Added new element '{clonedInfo}' after '{targetInfo}' in '{targetParentInfo}'.");
           }
           else if (pos == "prepend")
           {
             targetElement.AddFirst(cloned);
-            Log.Debug($"Prepended new element '{cloned.Name}' to '{targetElement.Name}'.");
+            Log.Debug($"Prepended new element '{clonedInfo}' to '{targetInfo}'.");
           }
           else if (pos == "append")
           {
             targetElement.Add(cloned);
-            Log.Debug($"Appended new element '{cloned.Name}' to '{targetElement.Name}'.");
+            Log.Debug($"Appended new element '{clonedInfo}' to '{targetInfo}'.");
           }
           else
           {
@@ -150,19 +153,20 @@ namespace Utilities.X4XMLPatch
         if (targetObj is XElement target)
         {
           var newContent = replaceElement.Value;
+          string targetInfo = GetElementInfo(target);
           if (!string.IsNullOrEmpty(newContent))
           {
             target.Value = newContent;
-            Log.Debug($"Replaced text of element '{target.Name}' with '{newContent}'.");
+            Log.Debug($"Replaced text of element '{targetInfo}' with '{newContent}'.");
           }
 
           var newElement = replaceElement.Element("new");
           if (newElement != null)
           {
-            XElement replacement = new XElement(newElement);
+            XElement replacement = new(newElement);
             replacement.Add(new XAttribute("_source", SourceId));
             target.ReplaceWith(replacement);
-            Log.Debug($"Replaced element '{target.Name}' with '{replacement.Name}'.");
+            Log.Debug($"Replaced element '{targetInfo}' with '{GetElementInfo(replacement)}'.");
           }
         }
         else if (targetObj is XText textNode)
@@ -200,13 +204,15 @@ namespace Utilities.X4XMLPatch
         if (targetObj is XElement target)
         {
           XElement? parent = target.Parent;
+          string targetInfo = GetElementInfo(target);
+          string parentInfo = GetElementInfo(parent);
           if (parent == null)
           {
-            Log.Warn($"Element '{target.Name}' has no parent. Cannot remove.");
+            Log.Warn($"Element '{targetInfo}' has no parent. Cannot remove.");
             return false;
           }
           target.Remove();
-          Log.Debug($"Removed element '{target.Name}' from '{parent.Name}'.");
+          Log.Debug($"Removed element '{targetInfo}' from '{parentInfo}'.");
         }
         else if (targetObj is XAttribute attr)
         {
@@ -217,7 +223,7 @@ namespace Utilities.X4XMLPatch
             return false;
           }
           attr.Remove();
-          Log.Debug($"Removed attribute '{attr.Name}' from '{parent.Name}'.");
+          Log.Debug($"Removed attribute '{attr.Name}' from '{GetElementInfo(parent)}'.");
         }
         else if (targetObj is XText textNode)
         {
@@ -226,6 +232,34 @@ namespace Utilities.X4XMLPatch
         }
       }
       return true;
+    }
+
+    private static string GetElementInfo(XElement? element)
+    {
+      string info = "<";
+      if (element != null)
+      {
+        info += $"{element.Name}";
+        if (element.HasAttributes)
+        {
+          info += $"{element.FirstAttribute?.Name}=\"{element.FirstAttribute?.Value}\"";
+          if (element.Attributes().Count() > 1)
+          {
+            info += " ...";
+          }
+        }
+        info += ">";
+      }
+      return info;
+    }
+
+    private static string GetAttributeInfo(XAttribute? attr)
+    {
+      if (attr == null)
+      {
+        return "";
+      }
+      return $"{attr.Name}=\"{attr.Value}\"";
     }
   }
 }
