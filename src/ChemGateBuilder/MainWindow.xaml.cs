@@ -808,6 +808,12 @@ namespace ChemGateBuilder
         {
           ModLoad(modPath);
         }
+        else
+        {
+          ChemGateKeeper newMod = new(modPath);
+          ChemGateKeeperMod = newMod;
+          IsModCanBeSaved = false;
+        }
       }
     }
 
