@@ -182,6 +182,8 @@ be easily installed and uninstalled.</p>
 gates in two sectors.</li>
 <li>Easily arrange the location of gates in sectors by moving them on
 the map using the mouse.</li>
+<li>Direct mode - when you need only to select a game folder and start
+building connections. Nothing to extract.</li>
 </ul>
 <h2 id="disclaimer">Disclaimer</h2>
 <p>Anyone can use the gate connections built by this tool in their mods
@@ -201,9 +203,61 @@ href="https://www.nexusmods.com/x4foundations/mods/1587/">Nexus</a></li>
 extract it to any folder.</p>
 <p>You can start building your connections right away.</p>
 <h2 id="usage">Usage</h2>
+<h3 id="direct-mode">Direct Mode</h3>
+<p>In the Direct Mode, you don’t need to extract the game files. You
+just need to select the game folder and start building the connections.
+In this case the tool will load the game data directly from the game
+files. And will work only with the “Chem Gate Keeper” mod in the game
+<code>Extensions</code> folder. You will be able only to save it,
+without possibility to select it’s location.</p>
+<h4 id="direct-mode-first-start">Direct Mode First Start</h4>
+<p>On the first start, the tool will inform you that you need to select
+the game folder, and will switch to the options menu tab. If you will
+unselect <code>Direct Mode</code>- you will go via start process
+described below in the <a href="#first-start">First Start</a>
+section.</p>
+<p>After selecting the game folder, the tool will start loading the game
+data. <img src="docs/images/first_start_direct_mode.gif"
+alt="First start in Direct Mode" /></p>
+<p>Available from <code>version 0.9.0</code>.</p>
+<h4 id="direct-mode-first-mod-creation">Direct Mode First Mod
+Creation</h4>
+<p>After loading the game data, you will see the main window and can
+start building the Gate connections. When you will be finish with the
+connections, you can save the mod via the <code>Mod</code> -&gt;
+<code>Save</code> menu item. Mod will be saved in the game
+<code>Extensions</code> folder.</p>
+<figure>
+<img src="docs/images/first_gate_direct_mode.gif"
+alt="First mod creation in Direct Mode" />
+<figcaption aria-hidden="true">First mod creation in Direct
+Mode</figcaption>
+</figure>
+<h4 id="direct-mode-second-and-other-starts">Direct Mode Second and
+Other starts</h4>
+<p>On the next starts tool will automatically load not only game data,
+but also the “Chem Gate Keeper” mod data. So, after start you will see
+the main window with the connections from the mod.</p>
+<p>You can update the connections, add new ones, or remove the existing
+ones. After that you can save the mod via the <code>Mod</code> -&gt;
+<code>Save</code> menu item.</p>
+<figure>
+<img src="docs/images/second_start_and_mod_update_direct_mode.gif"
+alt="Second and other starts in Direct Mode" />
+<figcaption aria-hidden="true">Second and other starts in Direct
+Mode</figcaption>
+</figure>
+<h4 id="direct-mode-to-usual-mode-and-vice-versa">Direct Mode To Usual
+Mode and Vice Versa</h4>
+<p>At any time you can switch between the Direct Mode and the Usual
+Mode. Just go to the options menu and select or unselect the
+<code>Direct Mode</code> checkbox. In some cases it will require to load
+the extracted game data again.</p>
 <h3 id="first-start">First Start</h3>
 <p>On the first start, the tool will inform you that you need to select
-the folder with the extracted game files.</p>
+the folder with the game files.</p>
+<p>If you will unselect the <code>Direct Mode</code> - you will go via
+the start process described below.</p>
 <p>And when you press a button to select the folder, the tool will
 propose two ways to do it:</p>
 <ul>
@@ -567,7 +621,18 @@ everyone!</p>
 <p>This project is licensed under the Apache License 2.0 - see the <a
 href="../../LICENSE">LICENSE</a> file for details.</p>
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">[0.8.9] - 2025-02-20</h3>
+<h3 id="section">[0.9.0] - 2025-02-24</h3>
+<ul>
+<li>Added
+<ul>
+<li><code>Direct Mode</code> to simplify the tool usage</li>
+</ul></li>
+<li>Improved
+<ul>
+<li>Procedures to work with EGOSOFT catalogs</li>
+</ul></li>
+</ul>
+<h3 id="section-1">[0.8.9] - 2025-02-20</h3>
 <ul>
 <li>Added
 <ul>
@@ -579,7 +644,7 @@ href="../../LICENSE">LICENSE</a> file for details.</p>
 edit</li>
 </ul></li>
 </ul>
-<h3 id="section-1">[0.8.8] - 2025-02-17</h3>
+<h3 id="section-2">[0.8.8] - 2025-02-17</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -591,21 +656,21 @@ issue</li>
 <li>Internal procedure of game data loading</li>
 </ul></li>
 </ul>
-<h3 id="section-2">[0.8.6] - 2025-02-14</h3>
+<h3 id="section-3">[0.8.6] - 2025-02-14</h3>
 <ul>
 <li>Fixed
 <ul>
 <li>Fixed the issue with the mod loading to the tool</li>
 </ul></li>
 </ul>
-<h3 id="section-3">[0.8.5] - 2025-02-14</h3>
+<h3 id="section-4">[0.8.5] - 2025-02-14</h3>
 <ul>
 <li>Updated
 <ul>
 <li>Documentation</li>
 </ul></li>
 </ul>
-<h3 id="section-4">[0.8.4] - 2025-02-14</h3>
+<h3 id="section-5">[0.8.4] - 2025-02-14</h3>
 <ul>
 <li>Added
 <ul>
@@ -620,28 +685,28 @@ issue</li>
 <li>Mod changes detection logic</li>
 </ul></li>
 </ul>
-<h3 id="section-5">[0.8.3] - 2025-02-14</h3>
+<h3 id="section-6">[0.8.3] - 2025-02-14</h3>
 <ul>
 <li>Refactor
 <ul>
 <li>Changed internal logic of data loading (XMLPatch)</li>
 </ul></li>
 </ul>
-<h3 id="section-6">[0.8.2] - 2025-02-13</h3>
+<h3 id="section-7">[0.8.2] - 2025-02-13</h3>
 <ul>
 <li>Fixed
 <ul>
 <li>Fixed the extraction window behavior</li>
 </ul></li>
 </ul>
-<h3 id="section-7">[0.8.1] - 2025-02-13</h3>
+<h3 id="section-8">[0.8.1] - 2025-02-13</h3>
 <ul>
 <li>Improved
 <ul>
 <li>Mods can be extracted with the game data and DLC’s</li>
 </ul></li>
 </ul>
-<h3 id="section-8">[0.8.0] - 2025-02-13</h3>
+<h3 id="section-9">[0.8.0] - 2025-02-13</h3>
 <ul>
 <li>Added
 <ul>
@@ -650,7 +715,7 @@ issue</li>
 <li>Showing empty cluster cells (with coordinates on the tooltip)</li>
 </ul></li>
 </ul>
-<h3 id="section-9">[0.7.0] - 2025-02-11</h3>
+<h3 id="section-10">[0.7.0] - 2025-02-11</h3>
 <ul>
 <li>Added
 <ul>
@@ -668,14 +733,14 @@ extracted files</li>
 extracted the game files</strong></li>
 </ul></li>
 </ul>
-<h3 id="section-10">[0.6.0] - 2025-02-10</h3>
+<h3 id="section-11">[0.6.0] - 2025-02-10</h3>
 <ul>
 <li>Added
 <ul>
 <li>Extraction game files</li>
 </ul></li>
 </ul>
-<h3 id="section-11">[0.5.2] - 2025-02-08</h3>
+<h3 id="section-12">[0.5.2] - 2025-02-08</h3>
 <ul>
 <li>Added
 <ul>
@@ -692,7 +757,7 @@ detection</li>
 <li>Console version is gone</li>
 </ul></li>
 </ul>
-<h3 id="section-12">[0.4.3] - 2025-01-14</h3>
+<h3 id="section-13">[0.4.3] - 2025-01-14</h3>
 <ul>
 <li>Added
 <ul>

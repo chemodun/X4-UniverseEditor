@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.2...XMLPatch@v0.1.3) (2025-02-24)
+
+
+### Code Refactoring
+
+* **XMLPatch:** enhance logging details and add utility methods for element and attribute info ([36558cd](https://github.com/chemodun/X4-UniverseEditor/commit/36558cd302f6314c6bc5866ec37fef25f6aea4b3))
+
 ## [0.1.2](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.1...XMLPatch@v0.1.2) (2025-02-14)
 
 
