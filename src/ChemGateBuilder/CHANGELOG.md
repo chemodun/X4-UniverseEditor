@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.9.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.9...ChemGateBuilder@v0.9.0) (2025-02-24)
+
+
+### Features
+
+* **ChemGateKeeper:** introduce the new mode of working - without the extraction data, directly with game folder ([74b5b9f](https://github.com/chemodun/X4-UniverseEditor/commit/74b5b9f3e7a7e78ab0456d201d6f2e133f618bf4))
+
+
+### Bug Fixes
+
+* **ChemGateBuilder:** handle new mod initialization and update save state logic ([28163d2](https://github.com/chemodun/X4-UniverseEditor/commit/28163d2ab1a4037f692651968767fe966cc198ab))
+* **ChemGateBuilder:** improve folder validation and user prompts for X4 Game and Data folders ([2ea3ea4](https://github.com/chemodun/X4-UniverseEditor/commit/2ea3ea4fb55feb100a9ebca91ffe5560e85cf667))
+* **ChemGateBuilder:** remove _source attributes for cleaner output ([0d6ae7f](https://github.com/chemodun/X4-UniverseEditor/commit/0d6ae7fcb7fff91fb6cca783a3a343eada04262b))
+* **ChemGateBuilder:** update selected path logic for X4 Data Folder dialog ([a18872a](https://github.com/chemodun/X4-UniverseEditor/commit/a18872a9af5f6c26fed0e7164e8521b7253a8f36))
+* **README:** correct grammatical errors in Direct Mode section ([8cf30ce](https://github.com/chemodun/X4-UniverseEditor/commit/8cf30ce4fe826995e4f3b715bd3f8b2a6076af3c))
+
+
+### Code Refactoring
+
+* **MoonEditWindow:** improve XAML formatting for better readability and maintainability ([d957298](https://github.com/chemodun/X4-UniverseEditor/commit/d9572983e810ac81071cfe6539f05c69b066132f))
+
+
+### Documentation
+
+* **ChemGateBuilder:** add Direct Mode section to README for improved user guidance ([265841c](https://github.com/chemodun/X4-UniverseEditor/commit/265841c2b2ba6e79fc38de996e1d8651489488b2))
+* **ChemGateBuilder:** add instructional videos for direct mode usage ([66d8a37](https://github.com/chemodun/X4-UniverseEditor/commit/66d8a370be7d319ccc813fff99ff69dd003e0528))
+* **images:** Update GIF files ([c1bf28e](https://github.com/chemodun/X4-UniverseEditor/commit/c1bf28e4abc901a50681c2c11cd61f75e05ce107))
+* **README:** update changelog for version 0.8.9 with Hyperion pack DLC support and fix for content.xml issue ([61eb292](https://github.com/chemodun/X4-UniverseEditor/commit/61eb292e29af1229207246ca76d548147d27a860))
+* **README:** Update README's files ([7e3f6c4](https://github.com/chemodun/X4-UniverseEditor/commit/7e3f6c4dd788da3e4c1d17074170ff427f7e918c))
+* **README:** Update README's files ([57597d8](https://github.com/chemodun/X4-UniverseEditor/commit/57597d883aff50b71b91015189fc44b0550577b6))
+* **README:** Update README's files ([d004f14](https://github.com/chemodun/X4-UniverseEditor/commit/d004f145e40f1b4a813d9529f5fd43ee0d91296c))
+
 ## [0.8.9](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.8...ChemGateBuilder@v0.8.9) (2025-02-20)
 
 
