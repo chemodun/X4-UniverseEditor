@@ -9,6 +9,7 @@ using System.Xml.XPath;
 using Utilities.Logging;
 using Utilities.X4XMLPatch;
 using X4DataLoader.Helpers;
+using X4Unpack;
 
 namespace X4DataLoader
 {
@@ -353,13 +354,30 @@ namespace X4DataLoader
     {
       List<GameFile> result = [];
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
+      ContentExtractor contentExtractor = new(coreFolderPath);
+      bool readFromCatalog = contentExtractor.FileCount > 0;
+      if (readFromCatalog)
+      {
+        Log.Debug($"Reading files from catalog: {contentExtractor.FileCount}");
+      }
       foreach (GameFilesStructureItem item in gameFilesStructure)
       {
         string folderPath = Path.Combine(coreFolderPath, item.Folder);
-        if (!Directory.Exists(folderPath))
+        if (readFromCatalog)
         {
-          Log.Info($"Folder not found: {folderPath}");
-          continue;
+          if (!contentExtractor.FolderExists(item.Folder))
+          {
+            Log.Info($"Folder not found in catalog: {folderPath}");
+            continue;
+          }
+        }
+        else
+        {
+          if (!Directory.Exists(folderPath))
+          {
+            Log.Info($"Folder not found: {folderPath}");
+            continue;
+          }
         }
         foreach (string fileItem in item.PossibleNames)
         {
@@ -371,13 +389,42 @@ namespace X4DataLoader
             MatchingModes.Mask => fileItem,
             _ => throw new ArgumentException("Invalid matching mode"),
           };
-          string[] files = Directory.GetFiles(folderPath, fileMask);
+          string[] files = [];
+          List<CatEntry> catEntries = [];
+          if (readFromCatalog)
+          {
+            catEntries = contentExtractor.GetFilesByMask(string.Join("/", item.Folder, fileMask));
+            files = catEntries.Select(e => e.FilePath).ToArray();
+          }
+          else
+          {
+            files = Directory.GetFiles(folderPath, fileMask);
+          }
           Log.Debug($"Found {files.Length} files for {item.Id} in {folderPath}");
           foreach (string file in files)
           {
             try
             {
-              GameFile? gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId);
+              GameFile? gameFile;
+              if (readFromCatalog)
+              {
+                try
+                {
+                  byte[] fileData = ContentExtractor.GetEntryData(catEntries.First(e => e.FilePath == file));
+                  string fileContent = System.Text.Encoding.UTF8.GetString(fileData);
+                  XDocument xmlDocument = XDocument.Parse(fileContent);
+                  gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId, false, xmlDocument.Root);
+                }
+                catch (Exception e)
+                {
+                  Log.Warn($"Error loading {file} from catalog: {e.Message}");
+                  continue;
+                }
+              }
+              else
+              {
+                gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId);
+              }
               X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(gameFile.FileName));
               if (gameFile.XML.Name.ToString() == "diff" && source != "vanilla" && exitingGameFiles != null)
               {
