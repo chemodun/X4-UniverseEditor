@@ -8,6 +8,7 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 - Select sectors from a list or from the Galaxy map.
 - Create any number of connections, where a connection is a pair of gates in two sectors.
 - Easily arrange the location of gates in sectors by moving them on the map using the mouse.
+- Direct mode - when you need only to select a game folder and start building connections. Nothing to extract.
 
 ## Disclaimer
 
@@ -29,9 +30,47 @@ You can start building your connections right away.
 
 ## Usage
 
+### Direct Mode
+
+In the Direct Mode, you don't need to extract the game files. You just need to select the game folder and start building the connections.
+In this case the tool will load the game data directly from the game files. And will work only with the "Chem Gate Keeper" mod in the game `Extensions` folder. You will be able only to save it, without possibility to select it's location.
+
+#### Direct Mode First Start
+
+On the first start, the tool will inform you that you need to select the game folder, and will switch to the options menu tab.
+If you will unselect `Direct Mode`- you will go via start process described below in the [First Start](#first-start) section.
+
+After selecting the game folder, the tool will start loading the game data.
+![First start in Direct Mode](docs/images/first_start_direct_mode.gif)
+
+Available from `version 0.9.0`.
+
+#### Direct Mode First Mod Creation
+
+After loading the game data, you will see the main window and can start building the Gate connections.
+When you will be finish with the connections, you can save the mod via the `Mod` -> `Save` menu item.
+Mod will be saved in the game `Extensions` folder.
+
+![First mod creation in Direct Mode](docs/images/first_gate_direct_mode.gif)
+
+#### Direct Mode Second and Other starts
+
+On the next starts tool will automatically load not only game data, but also the "Chem Gate Keeper" mod data. So, after start you will see the main window with the connections from the mod.
+
+You can update the connections, add new ones, or remove the existing ones. After that you can save the mod via the `Mod` -> `Save` menu item.
+
+![Second and other starts in Direct Mode](docs/images/second_start_and_mod_update_direct_mode.gif)
+
+#### Direct Mode To Usual Mode and Vice Versa
+
+At any time you can switch between the Direct Mode and the Usual Mode. Just go to the options menu and select or unselect the `Direct Mode` checkbox.
+In some cases it will require to load the extracted game data again.
+
 ### First Start
 
-On the first start, the tool will inform you that you need to select the folder with the extracted game files.
+On the first start, the tool will inform you that you need to select the folder with the game files.
+
+If you will unselect the `Direct Mode` - you will go via the start process described below.
 
 And when you press a button to select the folder, the tool will propose two ways to do it:
 
@@ -277,6 +316,13 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.9.0] - 2025-02-24
+
+- Added
+  - `Direct Mode` to simplify the tool usage
+- Improved
+  - Procedures to work with EGOSOFT catalogs
 
 ### [0.8.9] - 2025-02-20
 
