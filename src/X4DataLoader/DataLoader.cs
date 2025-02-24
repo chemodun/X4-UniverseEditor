@@ -349,21 +349,20 @@ namespace X4DataLoader
       List<GameFilesStructureItem> gameFilesStructure,
       string source = "vanilla",
       string relatedExtensionId = "",
-      List<GameFile>? exitingGameFiles = null
+      List<GameFile>? exitingGameFiles = null,
+      ContentExtractor? contentExtractor = null
     )
     {
       List<GameFile> result = [];
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
-      ContentExtractor contentExtractor = new(coreFolderPath);
-      bool readFromCatalog = contentExtractor.FileCount > 0;
-      if (readFromCatalog)
+      if (contentExtractor != null)
       {
-        Log.Debug($"Reading files from catalog: {contentExtractor.FileCount}");
+        Log.Debug($"Reading files from catalog: {contentExtractor?.FileCount}");
       }
       foreach (GameFilesStructureItem item in gameFilesStructure)
       {
         string folderPath = Path.Combine(coreFolderPath, item.Folder);
-        if (readFromCatalog)
+        if (contentExtractor != null)
         {
           if (!contentExtractor.FolderExists(item.Folder))
           {
@@ -391,9 +390,14 @@ namespace X4DataLoader
           };
           string[] files = [];
           List<CatEntry> catEntries = [];
-          if (readFromCatalog)
+          if (contentExtractor != null)
           {
-            catEntries = contentExtractor.GetFilesByMask(string.Join("/", item.Folder, fileMask));
+            string folderMask = string.Join("/", item.Folder, fileMask);
+            if (!string.IsNullOrEmpty(coreFolderPath))
+            {
+              folderMask = string.Join("/", coreFolderPath, folderMask);
+            }
+            catEntries = contentExtractor.GetFilesByMask(folderMask);
             files = catEntries.Select(e => e.FilePath).ToArray();
           }
           else
@@ -406,7 +410,7 @@ namespace X4DataLoader
             try
             {
               GameFile? gameFile;
-              if (readFromCatalog)
+              if (contentExtractor != null)
               {
                 try
                 {
@@ -425,6 +429,7 @@ namespace X4DataLoader
               {
                 gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId);
               }
+              Log.Debug($"File {file} loaded.");
               X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(gameFile.FileName));
               if (gameFile.XML.Name.ToString() == "diff" && source != "vanilla" && exitingGameFiles != null)
               {
@@ -437,6 +442,7 @@ namespace X4DataLoader
                 // GameFile? vanillaFile = vanillaFiles.FirstOrDefault(f => f.FileName == file.FileName);
                 if (existingGameFile != null && existingGameFile.XML != null)
                 {
+                  Log.Debug($"Patching {gameFile.FileName} with diff {gameFile.ExtensionId}.");
                   XElement? patchedXML = XMLPatch.ApplyPatch(existingGameFile.XML, gameFile.XML, source);
                   if (patchedXML == null)
                   {
@@ -507,7 +513,19 @@ namespace X4DataLoader
       // Scan for vanilla files
       string sourceStr = string.IsNullOrEmpty(source) ? "vanilla" : source;
       string relatedExtensionId = string.IsNullOrEmpty(source) ? "" : "vanilla";
-      List<GameFile> vanillaFiles = CollectFiles(coreFolderPath, gameFilesStructure, sourceStr, relatedExtensionId, result);
+      ContentExtractor? contentExtractor = new(coreFolderPath);
+      if (contentExtractor.FileCount == 0)
+      {
+        contentExtractor = null;
+      }
+      List<GameFile> vanillaFiles = CollectFiles(
+        contentExtractor == null ? coreFolderPath : "",
+        gameFilesStructure,
+        sourceStr,
+        relatedExtensionId,
+        result,
+        contentExtractor
+      );
       result.AddRange(vanillaFiles);
       Log.Debug($"Vanilla files identified.");
 
@@ -542,7 +560,19 @@ namespace X4DataLoader
               }
               extensions.Add(dlc);
               Log.Debug($"DLC identified: {dlc.Name}");
-              List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, dlc.Id, relatedExtensionId, result);
+              contentExtractor = new(dlcFolder);
+              if (contentExtractor.FileCount == 0)
+              {
+                contentExtractor = null;
+              }
+              List<GameFile> dlcFiles = CollectFiles(
+                contentExtractor == null ? dlcFolder : "",
+                gameFilesStructure,
+                dlc.Id,
+                relatedExtensionId,
+                result,
+                contentExtractor
+              );
               if (dlcFiles.Count > 0)
               {
                 result.AddRange(dlcFiles);
@@ -556,15 +586,27 @@ namespace X4DataLoader
       {
         foreach (ExtensionInfo extension in extensions)
         {
-          string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
-          if (Directory.Exists(extensionFolder))
+          List<GameFile> extensionFiles = [];
+          if (contentExtractor != null)
           {
-            List<GameFile> extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, source, extension.Id, result);
-            if (extensionFiles.Count > 0)
+            string extensionFolder = string.Join('/', "extensions", extension.Folder);
+            if (contentExtractor.FolderExists(extensionFolder))
             {
-              result.AddRange(extensionFiles);
-              Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extension.Name}.");
+              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, source, extension.Id, result, contentExtractor);
             }
+          }
+          else
+          {
+            string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
+            if (Directory.Exists(extensionFolder))
+            {
+              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, source, extension.Id, result);
+            }
+          }
+          if (extensionFiles.Count > 0)
+          {
+            result.AddRange(extensionFiles);
+            Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extension.Name}.");
           }
         }
       }
@@ -609,7 +651,11 @@ namespace X4DataLoader
       foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
       {
         versionStr = dependencyElement.Attribute("version")?.Value;
-        if (!string.IsNullOrEmpty(versionStr) && int.TryParse(versionStr, out int gameVersion))
+        if (
+          !string.IsNullOrEmpty(versionStr)
+          && int.TryParse(versionStr, out int gameVersion)
+          && string.IsNullOrEmpty(dependencyElement.Attribute("id")?.Value)
+        )
         {
           GameVersion = gameVersion;
         }
@@ -656,7 +702,7 @@ namespace X4DataLoader
     public string Id { get; set; } = id;
     public string ExtensionId { get; set; } = extensionId;
     public string RelatedExtensionId { get; set; } = relatedExtensionId;
-    public string PathRelative { get; set; } = Path.GetRelativePath(mainFolder, fullPath);
+    public string PathRelative { get; set; } = string.IsNullOrEmpty(mainFolder) ? fullPath : Path.GetRelativePath(mainFolder, fullPath);
     public string FileName { get; set; } = Path.GetFileName(fullPath);
     public bool Patched { get; set; } = patched;
     public XElement XML { get; set; } = xml ?? XDocument.Load(fullPath)?.Root ?? throw new ArgumentException($"Error loading {fullPath}");
