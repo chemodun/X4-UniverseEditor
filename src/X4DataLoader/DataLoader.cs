@@ -26,13 +26,15 @@ namespace X4DataLoader
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
       List<ProcessingOrderItem> processingOrder,
-      bool loadMods = false
+      bool loadMods = false,
+      bool loadEnabledOnly = false,
+      List<string>? excludedMods = null
     )
     {
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
       galaxy.Clear();
       List<ExtensionInfo> dlcs = [];
-      List<GameFile> gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs);
+      List<GameFile> gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs, "", null, loadEnabledOnly);
       if (File.Exists(Path.Combine(coreFolderPath, VersionDat)))
       {
         string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, VersionDat)).Trim();
@@ -69,7 +71,7 @@ namespace X4DataLoader
       }
       if (loadMods)
       {
-        LoadMods(galaxy, coreFolderPath, gameFilesStructure, gameFiles);
+        LoadMods(galaxy, coreFolderPath, gameFilesStructure, gameFiles, loadEnabledOnly, excludedMods);
       }
       List<string> sources = GameFile.GetExtensions(gameFiles);
       foreach (ProcessingOrderItem orderItem in processingOrder)
@@ -232,9 +234,17 @@ namespace X4DataLoader
       galaxy.GameFiles.AddRange(gameFiles);
     }
 
-    private void LoadMods(Galaxy galaxy, string coreFolderPath, List<GameFilesStructureItem> gameFilesStructure, List<GameFile> gameFiles)
+    private void LoadMods(
+      Galaxy galaxy,
+      string coreFolderPath,
+      List<GameFilesStructureItem> gameFilesStructure,
+      List<GameFile> gameFiles,
+      bool loadEnabledOnly,
+      List<string>? excludedMods
+    )
     {
       string extensionsFolder = Path.Combine(coreFolderPath, ExtensionsFolder);
+      List<string> skipMods = excludedMods ?? [];
       if (Directory.Exists(extensionsFolder))
       {
         Dictionary<string, ExtensionInfo> mods = [];
@@ -251,6 +261,16 @@ namespace X4DataLoader
             catch (ArgumentException e)
             {
               Log.Error($"Error loading mod {contentPath}: {e.Message}");
+              continue;
+            }
+            if (loadEnabledOnly && !modInfo.Enabled)
+            {
+              Log.Debug($"Skipping mod {modInfo.Name} because it is disabled.");
+              continue;
+            }
+            if (skipMods.Contains(modInfo.Id))
+            {
+              Log.Debug($"Skipping mod {modInfo.Name} because it is excluded.");
               continue;
             }
             if (modInfo.GameVersion > galaxy.Version)
@@ -430,7 +450,8 @@ namespace X4DataLoader
       List<GameFilesStructureItem> gameFilesStructure,
       List<ExtensionInfo> extensions,
       string source = "",
-      List<GameFile>? exitingGameFiles = null
+      List<GameFile>? exitingGameFiles = null,
+      bool loadEnabledOnly = false
     )
     {
       List<GameFile> result = exitingGameFiles ?? ([]);
@@ -465,6 +486,11 @@ namespace X4DataLoader
               catch (ArgumentException e)
               {
                 Log.Error($"Error loading DLC {contentPath}: {e.Message}");
+                continue;
+              }
+              if (loadEnabledOnly && !dlc.Enabled)
+              {
+                Log.Debug($"Skipping DLC {dlc.Name} because it is disabled.");
                 continue;
               }
               extensions.Add(dlc);
@@ -513,6 +539,7 @@ namespace X4DataLoader
     public string Folder { get; set; }
     public int GameVersion { get; set; }
     public int Version { get; set; }
+    public bool Enabled { get; set; } = true;
     public List<ModDependency> Dependencies { get; set; } = [];
 
     public ExtensionInfo(string path)
@@ -528,6 +555,10 @@ namespace X4DataLoader
         throw new ArgumentException("Invalid content.xml file");
       }
       Version = StringHelper.ParseInt(contentElement.Attribute("version")?.Value, 0);
+      if (contentElement.Attribute("enabled")?.Value == "false" || contentElement.Attribute("enabled")?.Value == "0")
+      {
+        Enabled = false;
+      }
       foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
       {
         versionStr = dependencyElement.Attribute("version")?.Value;
