@@ -33,7 +33,7 @@ You can start building your connections right away.
 [size=125][u]Direct Mode[/u][/size]
 
 In the Direct Mode, you don't need to extract the game files. You just need to select the game folder and start building the connections.
-In this case the tool will load the game data directly from the game files. And will work only with the "Chem Gate Keeper" mod in the game [b]Extensions[/b] folder. You will be able only to save it, without possibility to select it's location.
+In this case the tool will load the game data directly from the game files. And will work only with the "Chem Gate Keeper" mod in the game [b]Extensions[/b] folder. You will be able only to save it, without possibility to select its location.
 
 [size=120][u]Direct Mode First Start[/u][/size]
 
@@ -55,7 +55,7 @@ Mod will be saved in the game [b]Extensions[/b] folder.
 
 [size=120][u]Direct Mode Second and Other starts[/u][/size]
 
-On the next starts tool will automatically load not only game data, but also the "Chem Gate Keeper" mod data. So, after start you will see the main window with the connections from the mod.
+On the next starts tool will automatically load not only game data, but also the "Chem Gate Keeper" mod data. So, after starting you will see the main window with the connections from the mod.
 
 You can update the connections, add new ones, or remove the existing ones. After that you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item.
 
