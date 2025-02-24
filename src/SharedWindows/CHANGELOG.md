@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.4.0...SharedWindows@v0.4.1) (2025-02-24)
+
+
+### Code Refactoring
+
+* **X4DataExtractionWindow:** change X4Executable to public static for broader access ([8337cd8](https://github.com/chemodun/X4-UniverseEditor/commit/8337cd80d9c8166c2509cc9b22d3851b70c323b9))
+
 ## [0.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.3.0...SharedWindows@v0.4.0) (2025-02-20)
 
 
