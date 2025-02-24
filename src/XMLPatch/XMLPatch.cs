@@ -152,21 +152,20 @@ namespace Utilities.X4XMLPatch
       {
         if (targetObj is XElement target)
         {
-          var newContent = replaceElement.Value;
+          string targetName = target.Name.LocalName;
+          XElement? replaceSubElement = replaceElement.Element(targetName);
+          XElement? parent = target.Parent;
           string targetInfo = GetElementInfo(target);
-          if (!string.IsNullOrEmpty(newContent))
+          string parentInfo = GetElementInfo(parent);
+          if (replaceSubElement != null)
           {
-            target.Value = newContent;
-            Log.Debug($"Replaced text of element '{targetInfo}' with '{newContent}'.");
+            string replaceInfo = GetElementInfo(replaceSubElement);
+            target.ReplaceWith(replaceSubElement);
+            Log.Debug($"Replaced element '{targetInfo}' with '{replaceInfo}' in '{parentInfo}'.");
           }
-
-          var newElement = replaceElement.Element("new");
-          if (newElement != null)
+          else
           {
-            XElement replacement = new(newElement);
-            replacement.Add(new XAttribute("_source", SourceId));
-            target.ReplaceWith(replacement);
-            Log.Debug($"Replaced element '{targetInfo}' with '{GetElementInfo(replacement)}'.");
+            Log.Warn($"Can't process replacement for '{targetInfo}' in '{parentInfo}'. Skipping operation.");
           }
         }
         else if (targetObj is XText textNode)
