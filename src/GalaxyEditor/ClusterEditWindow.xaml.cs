@@ -15,7 +15,7 @@ namespace GalaxyEditor
     private GalaxyReferencesHolder GalaxyReferences { get; set; } = new();
     private UnifyItemPlanet? _selectedPlanet = null;
     private UnifyItemMoon? _selectedMoon = null;
-    private BitmapImage _icon;
+    private readonly BitmapImage _icon;
 
     public string ClusterName
     {

@@ -1,31 +1,51 @@
 <Window x:Class="GalaxyEditor.MoonEditWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Edit Moon"  WindowStartupLocation="CenterOwner"
-        MinHeight="200" MinWidth="600"
-        SizeToContent="WidthAndHeight" ResizeMode="CanResizeWithGrip">
+        Title="Edit Moon"
+        WindowStartupLocation="CenterOwner"
+        MinHeight="200"
+        MinWidth="600"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="CanResizeWithGrip">
     <Window.Resources>
-        <Style x:Key="GroupBoxStyle" TargetType="GroupBox">
-            <Setter Property="Margin" Value="5"/>
+        <Style x:Key="GroupBoxStyle"
+               TargetType="GroupBox">
+            <Setter Property="Margin"
+                    Value="5"/>
         </Style>
-        <Style x:Key="LabelStyle" TargetType="Label">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style x:Key="LabelStyle"
+               TargetType="Label">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
         </Style>
-        <Style x:Key="TextBoxStyle" TargetType="TextBox">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style x:Key="TextBoxStyle"
+               TargetType="TextBox">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
         </Style>
-        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style x:Key="ComboBoxStyle"
+               TargetType="ComboBox">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="Height"
+                    Value="20"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
         </Style>
-        <Style x:Key="ButtonStyle" TargetType="Button">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style x:Key="ButtonStyle"
+               TargetType="Button">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="Height"
+                    Value="20"/>
+            <Setter Property="Width"
+                    Value="100"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
         </Style>
     </Window.Resources>
     <Grid>
@@ -36,8 +56,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <GroupBox Grid.Row="0" Grid.Column="0" Margin="5" Header="Moon Information">
+        <GroupBox Grid.Row="0"
+                  Grid.Column="0"
+                  Margin="5"
+                  Header="Moon Information">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -57,36 +79,94 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
-                <Label Grid.Row="0" Grid.Column="0" Content="Name:" Style="{StaticResource LabelStyle}"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Item.Name, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
-
-                <Label Grid.Row="1" Grid.Column="0" Content="Geology:" Style="{StaticResource LabelStyle}"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding GeologyOptions}" SelectedValue="{Binding Item.GeologyReference, Mode=TwoWay}" DisplayMemberPath="Text" SelectedValuePath="Reference" Style="{StaticResource ComboBoxStyle}"/>
-
-                <Label Grid.Row="1" Grid.Column="2" Content="Atmosphere:" Style="{StaticResource LabelStyle}"/>
-                <ComboBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding AtmosphereOptions}" SelectedValue="{Binding Item.AtmosphereReference, Mode=TwoWay}" DisplayMemberPath="Text" SelectedValuePath="Reference" Style="{StaticResource ComboBoxStyle}"/>
-
-                <Label Grid.Row="2" Grid.Column="0" Content="Settlements:" Style="{StaticResource LabelStyle}"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding SettlementsOptions}" SelectedValue="{Binding Item.SettlementsReference, Mode=TwoWay}" DisplayMemberPath="Text" SelectedValuePath="Reference" Style="{StaticResource ComboBoxStyle}"/>
-
-                <Label Grid.Row="2" Grid.Column="2" Content="Population:" Style="{StaticResource LabelStyle}"/>
-                <ComboBox Grid.Row="2" Grid.Column="3" ItemsSource="{Binding PopulationOptions}" SelectedValue="{Binding Item.PopulationReference, Mode=TwoWay}" DisplayMemberPath="Text" SelectedValuePath="Reference" Style="{StaticResource ComboBoxStyle}"/>
-
-                <Label Grid.Row="2" Grid.Column="4" Content="Max Population:" Style="{StaticResource LabelStyle}"/>
-                <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding Item.MaxPopulation, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
-
-                <Label Grid.Row="3" Grid.Column="0" Content="World Part:" Style="{StaticResource LabelStyle}"/>
-                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Item.WorldPart, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
-
-                <Label Grid.Row="3" Grid.Column="2" Content="Atmosphere Part:" Style="{StaticResource LabelStyle}"/>
-                <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding Item.AtmospherePart, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Content="Name:"
+                       Style="{StaticResource LabelStyle}"/>
+                <TextBox Grid.Row="0"
+                         Grid.Column="1"
+                         Text="{Binding Item.Name, Mode=TwoWay}"
+                         Style="{StaticResource TextBoxStyle}"/>
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       Content="Geology:"
+                       Style="{StaticResource LabelStyle}"/>
+                <ComboBox Grid.Row="1"
+                          Grid.Column="1"
+                          ItemsSource="{Binding GeologyOptions}"
+                          SelectedValue="{Binding Item.GeologyReference, Mode=TwoWay}"
+                          DisplayMemberPath="Text"
+                          SelectedValuePath="Reference"
+                          Style="{StaticResource ComboBoxStyle}"/>
+                <Label Grid.Row="1"
+                       Grid.Column="2"
+                       Content="Atmosphere:"
+                       Style="{StaticResource LabelStyle}"/>
+                <ComboBox Grid.Row="1"
+                          Grid.Column="3"
+                          ItemsSource="{Binding AtmosphereOptions}"
+                          SelectedValue="{Binding Item.AtmosphereReference, Mode=TwoWay}"
+                          DisplayMemberPath="Text"
+                          SelectedValuePath="Reference"
+                          Style="{StaticResource ComboBoxStyle}"/>
+                <Label Grid.Row="2"
+                       Grid.Column="0"
+                       Content="Settlements:"
+                       Style="{StaticResource LabelStyle}"/>
+                <ComboBox Grid.Row="2"
+                          Grid.Column="1"
+                          ItemsSource="{Binding SettlementsOptions}"
+                          SelectedValue="{Binding Item.SettlementsReference, Mode=TwoWay}"
+                          DisplayMemberPath="Text"
+                          SelectedValuePath="Reference"
+                          Style="{StaticResource ComboBoxStyle}"/>
+                <Label Grid.Row="2"
+                       Grid.Column="2"
+                       Content="Population:"
+                       Style="{StaticResource LabelStyle}"/>
+                <ComboBox Grid.Row="2"
+                          Grid.Column="3"
+                          ItemsSource="{Binding PopulationOptions}"
+                          SelectedValue="{Binding Item.PopulationReference, Mode=TwoWay}"
+                          DisplayMemberPath="Text"
+                          SelectedValuePath="Reference"
+                          Style="{StaticResource ComboBoxStyle}"/>
+                <Label Grid.Row="2"
+                       Grid.Column="4"
+                       Content="Max Population:"
+                       Style="{StaticResource LabelStyle}"/>
+                <TextBox Grid.Row="2"
+                         Grid.Column="5"
+                         Text="{Binding Item.MaxPopulation, Mode=TwoWay}"
+                         Style="{StaticResource TextBoxStyle}"/>
+                <Label Grid.Row="3"
+                       Grid.Column="0"
+                       Content="World Part:"
+                       Style="{StaticResource LabelStyle}"/>
+                <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         Text="{Binding Item.WorldPart, Mode=TwoWay}"
+                         Style="{StaticResource TextBoxStyle}"/>
+                <Label Grid.Row="3"
+                       Grid.Column="2"
+                       Content="Atmosphere Part:"
+                       Style="{StaticResource LabelStyle}"/>
+                <TextBox Grid.Row="3"
+                         Grid.Column="3"
+                         Text="{Binding Item.AtmospherePart, Mode=TwoWay}"
+                         Style="{StaticResource TextBoxStyle}"/>
             </Grid>
         </GroupBox>
-
-        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Cancel" Click="ButtonCancel_Click" Style="{StaticResource ButtonStyle}"/>
-            <Button Content="Save" Click="ButtonSave_Click" Style="{StaticResource ButtonStyle}"/>
+        <StackPanel Grid.Row="1"
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="Cancel"
+                    Click="ButtonCancel_Click"
+                    Style="{StaticResource ButtonStyle}"/>
+            <Button Content="Save"
+                    Click="ButtonSave_Click"
+                    Style="{StaticResource ButtonStyle}"/>
         </StackPanel>
     </Grid>
 </Window>

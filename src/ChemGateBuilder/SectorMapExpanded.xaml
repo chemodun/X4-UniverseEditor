@@ -5,40 +5,66 @@
         xmlns:local="clr-namespace:ChemGateBuilder"
         xmlns:converters="clr-namespace:X4Map.Converters;assembly=X4Map"
         xmlns:mapconstants="clr-namespace:X4Map.Constants;assembly=X4Map"
-        Title="Sector Map" MinHeight="600" MinWidth="600"
+        Title="Sector Map"
+        MinHeight="600"
+        MinWidth="600"
         WindowStartupLocation="CenterOwner"
         Icon="{StaticResource BuilderIcon}"
         KeyDown="Window_KeyDown">
     <Window.Resources>
-        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter" />
-        <Style x:Key="SectorCanvasStyle" TargetType="Canvas">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="DockPanel.Dock" Value="Left"/>
-            <Setter Property="Margin" Value="5"/>
+        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter"/>
+        <Style x:Key="SectorCanvasStyle"
+               TargetType="Canvas">
+            <Setter Property="Background"
+                    Value="White"/>
+            <Setter Property="DockPanel.Dock"
+                    Value="Left"/>
+            <Setter Property="Margin"
+                    Value="5"/>
         </Style>
-        <Style x:Key="SectorHexagonStyle" TargetType="Polygon">
-            <Setter Property="Stroke" Value="DarkGray"/>
-            <Setter Property="StrokeThickness" Value="2"/>
+        <Style x:Key="SectorHexagonStyle"
+               TargetType="Polygon">
+            <Setter Property="Stroke"
+                    Value="DarkGray"/>
+            <Setter Property="StrokeThickness"
+                    Value="2"/>
         </Style>
-        <Style x:Key="CoordinatesTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="MinWidth" Value="40"/>
-            <Setter Property="TextAlignment" Value="Right"/>
+        <Style x:Key="CoordinatesTextBlockStyle"
+               TargetType="TextBlock">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="MinWidth"
+                    Value="40"/>
+            <Setter Property="TextAlignment"
+                    Value="Right"/>
         </Style>
-        <Style x:Key="CoordinatesLine" TargetType="StackPanel">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Orientation" Value="Horizontal"/>
+        <Style x:Key="CoordinatesLine"
+               TargetType="StackPanel">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="Orientation"
+                    Value="Horizontal"/>
         </Style>
-        <Style x:Key="SectorInternalRadius" TargetType="Slider">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Width" Value="400"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TickFrequency" Value="10"/>
-            <Setter Property="IsSnapToTickEnabled" Value="True"/>
-            <Setter Property="TickPlacement" Value="BottomRight"/>
+        <Style x:Key="SectorInternalRadius"
+               TargetType="Slider">
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch"/>
+            <Setter Property="Width"
+                    Value="400"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
+            <Setter Property="TickFrequency"
+                    Value="10"/>
+            <Setter Property="IsSnapToTickEnabled"
+                    Value="True"/>
+            <Setter Property="TickPlacement"
+                    Value="BottomRight"/>
         </Style>
     </Window.Resources>
     <Grid>
@@ -50,7 +76,9 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -60,69 +88,83 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label Content="New Gate Coordinates:" Grid.Column="0" />
-            <Label Content="X, km:" Grid.Column="1" />
-            <TextBlock Text="{Binding NewGateCoordinates.X}" Style="{StaticResource CoordinatesTextBlockStyle}" Grid.Column="2"/>
-            <Label Content="Y, km:" Grid.Column="3" />
-            <TextBlock Text="{Binding NewGateCoordinates.Y}" Style="{StaticResource CoordinatesTextBlockStyle}" Grid.Column="4"/>
-            <Label Content="Z, km:" Grid.Column="5" />
-            <TextBlock Text="{Binding NewGateCoordinates.Z}"  Style="{StaticResource CoordinatesTextBlockStyle}" Grid.Column="6"/>
+            <Label Content="New Gate Coordinates:"
+                   Grid.Column="0"/>
+            <Label Content="X, km:"
+                   Grid.Column="1"/>
+            <TextBlock Text="{Binding NewGateCoordinates.X}"
+                       Style="{StaticResource CoordinatesTextBlockStyle}"
+                       Grid.Column="2"/>
+            <Label Content="Y, km:"
+                   Grid.Column="3"/>
+            <TextBlock Text="{Binding NewGateCoordinates.Y}"
+                       Style="{StaticResource CoordinatesTextBlockStyle}"
+                       Grid.Column="4"/>
+            <Label Content="Z, km:"
+                   Grid.Column="5"/>
+            <TextBlock Text="{Binding NewGateCoordinates.Z}"
+                       Style="{StaticResource CoordinatesTextBlockStyle}"
+                       Grid.Column="6"/>
         </Grid>
         <Canvas x:Name="SectorMapExpandedCanvas"
-            Grid.Row="1"
-            Grid.Column="0"
-            Style="{StaticResource SectorCanvasStyle}"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            SizeChanged="SectorMapExpandedCanvas_SizeChanged">
+                Grid.Row="1"
+                Grid.Column="0"
+                Style="{StaticResource SectorCanvasStyle}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                SizeChanged="SectorMapExpandedCanvas_SizeChanged">
             <!-- Hexagonal Sector Representation -->
             <Polygon x:Name="SectorHexagon"
-                    Points="{Binding SectorMapExpanded.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
-                    Style="{StaticResource SectorHexagonStyle}"
-                    Canvas.Left="{Binding SectorMapExpanded.VisualX}"
-                    Canvas.Top="{Binding SectorMapExpanded.VisualY}"
-                    >
+                     Points="{Binding SectorMapExpanded.VisualSizePx, Converter={StaticResource HexagonPointsConverter}}"
+                     Style="{StaticResource SectorHexagonStyle}"
+                     Canvas.Left="{Binding SectorMapExpanded.VisualX}"
+                     Canvas.Top="{Binding SectorMapExpanded.VisualY}">
                 <Polygon.Fill>
-                    <SolidColorBrush Color="{Binding SectorMapExpanded.OwnerColor}" Opacity="{Binding MapColorsOpacity}"/>
+                    <SolidColorBrush Color="{Binding SectorMapExpanded.OwnerColor}"
+                                     Opacity="{Binding MapColorsOpacity}"/>
                 </Polygon.Fill>
             </Polygon>
             <!-- Gates Representation -->
             <ItemsControl ItemsSource="{Binding SectorMapExpanded.Items}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas />
+                        <Canvas/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Image
-                            Width="{Binding ItemSizePx}"
-                            Height="{Binding ItemSizePx}"
-                            Source="{Binding ObjectImage}"
-                            Stretch="Uniform"
-                            PreviewMouseLeftButtonDown="SectorMapExpandedItem_MouseLeftButtonDown"
-                            MouseMove="SectorMapExpandedItem_MouseMove"
-                            MouseLeftButtonUp="SectorMapExpandedItem_MouseLeftButtonUp">
+                        <Image Width="{Binding ItemSizePx}"
+                               Height="{Binding ItemSizePx}"
+                               Source="{Binding ObjectImage}"
+                               Stretch="Uniform"
+                               PreviewMouseLeftButtonDown="SectorMapExpandedItem_MouseLeftButtonDown"
+                               MouseMove="SectorMapExpandedItem_MouseMove"
+                               MouseLeftButtonUp="SectorMapExpandedItem_MouseLeftButtonUp">
                             <Image.RenderTransform>
-                                <TranslateTransform X="{Binding X}" Y="{Binding Y}" />
+                                <TranslateTransform X="{Binding X}"
+                                                    Y="{Binding Y}"/>
                             </Image.RenderTransform>
                             <Image.ToolTip>
-                                <ToolTip Content="{Binding ToolTip}" />
+                                <ToolTip Content="{Binding ToolTip}"/>
                             </Image.ToolTip>
                         </Image>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Canvas>
-        <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center">
-            <TextBlock Margin="0" VerticalAlignment="Center"
-                        Text="{Binding SectorMapExpanded.InternalSizeKm, StringFormat='Radius: {0} km'}" />
+        <StackPanel Orientation="Horizontal"
+                    Margin="5"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalAlignment="Center">
+            <TextBlock Margin="0"
+                       VerticalAlignment="Center"
+                       Text="{Binding SectorMapExpanded.InternalSizeKm, StringFormat='Radius: {0} km'}"/>
             <Slider x:Name="SectorDirectRadiusSlider"
                     Style="{StaticResource SectorInternalRadius}"
                     Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
                     Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
-                    Value="{Binding SectorMapExpanded.InternalSizeKm, Mode=TwoWay}"
-            />
+                    Value="{Binding SectorMapExpanded.InternalSizeKm, Mode=TwoWay}"/>
         </StackPanel>
     </Grid>
 </Window>
