@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.10.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.9.0...X4DataLoader@v0.10.0) (2025-02-24)
+
+
+### Features
+
+* **DataLoader:** enhance mod loading with options for enabled mods and exclusions ([178c8e9](https://github.com/chemodun/X4-UniverseEditor/commit/178c8e9603e84f3e18b9cf63d24062423b696b7f))
+* **DataLoader:** integrate ContentExtractor for improved file handling from catalog and directory ([02c65e2](https://github.com/chemodun/X4-UniverseEditor/commit/02c65e24c55cc391423b7ecd8312de51a62847f2))
+* **Translation:** add ClearReference method to format reference IDs ([88308c7](https://github.com/chemodun/X4-UniverseEditor/commit/88308c7ef98ace2e2e99ff6283e2d6b92ba81cf3))
+
+
+### Bug Fixes
+
+* **Highway:** replace exceptions with warnings for EntryPointPath and ExitPointPath loading errors; improve zone error messages ([9546752](https://github.com/chemodun/X4-UniverseEditor/commit/9546752dc4a053960f787b171432d6de9d3a1dcb))
+
+
+### Code Refactoring
+
+* **Cluster, Planet:** replace integer ID properties with reference strings for improved clarity ([8cf8915](https://github.com/chemodun/X4-UniverseEditor/commit/8cf8915dca33095863c73ef3e40f5dc7c02f1058))
+* **Cluster:** change properties from private to public setters for better accessibility ([e61875a](https://github.com/chemodun/X4-UniverseEditor/commit/e61875a01e30fb1151532884f196c12afb42c2da))
+* **DataLoader:** streamline content extraction logic and improve folder handling ([a3d70df](https://github.com/chemodun/X4-UniverseEditor/commit/a3d70df00c131df9f075cfb81fb36c8f91e98481))
+
 ## [0.9.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.8.0...X4DataLoader@v0.9.0) (2025-02-20)
 
 
