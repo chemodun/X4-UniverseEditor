@@ -10,28 +10,12 @@ namespace GalaxyEditor
 {
   public partial class ClusterEditWindow : Window, INotifyPropertyChanged
   {
+    private UnifyItemCluster _cluster = new();
     private Galaxy GalaxyData { get; set; } = new();
     private GalaxyReferencesHolder GalaxyReferences { get; set; } = new();
-    private CatalogItemString _systemId = new("");
-    private CatalogItemString _iconId = new("");
-    private CatalogItemWithStringId _musicId = new("", "");
-    private CatalogItemWithTextReference _sun = new("", "", 0, 0);
-    private CatalogItemWithTextReference _environment = new("", "", 0, 0);
     private UnifyItemPlanet? _selectedPlanet = null;
     private UnifyItemMoon? _selectedMoon = null;
-
-    public string ClusterId
-    {
-      get => Cluster.ClusterId;
-      set
-      {
-        if (Cluster.ClusterId != value)
-        {
-          Cluster.ClusterId = value;
-          OnPropertyChanged(nameof(ClusterId));
-        }
-      }
-    }
+    private BitmapImage _icon;
 
     public string ClusterName
     {
@@ -42,85 +26,6 @@ namespace GalaxyEditor
         {
           Cluster.Name = value;
           OnPropertyChanged(nameof(ClusterName));
-        }
-      }
-    }
-
-    public string Description
-    {
-      get => Cluster.Description;
-      set
-      {
-        if (Cluster.Description != value)
-        {
-          Cluster.Description = value;
-          OnPropertyChanged(nameof(Description));
-        }
-      }
-    }
-    public CatalogItemString SystemId
-    {
-      get => _systemId;
-      set
-      {
-        if (_systemId != value)
-        {
-          _systemId = value;
-          Cluster.System = value.Text;
-          OnPropertyChanged(nameof(SystemId));
-        }
-      }
-    }
-    public CatalogItemString IconId
-    {
-      get => _iconId;
-      set
-      {
-        if (_iconId != value)
-        {
-          _iconId = value;
-          Cluster.ImageId = value.Text;
-          OnPropertyChanged(nameof(IconId));
-        }
-      }
-    }
-    public CatalogItemWithStringId MusicId
-    {
-      get => _musicId;
-      set
-      {
-        if (_musicId != value)
-        {
-          _musicId = value;
-          Cluster.MusicId = value.Id;
-          OnPropertyChanged(nameof(MusicId));
-        }
-      }
-    }
-    public CatalogItemWithTextReference Sun
-    {
-      get => _sun;
-      set
-      {
-        if (_sun != value)
-        {
-          _sun = value;
-          Cluster.SunReference = value.Reference;
-          OnPropertyChanged(nameof(Sun));
-        }
-      }
-    }
-
-    public CatalogItemWithTextReference Environment
-    {
-      get => _environment;
-      set
-      {
-        if (_environment != value)
-        {
-          _environment = value;
-          Cluster.EnvironmentReference = value.Reference;
-          OnPropertyChanged(nameof(Environment));
         }
       }
     }
@@ -152,7 +57,15 @@ namespace GalaxyEditor
       }
     }
 
-    public UnifyItemCluster Cluster { get; set; } = new();
+    public UnifyItemCluster Cluster
+    {
+      get => _cluster;
+      set
+      {
+        _cluster = value;
+        OnPropertyChanged(nameof(Cluster));
+      }
+    }
     public bool IsChanged { get; set; } = false;
     public bool IsReady { get; set; } = false;
     public bool IsNew { get; set; } = false;
@@ -180,7 +93,9 @@ namespace GalaxyEditor
     {
       InitializeComponent();
       DataContext = this;
-      IsEditMode = editMode;
+      IsEditMode = /* editMode */
+        true;
+      _icon = icon;
       Icon = icon;
       GalaxyData = galaxyData;
       GalaxyReferences = galaxyReferences;
@@ -199,34 +114,6 @@ namespace GalaxyEditor
       {
         IsNew = true;
         OnPropertyChanged(nameof(IsNew));
-      }
-      CatalogItemString? systemId = SystemOptions.FirstOrDefault(s => s.Text == Cluster.System);
-      if (systemId != null)
-      {
-        SystemId = systemId;
-      }
-      CatalogItemString? iconId = IconOptions.FirstOrDefault(i => i.Text == Cluster.ImageId);
-      if (iconId != null)
-      {
-        IconId = iconId;
-      }
-      CatalogItemWithStringId? musicId = MusicOptions.FirstOrDefault(m => m.Id == Cluster.MusicId);
-      if (musicId != null)
-      {
-        MusicId = musicId;
-      }
-      CatalogItemWithTextReference? sun = CatalogItemWithTextReference.FindByReference([.. SunOptions], Cluster.SunReference);
-      if (sun != null)
-      {
-        Sun = sun;
-      }
-      CatalogItemWithTextReference? environment = CatalogItemWithTextReference.FindByReference(
-        [.. EnvironmentOptions],
-        Cluster.EnvironmentReference
-      );
-      if (environment != null)
-      {
-        Environment = environment;
       }
       FillPlanets();
       FillMoons();
@@ -322,6 +209,15 @@ namespace GalaxyEditor
     public void ButtonEditPlanet_Click(object sender, RoutedEventArgs e)
     {
       Log.Debug("ButtonEditPlanet_Click");
+      if (SelectedPlanet != null)
+      {
+        var planetEditWindow = new PlanetEditWindow(_icon, SelectedPlanet, GalaxyReferences) { Owner = this };
+        if (planetEditWindow.ShowDialog() == true)
+        {
+          // Handle the save logic if needed
+          OnPropertyChanged(nameof(Planets));
+        }
+      }
     }
 
     public void ButtonRemovePlanet_Click(object sender, RoutedEventArgs e)
@@ -337,6 +233,15 @@ namespace GalaxyEditor
     public void ButtonEditMoon_Click(object sender, RoutedEventArgs e)
     {
       Log.Debug("ButtonEditMoon_Click");
+      if (SelectedMoon != null)
+      {
+        var moonEditWindow = new MoonEditWindow(_icon, SelectedMoon, GalaxyReferences) { Owner = this };
+        if (moonEditWindow.ShowDialog() == true)
+        {
+          // Handle the save logic if needed
+          OnPropertyChanged(nameof(Moons));
+        }
+      }
     }
 
     public void ButtonRemoveMoon_Click(object sender, RoutedEventArgs e)

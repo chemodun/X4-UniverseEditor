@@ -62,20 +62,20 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelStyle}">Id:</Label>
-                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterId, Mode=TwoWay}" IsEnabled="false"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding Cluster.ClusterId, Mode=TwoWay}" IsEnabled="false"/>
                 <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Name:</Label>
-                <TextBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding ClusterName, Mode=TwoWay}" IsEnabled="{Binding IsEditMode}"/>
+                <TextBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Style="{StaticResource TextBoxStyle}" Text="{Binding Cluster.Name, Mode=TwoWay}" IsEnabled="{Binding IsEditMode}"/>
                 <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">Icon:</Label>
-                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding IconOptions}" SelectedItem="{Binding IconId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding IconOptions}" SelectedValue="{Binding Cluster.ImageId, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
                 <Button Grid.Row="1" Grid.Column="2" Content="New Icon" Click="ButtonAddIcon_Click" Style="{StaticResource ButtonStyle}"  Visibility="{Binding EditVisibility}"/>
                 <Label Grid.Row="1" Grid.Column="3" Style="{StaticResource LabelStyle}">Music:</Label>
-                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedItem="{Binding MusicId, Mode=TwoWay}"  SelectedValuePath="Id" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
+                <ComboBox Grid.Row="1" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding MusicOptions}" SelectedValue="{Binding Cluster.MusicId, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
                 <Button Grid.Row="1" Grid.Column="5" Content="New Music" Click="ButtonAddMusic_Click" Style="{StaticResource ButtonStyle}"  Visibility="{Binding EditVisibility}"/>
                 <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelStyle}">System Id:</Label>
-                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedItem="{Binding SystemId, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SystemOptions}" SelectedValue="{Binding Cluster.System, Mode=TwoWay}" SelectedValuePath="Text" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/> <!-- Updated binding for System Id -->
                 <Button Grid.Row="2" Grid.Column="2" Content="New System Id" Click="ButtonAddSystem_Click" Style="{StaticResource ButtonStyle}"  Visibility="{Binding EditVisibility}"/>
                 <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource LabelStyle}">Description:</Label>
-                <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Style="{StaticResource TextBoxStyle}" Text="{Binding Description, Mode=TwoWay}" Height="80" MaxWidth="800" AcceptsReturn="True" TextWrapping="Wrap" IsEnabled="{Binding IsEditMode}"/>
+                <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="6" Style="{StaticResource TextBoxStyle}" Text="{Binding Cluster.Description, Mode=TwoWay}" Height="80" MaxWidth="800" AcceptsReturn="True" TextWrapping="Wrap" IsEnabled="{Binding IsEditMode}"/> <!-- Updated binding for Description -->
             </Grid>
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="0" Margin="5" Header="Cluster System Information">
@@ -96,9 +96,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelStyle}">Sun:</Label>
-                <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SunOptions}" SelectedItem="{Binding Sun, Mode=TwoWay}" DisplayMemberPath="Text"  IsEnabled="{Binding IsEditMode}"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding SunOptions}" SelectedValue="{Binding Cluster.SunReference, Mode=TwoWay}" SelectedValuePath="Reference"  DisplayMemberPath="Text"  IsEnabled="{Binding IsEditMode}"/>
                 <Label Grid.Row="0" Grid.Column="3" Style="{StaticResource LabelStyle}">Environment:</Label>
-                <ComboBox Grid.Row="0" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding EnvironmentOptions}" SelectedItem="{Binding Environment, Mode=TwoWay}" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
+                <ComboBox Grid.Row="0" Grid.Column="4" Style="{StaticResource ComboBoxStyle}" ItemsSource="{Binding EnvironmentOptions}" SelectedValue="{Binding Cluster.EnvironmentReference, Mode=TwoWay}" SelectedValuePath="Reference" DisplayMemberPath="Text" IsEnabled="{Binding IsEditMode}"/>
                 <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelStyle}">Planets:</Label>
                 <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="{Binding DataGridsSpan}"
                         AutoGenerateColumns="False"
