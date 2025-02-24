@@ -714,9 +714,23 @@ namespace ChemGateBuilder
     private void X4DataNotLoadedCheckAndWarning()
     {
       // Validate the loaded X4DataFolder
-      if (!ValidateX4DataFolder(X4DataFolder, out string errorMessage))
+      if (DirectMode && !ValidateX4GameFolder(X4GameFolder, out string errorMessage))
       {
         StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
+        // Prompt the user to select a valid folder
+        _ = MessageBox.Show(
+          "The X4 Game folder is not set. Please set it via Configuration -> X4 Game Folder!",
+          "Invalid or missing X4 Game Folder",
+          MessageBoxButton.OK,
+          MessageBoxImage.Warning
+        );
+        StatusBar.SetStatusMessage("Please select a valid X4 Game folder to proceed.", StatusMessageType.Warning);
+        // Show the ribbon tab options
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabConfiguration")!;
+      }
+      else if (!DirectMode && !ValidateX4DataFolder(X4DataFolder, out string errorMessageData))
+      {
+        StatusBar.SetStatusMessage(errorMessageData, StatusMessageType.Error);
         // Prompt the user to select a valid folder
         _ = MessageBox.Show(
           "The X4 Data folder is not set. Please set it via Configuration -> X4 Data Folder!",
@@ -786,6 +800,7 @@ namespace ChemGateBuilder
       OnPropertyChanged(nameof(IsDataLoaded));
       GateConnectionReset();
       StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
+      RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
       if (DirectMode)
       {
         string modPath = Path.Combine(X4GameFolder, "extensions", ChemGateKeeper.ModId);
