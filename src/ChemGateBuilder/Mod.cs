@@ -361,7 +361,13 @@ namespace ChemGateBuilder
 
           pathItems.Add(connection.PathOpposite);
         }
-        addElement.Add(connection.XML);
+        if (connection.XML == null)
+        {
+          continue;
+        }
+        XElement connectionElement = new(connection.XML);
+        connectionElement.Attribute("_source")?.Remove();
+        addElement.Add(connectionElement);
       }
       XElement content = new("content");
       content.SetAttributeValue("id", Id);
@@ -426,10 +432,20 @@ namespace ChemGateBuilder
           if (connectionPath.Sector != null && connectionPath.Zone != null)
           {
             XElement sector = new("add", new XAttribute("sel", $"/macros/macro[@name='{connectionPath.Sector.Macro}']/connections"));
-            sector.Add(connectionPath.Zone.PositionXML);
+            if (connectionPath.Zone.PositionXML != null)
+            {
+              XElement connectionElement = new(connectionPath.Zone.PositionXML);
+              connectionElement.Attribute("_source")?.Remove();
+              sector.Add(connectionElement);
+            }
             sectors.Add(sector);
             XElement zone = new("add", new XAttribute("sel", $"/macros"));
-            zone.Add(connectionPath.Zone.XML);
+            if (connectionPath.Zone.XML != null)
+            {
+              XElement zoneElement = new(connectionPath.Zone.XML);
+              zoneElement.Attribute("_source")?.Remove();
+              zone.Add(zoneElement);
+            }
             zones.Add(zone);
             if (path.Key != "vanilla" && files_prefix == "")
             {
