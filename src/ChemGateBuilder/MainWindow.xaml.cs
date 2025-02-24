@@ -879,7 +879,7 @@ namespace ChemGateBuilder
       };
       if (AllSectors.Count > 0)
       {
-        dialog.SelectedPath = $"{X4DataFolder}\\";
+        dialog.SelectedPath = !string.IsNullOrEmpty(X4DataFolder) && X4DataFolder != "." ? $"{X4DataFolder}\\" : ".";
       }
       else
       {
