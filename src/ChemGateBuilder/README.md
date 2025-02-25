@@ -317,6 +317,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.9.2] - 2025-02-25
+
+- Fixed
+  - Fixed the issue with the loading the mod made by tool, introduced in `v0.8.8`
+
 ### [0.9.1] - 2025-02-25
 
 - Fixed
