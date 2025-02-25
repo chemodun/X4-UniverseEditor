@@ -89,7 +89,14 @@ namespace Utilities.X4XMLPatch
           string clonedInfo = GetElementInfo(cloned);
           string targetInfo = GetElementInfo(targetElement);
           string targetParentInfo = GetElementInfo(targetElement.Parent);
-          cloned.Add(new XAttribute("_source", SourceId));
+          if (cloned.Attribute("_source") == null)
+          {
+            cloned.Add(new XAttribute("_source", SourceId));
+          }
+          else
+          {
+            cloned.SetAttributeValue("_source", SourceId);
+          }
           if (pos == "before")
           {
             if (
@@ -207,6 +214,14 @@ namespace Utilities.X4XMLPatch
           string parentInfo = GetElementInfo(parent);
           if (replaceSubElement != null)
           {
+            if (replaceSubElement.Attribute("_source") == null)
+            {
+              replaceSubElement.Add(new XAttribute("_source", SourceId));
+            }
+            else
+            {
+              replaceSubElement.SetAttributeValue("_source", SourceId);
+            }
             string replaceInfo = GetElementInfo(replaceSubElement);
             target.ReplaceWith(replaceSubElement);
             Log.Debug($"Replaced element '{targetInfo}' with '{replaceInfo}' in '{parentInfo}'.");
