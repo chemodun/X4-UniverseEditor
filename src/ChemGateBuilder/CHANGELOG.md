@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.1...ChemGateBuilder@v0.9.2) (2025-02-25)
+
+
+### Bug Fixes
+
+* **XMLPatch:** ensure _source attribute is added or updated correctly ([c35de23](https://github.com/chemodun/X4-UniverseEditor/commit/c35de23a5b976505e79a6bc9f7c94427ea56f97a))
+
+
+### Documentation
+
+* **README:** update changelog for version 0.9.2 with fix for mod loading issue ([c35de23](https://github.com/chemodun/X4-UniverseEditor/commit/c35de23a5b976505e79a6bc9f7c94427ea56f97a))
+* **README:** Update README's files ([39d4df0](https://github.com/chemodun/X4-UniverseEditor/commit/39d4df0e6d415aa8c086c7d9a4b7762208a9465d))
+
 ## [0.9.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.0...ChemGateBuilder@v0.9.1) (2025-02-25)
 
 
