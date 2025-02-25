@@ -317,6 +317,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][0.9.2] - 2025-02-25[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Fixed the issue with the loading the mod made by tool, introduced in [b]v0.8.8[/b]
+[/list]
+[/list]
 [size=125][u][0.9.1] - 2025-02-25[/u][/size]
 [list]
 [*] Fixed
