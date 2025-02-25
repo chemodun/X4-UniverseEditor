@@ -92,21 +92,65 @@ namespace Utilities.X4XMLPatch
           cloned.Add(new XAttribute("_source", SourceId));
           if (pos == "before")
           {
+            if (
+              targetElement
+                .Parent!.Elements()
+                .Any(e =>
+                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                )
+            )
+            {
+              Log.Warn($"Element '{clonedInfo}' already exists in '{targetParentInfo}'. Skipping.");
+              continue;
+            }
             targetElement.AddBeforeSelf(cloned);
             Log.Debug($"Added new element '{clonedInfo}' before '{targetInfo}' in '{targetParentInfo}'.");
           }
           else if (pos == "after")
           {
+            if (
+              targetElement
+                .Parent!.Elements()
+                .Any(e =>
+                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                )
+            )
+            {
+              Log.Warn($"Element '{clonedInfo}' already exists in '{targetParentInfo}'. Skipping.");
+              continue;
+            }
             targetElement.AddAfterSelf(cloned);
             Log.Debug($"Added new element '{clonedInfo}' after '{targetInfo}' in '{targetParentInfo}'.");
           }
           else if (pos == "prepend")
           {
+            if (
+              targetElement
+                .Elements()
+                .Any(e =>
+                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                )
+            )
+            {
+              Log.Warn($"Element '{clonedInfo}' already exists in '{targetInfo}'. Skipping.");
+              continue;
+            }
             targetElement.AddFirst(cloned);
             Log.Debug($"Prepended new element '{clonedInfo}' to '{targetInfo}'.");
           }
           else if (pos == "append")
           {
+            if (
+              targetElement
+                .Elements()
+                .Any(e =>
+                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                )
+            )
+            {
+              Log.Warn($"Element '{clonedInfo}' already exists in '{targetInfo}'. Skipping.");
+              continue;
+            }
             targetElement.Add(cloned);
             Log.Debug($"Appended new element '{clonedInfo}' to '{targetInfo}'.");
           }
