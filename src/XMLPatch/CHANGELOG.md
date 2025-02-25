@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.5](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.4...XMLPatch@v0.1.5) (2025-02-25)
+
+
+### Bug Fixes
+
+* **XMLPatch:** diff will be always applied, despite errors during the processing ([24f474b](https://github.com/chemodun/X4-UniverseEditor/commit/24f474bf609217b50677519cde9292ac7649ccc9))
+* **XMLPatch:** enhance logging for node selection failures and add LastApplicableNode method ([d21d971](https://github.com/chemodun/X4-UniverseEditor/commit/d21d9711b5444d62bfbf1e1366affdba980cae47))
+* **XMLPatch:** prevent duplicate elements from being added in various positions ([9439182](https://github.com/chemodun/X4-UniverseEditor/commit/9439182a8358717028063c3da2a8f9736de2c16f))
+
 ## [0.1.4](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.3...XMLPatch@v0.1.4) (2025-02-24)
 
 
