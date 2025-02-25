@@ -310,9 +310,11 @@ namespace X4DataLoader
             else
             {
               bool inserted = false;
+              List<ModDependency> dependencies = mods[modId].Dependencies;
               for (int i = 0; i < modsOrder.Count; i++)
               {
-                if (mods[modId].Dependencies.Any(d => d.Id == modsOrder[i]))
+                ExtensionInfo currentMod = mods[modsOrder[i]];
+                if (currentMod.Dependencies.Any(d => d.Id == modId))
                 {
                   modsOrder.Insert(i, modId);
                   inserted = true;
