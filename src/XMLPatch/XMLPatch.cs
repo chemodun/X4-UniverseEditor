@@ -24,24 +24,24 @@ namespace Utilities.X4XMLPatch
             case "add":
               if (!ApplyAdd(operation, workingRoot, SourceId))
               {
-                return null;
+                continue;
               }
               break;
             case "replace":
               if (!ApplyReplace(operation, workingRoot, SourceId))
               {
-                return null;
+                continue;
               }
               break;
             case "remove":
               if (!ApplyRemove(operation, workingRoot))
               {
-                return null;
+                continue;
               }
               break;
             default:
               Log.Warn($"Unknown operation: {operation.Name}. Skipping.");
-              return null;
+              continue;
           }
         }
         Log.Debug($"Patched XML successfully.");
