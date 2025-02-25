@@ -317,6 +317,12 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.9.1] - 2025-02-25
+
+- Fixed
+  - Loading the diffs from mod will not be interrupted by the error
+  - Fixed mod loading order logic based on dependencies
+
 ### [0.9.0] - 2025-02-24
 
 - Added
