@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.0...X4DataLoader@v0.10.1) (2025-02-25)
+
+
+### Bug Fixes
+
+* **DataLoader:** fixed mods loading order calculation ([046af8c](https://github.com/chemodun/X4-UniverseEditor/commit/046af8cdf8ee4a9a7b4afd83c8eab0c211af8659))
+
 ## [0.10.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.9.0...X4DataLoader@v0.10.0) (2025-02-24)
 
 
