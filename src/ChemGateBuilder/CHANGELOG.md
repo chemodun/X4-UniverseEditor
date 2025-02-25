@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.0...ChemGateBuilder@v0.9.1) (2025-02-25)
+
+
+### Bug Fixes
+
+* **DataLoader:** fixed mods loading order calculation ([ab91db8](https://github.com/chemodun/X4-UniverseEditor/commit/ab91db874eaa56d7d9f075de279b973e69fe7dff))
+* **README:** update changelog for version 0.9.1 with fixes to mod loading and error handling ([ab91db8](https://github.com/chemodun/X4-UniverseEditor/commit/ab91db874eaa56d7d9f075de279b973e69fe7dff))
+* **XMLPatch:** diff will be always applied, despite errors during the processing ([ab91db8](https://github.com/chemodun/X4-UniverseEditor/commit/ab91db874eaa56d7d9f075de279b973e69fe7dff))
+
+
+### Documentation
+
+* **README:** Update README's files ([1fb9849](https://github.com/chemodun/X4-UniverseEditor/commit/1fb984910d48407af8d23460b9feeb9006e87a39))
+
 ## [0.9.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.8.9...ChemGateBuilder@v0.9.0) (2025-02-24)
 
 
