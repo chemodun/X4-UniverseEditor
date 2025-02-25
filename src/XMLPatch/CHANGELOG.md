@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.5...XMLPatch@v0.1.6) (2025-02-25)
+
+
+### Bug Fixes
+
+* **XMLPatch:** ensure _source attribute is added or updated correctly ([1e24cf7](https://github.com/chemodun/X4-UniverseEditor/commit/1e24cf7af4c58144d9915e15aa12f524afa0fc3f))
+
 ## [0.1.5](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.4...XMLPatch@v0.1.5) (2025-02-25)
 
 
