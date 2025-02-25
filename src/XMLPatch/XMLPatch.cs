@@ -69,7 +69,9 @@ namespace Utilities.X4XMLPatch
       var targetElements = originalRoot.XPathSelectElements(sel);
       if (targetElements == null || !targetElements.Any())
       {
-        Log.Warn($"No nodes found for add selector: {sel}");
+        Log.Warn(
+          $"No nodes found for add selector: '{sel}'! Existing only: '{LastApplicableNode(sel, originalRoot)}'. Skipping operation."
+        );
         return false;
       }
       if (targetElements.Count() > 1)
@@ -144,7 +146,9 @@ namespace Utilities.X4XMLPatch
       var targetNodes = originalRoot.XPathEvaluate(sel) as IEnumerable<object>;
       if (targetNodes == null || !targetNodes.Any())
       {
-        Log.Warn($"No nodes found for replace selector: {sel}");
+        Log.Warn(
+          $"No nodes found for replace selector: '{sel}'! Existing only: '{LastApplicableNode(sel, originalRoot)}'. Skipping operation."
+        );
         return false;
       }
 
@@ -175,8 +179,9 @@ namespace Utilities.X4XMLPatch
         }
         else if (targetObj is XAttribute attr)
         {
+          var oldValue = attr.Value;
           attr.Value = replaceElement.Value;
-          Log.Debug($"Replaced attribute '{attr.Name}' with '{replaceElement.Value}'.");
+          Log.Debug($"Replaced attribute '{attr.Name}' from '{oldValue}' to '{replaceElement.Value}'.");
         }
       }
       return true;
@@ -194,7 +199,9 @@ namespace Utilities.X4XMLPatch
       var targetNodes = originalRoot.XPathEvaluate(sel) as IEnumerable<object>;
       if (targetNodes == null || !targetNodes.Any())
       {
-        Log.Warn($"No nodes found for remove selector: {sel}");
+        Log.Warn(
+          $"No nodes found for remove selector: '{sel}'! Existing only: '{LastApplicableNode(sel, originalRoot)}'. Skipping operation."
+        );
         return false;
       }
 
@@ -259,6 +266,23 @@ namespace Utilities.X4XMLPatch
         return "";
       }
       return $"{attr.Name}=\"{attr.Value}\"";
+    }
+
+    private static string LastApplicableNode(string selector, XElement originalRoot)
+    {
+      string lastApplicableNode = "";
+      string[] parts = selector.Split('/').Where(s => !string.IsNullOrEmpty(s)).ToArray();
+      string xpath = "";
+      foreach (var part in parts)
+      {
+        xpath += "/" + part;
+        var nodes = originalRoot.XPathSelectElements(xpath);
+        if (nodes.Any())
+        {
+          lastApplicableNode = xpath;
+        }
+      }
+      return lastApplicableNode;
     }
   }
 }
