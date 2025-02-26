@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.6...XMLPatch@v0.1.7) (2025-02-26)
+
+
+### Code Refactoring
+
+* **XMLPatch:** standardize parameter naming in ApplyPatch method ([4298871](https://github.com/chemodun/X4-UniverseEditor/commit/42988710cf90d4de9c101d385e213de9a2cb0fef))
+
 ## [0.1.6](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.5...XMLPatch@v0.1.6) (2025-02-25)
 
 
