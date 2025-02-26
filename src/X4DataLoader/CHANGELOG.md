@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.1...X4DataLoader@v0.10.2) (2025-02-26)
+
+
+### Code Refactoring
+
+* **DataLoader:** add DefaultUniverseId constant for improved universe management ([509bdc7](https://github.com/chemodun/X4-UniverseEditor/commit/509bdc7f984b363a006ae7ec7ab757af513b92eb))
+* **DataLoader:** widely use the ExtensionInfo class instead of ExtensionId string, to have more useful information in a logs ([9eed756](https://github.com/chemodun/X4-UniverseEditor/commit/9eed7561ba601623ded3e408c352c598a094f5d7))
+
 ## [0.10.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.0...X4DataLoader@v0.10.1) (2025-02-25)
 
 
