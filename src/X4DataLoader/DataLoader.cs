@@ -19,6 +19,7 @@ namespace X4DataLoader
     public static readonly string ExtensionsFolder = "extensions";
     public static readonly string DlcPrefix = "ego_dlc_";
     public static readonly string VersionDat = "version.dat";
+    public static readonly string DefaultUniverseId = "xu_ep2_universe";
     private static readonly ExtensionInfo Vanilla = new("")
     {
       Name = "Vanilla",
