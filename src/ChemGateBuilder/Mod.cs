@@ -135,11 +135,12 @@ namespace ChemGateBuilder
           new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
         ];
         DataLoader dataLoader = new();
+        ExtensionInfo gateKeeper = new("") { Id = ModId, Name = ModName };
         List<GameFile> processedFiles = dataLoader.GatherFiles(
           currentPath,
           gameFilesStructure,
           galaxy.Extensions,
-          "chem_gate_keeper",
+          gateKeeper,
           GameFile.CloneList(galaxy.GameFiles, true)
         );
         List<GameFile> modFiles = processedFiles.Where(f => f.Patched).ToList();
@@ -172,7 +173,7 @@ namespace ChemGateBuilder
           }
           foreach (GameFile file in files)
           {
-            Log.Debug($"Loading {file.FileName}, Source: {file.ExtensionId}");
+            Log.Debug($"Loading {file.FileName}, Source: {file.Extension.Name}({file.Extension.Id})");
             IEnumerable<XElement> elements = [];
             switch (file.Id)
             {
@@ -183,7 +184,7 @@ namespace ChemGateBuilder
                   ZoneConnection zoneConnection = new();
                   try
                   {
-                    zoneConnection.Load(element, file.ExtensionId, file.FileName);
+                    zoneConnection.Load(element, file.Extension.Id, file.FileName);
                   }
                   catch (ArgumentException e)
                   {
@@ -200,7 +201,7 @@ namespace ChemGateBuilder
                   Zone zone = new();
                   try
                   {
-                    zone.Load(element, file.ExtensionId, file.FileName);
+                    zone.Load(element, file.Extension.Id, file.FileName);
                   }
                   catch (ArgumentException e)
                   {
@@ -225,7 +226,7 @@ namespace ChemGateBuilder
                 foreach (XElement element in elements)
                 {
                   var galaxyConnection = new GalaxyConnection();
-                  galaxyConnection.Load(element, galaxy.Clusters, file.ExtensionId, file.FileName, zones);
+                  galaxyConnection.Load(element, galaxy.Clusters, file.Extension.Id, file.FileName, zones);
                   string connectionsText =
                     $"\n - {galaxyConnection.PathDirect?.Sector?.Name} and {galaxyConnection.PathOpposite?.Sector?.Name}";
                   Description = Description.Replace(connectionsText, "");
