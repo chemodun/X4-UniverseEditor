@@ -62,7 +62,7 @@ jobs:
               fi
             fi
             relative_path=$(dirname $readme)
-            for conversion_type in egosoft nexus; do
+            for conversion_type in egosoft nexus steam; do
               echo "Converting $readme to $conversion_type"
               python3 markdown-to-bbcode-simple/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
               if [[ $? -ne 0 ]]; then
