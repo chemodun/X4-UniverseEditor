@@ -51,7 +51,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         X4Color color = new();
-        color.Load(element, file.ExtensionId, file.FileName);
+        color.Load(element, file.Extension.Id, file.FileName);
         galaxy.Colors.Add(color);
       }
     }
@@ -93,7 +93,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         X4MappedColor color = new();
-        color.Load(element, file.ExtensionId, file.FileName, galaxy.Colors);
+        color.Load(element, file.Extension.Id, file.FileName, galaxy.Colors);
         galaxy.MappedColors.Add(color);
       }
     }

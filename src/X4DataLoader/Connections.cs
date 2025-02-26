@@ -145,7 +145,7 @@ namespace X4DataLoader
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
       foreach (XElement element in elements)
       {
-        LoadConnections(element, galaxy, file.ExtensionId, file.FileName);
+        LoadConnections(element, galaxy, file.Extension.Id, file.FileName);
       }
     }
 

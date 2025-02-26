@@ -36,7 +36,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         Zone? zone = new();
-        zone.Load(element, file.ExtensionId, file.FileName);
+        zone.Load(element, file.Extension.Id, file.FileName);
         Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
           s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, zone.Name))
         );

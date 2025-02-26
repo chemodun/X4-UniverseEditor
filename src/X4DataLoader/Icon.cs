@@ -34,7 +34,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         X4Icon icon = new();
-        icon.Load(element, file.ExtensionId, file.FileName);
+        icon.Load(element, file.Extension.Id, file.FileName);
         galaxy.Icons.Add(icon);
       }
     }

@@ -85,7 +85,7 @@ namespace X4DataLoader
         ConstructionPlan constructionPlan = new();
         constructionPlan.Load(
           element,
-          file.ExtensionId,
+          file.Extension.Id,
           file.FileName,
           galaxy.Translation,
           galaxy.StationModules,

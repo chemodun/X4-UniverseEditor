@@ -30,7 +30,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         X4Sound sound = new();
-        sound.Load(element, file.ExtensionId, file.FileName);
+        sound.Load(element, file.Extension.Id, file.FileName);
         galaxy.Sounds.Add(sound);
       }
     }

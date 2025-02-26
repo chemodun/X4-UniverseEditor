@@ -92,7 +92,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         Faction faction = new();
-        faction.Load(element, file.ExtensionId, file.FileName, galaxy);
+        faction.Load(element, file.Extension.Id, file.FileName, galaxy);
         if (faction.Name == "")
         {
           Log.Warn($"Faction must have a name");

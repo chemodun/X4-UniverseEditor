@@ -125,7 +125,7 @@ namespace X4DataLoader
                 if (Clusters.Any(c => StringHelper.EqualsIgnoreCase(c.Macro, macroRef)) == false)
                 {
                   Cluster cluster = new(macroRef);
-                  cluster.SetPosition(position, name, element, file.ExtensionId, file.FileName);
+                  cluster.SetPosition(position, name, element, file.Extension.Id, file.FileName);
                   Clusters.Add(cluster);
                 }
                 else
@@ -144,7 +144,7 @@ namespace X4DataLoader
             GalaxyConnection galaxyConnection = new();
             try
             {
-              galaxyConnection.Load(element, Clusters, file.ExtensionId, file.FileName);
+              galaxyConnection.Load(element, Clusters, file.Extension.Id, file.FileName);
             }
             catch (Exception ex)
             {

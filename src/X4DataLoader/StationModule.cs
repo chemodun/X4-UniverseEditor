@@ -52,7 +52,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         StationModule module = new();
-        module.Load(element, file.ExtensionId, file.FileName);
+        module.Load(element, file.Extension.Id, file.FileName);
         if (galaxy.StationModules.Any(m => m.Id == module.Id))
         {
           Log.Error($"Duplicate module id {module.Id}");

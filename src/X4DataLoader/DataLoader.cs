@@ -19,7 +19,13 @@ namespace X4DataLoader
     public static readonly string ExtensionsFolder = "extensions";
     public static readonly string DlcPrefix = "ego_dlc_";
     public static readonly string VersionDat = "version.dat";
-
+    private static readonly ExtensionInfo Vanilla = new("")
+    {
+      Name = "Vanilla",
+      Id = "vanilla",
+      Folder = "",
+      Enabled = true,
+    };
     public event EventHandler<X4DataLoadingEventArgs>? X4DataLoadingEvent;
 
     public void LoadData(
@@ -35,7 +41,7 @@ namespace X4DataLoader
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
       galaxy.Clear();
       List<ExtensionInfo> dlcs = [];
-      List<GameFile> gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs, "", null, loadEnabledOnly);
+      List<GameFile> gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs, null, null, loadEnabledOnly);
       if (File.Exists(Path.Combine(coreFolderPath, VersionDat)))
       {
         string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, VersionDat)).Trim();
@@ -89,7 +95,7 @@ namespace X4DataLoader
         {
           // sourceStr = file.Source == "vanilla" && !string.IsNullOrEmpty(loadFor) ? loadFor : source;
           X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(file.FileName));
-          Log.Debug($"Loading {file.FileName} for {file.ExtensionId}");
+          Log.Debug($"Loading {file.FileName} for {file.Extension.Name}({file.Extension.Id})");
           switch (file.Id)
           {
             case "translations":
@@ -99,15 +105,21 @@ namespace X4DataLoader
             case "colors":
               X4Color.LoadFromXML(file, galaxy);
               X4MappedColor.LoadFromXML(file, galaxy);
-              Log.Debug($"Colors loaded (total on stage: {galaxy.Colors.Count}) from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Colors loaded (total on stage: {galaxy.Colors.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
+              );
               break;
             case "sounds":
               X4Sound.LoadFromXML(file, galaxy);
-              Log.Debug($"Sounds loaded (total on stage: {galaxy.Sounds.Count}) from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Sounds loaded (total on stage: {galaxy.Sounds.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
+              );
               break;
             case "icons":
               X4Icon.LoadFromXML(file, galaxy);
-              Log.Debug($"Icons loaded (total on stage: {galaxy.Icons.Count}) from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Icons loaded (total on stage: {galaxy.Icons.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
+              );
               break;
             case "mapDefaults":
               foreach (XElement datasetElement in file.XML.XPathSelectElements("/defaults/dataset"))
@@ -120,7 +132,7 @@ namespace X4DataLoader
                     try
                     {
                       Cluster? cluster = Cluster.GetClusterByMacro(galaxy.Clusters, macro);
-                      cluster?.SetDetails(datasetElement, galaxy, file.ExtensionId, file.FileName);
+                      cluster?.SetDetails(datasetElement, galaxy, file.Extension.Id, file.FileName);
                       Log.Debug($"Cluster defaults loaded: {cluster?.Name}");
                     }
                     catch (ArgumentException e)
@@ -133,7 +145,7 @@ namespace X4DataLoader
                     try
                     {
                       Sector? sector = Sector.GetSectorByMacro(galaxy.Sectors, macro);
-                      sector?.SetDetails(datasetElement, galaxy, file.ExtensionId, file.FileName);
+                      sector?.SetDetails(datasetElement, galaxy, file.Extension.Id, file.FileName);
                       Log.Debug($"Sector defaults loaded: {sector?.Name}");
                     }
                     catch (ArgumentException e)
@@ -143,84 +155,90 @@ namespace X4DataLoader
                   }
                 }
               }
-              Log.Debug($"Map Defaults loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Map Defaults loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})");
               break;
             case "clusters":
               Connection.LoadFromXML(file, galaxy);
               Log.Debug(
-                $"Clusters connections loaded and sectors (total on stage: {galaxy.Sectors.Count}) from: {file.FileName} for {file.ExtensionId}"
+                $"Clusters connections loaded and sectors (total on stage: {galaxy.Sectors.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
               );
               break;
             case "sectors":
               Connection.LoadFromXML(file, galaxy);
-              Log.Debug($"Sectors connections loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Sectors connections loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})");
               break;
             case "zones":
               Zone.LoadFromXML(file, galaxy);
-              Log.Debug($"Zones loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Zones loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})");
               break;
             case "sechighways":
               HighwayClusterLevel.LoadFromXML(file, galaxy);
-              Log.Debug($"Sector Highways loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Sector Highways loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})");
               break;
             case "zonehighways":
               HighwaySectorLevel.LoadFromXML(file, galaxy);
-              Log.Debug($"Zone Highways loaded from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug($"Zone Highways loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})");
               break;
             case "races":
               Race.LoadFromXML(file, galaxy);
-              Log.Debug($"Races loaded (total on stage: {galaxy.Races.Count}) from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Races loaded (total on stage: {galaxy.Races.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
+              );
               break;
             case "factions":
               Faction.LoadFromXML(file, galaxy);
-              Log.Debug(message: $"Factions loaded (total on stage: {galaxy.Factions.Count}) from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                message: $"Factions loaded (total on stage: {galaxy.Factions.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
+              );
               break;
             case "modules":
               StationModule.LoadFromXML(file, galaxy);
               Log.Debug(
-                $"Station modules loaded (total on stage: {galaxy.StationModules.Count}) from: {file.FileName} for {file.ExtensionId}"
+                $"Station modules loaded (total on stage: {galaxy.StationModules.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
               );
               break;
             case "modulegroups":
               StationModuleGroup.LoadFromXML(file, galaxy);
               Log.Debug(
-                $"Station module groups loaded (total on stage: {galaxy.StationModuleGroups.Count}) from: {file.FileName} for {file.ExtensionId}"
+                $"Station module groups loaded (total on stage: {galaxy.StationModuleGroups.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
               );
               break;
             case "constructionplans":
               ConstructionPlan.LoadFromXML(file, galaxy);
               Log.Debug(
-                $"Construction plans loaded (total on stage: {galaxy.ConstructionPlans.Count}) from: {file.FileName} for {file.ExtensionId}"
+                $"Construction plans loaded (total on stage: {galaxy.ConstructionPlans.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
               );
               break;
             case "stationgroups":
               StationGroup.LoadFromXML(file, galaxy);
               Log.Debug(
-                $"Station groups loaded (total on stage: {galaxy.StationGroups.Count}): from {file.FileName} for {file.ExtensionId}"
+                $"Station groups loaded (total on stage: {galaxy.StationGroups.Count}): from {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
               );
               break;
             case "stations":
               StationCategory.LoadFromXML(file, galaxy);
               Log.Debug(
-                $"Station categories loaded (total on stage: {galaxy.StationCategories.Count}) from: {file.FileName} for {file.ExtensionId}"
+                $"Station categories loaded (total on stage: {galaxy.StationCategories.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
               );
               break;
             case "god":
               Station.LoadFromXML(file, galaxy);
-              Log.Debug($"Stations loaded (total on stage: {galaxy.Stations.Count}) from: {file.FileName} for {file.ExtensionId}");
+              Log.Debug(
+                $"Stations loaded (total on stage: {galaxy.Stations.Count}) from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
+              );
               break;
             case "galaxy":
               galaxy.LoadFromXML(file, galaxy, orderItem.ProcedureId);
               if (orderItem.ProcedureId == "clusters")
               {
                 Log.Debug(
-                  $"Galaxy and clusters (total on stage: {galaxy.Clusters.Count}) loaded from: {file.FileName} for {file.ExtensionId}"
+                  $"Galaxy and clusters (total on stage: {galaxy.Clusters.Count}) loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
                 );
               }
               else
               {
                 Log.Debug(
-                  $"Galaxy gate connections (total on stage: {galaxy.Connections.Count}) loaded from: {file.FileName} for {file.ExtensionId}"
+                  $"Galaxy gate connections (total on stage: {galaxy.Connections.Count}) loaded from: {file.FileName} for {file.Extension.Name}({file.Extension.Id})"
                 );
               }
               break;
@@ -262,6 +280,11 @@ namespace X4DataLoader
             catch (ArgumentException e)
             {
               Log.Error($"Error loading mod {contentPath}: {e.Message}");
+              continue;
+            }
+            if (string.IsNullOrEmpty(modInfo.Id) && string.IsNullOrEmpty(modInfo.Folder))
+            {
+              Log.Debug($"Skipping mod {modInfo.Name} because it has no ID or folder.");
               continue;
             }
             if (loadEnabledOnly && !modInfo.Enabled)
@@ -335,7 +358,7 @@ namespace X4DataLoader
               Path.Combine(extensionsFolder, mod.Folder),
               gameFilesStructure,
               galaxy.Extensions,
-              mod.Id,
+              mod,
               gameFiles
             );
             Log.Debug($"Loaded {modFiles.Count} files for mod {mod.Name}");
@@ -349,12 +372,13 @@ namespace X4DataLoader
     private List<GameFile> CollectFiles(
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
-      string source = "vanilla",
+      ExtensionInfo? extension = null,
       string relatedExtensionId = "",
       List<GameFile>? exitingGameFiles = null,
       ContentExtractor? contentExtractor = null
     )
     {
+      extension ??= Vanilla;
       List<GameFile> result = [];
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
       if (contentExtractor != null)
@@ -419,7 +443,7 @@ namespace X4DataLoader
                   byte[] fileData = ContentExtractor.GetEntryData(catEntries.First(e => e.FilePath == file));
                   string fileContent = System.Text.Encoding.UTF8.GetString(fileData);
                   XDocument xmlDocument = XDocument.Parse(fileContent);
-                  gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId, false, xmlDocument.Root);
+                  gameFile = new(item.Id, coreFolderPath, file, extension, relatedExtensionId, false, xmlDocument.Root);
                 }
                 catch (Exception e)
                 {
@@ -429,13 +453,13 @@ namespace X4DataLoader
               }
               else
               {
-                gameFile = new(item.Id, coreFolderPath, file, source, relatedExtensionId);
+                gameFile = new(item.Id, coreFolderPath, file, extension, relatedExtensionId);
               }
               Log.Debug($"File {file} loaded.");
               X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(gameFile.FileName));
-              if (gameFile.XML.Name.ToString() == "diff" && source != "vanilla" && exitingGameFiles != null)
+              if (gameFile.XML.Name.ToString() == "diff" && extension.Id != "vanilla" && exitingGameFiles != null)
               {
-                Log.Debug($"Merging {gameFile.FileName} for {source}");
+                Log.Debug($"Merging {gameFile.FileName} for {extension.Id}");
                 GameFile? existingGameFile = GameFile.GetFromList(
                   exitingGameFiles,
                   gameFile.Id,
@@ -444,18 +468,18 @@ namespace X4DataLoader
                 // GameFile? vanillaFile = vanillaFiles.FirstOrDefault(f => f.FileName == file.FileName);
                 if (existingGameFile != null && existingGameFile.XML != null)
                 {
-                  Log.Debug($"Patching {gameFile.FileName} with diff {gameFile.ExtensionId}.");
-                  XElement? patchedXML = XMLPatch.ApplyPatch(existingGameFile.XML, gameFile.XML, source);
+                  Log.Debug($"Patching {gameFile.FileName} with diff {extension.Name}({extension.Id}).");
+                  XElement? patchedXML = XMLPatch.ApplyPatch(existingGameFile.XML, gameFile.XML, extension.Id);
                   if (patchedXML == null)
                   {
                     result.Add(gameFile);
-                    Log.Error($"Failed to apply patch for file {gameFile.FileName} with extension {gameFile.ExtensionId}.");
+                    Log.Error($"Failed to apply patch for file {gameFile.FileName} with extension {extension.Name}({extension.Id}).");
                   }
                   else
                   {
                     existingGameFile.XML = patchedXML;
                     existingGameFile.Patched = true;
-                    Log.Debug($"Patch applied for {gameFile.FileName} with extension {gameFile.ExtensionId}.");
+                    Log.Debug($"Patch applied for {gameFile.FileName} with extension {extension.Name}({extension.Id}).");
                   }
                 }
               }
@@ -504,17 +528,17 @@ namespace X4DataLoader
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
       List<ExtensionInfo> extensions,
-      string source = "",
+      ExtensionInfo? extensionFor = null,
       List<GameFile>? exitingGameFiles = null,
       bool loadEnabledOnly = false
     )
     {
       List<GameFile> result = exitingGameFiles ?? ([]);
+      extensionFor ??= Vanilla;
       Log.Debug($"Previously files gathered: {result.Count}.");
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
       // Scan for vanilla files
-      string sourceStr = string.IsNullOrEmpty(source) ? "vanilla" : source;
-      string relatedExtensionId = string.IsNullOrEmpty(source) ? "" : "vanilla";
+      string relatedExtensionId = extensionFor == Vanilla ? "" : "vanilla";
       ContentExtractor? contentExtractor = new(coreFolderPath);
       if (contentExtractor.FileCount == 0)
       {
@@ -523,7 +547,7 @@ namespace X4DataLoader
       List<GameFile> vanillaFiles = CollectFiles(
         contentExtractor == null ? coreFolderPath : "",
         gameFilesStructure,
-        sourceStr,
+        extensionFor,
         relatedExtensionId,
         result,
         contentExtractor
@@ -535,7 +559,7 @@ namespace X4DataLoader
       string extensionsFolder = Path.Combine(coreFolderPath, ExtensionsFolder);
       Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
 
-      if (string.IsNullOrEmpty(source))
+      if (extensionFor == Vanilla)
       {
         foreach (string dlcId in Galaxy.DLCOrder)
         {
@@ -555,6 +579,11 @@ namespace X4DataLoader
                 Log.Error($"Error loading DLC {contentPath}: {e.Message}");
                 continue;
               }
+              if (string.IsNullOrEmpty(dlc.Id) && string.IsNullOrEmpty(dlc.Folder))
+              {
+                Log.Debug($"Skipping DLC {dlc.Name} because it has no ID or folder.");
+                continue;
+              }
               if (loadEnabledOnly && !dlc.Enabled)
               {
                 Log.Debug($"Skipping DLC {dlc.Name} because it is disabled.");
@@ -570,7 +599,7 @@ namespace X4DataLoader
               List<GameFile> dlcFiles = CollectFiles(
                 contentExtractor == null ? dlcFolder : "",
                 gameFilesStructure,
-                dlc.Id,
+                dlc,
                 relatedExtensionId,
                 result,
                 contentExtractor
@@ -594,7 +623,7 @@ namespace X4DataLoader
             string extensionFolder = string.Join('/', "extensions", extension.Folder);
             if (contentExtractor.FolderExists(extensionFolder))
             {
-              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, source, extension.Id, result, contentExtractor);
+              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, extensionFor, extension.Id, result, contentExtractor);
             }
           }
           else
@@ -602,7 +631,7 @@ namespace X4DataLoader
             string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
             if (Directory.Exists(extensionFolder))
             {
-              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, source, extension.Id, result);
+              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, extensionFor, extension.Id, result);
             }
           }
           if (extensionFiles.Count > 0)
@@ -635,36 +664,46 @@ namespace X4DataLoader
 
     public ExtensionInfo(string path)
     {
-      Folder = Path.GetFileName(Path.GetDirectoryName(path)) ?? throw new ArgumentException("Invalid path");
-      XDocument contentDoc = XDocument.Load(path) ?? throw new ArgumentException("Invalid content.xml file");
-      XElement? contentElement = contentDoc.XPathSelectElement("/content") ?? throw new ArgumentException("Invalid content.xml file");
-      Id = contentElement.Attribute("id")?.Value ?? "";
-      Name = contentElement.Attribute("name")?.Value ?? "";
-      string? versionStr = contentElement.Attribute("version")?.Value;
-      if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(versionStr))
+      Folder = Path.GetFileName(Path.GetDirectoryName(path)) ?? "";
+      if (!string.IsNullOrEmpty(Folder))
       {
-        throw new ArgumentException("Invalid content.xml file");
-      }
-      Version = StringHelper.ParseInt(contentElement.Attribute("version")?.Value, 0);
-      if (contentElement.Attribute("enabled")?.Value == "false" || contentElement.Attribute("enabled")?.Value == "0")
-      {
-        Enabled = false;
-      }
-      foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
-      {
-        versionStr = dependencyElement.Attribute("version")?.Value;
-        if (
-          !string.IsNullOrEmpty(versionStr)
-          && int.TryParse(versionStr, out int gameVersion)
-          && string.IsNullOrEmpty(dependencyElement.Attribute("id")?.Value)
-        )
+        XDocument contentDoc = XDocument.Load(path) ?? throw new ArgumentException("Invalid content.xml file");
+        XElement? contentElement = contentDoc.XPathSelectElement("/content") ?? throw new ArgumentException("Invalid content.xml file");
+        Id = contentElement.Attribute("id")?.Value ?? "";
+        Name = contentElement.Attribute("name")?.Value ?? "";
+        string? versionStr = contentElement.Attribute("version")?.Value;
+        if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(versionStr))
         {
-          GameVersion = gameVersion;
+          throw new ArgumentException("Invalid content.xml file");
         }
-        else
+        Version = StringHelper.ParseInt(contentElement.Attribute("version")?.Value, 0);
+        if (contentElement.Attribute("enabled")?.Value == "false" || contentElement.Attribute("enabled")?.Value == "0")
         {
-          Dependencies.Add(new ModDependency(dependencyElement));
+          Enabled = false;
         }
+        foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
+        {
+          versionStr = dependencyElement.Attribute("version")?.Value;
+          if (
+            !string.IsNullOrEmpty(versionStr)
+            && int.TryParse(versionStr, out int gameVersion)
+            && string.IsNullOrEmpty(dependencyElement.Attribute("id")?.Value)
+          )
+          {
+            GameVersion = gameVersion;
+          }
+          else
+          {
+            Dependencies.Add(new ModDependency(dependencyElement));
+          }
+        }
+      }
+      else
+      {
+        Id = "";
+        Name = "";
+        GameVersion = 0;
+        Version = 0;
       }
     }
   }
@@ -695,14 +734,14 @@ namespace X4DataLoader
     string id,
     string mainFolder,
     string fullPath,
-    string extensionId = "",
+    ExtensionInfo extension,
     string relatedExtensionId = "",
     bool patched = false,
     XElement? xml = null
   )
   {
     public string Id { get; set; } = id;
-    public string ExtensionId { get; set; } = extensionId;
+    public ExtensionInfo Extension { get; set; } = extension;
     public string RelatedExtensionId { get; set; } = relatedExtensionId;
     public string PathRelative { get; set; } = string.IsNullOrEmpty(mainFolder) ? fullPath : Path.GetRelativePath(mainFolder, fullPath);
     public string FileName { get; set; } = Path.GetFileName(fullPath);
@@ -713,7 +752,7 @@ namespace X4DataLoader
     {
       return files.FirstOrDefault(f =>
         f.Id == id
-        && f.ExtensionId == extensionId
+        && f.Extension.Id == extensionId
         && (string.IsNullOrEmpty(relatedExtensionId) || f.RelatedExtensionId == relatedExtensionId)
       );
     }
@@ -721,18 +760,18 @@ namespace X4DataLoader
     public static List<GameFile> CloneList(List<GameFile> files, bool resetPatched = false)
     {
       return files
-        .Select(f => new GameFile(f.Id, f.PathRelative, f.FileName, f.ExtensionId, f.RelatedExtensionId, !resetPatched && f.Patched, f.XML))
+        .Select(f => new GameFile(f.Id, f.PathRelative, f.FileName, f.Extension, f.RelatedExtensionId, !resetPatched && f.Patched, f.XML))
         .ToList();
     }
 
     public static List<string> GetExtensions(List<GameFile> files)
     {
-      return files.Select(f => f.ExtensionId).Distinct().ToList();
+      return files.Select(f => f.Extension.Id).Distinct().ToList();
     }
 
     public static List<string> GetRelatedExtensions(List<GameFile> files, string extensionId)
     {
-      return files.Where(f => f.ExtensionId == extensionId).Select(f => f.RelatedExtensionId).Distinct().ToList();
+      return files.Where(f => f.Extension.Id == extensionId).Select(f => f.RelatedExtensionId).Distinct().ToList();
     }
   }
 }

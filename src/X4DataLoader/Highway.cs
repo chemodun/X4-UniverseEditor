@@ -178,7 +178,7 @@ namespace X4DataLoader
       {
         try
         {
-          HighwayClusterLevel highway = new(element, file.ExtensionId, file.FileName);
+          HighwayClusterLevel highway = new(element, file.Extension.Id, file.FileName);
           Cluster? cluster = galaxy.Clusters.FirstOrDefault(c =>
             c.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
           );
@@ -217,7 +217,7 @@ namespace X4DataLoader
       IEnumerable<XElement> elements = file.XML.XPathSelectElements("/macros/macro");
       foreach (XElement element in elements)
       {
-        HighwaySectorLevel? highway = new(element, file.ExtensionId, file.FileName);
+        HighwaySectorLevel? highway = new(element, file.Extension.Id, file.FileName);
         Sector? sector = galaxy.Sectors.FirstOrDefault(s =>
           s.Connections.Values.Any(conn => StringHelper.EqualsIgnoreCase(conn.MacroReference, highway.Macro))
         );

@@ -66,7 +66,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         StationCategory stationCategory = new();
-        stationCategory.Load(element, file.ExtensionId, file.FileName, galaxy.StationGroups);
+        stationCategory.Load(element, file.Extension.Id, file.FileName, galaxy.StationGroups);
         if (stationCategory.Tag == "")
         {
           Log.Warn($"StationCategory {stationCategory.StationId} must have a category");

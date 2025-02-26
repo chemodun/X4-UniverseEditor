@@ -198,7 +198,7 @@ namespace X4DataLoader
         Station? station = new();
         try
         {
-          station.Load(element, file.ExtensionId, file.FileName, galaxy);
+          station.Load(element, file.Extension.Id, file.FileName, galaxy);
         }
         catch (ArgumentException e)
         {

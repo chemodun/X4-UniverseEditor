@@ -59,7 +59,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         Race Race = new();
-        Race.Load(element, file.ExtensionId, file.FileName, galaxy.Translation);
+        Race.Load(element, file.Extension.Id, file.FileName, galaxy.Translation);
         if (Race.Name == "")
         {
           Log.Warn($"Race must have a name");

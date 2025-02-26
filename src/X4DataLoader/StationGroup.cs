@@ -66,7 +66,7 @@ namespace X4DataLoader
       foreach (XElement element in elements)
       {
         StationGroup group = new();
-        group.Load(element, file.ExtensionId, file.FileName, galaxy.ConstructionPlans);
+        group.Load(element, file.Extension.Id, file.FileName, galaxy.ConstructionPlans);
         if (group.Name == "")
         {
           Log.Warn($"StationGroup must have a name");
