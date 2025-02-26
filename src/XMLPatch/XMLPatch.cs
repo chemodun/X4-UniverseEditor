@@ -10,11 +10,11 @@ namespace Utilities.X4XMLPatch
 {
   public static class XMLPatch
   {
-    public static XElement? ApplyPatch(XElement originalRoot, XElement diffRoot, string SourceId)
+    public static XElement? ApplyPatch(XElement originalRoot, XElement diffRoot, string sourceId)
     {
       try
       {
-        XElement workingRoot = new XElement("root");
+        XElement workingRoot = new("root");
         workingRoot.Add(new XElement(originalRoot));
         Log.Debug("Applying XML patch...");
         foreach (var operation in diffRoot.Elements())
@@ -22,13 +22,13 @@ namespace Utilities.X4XMLPatch
           switch (operation.Name.LocalName)
           {
             case "add":
-              if (!ApplyAdd(operation, workingRoot, SourceId))
+              if (!ApplyAdd(operation, workingRoot, sourceId))
               {
                 continue;
               }
               break;
             case "replace":
-              if (!ApplyReplace(operation, workingRoot, SourceId))
+              if (!ApplyReplace(operation, workingRoot, sourceId))
               {
                 continue;
               }
