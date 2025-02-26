@@ -321,10 +321,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 - Fixed
   - Fixed the issue with the loading the mod made by tool, introduced in `v0.8.8`
-
-### [0.9.1] - 2025-02-25
-
-- Fixed
   - Loading the diffs from mod will not be interrupted by the error
   - Fixed mod loading order logic based on dependencies
 
