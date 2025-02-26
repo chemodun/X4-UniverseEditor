@@ -33,6 +33,11 @@ jobs:
         if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
         run: sudo apt-get update && sudo apt-get install -y python3
 
+      - name: Clone markdown-to-bbcode repository
+        if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
+        run: |
+          git clone https://github.com/chemodun/markdown-to-bbcode-simple.git
+
       - name: Process README.md changes
         if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
         env:
@@ -59,7 +64,7 @@ jobs:
             relative_path=$(dirname $readme)
             for conversion_type in egosoft nexus; do
               echo "Converting $readme to $conversion_type"
-              python3 .utils/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
+              python3 markdown-to-bbcode-simple/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
               if [[ $? -ne 0 ]]; then
                 echo "Error converting $readme to $conversion_type" >&2
               else
@@ -89,6 +94,7 @@ jobs:
               fi
             done
           done
+          rm -rf markdown-to-bbcode-simple
 
       - name: Commit and push changes
         if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
