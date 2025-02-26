@@ -29,6 +29,7 @@ namespace ChemGateBuilder
     private int VersionInitial = 0;
     private string _date = "2021-09-01";
     private int _gameVersion = 710;
+    private readonly string UniverseId = "";
     private readonly string Save = "false";
     private readonly string Sync = "false";
     private readonly List<string> DlcsRequired = [];
@@ -78,9 +79,10 @@ namespace ChemGateBuilder
     public ObservableCollection<GalaxyConnectionData> GalaxyConnections { get; } = [];
     public XElement? XML = null;
 
-    public ChemGateKeeper(string path = "")
+    public ChemGateKeeper(string path = "", string universeId = "")
     {
       ModFolderPath = path;
+      UniverseId = string.IsNullOrEmpty(universeId) ? DataLoader.DefaultUniverseId : universeId;
       SelectFolder = !File.Exists(Path.Combine(ModFolderPath, "content.xml"));
       XML = null;
       Date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -130,9 +132,9 @@ namespace ChemGateBuilder
         XElement? contentElement = docContent.Element("content");
         List<GameFilesStructureItem> gameFilesStructure =
         [
-          new GameFilesStructureItem(id: "sectors", folder: "maps/xu_ep2_universe", ["sectors.xml"], MatchingModes.Suffix),
-          new GameFilesStructureItem(id: "zones", folder: "maps/xu_ep2_universe", ["zones.xml"], MatchingModes.Suffix),
-          new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
+          new GameFilesStructureItem(id: "sectors", folder: $"maps/{UniverseId}", ["sectors.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "zones", folder: $"maps/{UniverseId}", ["zones.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "galaxy", folder: $"maps/{UniverseId}", ["galaxy.xml"]),
         ];
         DataLoader dataLoader = new();
         ExtensionInfo gateKeeper = new("") { Id = ModId, Name = ModName };
@@ -408,7 +410,7 @@ namespace ChemGateBuilder
       XDocument docContent = new(new XDeclaration("1.0", "utf-8", null), content);
       docContent.Save(Path.Combine(ModFolderPath, DataLoader.ContentXml));
       XDocument docGalaxy = new(new XDeclaration("1.0", "utf-8", null), diffElement);
-      string galaxyPath = Path.Combine(ModFolderPath, "maps", "xu_ep2_universe");
+      string galaxyPath = Path.Combine(ModFolderPath, "maps", UniverseId);
       Directory.CreateDirectory(galaxyPath);
       docGalaxy.Save(Path.Combine(galaxyPath, "galaxy.xml"));
       SaveModSectorsAndZones();
@@ -423,7 +425,7 @@ namespace ChemGateBuilder
         {
           universePath = Path.Combine(universePath, DataLoader.ExtensionsFolder, path.Key);
         }
-        universePath = Path.Combine(universePath, "maps", "xu_ep2_universe");
+        universePath = Path.Combine(universePath, "maps", UniverseId);
         Directory.CreateDirectory(universePath);
         XElement sectors = new("diff");
         XElement zones = new("diff");

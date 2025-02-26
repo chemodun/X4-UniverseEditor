@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChemGateBuilder"
-        xmlns:converters="clr-namespace:X4Map.Converters;assembly=X4Map"
+        xmlns:mapConverters="clr-namespace:X4Map.Converters;assembly=X4Map"
         xmlns:mapconstants="clr-namespace:X4Map.Constants;assembly=X4Map"
+        xmlns:attributeConverters="clr-namespace:SharedWindows.Converters;assembly=SharedWindows"
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
@@ -28,7 +29,10 @@
                            Foreground="DarkGray"/>
             </StackPanel>
         </DataTemplate>
-        <converters:HexagonPointsConverter x:Key="HexagonPointsConverter"/>
+        <mapConverters:HexagonPointsConverter x:Key="HexagonPointsConverter"/>
+        <attributeConverters:BoolInverseConverter x:Key="BoolInverseConverter"/>
+        <attributeConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <attributeConverters:BoolInverseToVisibilityConverter x:Key="BoolInverseToVisibilityConverter"/>
         <Style x:Key="SectorComboBoxItemStyle"
                TargetType="ComboBoxItem">
             <Style.Triggers>
@@ -419,6 +423,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label Content="Colors opacity:"
                                Grid.Row="0"
@@ -466,6 +471,21 @@
                                 Value="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Grid.Row="1"
                                 Grid.Column="2"/>
+                        <Label Content="Universe (default):"
+                               Grid.Row="2"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="2"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding X4UniverseIdIsDefault}"/>
+                        <TextBox Text="{Binding X4UniverseId}"
+                                 Grid.Row="2"
+                                 Grid.Column="2"
+                                 VerticalAlignment="Center"
+                                 IsEnabled="{Binding X4UniverseIdIsDefault, Converter={StaticResource BoolInverseConverter}}"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Logging Options">

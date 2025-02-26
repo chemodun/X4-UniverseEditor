@@ -41,6 +41,8 @@ namespace ChemGateBuilder
   {
     public double MapColorsOpacity { get; set; } = 0.5;
     public int SectorRadius { get; set; } = 400;
+    public bool NonStandardUniverse { get; set; } = false;
+    public string NonStandardUniverseId { get; set; } = "";
   }
 
   public class DataConfig
@@ -135,29 +137,9 @@ namespace ChemGateBuilder
         }
       }
     }
-    private readonly List<GameFilesStructureItem> _x4DataStructure =
-    [
-      new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
-      new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
-      new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
-      new GameFilesStructureItem(id: "clusters", folder: "maps/xu_ep2_universe", ["clusters.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "sectors", folder: "maps/xu_ep2_universe", ["sectors.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "zones", folder: "maps/xu_ep2_universe", ["zones.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "races", folder: "libraries", ["races.xml"]),
-      new GameFilesStructureItem(id: "factions", folder: "libraries", ["factions.xml"]),
-      new GameFilesStructureItem(id: "modules", folder: "libraries", ["modules.xml"]),
-      new GameFilesStructureItem(id: "modulegroups", folder: "libraries", ["modulegroups.xml"]),
-      new GameFilesStructureItem(id: "constructionplans", folder: "libraries", ["constructionplans.xml"]),
-      new GameFilesStructureItem(id: "stationgroups", folder: "libraries", ["stationgroups.xml"]),
-      new GameFilesStructureItem(id: "stations", folder: "libraries", ["stations.xml"]),
-      new GameFilesStructureItem(id: "god", folder: "libraries", ["god.xml"]),
-      new GameFilesStructureItem(id: "sechighways", folder: "maps/xu_ep2_universe", ["sechighways.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "zonehighways", folder: "maps/xu_ep2_universe", ["zonehighways.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
-      new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
-    ];
+    private readonly List<GameFilesStructureItem> X4DataStructure = [];
 
-    private readonly List<ProcessingOrderItem> _x4PDataProcessingOrder =
+    private readonly List<ProcessingOrderItem> X4PDataProcessingOrder =
     [
       new ProcessingOrderItem("translations", ""),
       new ProcessingOrderItem("colors", ""),
@@ -264,6 +246,38 @@ namespace ChemGateBuilder
 
     public ObservableCollection<string> X4DataVersions { get; set; } = ["7.10", "7.50"];
 
+    private string _x4UniverseId = DataLoader.DefaultUniverseId;
+    public string X4UniverseId
+    {
+      get => _x4UniverseId;
+      set
+      {
+        if (_x4UniverseId != value)
+        {
+          _x4UniverseId = value;
+          OnPropertyChanged(nameof(X4UniverseId));
+          X4UniverseIdIsDefault = value == DataLoader.DefaultUniverseId;
+          SaveConfiguration();
+        }
+      }
+    }
+    private bool _x4UniverseIdIsDefault = true;
+    public bool X4UniverseIdIsDefault
+    {
+      get => _x4UniverseIdIsDefault;
+      set
+      {
+        if (_x4UniverseIdIsDefault != value)
+        {
+          _x4UniverseIdIsDefault = value;
+          OnPropertyChanged(nameof(X4UniverseIdIsDefault));
+          if (value)
+          {
+            X4UniverseId = DataLoader.DefaultUniverseId;
+          }
+        }
+      }
+    }
     private bool _gatesActiveByDefault = true;
     public bool GatesActiveByDefault
     {
@@ -611,6 +625,28 @@ namespace ChemGateBuilder
       LoadConfiguration();
       InitializeComponent();
       DataContext = this;
+      X4DataStructure.AddRange(
+        [
+          new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
+          new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
+          new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
+          new GameFilesStructureItem(id: "clusters", folder: $"maps/{X4UniverseId}", ["clusters.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "sectors", folder: $"maps/{X4UniverseId}", ["sectors.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "zones", folder: $"maps/{X4UniverseId}", ["zones.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "races", folder: "libraries", ["races.xml"]),
+          new GameFilesStructureItem(id: "factions", folder: "libraries", ["factions.xml"]),
+          new GameFilesStructureItem(id: "modules", folder: "libraries", ["modules.xml"]),
+          new GameFilesStructureItem(id: "modulegroups", folder: "libraries", ["modulegroups.xml"]),
+          new GameFilesStructureItem(id: "constructionplans", folder: "libraries", ["constructionplans.xml"]),
+          new GameFilesStructureItem(id: "stationgroups", folder: "libraries", ["stationgroups.xml"]),
+          new GameFilesStructureItem(id: "stations", folder: "libraries", ["stations.xml"]),
+          new GameFilesStructureItem(id: "god", folder: "libraries", ["god.xml"]),
+          new GameFilesStructureItem(id: "sechighways", folder: $"maps/{X4UniverseId}", ["sechighways.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "zonehighways", folder: $"maps/{X4UniverseId}", ["zonehighways.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "galaxy", folder: $"maps/{X4UniverseId}", ["galaxy.xml"]),
+          new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
+        ]
+      );
       Assembly assembly = Assembly.GetExecutingAssembly();
       AssemblyName assemblyName = assembly.GetName();
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
@@ -664,6 +700,10 @@ namespace ChemGateBuilder
           LoadModsData = config.Data.LoadModsData;
           GatesActiveByDefault = config.Edit.GatesActiveByDefault;
           GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
+          if (config.Map.NonStandardUniverse && !String.IsNullOrEmpty(config.Map.NonStandardUniverseId))
+          {
+            X4UniverseId = config.Map.NonStandardUniverseId;
+          }
           MapColorsOpacity = config.Map.MapColorsOpacity;
           SectorRadius = config.Map.SectorRadius;
           LogLevel = config.Logging.LogLevel;
@@ -698,6 +738,16 @@ namespace ChemGateBuilder
         Map = new MapConfig { MapColorsOpacity = MapColorsOpacity, SectorRadius = SectorRadius },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
       };
+      if (X4UniverseId != DataLoader.DefaultUniverseId)
+      {
+        config.Map.NonStandardUniverse = true;
+        config.Map.NonStandardUniverseId = X4UniverseId;
+      }
+      else
+      {
+        config.Map.NonStandardUniverse = false;
+        config.Map.NonStandardUniverseId = "";
+      }
       App.ConfigureNLog(config.Logging);
       if (X4DataVersionOverride)
       {
@@ -810,7 +860,7 @@ namespace ChemGateBuilder
         }
         else
         {
-          ChemGateKeeper newMod = new(modPath);
+          ChemGateKeeper newMod = new(modPath, X4UniverseId);
           ChemGateKeeperMod = newMod;
           IsModCanBeSaved = false;
         }
@@ -962,11 +1012,11 @@ namespace ChemGateBuilder
       };
       if (DirectMode)
       {
-        dataLoader.LoadData(Galaxy, X4GameFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData, true, [ChemGateKeeper.ModId]);
+        dataLoader.LoadData(Galaxy, X4GameFolder, X4DataStructure, X4PDataProcessingOrder, LoadModsData, true, [ChemGateKeeper.ModId]);
       }
       else
       {
-        dataLoader.LoadData(Galaxy, X4DataFolder, _x4DataStructure, _x4PDataProcessingOrder, LoadModsData);
+        dataLoader.LoadData(Galaxy, X4DataFolder, X4DataStructure, X4PDataProcessingOrder, LoadModsData);
       }
     }
 
@@ -1434,7 +1484,7 @@ namespace ChemGateBuilder
 
     public void ButtonNewMod_Click(object sender, RoutedEventArgs e)
     {
-      ChemGateKeeperMod = new();
+      ChemGateKeeperMod = new("", X4UniverseId);
       _chemGateKeeperMod.SetGameVersion(X4DataVersion);
       ChemGateKeeperMod.GalaxyConnections.Clear();
       GatesConnectionCurrent?.ResetToInitial(GatesActiveByDefault, _gateMacroDefault);
@@ -1456,7 +1506,7 @@ namespace ChemGateBuilder
         StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
         return;
       }
-      ChemGateKeeper newMod = new(path);
+      ChemGateKeeper newMod = new(path, X4UniverseId);
       newMod.SetGameVersion(_x4DataVersion);
       if (newMod.LoadData(Galaxy, ChemGateKeeperMod))
       {
