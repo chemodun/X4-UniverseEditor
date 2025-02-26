@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.4.1...SharedWindows@v0.5.0) (2025-02-26)
+
+
+### Features
+
+* **Converters:** add boolean inversion and boolean to visibility converters for improved UI binding ([c74bfa2](https://github.com/chemodun/X4-UniverseEditor/commit/c74bfa29732c319e7b2605b42f3af271b0a28ccd))
+
 ## [0.4.1](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.4.0...SharedWindows@v0.4.1) (2025-02-24)
 
 
