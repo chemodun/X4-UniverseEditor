@@ -79,17 +79,15 @@ jobs:
             done
           done
           for readme in ${DELETED_FILES}; do
-            output_file="${readme%.md}.html"
-            egosoft_file="${readme%.md}/docs/README.egosoft"
-            nexus_file="${readme%.md}/docs/README.nexus"
-            for file in $output_file $egosoft_file $nexus_file; do
-              if [[ -f "$file" ]]; then
-                echo "Deleting $file"
-                git rm "$file"
+            for conversion_type in egosoft nexus steam; do
+              file_to_delete="${readme%README.md}/docs/README.$conversion_type"
+              if [[ -f "$file_to_delete" ]]; then
+                echo "Deleting $file_to_delete"
+                git rm "$file_to_delete"
                 if [[ $? -ne 0 ]]; then
-                  echo "Error deleting $file" >&2
+                  echo "Error deleting $file_to_delete" >&2
                 else
-                  echo "Deleted $file"
+                  echo "Deleted $file_to_delete"
                 fi
               fi
             done
