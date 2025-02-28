@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.9.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.2...ChemGateBuilder@v0.9.3) (2025-02-28)
+
+
+### Code Refactoring
+
+* **ChemGateBuilder:** add Extended.Wpf.Toolkit package reference and use IntegerUpDown for all inputs ([631df55](https://github.com/chemodun/X4-UniverseEditor/commit/631df554ba6a97202c4bee16163b5b878fb1a5f0))
+* **Galaxy:** add UniverseId support and update related bindings in UI ([0da58e9](https://github.com/chemodun/X4-UniverseEditor/commit/0da58e961b7334c406f84ddbb6004ef751c9c2da))
+* **Mod:** replace ExtensionId with ExtensionInfo for improved logging and file handling ([8854861](https://github.com/chemodun/X4-UniverseEditor/commit/8854861caec5ff7ed65db6520b85db2bd1253276))
+
+
+### Documentation
+
+* **README:** add custom universe id support to version 0.9.3 changelog ([1e5594e](https://github.com/chemodun/X4-UniverseEditor/commit/1e5594e1102b874c0c4d72971b87994ebbb9151b))
+* **README:** remove outdated version section and fix formatting ([286189e](https://github.com/chemodun/X4-UniverseEditor/commit/286189eed0e2cacee90246bba9fc7ddd21aca90d))
+* **README:** update changelog for version 0.9.3 with improvements to gate coordinates and input angles ([584fcbb](https://github.com/chemodun/X4-UniverseEditor/commit/584fcbb9744bf941e475d0ac1c4feec8e479d44f))
+* **README:** Update README's files ([c53a320](https://github.com/chemodun/X4-UniverseEditor/commit/c53a32026a8ee4886fb717ce0da198f67fc128f3))
+* **README:** Update README's files ([e446a7b](https://github.com/chemodun/X4-UniverseEditor/commit/e446a7bd46aa1d4fedecdee2473fc4e5e622a013))
+
 ## [0.9.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.1...ChemGateBuilder@v0.9.2) (2025-02-25)
 
 
