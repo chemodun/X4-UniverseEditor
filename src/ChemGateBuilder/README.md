@@ -319,8 +319,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ### [0.9.3] - 2025-02-28
 
+- Added
+  - Possibility to work with custom universe id
 - Improved
   - Improved gate coordinates, position and rotation angles input
+  - Debug log readability
 
 ### [0.9.2] - 2025-02-25
 
