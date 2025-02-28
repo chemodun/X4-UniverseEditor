@@ -317,6 +317,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][0.9.3] - 2025-02-28[/i][/u][/size]
+[list]
+[*] Improved
+[list]
+[*] Improved gate coordinates, position and rotation angles input
+[/list]
+[/list]
 [size=3][u][i][0.9.2] - 2025-02-25[/i][/u][/size]
 [list]
 [*] Fixed
