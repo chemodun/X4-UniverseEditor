@@ -103,7 +103,9 @@ namespace Utilities.X4XMLPatch
               targetElement
                 .Parent!.Elements()
                 .Any(e =>
-                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  e.Name == cloned.Name
+                  && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  && cloned.Attributes().All(a => a.Name == "_source" || e.Attribute(a.Name)?.Value == a.Value)
                 )
             )
             {
@@ -119,7 +121,9 @@ namespace Utilities.X4XMLPatch
               targetElement
                 .Parent!.Elements()
                 .Any(e =>
-                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  e.Name == cloned.Name
+                  && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  && cloned.Attributes().All(a => a.Name == "_source" || e.Attribute(a.Name)?.Value == a.Value)
                 )
             )
             {
@@ -135,7 +139,9 @@ namespace Utilities.X4XMLPatch
               targetElement
                 .Elements()
                 .Any(e =>
-                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  e.Name == cloned.Name
+                  && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  && cloned.Attributes().All(a => a.Name == "_source" || e.Attribute(a.Name)?.Value == a.Value)
                 )
             )
             {
@@ -151,7 +157,9 @@ namespace Utilities.X4XMLPatch
               targetElement
                 .Elements()
                 .Any(e =>
-                  e.Name == cloned.Name && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  e.Name == cloned.Name
+                  && e.Attributes().All(a => a.Name == "_source" || cloned.Attribute(a.Name)?.Value == a.Value)
+                  && cloned.Attributes().All(a => a.Name == "_source" || e.Attribute(a.Name)?.Value == a.Value)
                 )
             )
             {
