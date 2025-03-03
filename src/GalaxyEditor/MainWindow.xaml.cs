@@ -72,7 +72,6 @@ namespace GalaxyEditor
         {
           _logLevel = value;
           OnPropertyChanged(nameof(LogLevel));
-          App.ConfigureNLog(this);
         }
       }
     }
@@ -86,7 +85,6 @@ namespace GalaxyEditor
         {
           _logToFile = value;
           OnPropertyChanged(nameof(LogToFile));
-          App.ConfigureNLog(this);
         }
       }
     }
