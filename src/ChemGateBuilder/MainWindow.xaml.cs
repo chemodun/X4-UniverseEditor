@@ -68,7 +68,6 @@ namespace ChemGateBuilder
         {
           _logLevel = value;
           OnPropertyChanged(nameof(LogLevel));
-          App.ConfigureNLog(this);
         }
       }
     }
@@ -82,7 +81,6 @@ namespace ChemGateBuilder
         {
           _logToFile = value;
           OnPropertyChanged(nameof(LogToFile));
-          App.ConfigureNLog(this);
         }
       }
     }
@@ -621,10 +619,10 @@ namespace ChemGateBuilder
     public MainWindow()
     {
       _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
-      GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
       LoadConfiguration();
       InitializeComponent();
       DataContext = this;
+      GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
       X4DataStructure.AddRange(
         [
           new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
