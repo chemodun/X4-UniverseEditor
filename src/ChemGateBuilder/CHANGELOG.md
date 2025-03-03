@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.3...ChemGateBuilder@v0.9.4) (2025-03-03)
+
+
+### Code Refactoring
+
+* **App:** enhance NLog configuration handling and improve logging setup logic ([313e679](https://github.com/chemodun/X4-UniverseEditor/commit/313e679b79d47a9c8781bb15640ea39e529975d9))
+* **MainWindow:** remove redundant NLog configuration calls and streamline initialization ([8411114](https://github.com/chemodun/X4-UniverseEditor/commit/841111410370d1f2b17ef5af438306dd900aa5ef))
+
 ## [0.9.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.2...ChemGateBuilder@v0.9.3) (2025-02-28)
 
 
