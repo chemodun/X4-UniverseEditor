@@ -102,8 +102,8 @@ namespace Utilities.X4XMLPatch
           if (lastInserted != null)
           {
             lastInserted.AddAfterSelf(cloned);
-            lastInserted = cloned;
             Log.Debug($"Added next element '{clonedInfo}' after '{GetElementInfo(lastInserted)}'.");
+            lastInserted = cloned;
             continue;
           }
           switch (pos)
@@ -307,7 +307,7 @@ namespace Utilities.X4XMLPatch
         info += $"{element.Name}";
         if (element.HasAttributes)
         {
-          info += $"{element.FirstAttribute?.Name}=\"{element.FirstAttribute?.Value}\"";
+          info += $" {element.FirstAttribute?.Name}=\"{element.FirstAttribute?.Value}\"";
           if (element.Attributes().Count() > 1)
           {
             info += " ...";
