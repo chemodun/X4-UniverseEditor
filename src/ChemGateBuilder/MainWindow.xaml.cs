@@ -40,7 +40,6 @@ namespace ChemGateBuilder
   public class MapConfig
   {
     public double MapColorsOpacity { get; set; } = 0.5;
-    public int SectorRadius { get; set; } = 400;
     public bool NonStandardUniverse { get; set; } = false;
     public string NonStandardUniverseId { get; set; } = "";
   }
@@ -307,26 +306,6 @@ namespace ChemGateBuilder
         }
       }
     }
-
-    private int _sectorRadius = 400;
-    public int SectorRadius
-    {
-      get => _sectorRadius;
-      set
-      {
-        if (_sectorRadius != value)
-        {
-          _sectorRadius = value;
-          OnPropertyChanged(nameof(SectorRadius));
-          SaveConfiguration();
-          if (value > 0 && GatesConnectionCurrent != null)
-          {
-            GatesConnectionCurrent.SetSectorMapInternalSize(value);
-          }
-        }
-      }
-    }
-    public int SectorRadiusNegative => -SectorRadius;
 
     private double _mapColorsOpacity = 0.5;
     public double MapColorsOpacity
@@ -703,7 +682,6 @@ namespace ChemGateBuilder
             X4UniverseId = config.Map.NonStandardUniverseId;
           }
           MapColorsOpacity = config.Map.MapColorsOpacity;
-          SectorRadius = config.Map.SectorRadius;
           LogLevel = config.Logging.LogLevel;
           LogToFile = config.Logging.LogToFile;
         }
@@ -733,7 +711,7 @@ namespace ChemGateBuilder
           LoadModsData = LoadModsData,
         },
         Edit = new EditConfig { GatesActiveByDefault = GatesActiveByDefault, GatesMinimalDistanceBetween = GatesMinimalDistanceBetween },
-        Map = new MapConfig { MapColorsOpacity = MapColorsOpacity, SectorRadius = SectorRadius },
+        Map = new MapConfig { MapColorsOpacity = MapColorsOpacity },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
       };
       if (X4UniverseId != DataLoader.DefaultUniverseId)
@@ -1309,7 +1287,6 @@ namespace ChemGateBuilder
         SectorMapExpandedWindow sectorMapExpandedWindow = new(
           this,
           sectorName,
-          SectorRadius,
           isDirect ? GatesConnectionCurrent.SectorDirectMap : GatesConnectionCurrent.SectorOppositeMap,
           MapColorsOpacity
         );
