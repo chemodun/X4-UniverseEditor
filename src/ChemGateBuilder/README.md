@@ -317,6 +317,15 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.9.4] - 2025-03-04
+
+- Fixed
+  - Loading non-standard colors for the fractions
+  - Loading displaying the huge sectors with its content
+  - Scale slider on the Galaxy map
+- Improved
+  - Sector scaling on Sector map
+
 ### [0.9.3] - 2025-02-28
 
 - Added
