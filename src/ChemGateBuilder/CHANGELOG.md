@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.3...ChemGateBuilder@v0.9.4) (2025-03-04)
+
+
+### Code Refactoring
+
+* **App:** enhance NLog configuration handling and improve logging setup logic ([313e679](https://github.com/chemodun/X4-UniverseEditor/commit/313e679b79d47a9c8781bb15640ea39e529975d9))
+* **GalaxyMapWindow, MainWindow:** remove SectorRadius property and streamline GalaxyMapViewer connection ([02da7d5](https://github.com/chemodun/X4-UniverseEditor/commit/02da7d5dff0b6f728cec032b7eaad877fe33f7cd))
+* **GalaxyMapWindow:** improve layout and binding for GalaxyMapViewer controls (Scale Slider) ([f554835](https://github.com/chemodun/X4-UniverseEditor/commit/f5548352dc9be53463dfd3135cb5266c86482200))
+* **GateData:** remove redundant SetSectorMapInternalSize method to streamline code ([dc1e26b](https://github.com/chemodun/X4-UniverseEditor/commit/dc1e26bbbe7f0c8891ac52ee608562043a850126))
+* **MainWindow:** remove redundant NLog configuration calls and streamline initialization ([8411114](https://github.com/chemodun/X4-UniverseEditor/commit/841111410370d1f2b17ef5af438306dd900aa5ef))
+* **SectorMapExpanded:** update bindings for internal size and streamline constructor parameters ([d7b1427](https://github.com/chemodun/X4-UniverseEditor/commit/d7b142792df0fd3ce4f8e16ded294fc95c975a9b))
+
+
+### Miscellaneous Chores
+
+* **README:** update changelog for version 0.9.4 with fixes and improvements ([2c486bc](https://github.com/chemodun/X4-UniverseEditor/commit/2c486bca97b2a6c26a1575e67a505421d8601c67))
+
+
+### Documentation
+
+* **README:** Update README's files ([abad4dc](https://github.com/chemodun/X4-UniverseEditor/commit/abad4dcf3d28fd125c1728db9d29fb3020bf97a2))
+
 ## [0.9.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.2...ChemGateBuilder@v0.9.3) (2025-02-28)
 
 
