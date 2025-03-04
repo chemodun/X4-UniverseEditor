@@ -508,7 +508,7 @@ namespace GalaxyEditor
       // Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
       GalaxyData = new Galaxy();
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
-      GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity, SectorRadius);
+      GalaxyMapViewer.Connect(GalaxyData, GalaxyMapCanvas, MapColorsOpacity);
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
       GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_OnPressedSector;
       GalaxyMapViewer.OnPressedCluster += GalaxyMapViewer_OnPressedCluster;
