@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.2...X4DataLoader@v0.10.3) (2025-03-04)
+
+
+### Code Refactoring
+
+* **Colors, Faction:** improve color handling by ensuring default alpha value and enhancing color loading logic directly, not via mapping colors ([4c0b95a](https://github.com/chemodun/X4-UniverseEditor/commit/4c0b95ae4ef61f417e65f41a26f89d531242e5c9))
+
 ## [0.10.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.1...X4DataLoader@v0.10.2) (2025-02-26)
 
 
