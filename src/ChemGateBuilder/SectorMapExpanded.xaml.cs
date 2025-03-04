@@ -35,17 +35,16 @@ namespace ChemGateBuilder
 
     public double MapColorsOpacity { get; set; } = 0.5;
 
-    public SectorMapExpandedWindow(Window owner, string title, int sectorRadius, SectorMap sectorMap, double mapColorsOpacity)
+    public SectorMapExpandedWindow(Window owner, string title, SectorMap sectorMap, double mapColorsOpacity)
     {
       Owner = owner;
-      Title = title;
+      Title = $"Sector Map: {title}";
       var minSize = Math.Min(Owner.ActualWidth, Owner.ActualHeight) * 0.9;
       Width = minSize;
       Height = minSize;
       MapColorsOpacity = mapColorsOpacity;
       InitializeComponent();
       DataContext = this;
-      _sectorMapExpanded.InternalSizeKm = sectorRadius;
       _sectorMapExpanded.Connect(SectorMapExpandedCanvas, SectorHexagon);
       _sectorMapExpanded.From(sectorMap);
       SectorMapItem? newItem = _sectorMapExpanded.GetItem(SectorMap.NewGateId);
