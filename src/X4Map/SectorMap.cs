@@ -12,6 +12,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using Utilities.Logging;
 using X4DataLoader;
+using X4Map.Constants;
 
 namespace X4Map
 {
@@ -20,7 +21,9 @@ namespace X4Map
     private double _visualX;
     private double _visualY;
     protected double _visualSizePx = 200; // Default size
-    protected double _internalSizeKm = 400;
+    protected double _internalSizeMinKm = MapConstants.SectorInternalSizeMinKm;
+    protected double _internalSizeKm = MapConstants.SectorInternalSizeMinKm;
+    protected double _internalSizeMaxKm = MapConstants.SectorInternalSizeMinKm * 5;
     private string? _selectedItemId = "";
     private string _ownerColor = OwnerColorInitial;
     public static readonly string OwnerColorInitial = "#F0F0F0";
@@ -53,6 +56,15 @@ namespace X4Map
         OnPropertyChanged();
       }
     }
+    public double InternalSizeMinKm
+    {
+      get => _internalSizeMinKm;
+      set
+      {
+        _internalSizeMinKm = value;
+        OnPropertyChanged();
+      }
+    }
     public double InternalSizeKm
     {
       get => _internalSizeKm;
@@ -61,6 +73,15 @@ namespace X4Map
         _internalSizeKm = value;
         OnPropertyChanged();
         UpdateItems();
+      }
+    }
+    public double InternalSizeMaxKm
+    {
+      get => _internalSizeMaxKm;
+      set
+      {
+        _internalSizeMaxKm = value;
+        OnPropertyChanged();
       }
     }
     public string? SelectedItemId
@@ -87,6 +108,7 @@ namespace X4Map
     public static readonly double MinVisualSectorSize = 50;
     public static readonly double MaxVisualSectorSize = 1200;
     public static readonly string NewGateId = "NewGate";
+    public static readonly double HexagonSizesRelation = Math.Sqrt(3) / 2; // Height of the hexagon in pixels (Width * sqrt(3)/2)
 
     public double ItemSizeMinPx = ItemSizeMinDefaultPx;
 
@@ -148,6 +170,7 @@ namespace X4Map
         }
       }
       SelectedItemId = sectorMap.SelectedItemId;
+      SetInternalSize(sectorMap.InternalSizeKm);
     }
 
     public List<ObjectInSector> SetSector(Sector? sector, Galaxy galaxy)
@@ -270,7 +293,15 @@ namespace X4Map
         IsNew = objectData.Id == SectorMap.NewGateId,
       };
       Items.Add(item);
-      item.Update();
+      double newInternalSize = objectData.GetMaxCoordinate(InternalSizeKm);
+      if (newInternalSize > InternalSizeKm)
+      {
+        SetInternalSize(newInternalSize);
+      }
+      else
+      {
+        item.Update();
+      }
     }
 
     public void SelectItem(string? ItemId)
@@ -354,9 +385,11 @@ namespace X4Map
       UpdateItems();
     }
 
-    public void SetInternalSize(int sizeKm)
+    public void SetInternalSize(double sizeKm)
     {
       InternalSizeKm = sizeKm;
+      InternalSizeMinKm = Math.Max(MapConstants.SectorInternalSizeMinKm, sizeKm / 10);
+      InternalSizeMaxKm = Math.Min(MapConstants.SectorInternalSizeMaxKm, sizeKm * 5);
       UpdateItems();
     }
 

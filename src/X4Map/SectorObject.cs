@@ -121,6 +121,12 @@ namespace X4Map
     public Dictionary<string, string> Attributes = [];
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    public double GetMaxCoordinate(double maxCoordinate)
+    {
+      double distance = Math.Round(Math.Sqrt(X * X + Z * Z) / SectorMap.HexagonSizesRelation);
+      return Math.Max(maxCoordinate, distance);
+    }
+
     protected void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
