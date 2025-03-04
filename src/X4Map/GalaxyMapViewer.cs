@@ -213,7 +213,6 @@ namespace X4Map
       Galaxy galaxy,
       Canvas galaxyCanvas,
       double mapColorsOpacity,
-      int sectorRadius,
       bool editorMode = true,
       Dictionary<string, List<ObjectInSector>>? extraObjects = null,
       List<string>? extraConnectionsNames = null
@@ -223,7 +222,7 @@ namespace X4Map
       GalaxyData = galaxy;
       GalaxyCanvas = galaxyCanvas;
       _mapColorsOpacity = mapColorsOpacity;
-      _sectorRadius = sectorRadius;
+      _sectorRadius = MapConstants.SectorInternalSizeMinKm;
       _extraObjects = extraObjects ?? [];
       _extraConnectionsNames = extraConnectionsNames ?? [];
       ShowEmptyClusterPlaces.PropertyChanged += MapOptions_PropertyChanged;
