@@ -5,10 +5,10 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: write
-  repository-projects: read # needed for 'gh pr edit' https://github.com/cli/cli/issues/6274
+# permissions:
+#   contents: write
+#   pull-requests: write
+#   repository-projects: read # needed for 'gh pr edit' https://github.com/cli/cli/issues/6274
 
 jobs:
   release-please:
