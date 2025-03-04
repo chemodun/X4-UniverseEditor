@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.8](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.7...XMLPatch@v0.1.8) (2025-03-04)
+
+
+### Code Refactoring
+
+* **XMLPatch:** enhance element logging format and ensure correct element insertion flow ([26b6e8f](https://github.com/chemodun/X4-UniverseEditor/commit/26b6e8fb4e838ef3d8c64573d76beae58644226b))
+* **XMLPatch:** improve attribute comparison logic for cloned elements to prevent doubling ([02819d3](https://github.com/chemodun/X4-UniverseEditor/commit/02819d3c3cd2ef4ace53e3a18a8c988e14bf0317))
+* **XMLPatch:** streamline element insertion logic and improve handling of duplicate elements and right order on multiple items ([8371e82](https://github.com/chemodun/X4-UniverseEditor/commit/8371e82f6efed1f929b033b042daaf1a5d869844))
+
 ## [0.1.7](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.6...XMLPatch@v0.1.7) (2025-02-26)
 
 
