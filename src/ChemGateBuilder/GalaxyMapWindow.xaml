@@ -3,15 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:x4map="clr-namespace:X4Map;assembly=X4Map"
-        Title="Galaxy Map" Height="600" Width="800"
+        Title="Galaxy Map"
+        Height="600"
+        Width="800"
         WindowStartupLocation="CenterOwner"
-        Icon="{StaticResource BuilderIcon}"
-        >
+        Icon="{StaticResource BuilderIcon}">
     <Window.Resources>
-        <Style x:Key="FontAwesomeIconStyle" TargetType="{x:Type fa:IconImage}">
-            <Setter Property="Foreground" Value="DarkGray"/>
-            <Setter Property="Width" Value="16"/>
-            <Setter Property="Height" Value="16"/>
+        <Style x:Key="FontAwesomeIconStyle"
+               TargetType="{x:Type fa:IconImage}">
+            <Setter Property="Foreground"
+                    Value="DarkGray"/>
+            <Setter Property="Width"
+                    Value="16"/>
+            <Setter Property="Height"
+                    Value="16"/>
         </Style>
     </Window.Resources>
     <Grid>
@@ -23,25 +28,43 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Slider x:Name="HexagonWidthSlider"
-                Grid.Row="0"
-                Grid.ColumnSpan="2"
-                Minimum="{Binding HexagonWidthMinimal}"
-                Maximum="{Binding HexagonWidthMaximal}"
-                Value="{Binding HexagonWidth}"
-                TickFrequency="10" IsSnapToTickEnabled="True"
-                TickPlacement="BottomRight"/>
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Content="Scale:"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"/>
+            <Slider x:Name="HexagonWidthSlider"
+                    Grid.Column="1"
+                    Minimum="{Binding ElementName=GalaxyMapViewer, Path=HexagonWidthMinimal}"
+                    Maximum="{Binding ElementName=GalaxyMapViewer, Path=HexagonWidthMaximal}"
+                    Value="{Binding ElementName=GalaxyMapViewer, Path=HexagonWidth}"
+                    TickFrequency="10"
+                    IsSnapToTickEnabled="True"
+                    TickPlacement="BottomRight"
+                    SmallChange="10"
+                    LargeChange="100"
+                    ToolTip="Adjust Galaxy Map scale"/>
+        </Grid>
         <x4map:GalaxyMapViewer x:Name="GalaxyMapViewer"
-                        Grid.Row="1"
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto"
-                        Background="LightGray"
-                        >
+                               Grid.Row="1"
+                               HorizontalScrollBarVisibility="Auto"
+                               VerticalScrollBarVisibility="Auto"
+                               Background="LightGray">
             <Canvas x:Name="GalaxyMapCanvas"
-                Background="LightGray"
-                />
+                    Background="LightGray"/>
         </x4map:GalaxyMapViewer>
-        <Grid Grid.Row="1" Grid.Column="1" Background="LightGray">
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              Background="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -50,39 +73,63 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Margin="0" Width="20" Height="20"
-                Click="ButtonOptionsVisibility_Click" Foreground="DarkGray"
-                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Toggle options visibility">
+            <Button Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0"
+                    Width="20"
+                    Height="20"
+                    Click="ButtonOptionsVisibility_Click"
+                    Foreground="DarkGray"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    ToolTip="Toggle options visibility">
                 <Button.Content>
-                    <fa:IconImage Icon="{Binding OptionsVisibilitySymbol}" Style="{StaticResource FontAwesomeIconStyle}"/>
+                    <fa:IconImage Icon="{Binding OptionsVisibilitySymbol}"
+                                  Style="{StaticResource FontAwesomeIconStyle}"/>
                 </Button.Content>
             </Button>
-            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Visibility="{Binding OptionsVisibilityState}" Width="{Binding OptionsWidth}">
-                <GroupBox Header="DLC's" Margin="5" Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsDLCsVisibilityState}">
+            <StackPanel Grid.Row="1"
+                        Grid.Column="0"
+                        Orientation="Vertical"
+                        Visibility="{Binding OptionsVisibilityState}"
+                        Width="{Binding OptionsWidth}">
+                <GroupBox Header="DLC's"
+                          Margin="5"
+                          Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsDLCsVisibilityState}">
                     <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=DLCsOptions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                <CheckBox Content="{Binding Name}"
+                                          IsChecked="{Binding IsChecked}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </GroupBox>
-                <GroupBox Header="Mods" Margin="5" Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsModsVisibilityState}">
+                <GroupBox Header="Mods"
+                          Margin="5"
+                          Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsModsVisibilityState}">
                     <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=ModsOptions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                <CheckBox Content="{Binding Name}"
+                                          IsChecked="{Binding IsChecked}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </GroupBox>
             </StackPanel>
-            <GroupBox Header="Developer options" Margin="5" Grid.Row="2" Visibility="{Binding OptionsVisibilityState}" Width="{Binding OptionsWidth}">
+            <GroupBox Header="Developer options"
+                      Margin="5"
+                      Grid.Row="2"
+                      Visibility="{Binding OptionsVisibilityState}"
+                      Width="{Binding OptionsWidth}">
                 <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer,  Path=DeveloperOptions}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                            <CheckBox Content="{Binding Name}"
+                                      IsChecked="{Binding IsChecked}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
