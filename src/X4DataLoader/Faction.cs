@@ -67,9 +67,24 @@ namespace X4DataLoader
       XElement? colorElement = element.Element("color");
       if (colorElement != null)
       {
-        ColorId = XmlHelper.GetAttribute(colorElement, "ref") ?? "";
+        if (colorElement.Attribute("ref")?.Value != null)
+        {
+          ColorId = XmlHelper.GetAttribute(colorElement, "ref") ?? "";
+          Color = X4MappedColor.GetColorByMappedId(ColorId, galaxy);
+        }
+        else
+        {
+          string colorR = XmlHelper.GetAttribute(colorElement, "r") ?? "";
+          string colorG = XmlHelper.GetAttribute(colorElement, "g") ?? "";
+          string colorB = XmlHelper.GetAttribute(colorElement, "b") ?? "";
+          string colorA = XmlHelper.GetAttribute(colorElement, "a") ?? "";
+          if (!string.IsNullOrEmpty(colorR) && !string.IsNullOrEmpty(colorG) && !string.IsNullOrEmpty(colorB))
+          {
+            Color = new X4Color();
+            Color.Load(colorElement, source, fileName);
+          }
+        }
       }
-      Color = X4MappedColor.GetColorByMappedId(ColorId, galaxy);
       XElement? iconElement = element.Element("icon");
       if (iconElement != null)
       {

@@ -39,6 +39,7 @@ namespace X4DataLoader
       Green = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "g"));
       Blue = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "b"));
       Alpha = StringHelper.ParseInt(XmlHelper.GetAttribute(element, "a"));
+      Alpha = Alpha == 0 ? 255 : Alpha;
       Color = Color.FromArgb(Alpha, Red, Green, Blue);
       Source = source;
       FileName = fileName;
