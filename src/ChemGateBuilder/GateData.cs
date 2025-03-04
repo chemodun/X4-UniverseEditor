@@ -8,6 +8,7 @@ using System.Windows.Shapes;
 using SharedWindows;
 using X4DataLoader;
 using X4Map;
+using X4Map.Constants;
 
 namespace ChemGateBuilder
 {
@@ -352,12 +353,6 @@ namespace ChemGateBuilder
         return null;
       }
       return newObject;
-    }
-
-    public void SetSectorMapInternalSize(int sizeKm)
-    {
-      SectorDirectMap.InternalSizeKm = sizeKm;
-      SectorOppositeMap.InternalSizeKm = sizeKm;
     }
 
     public void UpdateCurrentGateCoordinates(int X, int Y, int Z, string propertyName)
