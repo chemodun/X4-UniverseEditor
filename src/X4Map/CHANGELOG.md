@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.0...X4Map@v0.5.1) (2025-03-04)
+
+
+### Code Refactoring
+
+* **Constants:** update sector size constants for improved map configuration ([22d3a12](https://github.com/chemodun/X4-UniverseEditor/commit/22d3a12b3d3c378e0b69489cc503ac6159015770))
+* **GalaxyMap:** update sector creation methods to return internal size and enhance logging ([82d96a5](https://github.com/chemodun/X4-UniverseEditor/commit/82d96a5389d0a76f65edf6577e649c7689362f0a))
+* **GalaxyMapViewer:** replace sector radius parameter with minimum internal size constant ([116fed3](https://github.com/chemodun/X4-UniverseEditor/commit/116fed31df3cb925bdba50caaefeb574b7df8c94))
+* **SectorMap, SectorObject:** enhance internal size management and add max coordinate calculation ([2bf8b4b](https://github.com/chemodun/X4-UniverseEditor/commit/2bf8b4b753dc2a1393bc91d85446086e07cd40e9))
+
 ## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.4.0...X4Map@v0.5.0) (2025-02-24)
 
 
