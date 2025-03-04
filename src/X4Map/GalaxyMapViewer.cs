@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Utilities.Logging;
 using X4DataLoader;
+using X4Map.Constants;
 
 namespace X4Map
 {
@@ -36,8 +37,7 @@ namespace X4Map
     private readonly List<GalaxyMapSector> _sectors = [];
     private Canvas GalaxyCanvas { get; set; } = new();
     private const double HexagonWidthDefault = 100; // Width of the hexagon in pixels
-    public static readonly double HexagonSizesRelation = Math.Sqrt(3) / 2; // Height of the hexagon in pixels (Width * sqrt(3)/2)
-    private static readonly double HexagonHeightDefault = HexagonWidthDefault * HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
+    private static readonly double HexagonHeightDefault = HexagonWidthDefault * SectorMap.HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
     private double _hexagonWidth = HexagonWidthDefault; // Width of the hexagon in pixels
     public double HexagonWidth
     {
@@ -45,14 +45,14 @@ namespace X4Map
       set
       {
         _hexagonWidth = value;
-        _hexagonHeight = value * HexagonSizesRelation;
+        _hexagonHeight = value * SectorMap.HexagonSizesRelation;
         OnPropertyChanged(nameof(HexagonWidth));
         OnPropertyChanged(nameof(HexagonHeight));
         UpdateMap();
       }
     } // Width of the hexagon in pixel
 
-    private double _hexagonHeight = HexagonWidthDefault * HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
+    private double _hexagonHeight = HexagonWidthDefault * SectorMap.HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
     public double HexagonHeight
     {
       get => _hexagonHeight;
@@ -78,8 +78,8 @@ namespace X4Map
         OnPropertyChanged(nameof(HexagonWidthMaximal));
       }
     }
-    private int _sectorRadius = 400;
-    public int SectorRadius
+    private double _sectorRadius = MapConstants.SectorInternalSizeMinKm;
+    public double SectorRadius
     {
       get => _sectorRadius;
       set
@@ -321,6 +321,7 @@ namespace X4Map
 
     private void CreateMap()
     {
+      double maxSectorRadius = SectorRadius;
       if (MapCells.Count == 0)
       {
         Log.Warn("Cluster map is empty.");
@@ -364,7 +365,11 @@ namespace X4Map
             HexagonHeight,
             ScaleFactor
           );
-          clusterMapCluster.Create(this);
+          double sectorRadius = clusterMapCluster.Create(this);
+          if (sectorRadius > maxSectorRadius)
+          {
+            maxSectorRadius = sectorRadius;
+          }
           _clusters.Add(clusterMapCluster);
           if (cluster != null)
           {
@@ -441,6 +446,7 @@ namespace X4Map
           InterConnections.Add(galaxyMapGateConnection);
         }
       }
+      SectorRadius = maxSectorRadius;
     }
 
     private void ScaleFactorUpdate()
@@ -450,13 +456,13 @@ namespace X4Map
       double scaleFactorWidth = width / _canvasWidthBase / HexagonWidthDefault;
       double scaleFactorHeight = height / _canvasHeightBase / HexagonHeightDefault;
       ScaleFactor = Math.Min(scaleFactorWidth, scaleFactorHeight);
-      if (width * HexagonSizesRelation < height)
+      if (width * SectorMap.HexagonSizesRelation < height)
       {
         HexagonWidthMaximal = width / ScaleFactor * 2;
       }
       else
       {
-        HexagonWidthMaximal = height / HexagonSizesRelation / ScaleFactor * 2;
+        HexagonWidthMaximal = height / SectorMap.HexagonSizesRelation / ScaleFactor * 2;
       }
     }
 

@@ -54,14 +54,17 @@ namespace X4Map
 
     protected override string[] ToolTipItems => [.. _toolTipItems, .. base.ToolTipItems]; /* Implement setter if needed, or leave it empty if not applicable */
 
-    public override void Create(GalaxyMapViewer map)
+    public override double Create(GalaxyMapViewer map)
     {
       if (Cluster == null || Sector == null || Canvas == null || map == null)
       {
-        return;
+        return 0;
       }
       UpdatePoints();
       SolidColorBrush brush;
+      Log.Debug(
+        $"Creating sector {Sector.Name} at {X}, {Y}. Source: {Sector.Source}. Owner: '{Sector.DominantOwner}', Faction: {Sector.DominantOwnerFaction?.Id}, Color: {Sector.Color}, Faction Color: {Sector.DominantOwnerFaction?.Color}"
+      );
       if (Sector.Color != null)
       {
         brush = new SolidColorBrush(
@@ -124,7 +127,7 @@ namespace X4Map
       SectorMapHelper.VisualX = X;
       SectorMapHelper.VisualY = Y;
       SectorMapHelper.VisualSizePx = Width;
-      SectorMapHelper.InternalSizeKm = map.SectorRadius;
+      SectorMapHelper.SetInternalSize(map.SectorRadius);
       SectorMapHelper.ItemSizeMinPx = 4;
       SectorMapHelper.SetSector(Sector, map.GalaxyData);
       List<ObjectInSector>? extraObjects = map.GetExtraObjects(Sector.Macro);
@@ -167,6 +170,7 @@ namespace X4Map
         item.ConnectImage(image);
         item.SetVisible(true);
       }
+      return SectorMapHelper.InternalSizeKm;
     }
 
     public override void Remove(Canvas canvas)
@@ -186,7 +190,7 @@ namespace X4Map
       HexagonWidth = map.HexagonWidth;
       HexagonHeight = map.HexagonHeight;
       ScaleFactor = map.ScaleFactor;
-      SectorMapHelper.InternalSizeKm = map.SectorRadius;
+      SectorMapHelper.SetInternalSize(map.SectorRadius);
       UpdatePoints();
       if (Sector.Color != null)
       {

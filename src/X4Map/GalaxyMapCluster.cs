@@ -116,23 +116,29 @@ namespace X4Map
       (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
     ];
 
-    public virtual void Create(GalaxyMapViewer map)
+    public virtual double Create(GalaxyMapViewer map)
     {
+      double maxInternalSizeKm = 0;
       if (map == null || Canvas == null)
       {
-        return;
+        return maxInternalSizeKm;
       }
       if (Cluster != null && Cluster.Sectors.Count == 1)
       {
         Sector sector = Cluster.Sectors[0];
+        Log.Debug(
+          $"Col: {MapPosition.Column, 3} Row: {MapPosition.Row, 3}: Creating a single Sector '{sector.Name}' in Cluster '({Cluster.Name})'"
+        );
         GalaxyMapSector clusterMapSector = new(_x, _y, this, Canvas, Cluster, sector, HexagonWidth, HexagonHeight, ScaleFactor);
-        clusterMapSector.Create(map);
+        maxInternalSizeKm = clusterMapSector.Create(map);
         Sectors.Add(clusterMapSector);
       }
       else
       {
         UpdatePoints();
-        // Log.Debug($"Creating cluster {Cluster.Name} at ({X}, {Y}) ({x}, {y}) with Points {string.Join(", ", Points.Select(p => $"({p.X}, {p.Y})"))})");
+        Log.Debug(
+          $"Col: {MapPosition.Column, 3} Row: {MapPosition.Row, 3}: Creating a {(Cluster != null ? "Cluster '" + Cluster.Name + "'" : "'Empty Map Cell'")}"
+        );
         Hexagon = new()
         {
           Stroke = Cluster != null ? Brushes.Black : Brushes.DarkGray,
@@ -159,6 +165,7 @@ namespace X4Map
         List<double?> angles = [];
         if (Cluster != null)
         {
+          Log.Debug($"Cluster '{Cluster.Name}' has {Cluster.Sectors.Count} sectors");
           for (int i = 0; i < Cluster.Sectors.Count; i++)
           {
             double? angle = null;
@@ -201,6 +208,7 @@ namespace X4Map
               $"Sector {sector.Name}  with Position: X = {sector.Position.X}, Y = {sector.Position.Y}, Z = {sector.Position.Z}. Angle: {angle}, Corner: {corners[i]}"
             );
           }
+          Log.Debug($"Angles({angles.Count}): {string.Join(", ", angles)}, Corners({corners.Count}): {string.Join(", ", corners)}");
           if (corners.Count == 3)
           {
             corners[0] = HexagonCornersTriplet.GetCornerByTwoOther(corners[1], corners[2], Triplets);
@@ -269,8 +277,10 @@ namespace X4Map
             }
             else if (angles[1] == -180) { }
           }
+          Log.Debug($"Final Corners({corners.Count}): {string.Join(", ", corners)}");
           foreach ((HexagonCorner, HexagonCorner) pair in HorizontalPairs)
           {
+            Log.Debug($"Checking pair: {pair.Item1} - {pair.Item2}");
             if (corners.Contains(pair.Item1) || corners.Contains(pair.Item2))
             {
               int index = corners.Contains(pair.Item1) ? corners.IndexOf(pair.Item1) : corners.IndexOf(pair.Item2);
@@ -303,7 +313,7 @@ namespace X4Map
                   y = _y;
                   break;
               }
-              Log.Debug($"Sector {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
+              Log.Debug($"Sector({index}) {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
               GalaxyMapSector clusterMapSector = new(
                 x,
                 y,
@@ -316,12 +326,21 @@ namespace X4Map
                 ScaleFactor,
                 true
               );
-              clusterMapSector.Create(map);
+              double internalSizeKm = clusterMapSector.Create(map);
+              if (internalSizeKm > maxInternalSizeKm)
+              {
+                maxInternalSizeKm = internalSizeKm;
+              }
               Sectors.Add(clusterMapSector);
+            }
+            else
+            {
+              Log.Debug($"Pair {pair.Item1} - {pair.Item2} not found in corners");
             }
           }
         }
       }
+      return maxInternalSizeKm; // Return the maximum internal size of the sectors in the cluster
     }
 
     public void ReAssign(GalaxyMapViewer map, Cluster? cluster)
