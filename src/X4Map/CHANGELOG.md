@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.1...X4Map@v0.5.2) (2025-03-05)
+
+
+### Code Refactoring
+
+* **GalaxyMap:** enhance UI to display mod versions alongside names ([c39d927](https://github.com/chemodun/X4-UniverseEditor/commit/c39d9276b578212f42efce99bdde94f1dc1baf19))
+
 ## [0.5.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.0...X4Map@v0.5.1) (2025-03-04)
 
 
