@@ -113,8 +113,20 @@
                     <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=ModsOptions}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Content="{Binding Name}"
-                                          IsChecked="{Binding IsChecked}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Content="{Binding Name}"
+                                              IsChecked="{Binding IsChecked}"
+                                              Grid.Column="0"/>
+                                    <TextBlock Text="{Binding Version}"
+                                               Margin="5,0,0,0"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right"
+                                               Grid.Column="1"/>
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

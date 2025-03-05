@@ -446,12 +446,12 @@ namespace X4Map
             if (sector != null && isSector)
             {
               labelStr = "Source:";
-              textStr = sector.Source;
+              textStr = $"{sector.SourceName} ({sector.Source})";
             }
             else if (cluster != null)
             {
               labelStr = "Source:";
-              textStr = cluster.Source;
+              textStr = $"{cluster.SourceName} ({cluster.Source})";
             }
             break;
           case "Coordinates":

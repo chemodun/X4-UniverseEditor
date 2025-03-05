@@ -197,7 +197,7 @@ namespace X4Map
       }
     }
     public ObservableCollection<MapOptions> DeveloperOptions { get; set; } = [];
-    public MapOptions ShowEmptyClusterPlaces = new("Show Empty Cluster Cells", "EmptyCell", false);
+    public MapOptions ShowEmptyClusterPlaces = new("Show Empty Cluster Cells", "", "EmptyCell", false);
 
     private List<string> _extraConnectionsNames = [];
     private Dictionary<string, List<ObjectInSector>> _extraObjects = [];
@@ -270,7 +270,7 @@ namespace X4Map
         ExtensionInfo? dlc = GalaxyData.DLCs.Find(dlc => dlc.Id == dlcId);
         if (dlc != null)
         {
-          var extension = new MapOptions(dlc.Name, dlc.Id, true);
+          var extension = new MapOptions(dlc.Name, $"v.{dlc.Version}", dlc.Id, true);
           extension.PropertyChanged += MapOptions_PropertyChanged;
           DLCsOptions.Add(extension);
         }
@@ -278,7 +278,7 @@ namespace X4Map
       OptionsDLCsVisibilityState = DLCsOptions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
       foreach (ExtensionInfo mod in GalaxyData.Mods)
       {
-        var extension = new MapOptions(mod.Name, mod.Id, true);
+        var extension = new MapOptions(mod.Name, $"v.{mod.Version}", mod.Id, true);
         extension.PropertyChanged += MapOptions_PropertyChanged;
         ModsOptions.Add(extension);
       }
@@ -942,12 +942,14 @@ namespace X4Map
   public class MapOptions : INotifyPropertyChanged
   {
     private string _name = string.Empty;
+    private string _version = string.Empty;
     private string _id = string.Empty;
     private bool _isChecked = false;
 
-    public MapOptions(string name, string id, bool isChecked)
+    public MapOptions(string name, string version, string id, bool isChecked)
     {
       Name = name;
+      Version = version;
       Id = id;
       IsChecked = isChecked;
     }
@@ -961,6 +963,19 @@ namespace X4Map
         {
           _name = value;
           OnPropertyChanged(nameof(Name));
+        }
+      }
+    }
+
+    public string Version
+    {
+      get => _version;
+      set
+      {
+        if (_version != value)
+        {
+          _version = value;
+          OnPropertyChanged(nameof(Version));
         }
       }
     }
