@@ -317,7 +317,19 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
-[size=125][u][0.9.4] - 2025-03-04[/u][/size]
+[size=125][u][0.9.6] - 2025-03-06[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Ignore doubles in clusters/sectors
+[/list]
+[*] Improved
+[list]
+[*] Tool tips for the clusters and sectors
+[*] Mods version is shown in the Galaxy map
+[/list]
+[/list]
+[size=125][u][0.9.5] - 2025-03-05[/u][/size]
 [list]
 [*] Fixed
 [list]
