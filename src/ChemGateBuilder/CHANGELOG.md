@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.5](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.4...ChemGateBuilder@v0.9.5) (2025-03-05)
+
+
+### Code Refactoring
+
+* **GalaxyMap:** enhance UI to display mod versions alongside names ([c39d927](https://github.com/chemodun/X4-UniverseEditor/commit/c39d9276b578212f42efce99bdde94f1dc1baf19))
+
+
+### Documentation
+
+* **README:** update changelog for version 0.9.6 with fixes and improvements ([61fbb95](https://github.com/chemodun/X4-UniverseEditor/commit/61fbb95e91c7c189456ddb14ea637edf24df902b))
+* **README:** Update README's files ([b939efc](https://github.com/chemodun/X4-UniverseEditor/commit/b939efc6019410fa6a9e2a172b04ecd3a6b9cce6))
+
 ## [0.9.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.3...ChemGateBuilder@v0.9.4) (2025-03-04)
 
 
