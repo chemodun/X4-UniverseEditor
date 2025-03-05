@@ -317,7 +317,15 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
-### [0.9.4] - 2025-03-04
+### [0.9.6] - 2025-03-06
+
+- Fixed
+  - Ignore doubles in clusters/sectors
+- Improved
+  - Tool tips for the clusters and sectors
+  - Mods version is shown in the Galaxy map
+
+### [0.9.5] - 2025-03-05
 
 - Fixed
   - Loading non-standard colors for the fractions
