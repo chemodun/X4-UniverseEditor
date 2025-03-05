@@ -232,7 +232,7 @@ namespace X4DataLoader
           Sector? sector = Sector.GetSectorByMacro(galaxy.Sectors, name);
           if (sector != null)
           {
-            sector.Update(reference, source, fileName, element);
+            sector.Update(reference, source, galaxy.Extensions.FirstOrDefault(e => e.Id == source)?.Name ?? "", fileName, element);
             foreach (Connection connection in connections)
             {
               sector.Connections[connection.Name] = connection;
@@ -244,7 +244,7 @@ namespace X4DataLoader
           Cluster? cluster = Cluster.GetClusterByMacro(galaxy.Clusters, name);
           if (cluster != null)
           {
-            cluster.Update(reference, source, fileName, element);
+            cluster.Update(reference, source, galaxy.Extensions.FirstOrDefault(e => e.Id == source)?.Name ?? "", fileName, element);
             foreach (Connection connection in connections)
             {
               cluster.Connections[connection.Name] = connection;
@@ -254,7 +254,7 @@ namespace X4DataLoader
       }
       catch (ArgumentException e)
       {
-        throw new ArgumentException($"Error loading Connections: {e.Message}");
+        Log.Warn($"Error loading connections for {name}: {e.Message}");
       }
     }
 

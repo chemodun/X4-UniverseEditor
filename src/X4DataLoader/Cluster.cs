@@ -36,6 +36,7 @@ namespace X4DataLoader
     public string DetailsFileName { get; private set; } = "";
     public XElement? DetailsXML { get; set; } = null;
     public string Source { get; set; } = "vanilla";
+    public string SourceName { get; set; } = "Vanilla";
     public string FileName { get; private set; } = "";
     public XElement? XML { get; set; } = null;
     public List<Sector> Sectors { get; private set; } = [];
@@ -98,11 +99,12 @@ namespace X4DataLoader
       }
     }
 
-    public void Update(string reference, string source, string fileName, XElement element)
+    public void Update(string reference, string source, string sourceName, string fileName, XElement element)
     {
       XML = element;
       Reference = reference;
       Source = source;
+      SourceName = string.IsNullOrEmpty(sourceName) ? SourceName : sourceName;
       FileName = fileName;
     }
 

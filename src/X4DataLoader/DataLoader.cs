@@ -351,7 +351,13 @@ namespace X4DataLoader
               }
             }
           }
-          Log.Debug($"Loading mods in the following order: {string.Join(", ", modsOrder)}");
+          string modsOrderStr = "";
+          foreach (string modId in modsOrder)
+          {
+            ExtensionInfo mod = mods[modId];
+            modsOrderStr += (string.IsNullOrEmpty(modsOrderStr) ? "" : ", ") + $"{mod.Name}({mod.Id})";
+          }
+          Log.Debug($"Loading mods in the following order: {modsOrderStr}");
           foreach (string modId in modsOrder)
           {
             ExtensionInfo mod = mods[modId];
