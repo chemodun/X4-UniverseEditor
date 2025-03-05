@@ -7,6 +7,13 @@
 
 * **data-loader:** add SourceName property and update method to handle source names ([3829f32](https://github.com/chemodun/X4-UniverseEditor/commit/3829f32c3e8ec99f6a62e201930360260dc5465e))
 
+## [0.10.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.3...X4DataLoader@v0.10.4) (2025-03-05)
+
+
+### Code Refactoring
+
+* **data-loader:** add SourceName property and update method to handle source names ([3829f32](https://github.com/chemodun/X4-UniverseEditor/commit/3829f32c3e8ec99f6a62e201930360260dc5465e))
+
 ## [0.10.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.2...X4DataLoader@v0.10.3) (2025-03-04)
 
 
