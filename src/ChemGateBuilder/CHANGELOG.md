@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.5...ChemGateBuilder@v0.9.6) (2025-03-14)
+
+
+### Bug Fixes
+
+* **Mod:** fix Mod file structure for Sectors and Zones,  savings where such elements are defined only via diff files in other mods ([be774e0](https://github.com/chemodun/X4-UniverseEditor/commit/be774e0ea67987ad051a2e96e519c6675d91d4e7))
+
 ## [0.9.5](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.4...ChemGateBuilder@v0.9.5) (2025-03-05)
 
 
