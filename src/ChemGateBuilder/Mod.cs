@@ -413,23 +413,27 @@ namespace ChemGateBuilder
       string galaxyPath = Path.Combine(ModFolderPath, "maps", UniverseId);
       Directory.CreateDirectory(galaxyPath);
       docGalaxy.Save(Path.Combine(galaxyPath, "galaxy.xml"));
-      SaveModSectorsAndZones();
+      SaveModSectorsAndZones(galaxy);
     }
 
-    private void SaveModSectorsAndZones()
+    private void SaveModSectorsAndZones(Galaxy? galaxy)
     {
+      Dictionary<string, XElement> sectorCollection = [];
+      Dictionary<string, XElement> zonesCollection = [];
       foreach (KeyValuePair<string, List<GalaxyConnectionPath>> path in _paths)
       {
-        string universePath = ModFolderPath;
-        if (path.Key != "vanilla")
+        string sectorsKey = galaxy?.GameFiles.Any(gf => gf.Id == "sectors" && gf.Extension.Id == path.Key) == true ? path.Key : "vanilla";
+        string zonesKey = galaxy?.GameFiles.Any(gf => gf.Id == "zones" && gf.Extension.Id == path.Key) == true ? path.Key : "vanilla";
+        if (!sectorCollection.TryGetValue(sectorsKey, out XElement? sectors) || sectors == null)
         {
-          universePath = Path.Combine(universePath, DataLoader.ExtensionsFolder, path.Key);
+          sectors = new("diff");
+          sectorCollection.Add(sectorsKey, sectors);
         }
-        universePath = Path.Combine(universePath, "maps", UniverseId);
-        Directory.CreateDirectory(universePath);
-        XElement sectors = new("diff");
-        XElement zones = new("diff");
-        string files_prefix = "";
+        if (!zonesCollection.TryGetValue(zonesKey, out XElement? zones) || zones == null)
+        {
+          zones = new("diff");
+          zonesCollection.Add(zonesKey, zones);
+        }
         foreach (GalaxyConnectionPath connectionPath in path.Value)
         {
           if (connectionPath.Sector != null && connectionPath.Zone != null)
@@ -450,16 +454,36 @@ namespace ChemGateBuilder
               zone.Add(zoneElement);
             }
             zones.Add(zone);
-            if (path.Key != "vanilla" && files_prefix == "")
+          }
+        }
+      }
+      SaveModXmlCollection("sectors", sectorCollection, galaxy);
+      SaveModXmlCollection("zones", zonesCollection, galaxy);
+    }
+
+    private void SaveModXmlCollection(string xmlType, Dictionary<string, XElement> xmlCollection, Galaxy? galaxy)
+    {
+      foreach (KeyValuePair<string, XElement> sectorEntry in xmlCollection)
+      {
+        string universePath = ModFolderPath;
+        string filePrefix = "";
+        if (sectorEntry.Key != "vanilla")
+        {
+          ExtensionInfo? extension = galaxy?.Extensions.FirstOrDefault(e => e.Id == sectorEntry.Key);
+          if (extension != null)
+          {
+            universePath = Path.Combine(universePath, DataLoader.ExtensionsFolder, extension.Folder);
+            GameFile? gameFile = galaxy?.GameFiles.FirstOrDefault(gf => gf.Id == xmlType && gf.Extension.Id == sectorEntry.Key);
+            if (gameFile != null)
             {
-              files_prefix = connectionPath.Sector.PositionFileName.Replace("clusters.xml", "");
+              filePrefix = gameFile.FileName.Replace($"{xmlType}.xml", "");
             }
           }
         }
-        XDocument docSectors = new(new XDeclaration("1.0", "utf-8", null), sectors);
-        docSectors.Save(Path.Combine(universePath, $"{files_prefix}sectors.xml"));
-        XDocument docZones = new(new XDeclaration("1.0", "utf-8", null), zones);
-        docZones.Save(Path.Combine(universePath, $"{files_prefix}zones.xml"));
+        universePath = Path.Combine(universePath, "maps", UniverseId);
+        Directory.CreateDirectory(universePath);
+        XDocument docSectors = new(new XDeclaration("1.0", "utf-8", null), sectorEntry.Value);
+        docSectors.Save(Path.Combine(universePath, $"{filePrefix}{xmlType}.xml"));
       }
     }
 

@@ -317,6 +317,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.9.6] - 2025-03-14
+
+- Fixed
+  - Creating a gate in Sectors defined only by diff files (specifics of some Mods)
+
 ### [0.9.5] - 2025-03-05
 
 - Fixed
