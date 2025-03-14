@@ -41,7 +41,7 @@ On the first start, the tool will inform you that you need to select the game fo
 If you will unselect [b]Direct Mode[/b]- you will go via start process described below in the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#first-start]First Start[/url] section.
 
 After selecting the game folder, the tool will start loading the game data.
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/first_start_direct_mode.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/first_start_direct_mode.gif[/img]
 
 Available from [b]version 0.9.0[/b].
 
@@ -51,7 +51,7 @@ After loading the game data, you will see the main window and can start building
 When you will be finish with the connections, you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item.
 Mod will be saved in the game [b]Extensions[/b] folder.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/first_gate_direct_mode.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/first_gate_direct_mode.gif[/img]
 
 [size=3][u]Direct Mode Second and Other starts[/u][/size]
 
@@ -59,7 +59,7 @@ On the next starts tool will automatically load not only game data, but also the
 
 You can update the connections, add new ones, or remove the existing ones. After that you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/second_start_and_mod_update_direct_mode.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/second_start_and_mod_update_direct_mode.gif[/img]
 
 [size=3][u]Direct Mode To Usual Mode and Vice Versa[/u][/size]
 
@@ -81,7 +81,7 @@ And when you press a button to select the folder, the tool will propose two ways
 
 After selecting the folder, the tool will start loading the game data.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/first_start.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/first_start.gif[/img]
 
 There is a link on wiki related to the tool for the extraction - [url=https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/]X Catalog Tool[/url].
 
@@ -94,7 +94,7 @@ Now everything is simple:
 [*] Select the folder where will be placed new folder with the extracted game files. It will be created automatically with a name containing the current game version. Like "X4v710-extracted".
 [*] Press the "Extract Data" button.
 [/list]
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/first_start_with_extraction.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/first_start_with_extraction.gif[/img]
 
 There are several options to extract the game files:
 [list]
@@ -122,7 +122,7 @@ The tool will extract them automatically for DLC's. If you have an extracted dat
 After starting, you will see the main window with a list of connections and an area to define a gate connection, i.e., two areas to define the gates in the two sectors.
 The new gates are already shown on the map in the default position in the sector center.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/main_window.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/main_window.png[/img]
 
 [size=3][u]Connection Editing Area[/u][/size]
 
@@ -146,7 +146,7 @@ Please note that the coordinates are split into two parts:
 [/list]
 To simplify editing, the position part is randomly prefilled on sector selection.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/define_direct_sector.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/define_direct_sector.gif[/img]
 
 [size=2][u]Gate Rotation[/u][/size]
 
@@ -161,13 +161,13 @@ The rotation of the gate can be defined using three angles: Pitch, Yaw, and Roll
 If the current sector map size is too small for you, you can press the appropriate button to open the extended sector map.
 On this map, you can set the gate location in the same way as on the simple map, but more precisely.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/extended_sector_map.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/extended_sector_map.gif[/img]
 
 [size=2][u][i]Sector "Real" Size Slider[/i][/u][/size]
 
 Under the sector map, there is a slider to change the sector map "real" size. This is effectively the scale of the sector map.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/sector_scale_slider.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/sector_scale_slider.gif[/img]
 
 [size=2][u][i]Other Gate Data[/i][/u][/size]
 
@@ -179,7 +179,7 @@ Now you can select the second sector and define the gate location in it.
 
 Please note that in the selection list for the second ([b]Opposite Sector[/b]), some sectors will be grayed out and not available for selection. This is because the sector is already selected as the first sector or they already have a connection with the [b]Direct Sector[/b].
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/define_opposite_sector.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/define_opposite_sector.gif[/img]
 
 After defining the gate in the second sector, you can add the connection to the list.
 
@@ -187,7 +187,7 @@ After defining the gate in the second sector, you can add the connection to the 
 
 Simply press the [b]Add[/b] button.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/add_gates_connection.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/add_gates_connection.gif[/img]
 
 The connection will be added to the list. You can see the connection in the list and still edit it.
 
@@ -196,7 +196,7 @@ The connection will be added to the list. You can see the connection in the list
 If you move the gate in the sector for the existing connection, you will see two "identical" gates on the map.
 One ([b]gold[/b]) is the gate from the connection, and the other ([b]green[/b]) is the gate in the new location.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/update_gates_connection.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/update_gates_connection.gif[/img]
 
 [size=3][u]Connection Editing Area Buttons[/u][/size]
 
@@ -215,13 +215,13 @@ Otherwise, it will reset the gate data fields to the values of the selected conn
 
 You can hover over the map objects to view additional information about them, such as their status, coordinates, and related connections. This feature helps in better understanding the relationships between different gates and sectors.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/map_objects_tooltips.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/map_objects_tooltips.gif[/img]
 
 [size=3][u]Galaxy Map[/u][/size]
 
 The Galaxy Map allows you to navigate through various sectors in the game. You can zoom in and out to view details about each sector and the gates within them. Using the map, you can select sectors to use in the gate connections.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/galaxy_map.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/galaxy_map.gif[/img]
 
 For zooming, there are two options available:
 [list]
@@ -239,7 +239,7 @@ You can hover over the clusters and sectors on the map to view additional inform
 [*] For clusters you can see a name, macro and coordinates.
 [*] For sectors you can see a name, owner, sunlight, economy, security, macro and coordinates. Additionally information about parent cluster is shown.
 [/list]
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/cluster_sector_tooltips.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/cluster_sector_tooltips.gif[/img]
 
 Available from [b]version 0.8.0[/b].
 
@@ -247,7 +247,7 @@ Available from [b]version 0.8.0[/b].
 
 You can toggle the visibility of DLCs and Mods on the map to focus on your current editing tasks. This feature allows you to clearly see the connections you are working on without distractions from additional content. Use the map options menu to show or hide these elements according to your needs.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/hide_show_extensions.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/hide_show_extensions.gif[/img]
 
 Available from [b]version 0.8.0[/b].
 
@@ -255,7 +255,7 @@ Available from [b]version 0.8.0[/b].
 
 You can toggle the visibility of empty cluster cells on the map. This feature allows you to see the empty cells where a new cluster can be placed. Use the map options menu to show or hide these elements according to your needs. Additionally, you will have the possibility to see the coordinates of such cells on the appropriate tooltip.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/empty_cluster_cells.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/empty_cluster_cells.gif[/img]
 
 [size=3][u][i]Save the Mod[/i][/u][/size]
 
@@ -265,7 +265,7 @@ Please note that if you have not finished editing the connections, this menu ite
 
 After selecting the [b]Save[/b] menu item, the tool will ask you to select the output folder for the mod.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/saving_the_mod.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/saving_the_mod.gif[/img]
 
 After that, the mod is ready to be installed in the game.
 
@@ -275,7 +275,7 @@ If you have a previously saved mod, you can load it via the [b]Mod[/b] -> [b]Loa
 The difference from saving the mod is that you have to select the [b]content.xml[/b] file in the mod root folder in contrast to selecting the output folder.
 This was made to avoid selecting the wrong folder.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/loading_the_mod.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/loading_the_mod.gif[/img]
 
 After loading the mod, you will see the connections in the list and the gates on the map for the first connection. This visibility confirms the successful loading of the mod and aids in verifying the gate configurations.
 
@@ -283,17 +283,17 @@ After loading the mod, you will see the connections in the list and the gates on
 
 There is a short overview of the mod in the tool to see the gate locations.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/mod_gates_overview.gif[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/mod_gates_overview.gif[/img]
 
 Here are several screenshots from the game with the mod gates in the [b]Asteroid Belt[/b] sector.
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-new-three-gates.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-new-three-gates.png[/img]
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-to-ArgonPrime.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-to-ArgonPrime.png[/img]
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-to-BarrenShores.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-to-BarrenShores.png[/img]
 
-[img]https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-to-AtreusClouds.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/X4-AsteroidBelt-to-AtreusClouds.png[/img]
 
 [size=3][u][b]Credits[/b][/u][/size]
 [list]
@@ -317,6 +317,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][0.9.6] - 2025-03-14[/i][/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Creating a gate in Sectors defined only by diff files (specifics of some Mods)
+[/list]
+[/list]
 [size=3][u][i][0.9.5] - 2025-03-05[/i][/u][/size]
 [list]
 [*] Fixed
