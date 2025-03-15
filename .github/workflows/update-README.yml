@@ -23,11 +23,10 @@ jobs:
 
       - name: Get all README markdown files
         id: changed-readme-markdown-files
-        uses: tj-actions/changed-files@v45
+        uses: chemodun/changed-files@0.1.0
         with:
           # Avoid using single or double quotes for multiline patterns
-          files: |
-            src/**/README.md
+          files: src\/.*\/README\.md
 
       - name: Install python3
         if: steps.changed-readme-markdown-files.outputs.any_changed == 'true'
