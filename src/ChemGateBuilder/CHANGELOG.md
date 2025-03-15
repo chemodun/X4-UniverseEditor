@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.7](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.6...ChemGateBuilder@v0.9.7) (2025-03-15)
+
+
+### Documentation
+
+* **README:** correct formatting in the 0.9.6 release notes ([986f495](https://github.com/chemodun/X4-UniverseEditor/commit/986f49556f0a25cbcdbf9344ba136f17aafbfc5e))
+
 ## [0.9.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.5...ChemGateBuilder@v0.9.6) (2025-03-14)
 
 
