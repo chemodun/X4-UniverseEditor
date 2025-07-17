@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -393,6 +394,16 @@ namespace X4Map
               InterConnections.Add(galaxyMapHighway);
             }
           }
+        }
+      }
+      List<Cluster> unprocessedClusters = GalaxyMapCell.GetUnprocessedClusters(MapCells);
+      if (unprocessedClusters.Count > 0)
+      {
+        Log.Warn($"There are {unprocessedClusters.Count} unprocessed clusters in the map.");
+        foreach (Cluster cluster in unprocessedClusters)
+        {
+          // Process each unprocessed cluster
+          Log.Warn($"Unprocessed cluster: {cluster.Name} at position {cluster.Position}");
         }
       }
       if (SectorsItems.Count > 0)
@@ -819,14 +830,26 @@ namespace X4Map
     public int Row { get; set; } = row;
   }
 
-  class GalaxyMapCell(Cluster cluster, int col, int row)
+  class GalaxyMapCell(Cluster cluster, int col, int row, bool isProcessed = false)
   {
     public MapPosition Position { get; set; } = new(col, row);
     public Cluster Cluster { get; set; } = cluster;
+    public bool IsProcessed { get; set; } = isProcessed;
 
     public static Cluster? GetCluster(List<GalaxyMapCell> cells, MapPosition position)
     {
-      return cells.Find(cell => cell.Position.Column == position.Column && cell.Position.Row == position.Row)?.Cluster;
+      GalaxyMapCell? foundCell = cells.Find(cell => cell.Position.Column == position.Column && cell.Position.Row == position.Row);
+      if (foundCell != null)
+      {
+        foundCell.IsProcessed = true;
+        return foundCell.Cluster;
+      }
+      return null;
+    }
+
+    public static List<Cluster> GetUnprocessedClusters(List<GalaxyMapCell> cells)
+    {
+      return cells.Where(cell => !cell.IsProcessed).Select(cell => cell.Cluster).ToList();
     }
   }
 
