@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.5.0...SharedWindows@v0.6.0) (2025-07-18)
+
+
+### Features
+
+* **X4DataExtraction:** add options to extract all DLCs and Mods with binding updates ([7ae4260](https://github.com/chemodun/X4-UniverseEditor/commit/7ae4260fb747de6b2157a53b8e8b5d99b256b23c))
+
+
+### Code Refactoring
+
+* **X4DataExtraction:** changed structure of checkboxes ([7ae4260](https://github.com/chemodun/X4-UniverseEditor/commit/7ae4260fb747de6b2157a53b8e8b5d99b256b23c))
+
 ## [0.5.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.4.1...SharedWindows@v0.5.0) (2025-02-26)
 
 
