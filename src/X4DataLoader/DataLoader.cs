@@ -447,8 +447,29 @@ namespace X4DataLoader
               {
                 try
                 {
-                  byte[] fileData = ContentExtractor.GetEntryData(catEntries.First(e => e.FilePath == file));
-                  string fileContent = System.Text.Encoding.UTF8.GetString(fileData);
+                  CatEntry entry = catEntries.Last(e => e.FilePath == file);
+                  byte[] fileData = ContentExtractor.GetEntryData(entry);
+                  string extractedFileHash = ContentExtractor.CalculateMD5Hash(fileData);
+                  if (fileData.Length == 0)
+                  {
+                    Log.Warn($"File {file} is empty in catalog.");
+                    continue;
+                  }
+                  else if (extractedFileHash != entry.FileHash)
+                  {
+                    Log.Warn($"Warning: Hash mismatch for file {file}. Skipping extraction.");
+                    continue;
+                  }
+                  string fileContent = "";
+                  if (fileData.Length >= 3 && fileData[0] == 0xEF && fileData[1] == 0xBB && fileData[2] == 0xBF)
+                  {
+                    // Remove BOM if present
+                    fileContent = System.Text.Encoding.UTF8.GetString(fileData, 3, fileData.Length - 3);
+                  }
+                  else
+                  {
+                    fileContent = System.Text.Encoding.UTF8.GetString(fileData);
+                  }
                   XDocument xmlDocument = XDocument.Parse(fileContent);
                   gameFile = new(item.Id, coreFolderPath, file, extension, relatedExtensionId, false, xmlDocument.Root);
                 }
