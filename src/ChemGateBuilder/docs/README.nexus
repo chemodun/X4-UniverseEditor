@@ -93,6 +93,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#license]License[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#changelog]Changelog[/url]
 [list]
+[*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0101---2025-07-18]0.10.1\] - 2025-07-18[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0100---2025-07-18]0.10.0\] - 2025-07-18[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#097---2025-07-18]0.9.7\] - 2025-07-18[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#096---2025-03-14]0.9.6\] - 2025-03-14[/url]
@@ -433,6 +434,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][0.10.1] - 2025-07-18[/i][/u][/size]
+[list]
+[*] Improved
+[list]
+[*] Readme file will now be opened in embedded browser instead of system default browser
+[/list]
+[/list]
 [size=3][u][i][0.10.0] - 2025-07-18[/i][/u][/size]
 [list]
 [*] Added
