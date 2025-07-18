@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.4...X4DataLoader@v0.10.5) (2025-07-18)
+
+
+### Bug Fixes
+
+* **DataLoader:** enhance file extraction with hash validation and BOM handling ([dd13f5a](https://github.com/chemodun/X4-UniverseEditor/commit/dd13f5acd2f99eb4373d913dae0650e3f5f822fd))
+
 ## [0.10.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.3...X4DataLoader@v0.10.4) (2025-03-05)
 
 
