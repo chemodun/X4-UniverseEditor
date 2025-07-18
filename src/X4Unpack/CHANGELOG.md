@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.2...X4Unpack@v0.3.3) (2025-07-18)
+
+
+### Code Refactoring
+
+* **ContentExtractor:** remove BOM handling and improve logging during file extraction ([a253602](https://github.com/chemodun/X4-UniverseEditor/commit/a25360216cd6a6620c299837a178ecf1d281c378))
+
 ## [0.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.1...X4Unpack@v0.3.2) (2025-02-24)
 
 
