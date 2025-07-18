@@ -149,6 +149,10 @@ namespace X4Map
         // Binding for Source
         Binding sourceBinding = new(path: "ObjectImage") { Source = item };
         image.SetBinding(Image.SourceProperty, sourceBinding);
+
+        // Create TransformGroup to combine translation and rotation
+        TransformGroup transformGroup = new();
+
         // Create TranslateTransform
         TranslateTransform translateTransform = new();
 
@@ -160,8 +164,26 @@ namespace X4Map
         Binding translateYBinding = new(path: "Y") { Source = item };
         BindingOperations.SetBinding(translateTransform, TranslateTransform.YProperty, translateYBinding);
 
+        // Create RotateTransform
+        RotateTransform rotateTransform = new();
+
+        // Binding for RotateTransform.Angle
+        Binding angleBinding = new(path: "Angle") { Source = item };
+        BindingOperations.SetBinding(rotateTransform, RotateTransform.AngleProperty, angleBinding);
+
+        // Binding for RotateTransform.CenterX (half of item size)
+        Binding centerXBinding = new(path: "CenterX") { Source = item };
+        BindingOperations.SetBinding(rotateTransform, RotateTransform.CenterXProperty, centerXBinding);
+
+        // Binding for RotateTransform.CenterY (half of item size)
+        Binding centerYBinding = new(path: "CenterY") { Source = item };
+        BindingOperations.SetBinding(rotateTransform, RotateTransform.CenterYProperty, centerYBinding);
+
+        // Add transforms to the group
+        transformGroup.Children.Add(translateTransform);
+        transformGroup.Children.Add(rotateTransform);
         // Assign the transform to the Image
-        image.RenderTransform = translateTransform;
+        image.RenderTransform = transformGroup;
         // Binding for ToolTip
         Binding toolTipBinding = new(path: "ToolTip") { Source = item };
         image.SetBinding(Image.ToolTipProperty, toolTipBinding);
