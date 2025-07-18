@@ -307,10 +307,7 @@ namespace X4Map
       {
         SetInternalSize(newInternalSize);
       }
-      else
-      {
-        item.Update();
-      }
+      item.Update();
     }
 
     public void SelectItem(string? ItemId)
@@ -801,6 +798,7 @@ namespace X4Map
     public void UpdateRotation()
     {
       OnPropertyChanged(nameof(Angle));
+      UpdateToolTip();
     }
 
     public void UpdateInternalCoordinates(ObjectCoordinates coordinates)
@@ -848,6 +846,10 @@ namespace X4Map
         result = $"{_objectData?.Info ?? ""}\nOwner: {_objectData?.Attributes["StationOwner"] ?? ""}\n";
       }
       result += $"X: {_objectData?.X ?? 0, 4}, Y: {_objectData?.Y ?? 0, 4}, Z: {_objectData?.Z ?? 0, 4}";
+      if (Type == "gate")
+      {
+        result += $"\nPitch: {_objectData?.Angle ?? 0}°";
+      }
       result += $"\nSource: {From}";
       ToolTip = result;
     }
