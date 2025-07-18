@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.6.0...SharedWindows@v0.7.0) (2025-07-18)
+
+
+### Features
+
+* **HtmlViewer:** add HtmlViewerWindow and integrate WebView2 for HTML rendering ([61d00c5](https://github.com/chemodun/X4-UniverseEditor/commit/61d00c5bedccb75e3748cb68e8cb8760c4b6248b))
+
 ## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.5.0...SharedWindows@v0.6.0) (2025-07-18)
 
 
