@@ -137,17 +137,13 @@ namespace X4Unpack
 
       byte[] buffer = new byte[entry.FileSize];
       datFileStream.Read(buffer, 0, buffer.Length);
-      // Remove BOM if present
-      if (buffer.Length >= 3 && buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF)
-      {
-        buffer = buffer.Skip(3).ToArray();
-      }
       return buffer;
     }
 
     public virtual void ExtractEntry(CatEntry entry, string outputDirectory, bool overwrite = false, bool skipHashCheck = false)
     {
       string outputFilePath = Path.Combine(outputDirectory, entry.FilePath);
+      Log.Debug($"Extracting {entry.FilePath} from {entry.DatFilePath} to {outputDirectory}");
       if (File.Exists(outputFilePath) && !overwrite)
       {
         Log.Warn($"File {entry.FilePath} already exists in output directory. Skipping extraction.");
@@ -174,7 +170,7 @@ namespace X4Unpack
       File.SetLastWriteTime(outputFilePath, entry.FileDate);
     }
 
-    private static string CalculateMD5Hash(byte[] data)
+    public static string CalculateMD5Hash(byte[] data)
     {
       byte[] hashBytes = MD5.HashData(data);
       return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
