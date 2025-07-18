@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.3...X4Map@v0.6.0) (2025-07-18)
+
+
+### Features
+
+* **GalaxyMapSector:** add rotation functionality to image rendering with TransformGroup ([33dfe6d](https://github.com/chemodun/X4-UniverseEditor/commit/33dfe6d913a8540afb33b1864aac593df9f696dd))
+* **SectorMap, SectorObject:** add rotation functionality for sector map items ([0e0480b](https://github.com/chemodun/X4-UniverseEditor/commit/0e0480b9abd15b89794813e02f2c8eee4c8d0d4d))
+
+
+### Code Refactoring
+
+* **SectorMap:** enhance tooltip for gate objects with pitch information ([873bd49](https://github.com/chemodun/X4-UniverseEditor/commit/873bd49bce42366117183fd90a642a66c7b6b179))
+
 ## [0.5.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.2...X4Map@v0.5.3) (2025-07-18)
 
 
