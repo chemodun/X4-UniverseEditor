@@ -1,11 +1,19 @@
 {
   "src/X4DataLoader": "0.10.4",
+  "filler-one": "0.0.0",
   "src/X4DataTestConsole": "0.2.6",
+  "filler-two": "0.0.0",
   "src/ChemGateBuilder": "0.9.6",
+  "filler-three": "0.0.0",
   "src/Logger": "0.0.3",
+  "filler-four": "0.0.0",
   "src/X4Unpack": "0.3.2",
+  "filler-five": "0.0.0",
   "src/XMLPatch": "0.1.8",
+  "filler-six": "0.0.0",
   "src/X4Map": "0.5.2",
+  "filler-seven": "0.0.0",
   "src/GalaxyEditor": "0.2.1",
+  "filler-eight": "0.0.0",
   "src/SharedWindows": "0.5.0"
 }
