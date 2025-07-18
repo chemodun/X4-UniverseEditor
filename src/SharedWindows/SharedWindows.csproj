@@ -19,4 +19,8 @@
     <ProjectReference Include="..\X4Unpack\X4Unpack.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3351.48" />
+  </ItemGroup>
+
 </Project>
