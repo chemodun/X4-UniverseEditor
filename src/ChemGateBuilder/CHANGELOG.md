@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.7](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.6...ChemGateBuilder@v0.9.7) (2025-07-18)
+
+
+### Miscellaneous Chores
+
+* **README:** update changelog for version 0.9.7 with fixes and improvements ([1eb9a80](https://github.com/chemodun/X4-UniverseEditor/commit/1eb9a80df76841da5e16cfb2c92a6ac41cbda3a0))
+
+
+### Documentation
+
+* **README:** add note about sector visibility issues related to clusters and hexagonal grid alignment ([2e7328e](https://github.com/chemodun/X4-UniverseEditor/commit/2e7328e3c15cea9d55acb1c4a6b186caf393f43f))
+* **README:** correct formatting in the 0.9.6 release notes ([986f495](https://github.com/chemodun/X4-UniverseEditor/commit/986f49556f0a25cbcdbf9344ba136f17aafbfc5e))
+* **README:** Update README's files ([e750872](https://github.com/chemodun/X4-UniverseEditor/commit/e75087231345e5ad29db0c543db7849bd430ad80))
+
 ## [0.9.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.5...ChemGateBuilder@v0.9.6) (2025-03-14)
 
 
