@@ -33,6 +33,17 @@ namespace ChemGateBuilder
       }
     }
 
+    private ObjectRotation _newGateRotation = new();
+    public ObjectRotation NewGateRotation
+    {
+      get => _newGateRotation;
+      set
+      {
+        _newGateRotation = value;
+        OnPropertyChanged(nameof(NewGateRotation));
+      }
+    }
+
     public double MapColorsOpacity { get; set; } = 0.5;
 
     public SectorMapExpandedWindow(Window owner, string title, SectorMap sectorMap, double mapColorsOpacity)
@@ -53,6 +64,7 @@ namespace ChemGateBuilder
         NewGateCoordinates.X = newItem.ObjectData.X;
         NewGateCoordinates.Y = newItem.ObjectData.Y;
         NewGateCoordinates.Z = newItem.ObjectData.Z;
+        NewGateRotation.Pitch = newItem.ObjectData.Angle;
       }
     }
 
@@ -66,9 +78,19 @@ namespace ChemGateBuilder
       SectorMapExpanded.MouseLeftButtonDown(sender, e);
     }
 
+    private void SectorMapExpandedItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      SectorMapExpanded.MouseRightButtonDown(sender, e);
+    }
+
+    private void SectorMapExpandedItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      SectorMapExpanded.MouseRightButtonUp(sender, e);
+    }
+
     private void SectorMapExpandedItem_MouseMove(object sender, MouseEventArgs e)
     {
-      SectorMapExpanded.MouseMove(sender, e, NewGateCoordinates);
+      SectorMapExpanded.MouseMove(sender, e, NewGateCoordinates, NewGateRotation);
     }
 
     private void SectorMapExpandedItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

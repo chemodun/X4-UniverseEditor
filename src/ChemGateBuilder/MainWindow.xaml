@@ -616,16 +616,24 @@
                                                                        Source="{Binding ObjectImage}"
                                                                        Stretch="Uniform"
                                                                        PreviewMouseLeftButtonDown="SectorDirectMapItem_MouseLeftButtonDown"
+                                                                       PreviewMouseRightButtonDown="SectorDirectMapItem_MouseRightButtonDown"
                                                                        MouseMove="SectorDirectMapItem_MouseMove"
-                                                                       MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp">
+                                                                       MouseLeftButtonUp="SectorDirectMapItem_MouseLeftButtonUp"
+                                                                       MouseRightButtonUp="SectorDirectMapItem_MouseRightButtonUp">
                                                                     <!-- <Image.Source>
                                                                     <StaticResource ResourceKey="{Binding ObjectImage}"/>
                                                                 </Image.Source> -->
                                                                     <!-- Positioning the Image using RenderTransform -->
                                                                     <Image.RenderTransform>
-                                                                        <TranslateTransform X="{Binding X}"
-                                                                                            Y="{Binding Y}"/>
+                                                                        <TransformGroup>
+                                                                            <TranslateTransform X="{Binding X}"
+                                                                                                Y="{Binding Y}"/>
+                                                                            <RotateTransform Angle="{Binding Angle}"
+                                                                                            CenterX="{Binding CenterX}"
+                                                                                            CenterY="{Binding CenterY}"/>
+                                                                        </TransformGroup>
                                                                     </Image.RenderTransform>
+                                                                        <!-- CenterX="{Binding CenterX}" CenterY="{Binding CenterY}" -->
                                                                     <!-- Binding Tooltip -->
                                                                     <Image.ToolTip>
                                                                         <ToolTip Content="{Binding ToolTip}"/>
@@ -913,15 +921,20 @@
                                                                        Source="{Binding ObjectImage}"
                                                                        Stretch="Uniform"
                                                                        PreviewMouseLeftButtonDown="SectorOppositeMapItem_MouseLeftButtonDown"
+                                                                       PreviewMouseRightButtonDown="SectorOppositeMapItem_MouseRightButtonDown"
                                                                        MouseMove="SectorOppositeMapItem_MouseMove"
-                                                                       MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp">
+                                                                       MouseLeftButtonUp="SectorOppositeMapItem_MouseLeftButtonUp"
+                                                                       MouseRightButtonUp="SectorOppositeMapItem_MouseRightButtonUp">
                                                                     <!-- <Image.Source>
                                                                     <StaticResource ResourceKey="{Binding ObjectImage}"/>
                                                                 </Image.Source> -->
                                                                     <!-- Positioning the Image using RenderTransform -->
                                                                     <Image.RenderTransform>
-                                                                        <TranslateTransform X="{Binding X}"
-                                                                                            Y="{Binding Y}"/>
+                                                                        <TransformGroup>
+                                                                            <TranslateTransform X="{Binding X}"
+                                                                                                Y="{Binding Y}"/>
+                                                                            <RotateTransform Angle="{Binding Angle}" CenterX="{Binding CenterX}" CenterY="{Binding CenterY}"/>
+                                                                        </TransformGroup>
                                                                     </Image.RenderTransform>
                                                                     <!-- Binding Tooltip -->
                                                                     <Image.ToolTip>

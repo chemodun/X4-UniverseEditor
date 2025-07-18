@@ -85,24 +85,34 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label Content="New Gate Coordinates:"
+            <Label Content="New Gate:"
                    Grid.Column="0"/>
-            <Label Content="X, km:"
+            <Label Content="Coordinates:"
                    Grid.Column="1"/>
+            <Label Content="X, km:"
+                   Grid.Column="2"/>
             <TextBlock Text="{Binding NewGateCoordinates.X}"
                        Style="{StaticResource CoordinatesTextBlockStyle}"
-                       Grid.Column="2"/>
+                       Grid.Column="3"/>
             <Label Content="Y, km:"
-                   Grid.Column="3"/>
+                   Grid.Column="4"/>
             <TextBlock Text="{Binding NewGateCoordinates.Y}"
                        Style="{StaticResource CoordinatesTextBlockStyle}"
-                       Grid.Column="4"/>
+                       Grid.Column="5"/>
             <Label Content="Z, km:"
-                   Grid.Column="5"/>
+                   Grid.Column="6"/>
             <TextBlock Text="{Binding NewGateCoordinates.Z}"
                        Style="{StaticResource CoordinatesTextBlockStyle}"
-                       Grid.Column="6"/>
+                       Grid.Column="7"/>
+                <Label Content="Rotation:"
+                       Grid.Column="8"/>
+            <TextBlock Text="{Binding NewGateRotation.Pitch, StringFormat='Pitch: {0:0.00}°'}"
+                       Style="{StaticResource CoordinatesTextBlockStyle}"
+                       Grid.Column="9"/>
         </Grid>
         <Canvas x:Name="SectorMapExpandedCanvas"
                 Grid.Row="1"
@@ -136,11 +146,17 @@
                                Source="{Binding ObjectImage}"
                                Stretch="Uniform"
                                PreviewMouseLeftButtonDown="SectorMapExpandedItem_MouseLeftButtonDown"
+                               PreviewMouseRightButtonDown="SectorMapExpandedItem_MouseRightButtonDown"
                                MouseMove="SectorMapExpandedItem_MouseMove"
-                               MouseLeftButtonUp="SectorMapExpandedItem_MouseLeftButtonUp">
+                               MouseLeftButtonUp="SectorMapExpandedItem_MouseLeftButtonUp"
+                               PreviewMouseRightButtonUp="SectorMapExpandedItem_MouseRightButtonUp">
                             <Image.RenderTransform>
-                                <TranslateTransform X="{Binding X}"
-                                                    Y="{Binding Y}"/>
+                                <TransformGroup>
+                                        <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                                        <RotateTransform Angle="{Binding Angle}"
+                                                        CenterX="{Binding CenterX}"
+                                                        CenterY="{Binding CenterY}"/>
+                                </TransformGroup>
                             </Image.RenderTransform>
                             <Image.ToolTip>
                                 <ToolTip Content="{Binding ToolTip}"/>

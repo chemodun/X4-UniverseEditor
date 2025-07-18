@@ -343,6 +343,7 @@ namespace ChemGateBuilder
         X = gateCurrent.Coordinates.X,
         Y = gateCurrent.Coordinates.Y,
         Z = gateCurrent.Coordinates.Z,
+        Angle = gateCurrent.Rotation.Pitch,
         Type = "gate",
         From = "new",
         Id = SectorMap.NewGateId,

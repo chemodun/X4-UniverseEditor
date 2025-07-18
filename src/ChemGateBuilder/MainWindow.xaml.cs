@@ -1212,11 +1212,34 @@ namespace ChemGateBuilder
       }
     }
 
+    private void SectorDirectMapItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      if (GatesConnectionCurrent?.SectorDirectMap != null)
+      {
+        GatesConnectionCurrent.SectorDirectMap.MouseRightButtonDown(sender, e);
+        this.Cursor = Cursors.Hand;
+      }
+    }
+
+    private void SectorOppositeMapItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      if (GatesConnectionCurrent?.SectorOppositeMap != null)
+      {
+        GatesConnectionCurrent.SectorOppositeMap.MouseRightButtonDown(sender, e);
+        this.Cursor = Cursors.Hand;
+      }
+    }
+
     private void SectorDirectMapItem_MouseMove(object sender, MouseEventArgs e)
     {
       if (GatesConnectionCurrent?.SectorDirectMap != null)
       {
-        GatesConnectionCurrent.SectorDirectMap.MouseMove(sender, e, GatesConnectionCurrent.GateDirect.Coordinates);
+        GatesConnectionCurrent.SectorDirectMap.MouseMove(
+          sender,
+          e,
+          GatesConnectionCurrent.GateDirect.Coordinates,
+          GatesConnectionCurrent.GateDirect.Rotation
+        );
       }
     }
 
@@ -1224,7 +1247,12 @@ namespace ChemGateBuilder
     {
       if (GatesConnectionCurrent?.SectorOppositeMap != null)
       {
-        GatesConnectionCurrent.SectorOppositeMap.MouseMove(sender, e, GatesConnectionCurrent.GateOpposite.Coordinates);
+        GatesConnectionCurrent.SectorOppositeMap.MouseMove(
+          sender,
+          e,
+          GatesConnectionCurrent.GateOpposite.Coordinates,
+          GatesConnectionCurrent.GateOpposite.Rotation
+        );
       }
     }
 
@@ -1268,6 +1296,24 @@ namespace ChemGateBuilder
       }
     }
 
+    private void SectorDirectMapItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      this.Cursor = Cursors.Arrow;
+      if (GatesConnectionCurrent?.SectorDirectMap != null)
+      {
+        GatesConnectionCurrent.SectorDirectMap.MouseRightButtonUp(sender, e);
+      }
+    }
+
+    private void SectorOppositeMapItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      this.Cursor = Cursors.Arrow;
+      if (GatesConnectionCurrent?.SectorOppositeMap != null)
+      {
+        GatesConnectionCurrent.SectorOppositeMap.MouseRightButtonUp(sender, e);
+      }
+    }
+
     public void ButtonSectorDirectMapExpand_Click(object sender, RoutedEventArgs e)
     {
       ButtonSectorMapExpand_Click(sender, e, true);
@@ -1295,11 +1341,13 @@ namespace ChemGateBuilder
         {
           GatesConnectionCurrent.SectorDirectMap.InternalSizeKm = sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm;
           GatesConnectionCurrent.GateDirect.Coordinates.SetFrom(sectorMapExpandedWindow.NewGateCoordinates);
+          GatesConnectionCurrent.GateDirect.Rotation.Pitch = sectorMapExpandedWindow.NewGateRotation.Pitch;
         }
         else
         {
           GatesConnectionCurrent.SectorOppositeMap.InternalSizeKm = sectorMapExpandedWindow.SectorMapExpanded.InternalSizeKm;
           GatesConnectionCurrent.GateOpposite.Coordinates.SetFrom(sectorMapExpandedWindow.NewGateCoordinates);
+          GatesConnectionCurrent.GateOpposite.Rotation.Pitch = sectorMapExpandedWindow.NewGateRotation.Pitch;
         }
       }
     }
