@@ -78,6 +78,7 @@ jobs:
         if: ${{ steps.identify-changes.outputs.changed_videos != '0' }}
         run: |
           rm changed_videos.txt
+          git pull
           if [[ -n $(git status -uno --porcelain) ]]; then
             git commit -m 'docs(images): Update GIF files'
             git push
