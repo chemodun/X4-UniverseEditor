@@ -71,6 +71,7 @@ You can download the tool from the following locations:
     - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
   - [License](#license)
   - [Changelog](#changelog)
+    - [\[0.10.1\] - 2025-07-18](#0101---2025-07-18)
     - [\[0.10.0\] - 2025-07-18](#0100---2025-07-18)
     - [\[0.9.7\] - 2025-07-18](#097---2025-07-18)
     - [\[0.9.6\] - 2025-03-14](#096---2025-03-14)
@@ -408,6 +409,11 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.1] - 2025-07-18
+
+- Improved
+  - Readme file will now be opened in embedded browser instead of system default browser
 
 ### [0.10.0] - 2025-07-18
 

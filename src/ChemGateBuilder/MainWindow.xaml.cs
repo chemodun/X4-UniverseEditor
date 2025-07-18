@@ -1608,12 +1608,61 @@ namespace ChemGateBuilder
       string imagesPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "docs", "images");
       if (File.Exists(readmePath) && Directory.Exists(imagesPath))
       {
-        Process.Start(new ProcessStartInfo(readmePath) { UseShellExecute = true });
+        // Process.Start(new ProcessStartInfo(readmePath) { UseShellExecute = true });
+        try
+        {
+          var htmlViewer = new SharedWindows.HtmlViewerWindow(readmePath, _appIcon) { Owner = this };
+
+          // Subscribe to error events
+          htmlViewer.ErrorOccurred += HtmlViewer_ErrorOccurred;
+
+          htmlViewer.ShowDialog();
+        }
+        catch (System.Exception ex)
+        {
+          // Handle any exceptions that occur before the window is shown
+          HandleHtmlViewerError(ex, "Failed to open HTML viewer");
+        }
       }
       else
       {
         Log.Error("Documentation file not found.");
         StatusBar.SetStatusMessage("Error: Documentation file not found.", StatusMessageType.Error);
+      }
+    }
+
+    private void HtmlViewer_ErrorOccurred(object? sender, SharedWindows.HtmlViewerErrorEventArgs e)
+    {
+      // Handle the error from the HTML viewer
+      HandleHtmlViewerError(e.Exception, e.ErrorMessage);
+    }
+
+    private void HandleHtmlViewerError(Exception? exception, string errorMessage)
+    {
+      string fullMessage = exception != null ? $"{errorMessage}: {exception.Message}" : errorMessage;
+
+      Log.Error($"HTML Viewer Error: {fullMessage}");
+      StatusBar.SetStatusMessage($"HTML Viewer Error: {errorMessage}", StatusMessageType.Error);
+
+      TryOpenWithDefaultBrowser();
+    }
+
+    private void TryOpenWithDefaultBrowser()
+    {
+      try
+      {
+        string readmePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "README.html");
+        string imagesPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "docs", "images");
+        if (File.Exists(readmePath) && Directory.Exists(imagesPath))
+        {
+          Process.Start(new ProcessStartInfo(readmePath) { UseShellExecute = true });
+          StatusBar.SetStatusMessage("Documentation opened in default browser.", StatusMessageType.Info);
+        }
+      }
+      catch (System.Exception ex)
+      {
+        Log.Error($"Failed to open file with default browser: {ex.Message}");
+        StatusBar.SetStatusMessage("Failed to open documentation.", StatusMessageType.Error);
       }
     }
 
