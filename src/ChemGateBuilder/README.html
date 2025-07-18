@@ -364,9 +364,17 @@ alt="Define Direct sector" />
 <figcaption aria-hidden="true">Define Direct sector</figcaption>
 </figure>
 <h6 id="gate-rotation">Gate Rotation</h6>
-<p>The rotation of the gate can be defined using three angles: Pitch,
-Yaw, and Roll. Here is an explanation of each:</p>
+<p>The rotation of the gate can be defined using three angles: Yaw,
+Pitch and Roll.</p>
+<p><strong>Pitch is the most important one</strong>, as it defines the
+direction the gate is facing in the sector. Yaw and Roll are generally
+not needed for most cases, but can be used for specific scenarios.</p>
+<p>Here is an explanation of each:</p>
 <ul>
+<li><strong>Yaw</strong>: This is just the clockwise/counterclockwise
+rotation of the ring. A value of 90 would put the side pods of the ring
+at the top and bottom instead and so is also generally unnecessary and
+can be left at 0 in most cases.</li>
 <li><strong>Pitch</strong>: This is the left/right rotation of the ring
 and is the one to actually use if you want to face the ring in a certain
 direction on the map. A Pitch of 0 degrees has the ring facing North and
@@ -379,10 +387,6 @@ cluttered if it’s facing the wrong way. Also, you can’t enter more than
 negative value. And oddly, you can’t type in a negative sign (-) without
 a value already in the box. For example, -135 would face the gate
 South-West with the map line going North-East.</li>
-<li><strong>Yaw</strong>: This is just the clockwise/counterclockwise
-rotation of the ring. A value of 90 would put the side pods of the ring
-at the top and bottom instead and so is also generally unnecessary and
-can be left at 0 in most cases.</li>
 <li><strong>Roll</strong>: This is the forward/backward pitch of the
 gate and so is generally unneeded unless the gate is well above or below
 the plane of the sector. It can typically just be left at 0.</li>
