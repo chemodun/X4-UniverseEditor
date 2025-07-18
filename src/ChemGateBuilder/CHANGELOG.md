@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.10.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.7...ChemGateBuilder@v0.10.0) (2025-07-18)
+
+
+### Features
+
+* **SectorMap:** enhance gate functionality with displaying the gate rotation and right-press interactions to modify the rotation on the fly ([2a9cb02](https://github.com/chemodun/X4-UniverseEditor/commit/2a9cb02283309c29b442b4ad9223aacb00058a57))
+
+
+### Code Refactoring
+
+* **GalaxyConnectionData, MainWindow:** add pitch angle properties for gates and update UI bindings ([6745e2f](https://github.com/chemodun/X4-UniverseEditor/commit/6745e2f1bfdb0ca171e5187c49b9493e05aa5d31))
+
+
+### Documentation
+
+* **images:** Update GIF files ([0a7b5ec](https://github.com/chemodun/X4-UniverseEditor/commit/0a7b5eced73734255da1fa6860b8357175683726))
+* **README:** clarify gate rotation angles and emphasize importance of pitch ([e38ab72](https://github.com/chemodun/X4-UniverseEditor/commit/e38ab729ed4dd1974c00e4adb1b9e1e697b83377))
+* **README:** Enhance features section with gate rotation details and update table of contents with appropriate changelog update ([7a3c654](https://github.com/chemodun/X4-UniverseEditor/commit/7a3c6542f424c4bae75ebf1b1621043b0bb60649))
+* **README:** Update README's files ([339104e](https://github.com/chemodun/X4-UniverseEditor/commit/339104e1c27cfbe2f0c3e489159b7e2adabe3112))
+* **README:** Update README's files ([04bffab](https://github.com/chemodun/X4-UniverseEditor/commit/04bffabcefebfc8867081e3cbe8251ce84d2f86d))
+* **videos:** add rotation related videos ([460a5f7](https://github.com/chemodun/X4-UniverseEditor/commit/460a5f72169a413a0d14388294630b956d9ab03c))
+* **videos:** add rotation related videos ([e38ab72](https://github.com/chemodun/X4-UniverseEditor/commit/e38ab729ed4dd1974c00e4adb1b9e1e697b83377))
+* **videos:** remove gate rotation feature videos. temporary ([a8ef004](https://github.com/chemodun/X4-UniverseEditor/commit/a8ef00457212bdb8adaf502260a0e30b280d7faa))
+
 ## [0.9.7](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.6...ChemGateBuilder@v0.9.7) (2025-07-18)
 
 
