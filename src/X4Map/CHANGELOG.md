@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.2...X4Map@v0.5.3) (2025-07-18)
+
+
+### Code Refactoring
+
+* **GalaxyMapViewer:** add unprocessed cluster logging, which can happened if cluster has coordinates not aligned to the hexagonal map ([c43e8fa](https://github.com/chemodun/X4-UniverseEditor/commit/c43e8fa91741da10b411822630bcc732a3515872))
+
 ## [0.5.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.1...X4Map@v0.5.2) (2025-03-05)
 
 
