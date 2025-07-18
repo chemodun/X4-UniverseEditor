@@ -18,11 +18,13 @@ namespace ChemGateBuilder
     public int GateDirectX => (int)(_connection?.PathDirect?.Zone?.Position?.X / 1000 ?? 0);
     public int GateDirectY => (int)(_connection?.PathDirect?.Zone?.Position?.Y / 1000 ?? 0);
     public int GateDirectZ => (int)(_connection?.PathDirect?.Zone?.Position?.Z / 1000 ?? 0);
+    public int GateDirectAngle => (int)(DirectRotation?.Pitch ?? 0);
     public bool GateDirectActive => _connection?.PathDirect?.Gate?.IsActive ?? false;
     public string SectorOppositeName => _connection?.PathOpposite?.Sector?.Name ?? string.Empty;
     public int GateOppositeX => (int)(_connection?.PathOpposite?.Zone?.Position?.X / 1000 ?? 0);
     public int GateOppositeY => (int)(_connection?.PathOpposite?.Zone?.Position?.Y / 1000 ?? 0);
     public int GateOppositeZ => (int)(_connection?.PathOpposite?.Zone?.Position?.Z / 1000 ?? 0);
+    public int GateOppositeAngle => (int)(OppositeRotation?.Pitch ?? 0);
     public bool GateOppositeActive => _connection?.PathOpposite?.Gate?.IsActive ?? false;
 
     public GalaxyConnection Connection

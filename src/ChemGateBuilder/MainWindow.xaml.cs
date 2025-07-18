@@ -1112,6 +1112,7 @@ namespace ChemGateBuilder
             X = isDirect ? connection.GateDirectX : connection.GateOppositeX,
             Y = isDirect ? connection.GateDirectY : connection.GateOppositeY,
             Z = isDirect ? connection.GateDirectZ : connection.GateOppositeZ,
+            Angle = isDirect ? connection.GateDirectAngle : connection.GateOppositeAngle,
             Id = connection.Connection.Name,
             From = "mod",
             Type = "gate",
