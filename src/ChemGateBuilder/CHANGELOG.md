@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.0...ChemGateBuilder@v0.10.1) (2025-07-18)
+
+
+### Code Refactoring
+
+* **MainWindow:** integrate embedded HTML viewer for README display and enhance error handling ([8115880](https://github.com/chemodun/X4-UniverseEditor/commit/81158804d5b7bf1b483df8feb4505179bc9dd965))
+
+
+### Documentation
+
+* **README:** Update README's files ([b549039](https://github.com/chemodun/X4-UniverseEditor/commit/b549039055105bdf258790f25256ce10dbc1cede))
+
 ## [0.10.0](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.9.7...ChemGateBuilder@v0.10.0) (2025-07-18)
 
 
