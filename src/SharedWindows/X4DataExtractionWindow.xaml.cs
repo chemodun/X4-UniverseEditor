@@ -131,6 +131,41 @@ namespace SharedWindows
       }
     }
 
+    private bool _extractAllDlcs = true;
+    public bool ExtractAllDlcs
+    {
+      get => _extractAllDlcs;
+      set
+      {
+        if (_extractAllDlcs != value)
+        {
+          _extractAllDlcs = value;
+          OnPropertyChanged(nameof(ExtractAllDlcs));
+          foreach (var extension in DlcsOptions)
+          {
+            extension.IsChecked = _extractAllDlcs;
+          }
+        }
+      }
+    }
+    private bool _extractAllMods = true;
+    public bool ExtractAllMods
+    {
+      get => _extractAllMods;
+      set
+      {
+        if (_extractAllMods != value)
+        {
+          _extractAllMods = value;
+          OnPropertyChanged(nameof(ExtractAllMods));
+          foreach (var extension in ModsOptions)
+          {
+            extension.IsChecked = _extractAllMods;
+          }
+        }
+      }
+    }
+
     private bool _loadExtractedDataAfterExtraction = true;
     public bool LoadExtractedDataAfterExtraction
     {
@@ -553,7 +588,6 @@ namespace SharedWindows
             }
             return;
           }
-          Log.Debug($"Extracting {catEntry.FilePath}");
           progress += step;
           progressInt = (int)progress;
           _backgroundWorker.ReportProgress(progressInt, $"Extracting {entry.ExtractToFolder}/{catEntry.FilePath}");
@@ -751,11 +785,12 @@ namespace SharedWindows
     {
       if (IsNotPacked)
       {
+        Log.Debug($"Copying {catEntry.FilePath} from {_folderPath} to {extractToFolder}");
         string sourceFile = Path.Combine(_folderPath, catEntry.FilePath);
         string destFile = Path.Combine(extractToFolder, catEntry.FilePath);
         if (File.Exists(destFile) && !overwriteExistingFiles)
         {
-          Log.Debug($"File {catEntry.FilePath} already exists in {extractToFolder}");
+          Log.Warn($"File {catEntry.FilePath} already exists in {extractToFolder}");
           return;
         }
         try
