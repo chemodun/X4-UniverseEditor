@@ -8,6 +8,7 @@ This tool allows you to build gate connections for the game X4 Foundations. It h
 - Select sectors from a list or from the Galaxy map.
 - Create any number of connections, where a connection is a pair of gates in two sectors.
 - Easily arrange the location of gates in sectors by moving them on the map using the mouse.
+- Easily rotate the gates in sectors by using the mouse.
 - Direct mode - when you need only to select a game folder and start building connections. Nothing to extract.
 
 ## Disclaimer
@@ -21,6 +22,76 @@ You can download the tool from the following locations:
 
 - [Releases on GitHub](https://github.com/chemodun/X4-UniverseEditor/releases)
 - [Nexus](https://www.nexusmods.com/x4foundations/mods/1587/)
+
+## Table of Contents
+
+- [X4 Chem Gate Builder](#x4-chem-gate-builder)
+  - [Features](#features)
+  - [Disclaimer](#disclaimer)
+  - [Download](#download)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Direct Mode](#direct-mode)
+      - [Direct Mode First Start](#direct-mode-first-start)
+      - [Direct Mode First Mod Creation](#direct-mode-first-mod-creation)
+      - [Direct Mode Second and Other starts](#direct-mode-second-and-other-starts)
+      - [Direct Mode To Usual Mode and Vice Versa](#direct-mode-to-usual-mode-and-vice-versa)
+    - [First Start](#first-start)
+    - [With Extracted Game Files](#with-extracted-game-files)
+    - [Without Extracted Game Files](#without-extracted-game-files)
+      - [Loading the Mods with the Game Data and DLC's](#loading-the-mods-with-the-game-data-and-dlcs)
+        - [Data Loading Important Notice](#data-loading-important-notice)
+    - [Main Window](#main-window)
+      - [Connection Editing Area](#connection-editing-area)
+        - [Direct Sector Selection and Simple Map](#direct-sector-selection-and-simple-map)
+        - [Define Gate Location](#define-gate-location)
+          - [Gate Rotation](#gate-rotation)
+          - [Rotate gate by mouse](#rotate-gate-by-mouse)
+        - [Gate orientation on a Galaxy Map](#gate-orientation-on-a-galaxy-map)
+        - [Extended Sector Map](#extended-sector-map)
+        - [Sector "Real" Size Slider](#sector-real-size-slider)
+        - [Other Gate Data](#other-gate-data)
+      - [Opposite Sector Selection](#opposite-sector-selection)
+      - [Add Gates Connection](#add-gates-connection)
+      - [Modify Existing Connection](#modify-existing-connection)
+      - [Connection Editing Area Buttons](#connection-editing-area-buttons)
+        - [Reset Button](#reset-button)
+      - [Map Objects Tooltips](#map-objects-tooltips)
+      - [Galaxy Map](#galaxy-map)
+        - [Clusters and sectors tooltips](#clusters-and-sectors-tooltips)
+        - [Hiding and showing the DLC's and Mods on a map](#hiding-and-showing-the-dlcs-and-mods-on-a-map)
+        - [Showing an empty cluster cells](#showing-an-empty-cluster-cells)
+    - [Save the Mod](#save-the-mod)
+    - [Load the Mod](#load-the-mod)
+    - [Overview New Gates in the Tool and in the Game](#overview-new-gates-in-the-tool-and-in-the-game)
+  - [Credits](#credits)
+  - [Useful Links](#useful-links)
+    - [EGOSOFT Forum](#egosoft-forum)
+    - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
+  - [License](#license)
+  - [Changelog](#changelog)
+    - [\[0.10.0\] - 2025-07-18](#0100---2025-07-18)
+    - [\[0.9.7\] - 2025-07-18](#097---2025-07-18)
+    - [\[0.9.6\] - 2025-03-14](#096---2025-03-14)
+    - [\[0.9.5\] - 2025-03-05](#095---2025-03-05)
+    - [\[0.9.4\] - 2025-03-04](#094---2025-03-04)
+    - [\[0.9.3\] - 2025-02-28](#093---2025-02-28)
+    - [\[0.9.2\] - 2025-02-25](#092---2025-02-25)
+    - [\[0.9.0\] - 2025-02-24](#090---2025-02-24)
+    - [\[0.8.9\] - 2025-02-20](#089---2025-02-20)
+    - [\[0.8.8\] - 2025-02-17](#088---2025-02-17)
+    - [\[0.8.6\] - 2025-02-14](#086---2025-02-14)
+    - [\[0.8.5\] - 2025-02-14](#085---2025-02-14)
+    - [\[0.8.4\] - 2025-02-14](#084---2025-02-14)
+    - [\[0.8.3\] - 2025-02-14](#083---2025-02-14)
+    - [\[0.8.2\] - 2025-02-13](#082---2025-02-13)
+    - [\[0.8.1\] - 2025-02-13](#081---2025-02-13)
+    - [\[0.8.0\] - 2025-02-13](#080---2025-02-13)
+    - [\[0.7.0\] - 2025-02-11](#070---2025-02-11)
+    - [\[0.6.0\] - 2025-02-10](#060---2025-02-10)
+    - [\[0.5.2\] - 2025-02-08](#052---2025-02-08)
+    - [\[0.4.3\] - 2025-01-14](#043---2025-01-14)
 
 ## Installation
 
@@ -159,6 +230,21 @@ Here is an explanation of each:
 - **Yaw**: This is just the clockwise/counterclockwise rotation of the ring. A value of 90 would put the side pods of the ring at the top and bottom instead and so is also generally unnecessary and can be left at 0 in most cases.
 - **Pitch**: This is the left/right rotation of the ring and is the one to actually use if you want to face the ring in a certain direction on the map. A Pitch of 0 degrees has the ring facing North and the connection line on the map coming out of the south side of the ring. +45 degrees has the ring turn right to face North-East with the map line going to the South-West. While ship traffic doesn't care which way the map line is facing, it does make the map a bit wild and unnecessarily cluttered if it's facing the wrong way. Also, you can't enter more than 180 degrees in the box, so if you want to face west you must use a negative value. And oddly, you can't type in a negative sign (-) without a value already in the box. For example, -135 would face the gate South-West with the map line going North-East.
 - **Roll**: This is the forward/backward pitch of the gate and so is generally unneeded unless the gate is well above or below the plane of the sector. It can typically just be left at 0.
+
+###### Rotate gate by mouse
+
+You can rotate the gate by pressing and holding the right mouse button on the new gate icon on the map and moving the mouse around. Increasing the distance from the center of the gate will increase the rotation accuracy.
+![Rotate gate by mouse](docs/images/gate_rotation_features_on_edit.gif)
+
+Available from `version 0.10.0`.
+
+##### Gate orientation on a Galaxy Map
+
+Orientation of the gate on the Galaxy Map is displayed by the Pitch angle.
+
+![Gate orientation on Galaxy Map](docs/images/gate_rotation_features_on_map.gif)
+
+Available from `version 0.10.0`.
 
 ##### Extended Sector Map
 
@@ -322,6 +408,12 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.0] - 2025-07-18
+
+- Added
+  - Expose gate orientation on Sector and Galaxy Maps
+  - Gate rotation by mouse on the Sector map
 
 ### [0.9.7] - 2025-07-18
 
