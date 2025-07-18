@@ -115,7 +115,10 @@ namespace X4Map
     public ObservableCollection<SectorMapItem> Items { get; set; } = [];
 
     public bool IsDragging = false;
+    public bool IsRotating = false;
     public SectorMapItem? SelectedItem = null;
+    public Point InitialMousePosition;
+    public double InitialAngle = 0;
     public System.Windows.Point MouseOffset;
     public Canvas? MapCanvas;
     public Polygon? MapHexagon;
@@ -201,6 +204,11 @@ namespace X4Map
               if (zoneCoordinates == null)
                 continue;
               Position? gateCoordinates = gateConnection.Position;
+              ObjectRotation? gateRotation = new(0, 0, 0);
+              if (gateConnection.Quaternion != null)
+              {
+                gateRotation = ObjectRotation.FromQuaternion(gateConnection.Quaternion);
+              }
               if (gateCoordinates == null)
                 continue;
               ObjectInSector newObject = new()
@@ -210,6 +218,7 @@ namespace X4Map
                 X = (int)((zoneCoordinates.X + gateCoordinates.X) / 1000),
                 Y = (int)((zoneCoordinates.Y + gateCoordinates.Y) / 1000),
                 Z = (int)((zoneCoordinates.Z + gateCoordinates.Z) / 1000),
+                Angle = gateRotation?.Pitch ?? 0,
                 Type = "gate",
                 From = galaxy.Extensions.FirstOrDefault(e => e.Id == zone.Source)?.Name ?? "Vanilla",
                 Id = gateConnection.Name,
@@ -419,9 +428,87 @@ namespace X4Map
       }
     }
 
-    public void MouseMove(object sender, MouseEventArgs e, ObjectCoordinates coordinates)
+    public void MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
-      if (SelectedItem != null && IsDragging)
+      if (sender is Image image && image.DataContext is SectorMapItem item && this != null)
+      {
+        SelectedItem = item;
+        if (item.IsNew) // Only allow rotating for "new" gates
+        {
+          IsRotating = true;
+
+          // Get the initial mouse position relative to the canvas
+          if (MapCanvas != null)
+          {
+            InitialMousePosition = e.GetPosition(MapCanvas);
+            InitialAngle = item.Angle;
+          }
+
+          // Capture the mouse to receive MouseMove events
+          image.CaptureMouse();
+        }
+        Log.Debug(
+          $"[MouseRightButtonDown] Selected Item: {SelectedItem?.ObjectData?.Id}, IsRotating: {IsRotating}, InitialAngle: {InitialAngle}"
+        );
+      }
+    }
+
+    public void MouseMove(object sender, MouseEventArgs e, ObjectCoordinates coordinates, ObjectRotation rotation)
+    {
+      if (SelectedItem != null && IsRotating)
+      {
+        HandleRotation(sender, e, rotation);
+      }
+      else if (SelectedItem != null && IsDragging)
+      {
+        HandleDragging(sender, e, coordinates);
+      }
+    }
+
+    private void HandleRotation(object sender, MouseEventArgs e, ObjectRotation rotation)
+    {
+      if (sender is Image && MapCanvas != null && SelectedItem != null)
+      {
+        // Get current mouse position
+        Point currentMousePosition = e.GetPosition(MapCanvas);
+
+        // Calculate the center of the selected item
+        Point itemCenter = new(SelectedItem.CenterX, SelectedItem.CenterY);
+
+        // Calculate angles from item center to initial and current mouse positions
+        double initialAngleRad = Math.Atan2(InitialMousePosition.Y - itemCenter.Y, InitialMousePosition.X - itemCenter.X);
+
+        double currentAngleRad = Math.Atan2(currentMousePosition.Y - itemCenter.Y, currentMousePosition.X - itemCenter.X);
+
+        // Calculate the angle difference in degrees
+        double angleDifference = (currentAngleRad - initialAngleRad) * 180.0 / Math.PI;
+
+        // Calculate new angle
+        double newAngle = InitialAngle + angleDifference;
+
+        // Clamp angle between -180 and 180
+        while (newAngle > 180)
+          newAngle -= 360;
+        while (newAngle < -180)
+          newAngle += 360;
+
+        // Update the item's angle
+        if (SelectedItem.ObjectData != null)
+        {
+          SelectedItem.ObjectData.Angle = (int)Math.Round(newAngle);
+          SelectedItem.UpdateRotation();
+        }
+        if (rotation != null)
+        {
+          rotation.Pitch = (int)Math.Round(newAngle);
+        }
+        Log.Debug($"[HandleRotation] New Angle: {newAngle:F1}°");
+      }
+    }
+
+    private void HandleDragging(object sender, MouseEventArgs e, ObjectCoordinates coordinates)
+    {
+      if (sender is Image && MapCanvas != null && SelectedItem != null)
       {
         double halfSize = SelectedItem.ItemSizePx / 2;
         SectorMapItem selectedItem = SelectedItem;
@@ -453,6 +540,26 @@ namespace X4Map
           }
         }
       }
+    }
+
+    public ObjectInSector? MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      if (SelectedItem != null && IsRotating)
+      {
+        IsRotating = false;
+
+        if (sender is Image image && image.DataContext is SectorMapItem item && item != null)
+        {
+          image.ReleaseMouseCapture();
+          if (!item.IsNew)
+          {
+            return item.ObjectData;
+          }
+        }
+
+        SelectedItem = null;
+      }
+      return null;
     }
 
     public ObjectInSector? MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -601,6 +708,17 @@ namespace X4Map
     {
       get => Y + ItemSizePx / 2;
     }
+
+    public int Angle
+    {
+      get
+      {
+        if (_objectData == null)
+          return 0;
+        return (int)_objectData.Angle; // Assuming Angle is in degrees
+      }
+    }
+
     public Image? Image { get; private set; } = null;
     private Dictionary<string, string> Attributes
     {
@@ -637,6 +755,7 @@ namespace X4Map
     {
       UpdateSize();
       UpdatePosition();
+      UpdateRotation();
     }
 
     private void UpdateSize()
@@ -677,6 +796,11 @@ namespace X4Map
       OnPropertyChanged(nameof(X));
       OnPropertyChanged(nameof(Y));
       UpdateToolTip();
+    }
+
+    public void UpdateRotation()
+    {
+      OnPropertyChanged(nameof(Angle));
     }
 
     public void UpdateInternalCoordinates(ObjectCoordinates coordinates)
