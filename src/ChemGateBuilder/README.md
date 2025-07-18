@@ -232,6 +232,8 @@ Additionally, you can drag the map with the left mouse button when it is zoomed 
 
 When you click the left mouse button on a sector, it will be selected as the direct or opposite sector in the connection. If the selected sector is not available for the connection, like grayed-out sectors in the dropdown lists, the tool will do nothing.
 
+Note: If you cannot see the sector you need on a map, but is is available in the list - it is probably because the located in cluster which coordinates cannot be aligned to the hexagonal grid. It will be a possible problem in appropriate Mod or DLC.
+
 ##### Clusters and sectors tooltips
 
 You can hover over the clusters and sectors on the map to view additional information about them:
