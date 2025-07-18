@@ -317,10 +317,18 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
+### [0.9.7] - 2025-07-18
+
+- Fixed
+  - Fixed the issue with the extracting the files Egosoft catalogs with UTF-8 BOM
+- Improved
+  - Improved the extraction window by rearranging the controls and "all" options for the DLC's and Mods
+  - Improved logging for the Clusters which is not processing during the Map building, if their coordinates cannot be aligned to the hexagonal grid
+
 ### [0.9.6] - 2025-03-14
 
 - Fixed
-  - Creating a gate in Sectors defined only by diff files (specifics of some Mods) 
+  - Creating a gate in Sectors defined only by diff files (specifics of some Mods)
 
 ### [0.9.5] - 2025-03-05
 
