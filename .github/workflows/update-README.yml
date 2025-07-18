@@ -63,7 +63,7 @@ jobs:
             relative_path=$(dirname $readme)
             for conversion_type in egosoft nexus steam; do
               echo "Converting $readme to $conversion_type"
-              python3 markdown-to-bbcode-simple/markdown_to_bbcode.py -t $conversion_type -o "$relative_path/docs" "$readme"
+              python3 markdown-to-bbcode-simple/markdown_to_bbcode.py -t $conversion_type -o "docs" "$readme"
               if [[ $? -ne 0 ]]; then
                 echo "Error converting $readme to $conversion_type" >&2
               else
@@ -78,18 +78,31 @@ jobs:
             done
           done
           for readme in ${DELETED_FILES}; do
-            for conversion_type in egosoft nexus steam; do
-              file_to_delete="${readme%README.md}/docs/README.$conversion_type"
-              if [[ -f "$file_to_delete" ]]; then
-                echo "Deleting $file_to_delete"
-                git rm "$file_to_delete"
+            file_name=$(basename $readme)
+            relative_path=$(dirname $readme)
+            if [[ file_name == "README.md" ]]; then
+              for conversion_type in egosoft nexus steam; do
+                file_to_delete="${relative_path}/docs/README.$conversion_type"
+                if [[ -f "$file_to_delete" ]]; then
+                  echo "Deleting $file_to_delete"
+                  git rm "$file_to_delete"
+                  if [[ $? -ne 0 ]]; then
+                    echo "Error deleting $file_to_delete" >&2
+                  else
+                    echo "Deleted $file_to_delete"
+                  fi
+                fi
+              done
+              if [[ -f "$relative_path/docs/README.html" ]]; then
+                echo "Deleting $relative_path/docs/README.html"
+                git rm "$relative_path/docs/README.html"
                 if [[ $? -ne 0 ]]; then
-                  echo "Error deleting $file_to_delete" >&2
+                  echo "Error deleting $relative_path/docs/README.html" >&2
                 else
-                  echo "Deleted $file_to_delete"
+                  echo "Deleted $relative_path/docs/README.html"
                 fi
               fi
-            done
+            fi
           done
           rm -rf markdown-to-bbcode-simple
 
