@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.1...ChemGateBuilder@v0.10.2) (2025-07-19)
+
+
+### Code Refactoring
+
+* **MainWindow:** add Reload button to refresh game data and update README ([2972bd5](https://github.com/chemodun/X4-UniverseEditor/commit/2972bd5e80ac85910acf544115da81b89ae0ff25))
+
 ## [0.10.1](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.0...ChemGateBuilder@v0.10.1) (2025-07-18)
 
 
