@@ -42,6 +42,7 @@ You can download the tool from the following locations:
     - [Without Extracted Game Files](#without-extracted-game-files)
       - [Loading the Mods with the Game Data and DLC's](#loading-the-mods-with-the-game-data-and-dlcs)
         - [Data Loading Important Notice](#data-loading-important-notice)
+        - [Reloading the Game Data](#reloading-the-game-data)
     - [Main Window](#main-window)
       - [Connection Editing Area](#connection-editing-area)
         - [Direct Sector Selection and Simple Map](#direct-sector-selection-and-simple-map)
@@ -71,6 +72,7 @@ You can download the tool from the following locations:
     - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
   - [License](#license)
   - [Changelog](#changelog)
+    - [\[0.10.2\] - 2025-07-19](#0102---2025-07-19)
     - [\[0.10.1\] - 2025-07-18](#0101---2025-07-18)
     - [\[0.10.0\] - 2025-07-18](#0100---2025-07-18)
     - [\[0.9.7\] - 2025-07-18](#097---2025-07-18)
@@ -188,6 +190,12 @@ Updated in `version 0.8.1`.
 
 From `version 0.7.0` the tool requires the `content.xml` files for the DLC's and Mods in the extracted game data.
 The tool will extract them automatically for DLC's. If you have an extracted data by previous version of a tool (before `v0.7.0`)- please repeat the process.
+
+##### Reloading the Game Data
+
+If you need to reload the game data, especially if the Mod or DLC was updated (for example, if you are mod developer, and want to know how the galaxy map will look after your changes) - you can do it via the `X4 Data` -> `Reload` menu item.
+
+Available from `version 0.10.2`.
 
 ### Main Window
 
@@ -409,6 +417,11 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.2] - 2025-07-19
+
+- Added
+  - Reloading the game data via the `X4 Data` -> `Reload` menu item
 
 ### [0.10.1] - 2025-07-18
 

@@ -1588,6 +1588,11 @@ namespace ChemGateBuilder
       }
     }
 
+    public void ButtonReloadX4Data_Click(object sender, RoutedEventArgs e)
+    {
+      LoadX4DataInBackgroundStart();
+    }
+
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
     {
       Dictionary<string, string> informationalLinks = new()

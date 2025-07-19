@@ -261,6 +261,14 @@
                             <StaticResource ResourceKey="XIcon"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
+                    <fluent:Button Header="Reload"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonReloadX4Data_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="Rotate"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Configuration"
