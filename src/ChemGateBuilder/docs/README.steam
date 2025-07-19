@@ -48,6 +48,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#loading-the-mods-with-the-game-data-and-dlcs]Loading the Mods with the Game Data and DLC's[/url]
 [list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#data-loading-important-notice]Data Loading Important Notice[/url]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#reloading-the-game-data]Reloading the Game Data[/url]
 [/list]
 [/list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#main-window]Main Window[/url]
@@ -93,6 +94,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#license]License[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#changelog]Changelog[/url]
 [list]
+[*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0102---2025-07-19]0.10.2\] - 2025-07-19[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0101---2025-07-18]0.10.1\] - 2025-07-18[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0100---2025-07-18]0.10.0\] - 2025-07-18[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#097---2025-07-18]0.9.7\] - 2025-07-18[/url]
@@ -212,6 +214,12 @@ Updated in [b]version 0.8.1[/b].
 
 From [b]version 0.7.0[/b] the tool requires the [b]content.xml[/b] files for the DLC's and Mods in the extracted game data.
 The tool will extract them automatically for DLC's. If you have an extracted data by previous version of a tool (before [b]v0.7.0[/b])- please repeat the process.
+
+[h3][u]Reloading the Game Data[/u][/h3]
+
+If you need to reload the game data, especially if the Mod or DLC was updated (for example, if you are mod developer, and want to know how the galaxy map will look after your changes) - you can do it via the [b]X4 Data[/b] -> [b]Reload[/b] menu item.
+
+Available from [b]version 0.10.2[/b].
 
 [h2]Main Window[/h2]
 
@@ -434,6 +442,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [h2][b]Changelog[/b][/h2]
 
+[h2][0.10.2] - 2025-07-19[/h2]
+[list]
+[*] Added
+[list]
+[*] Reloading the game data via the [b]X4 Data[/b] -> [b]Reload[/b] menu item
+[/list]
+[/list]
 [h2][0.10.1] - 2025-07-18[/h2]
 [list]
 [*] Improved
