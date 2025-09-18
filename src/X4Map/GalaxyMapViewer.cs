@@ -363,7 +363,7 @@ namespace X4Map
         }
         catch (Exception ex)
         {
-          Debug.WriteLine($"Failed to copy element: {ex.Message}");
+          Log.Error($"Failed to copy element: {ex.Message}");
         }
       }
 
