@@ -1,13 +1,6 @@
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.SqlTypes;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using Utilities.Logging;
 using X4DataLoader;
 using X4Map;
@@ -116,6 +109,40 @@ namespace ChemGateBuilder
           }
         }
       }
+    }
+
+    private void ExportPngButton_Click(object sender, RoutedEventArgs e)
+    {
+      var dialog = new Microsoft.Win32.SaveFileDialog
+      {
+        Filter = "PNG Image|*.png",
+        Title = "Export Galaxy Map as PNG",
+        FileName = "GalaxyMap.png"
+      };
+      if (dialog.ShowDialog() != true)
+      {
+        return;
+      }
+
+
+      // await Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
+      BackgroundWorker worker = new BackgroundWorker();
+      worker.DoWork += (s, args) => GalaxyMapViewer.ExportToPng(GalaxyMapCanvas, dialog.FileName);
+      worker.RunWorkerCompleted += (s, args) =>
+      {
+        if (args.Error != null)
+        {
+          Log.Warn($"Error exporting PNG: {args.Error}");
+          MessageBox.Show($"Error exporting PNG: {args.Error.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        else
+        {
+          MessageBox.Show("Galaxy map exported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        MainBusyIndicator.IsBusy = false; // Hide busy indicator
+      };
+      MainBusyIndicator.IsBusy = true;  // Show busy indicator
+      worker.RunWorkerAsync();
     }
 
     private void ButtonOptionsVisibility_Click(object sender, RoutedEventArgs e)

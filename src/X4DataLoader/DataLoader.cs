@@ -361,6 +361,7 @@ namespace X4DataLoader
           foreach (string modId in modsOrder)
           {
             ExtensionInfo mod = mods[modId];
+            var previousTotalFiles = gameFiles.Count;
             List<GameFile> modFiles = GatherFiles(
               Path.Combine(extensionsFolder, mod.Folder),
               gameFilesStructure,
@@ -368,8 +369,13 @@ namespace X4DataLoader
               mod,
               gameFiles
             );
-            Log.Debug($"Loaded {modFiles.Count} files for mod {mod.Name}");
-            // gameFiles.AddRange(modFiles);
+            var filesLoaded = gameFiles.Count - previousTotalFiles;
+            Log.Debug($"Loaded {filesLoaded} files for mod '{mod.Name}'");
+            if (filesLoaded == 0)
+            {
+              Log.Info($"No files were loaded for mod '{mod.Name}' - this mod will be skipped.");
+              continue;
+            }
             galaxy.Mods.Add(mod);
           }
         }
@@ -557,13 +563,14 @@ namespace X4DataLoader
       List<GameFilesStructureItem> gameFilesStructure,
       List<ExtensionInfo> extensions,
       ExtensionInfo? extensionFor = null,
-      List<GameFile>? exitingGameFiles = null,
+      List<GameFile>? existingGameFiles = null,
       bool loadEnabledOnly = false
     )
     {
-      List<GameFile> result = exitingGameFiles ?? ([]);
+      List<GameFile> result = existingGameFiles ?? ([]);
+      int previousCount = result.Count;
       extensionFor ??= Vanilla;
-      Log.Debug($"Previously files gathered: {result.Count}.");
+      Log.Debug($"Previously gathered files: {previousCount}.");
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
       // Scan for vanilla files
       string relatedExtensionId = extensionFor == Vanilla ? "" : "vanilla";
@@ -669,7 +676,7 @@ namespace X4DataLoader
           }
         }
       }
-      Log.Debug($"Total files gathered up to this step: {result.Count}.");
+      Log.Debug($"Total files added: {result.Count - previousCount} - of {coreFolderPath}");
       return result;
     }
   }

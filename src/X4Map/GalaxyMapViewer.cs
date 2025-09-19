@@ -3,12 +3,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Security.RightsManagement;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Utilities.Logging;
 using X4DataLoader;
 using X4Map.Constants;
@@ -210,6 +213,8 @@ namespace X4Map
     public event EventHandler<ClusterEventArgs>? OnRightPressedCluster;
     public event EventHandler<CellEventArgs>? OnRightPressedCell;
 
+    public Canvas? ExportCanvas{ get; set; }
+
     public void Connect(
       Galaxy galaxy,
       Canvas galaxyCanvas,
@@ -317,6 +322,70 @@ namespace X4Map
 
       _canvasWidthBase = (MapInfo.ColumnMax - MapInfo.ColumnMin + 1) * 0.75 + 0.25;
       _canvasHeightBase = (MapInfo.RowMax - MapInfo.RowMin) * 0.5 + 1;
+    }
+
+    public async Task ExportToPng(Canvas sourceCanvas, string filePath)
+    {
+      if (sourceCanvas == null)
+        throw new ArgumentNullException(nameof(sourceCanvas));
+
+      Dispatcher.Invoke(sourceCanvas.UpdateLayout, DispatcherPriority.Render);
+
+      if (sourceCanvas.ActualWidth == 0 || sourceCanvas.ActualHeight == 0)
+        throw new InvalidOperationException("Canvas has zero width or height.");
+
+      // Create a new canvas and copy properties
+      // Need to run this on the UI thread and have it return back the resulting canvas
+
+      Dispatcher.Invoke(new Action(() =>
+      {
+        ExportCanvas = new Canvas
+        {
+          Width = sourceCanvas.ActualWidth,
+          Height = sourceCanvas.ActualHeight,
+          Background = Brushes.Transparent
+        };
+      }), DispatcherPriority.Normal);
+
+      if (ExportCanvas == null)
+        throw new InvalidOperationException("Failed to create export canvas.");
+
+      var elements = Dispatcher.Invoke(() => sourceCanvas.Children, DispatcherPriority.Background);
+      foreach (UIElement child in elements)
+      {
+        try
+        {
+          var xaml = System.Windows.Markup.XamlWriter.Save(child);
+          var deepCopy = System.Windows.Markup.XamlReader.Parse(xaml) as UIElement;
+          if (deepCopy == null)
+            continue;
+          ExportCanvas.Children.Add(deepCopy);
+        }
+        catch (Exception ex)
+        {
+          Log.Error($"Failed to copy element: {ex.Message}");
+        }
+      }
+
+      var WidthAndHeight = Dispatcher.Invoke(() =>
+      {
+        ExportCanvas.Measure(new Size(ExportCanvas.Width, ExportCanvas.Height));
+        ExportCanvas.Arrange(new Rect(0, 0, ExportCanvas.Width, ExportCanvas.Height));
+        ExportCanvas.UpdateLayout();
+        return (ExportCanvas.Width, ExportCanvas.Height);
+       }, DispatcherPriority.Background);
+
+
+      // Render to bitmap
+      var rtb = new System.Windows.Media.Imaging.RenderTargetBitmap(
+        (int) WidthAndHeight.Width, (int) WidthAndHeight.Height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+      rtb.Render(ExportCanvas);
+
+      // Encode as PNG
+      var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+      encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(rtb));
+      using var fs = System.IO.File.OpenWrite(filePath);
+      encoder.Save(fs);
     }
 
     private void CreateMap()
@@ -457,6 +526,7 @@ namespace X4Map
         }
       }
       SectorRadius = maxSectorRadius;
+
     }
 
     private void ScaleFactorUpdate()

@@ -41,6 +41,7 @@ namespace X4DataLoader
       "ego_dlc_boron",
       "ego_dlc_timelines",
       "ego_dlc_mini_01",
+      "ego_dlc_mini_02",
     ];
 
     public Galaxy()
