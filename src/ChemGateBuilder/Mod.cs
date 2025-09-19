@@ -138,19 +138,21 @@ namespace ChemGateBuilder
         ];
         DataLoader dataLoader = new();
         ExtensionInfo gateKeeper = new("") { Id = ModId, Name = ModName };
-        List<GameFile> processedFiles = dataLoader.GatherFiles(
+        List<GameFile> existingGameFiles = GameFile.CloneList(galaxy.GameFiles, true);
+        dataLoader.GatherFiles(
           currentPath,
           gameFilesStructure,
           galaxy.Extensions,
+          out int totallyPatchedFiles,
           gateKeeper,
-          GameFile.CloneList(galaxy.GameFiles, true)
+          existingGameFiles
         );
-        List<GameFile> modFiles = processedFiles.Where(f => f.Patched).ToList();
-        if (contentElement == null || modFiles.Count == 0)
+        if (contentElement == null || totallyPatchedFiles == 0)
         {
           MessageBox.Show("The selected folder does not contain a valid mod", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
           return false;
         }
+        List<GameFile> modFiles = [.. existingGameFiles.Where(f => f.Patched)];
         Id = contentElement.Attribute("id")?.Value ?? Id;
         Name = contentElement.Attribute("name")?.Value ?? Name;
         Version = int.Parse(contentElement.Attribute("version")?.Value ?? "0", System.Globalization.CultureInfo.InvariantCulture);

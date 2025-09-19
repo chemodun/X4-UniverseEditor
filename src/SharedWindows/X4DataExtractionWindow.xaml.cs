@@ -334,73 +334,47 @@ namespace SharedWindows
         Log.Debug("version.dat not found");
         return false;
       }
-      if (Directory.Exists(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
+      List<ExtensionInfo> allExtensions = ExtensionInfo.LoadInstalledSorted(GameFolder, !LoadMods);
+      if (allExtensions.Count == 0)
       {
-        foreach (string extensionFolder in Directory.GetDirectories(Path.Combine(GameFolder, DataLoader.ExtensionsFolder)))
+        Log.Debug("No extensions found");
+        return false;
+      }
+      else
+      {
+        foreach (var extension in allExtensions)
         {
-          if (File.Exists(Path.Combine(extensionFolder, DataLoader.ContentXml)))
+          Log.Debug($"Extension {extension.Folder}: {extension.Name} {(extension.IsDlc ? "(DLC)" : "(Mod)")}");
+          if (extension.IsDlc)
           {
-            try
-            {
-              XDocument contentXml = XDocument.Load(Path.Combine(extensionFolder, DataLoader.ContentXml));
-              XElement? contentElement = contentXml.Element("content");
-              if (contentElement == null)
+            DlcsOptions.Add(
+              new ExtensionOption
               {
-                Log.Warn($"No content element found in {Path.Combine(extensionFolder, DataLoader.ContentXml)}");
-                continue;
+                Name = extension.Name,
+                Id = extension.Id,
+                Folder = extension.Folder,
+                IsChecked = true,
               }
-              string extensionName = contentElement.Attribute("name")?.Value ?? "";
-              string extensionId = contentElement.Attribute("id")?.Value ?? "";
-              if (string.IsNullOrEmpty(extensionName) || string.IsNullOrEmpty(extensionId))
+            );
+          }
+          else if (LoadMods)
+          {
+            ModsOptions.Add(
+              new ExtensionOption
               {
-                Log.Warn($"No name or id attribute found in {Path.Combine(extensionFolder, DataLoader.ContentXml)}");
-                continue;
+                Name = extension.Name,
+                Id = extension.Id,
+                Folder = extension.Folder,
+                IsChecked = true,
               }
-              Log.Debug($"Extension {Path.GetFileName(extensionFolder)}: {extensionName}");
-              if (LoadMods || Galaxy.DLCOrder.Contains(extensionId))
-              {
-                ModsOptions.Add(
-                  new ExtensionOption
-                  {
-                    Name = extensionName,
-                    Id = extensionId,
-                    Folder = Path.GetFileName(extensionFolder),
-                    IsChecked = true,
-                  }
-                );
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Error($"Error reading {DataLoader.ContentXml} from {extensionFolder}", ex);
-            }
+            );
           }
         }
         if (ModsOptions.Count > 0)
         {
-          // Check for DLCs
-          foreach (string dlcId in Galaxy.DLCOrder)
-          {
-            if (ModsOptions.Any(extension => extension.Id == dlcId))
-            {
-              DlcsOptions.Add(ModsOptions.First(extension => extension.Id == dlcId));
-            }
-          }
-          foreach (var dlc in DlcsOptions)
-          {
-            ModsOptions.Remove(dlc);
-          }
-          if (ModsOptions.Count > 0)
-          {
-            IsModsOptionsVisible = Visibility.Visible;
-          }
+          IsModsOptionsVisible = Visibility.Visible;
         }
-        return true;
-      }
-      else
-      {
-        Log.Debug("No extensions folder found");
-        return false;
+        return DlcsOptions.Count > 0 || ModsOptions.Count > 0;
       }
     }
 

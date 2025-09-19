@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -604,7 +605,7 @@ namespace ChemGateBuilder
       GatesConnectionCurrent = new GatesConnectionData(GatesActiveByDefault, _gateMacroDefault);
       X4DataStructure.AddRange(
         [
-          new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
+          new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"], MatchingModes.Exact, false),
           new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
           new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
           new GameFilesStructureItem(id: "clusters", folder: $"maps/{X4UniverseId}", ["clusters.xml"], MatchingModes.Suffix),

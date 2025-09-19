@@ -41,8 +41,38 @@ namespace X4DataLoader
     {
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
       galaxy.Clear();
-      List<ExtensionInfo> dlcs = [];
-      List<GameFile> gameFiles = GatherFiles(coreFolderPath, gameFilesStructure, galaxy.DLCs, null, null, loadEnabledOnly);
+      List<ExtensionInfo> allExtensions = ExtensionInfo.LoadInstalledSorted(coreFolderPath, !loadMods);
+      List<GameFile> gameFiles = CollectFiles(coreFolderPath, gameFilesStructure, out int processedFiles, Vanilla, "", null);
+      foreach (ExtensionInfo extension in allExtensions)
+      {
+        if (loadEnabledOnly && !extension.Enabled)
+          continue;
+        if (excludedMods != null && excludedMods.Contains(extension.Id))
+          continue;
+        List<GameFile> extensionFiles = GatherFiles(
+          Path.Combine(coreFolderPath, ExtensionsFolder, extension.Folder),
+          gameFilesStructure,
+          galaxy.Extensions,
+          out processedFiles,
+          extension,
+          gameFiles,
+          loadEnabledOnly
+        );
+        if (processedFiles == 0)
+        {
+          Log.Info($"No files were loaded for extension '{extension.Name}' - this extension will be skipped.");
+          continue;
+        }
+        gameFiles.AddRange(extensionFiles);
+        if (extension.IsDlc)
+        {
+          galaxy.DLCs.Add(extension);
+        }
+        else
+        {
+          galaxy.Mods.Add(extension);
+        }
+      }
       if (File.Exists(Path.Combine(coreFolderPath, VersionDat)))
       {
         string versionStr = File.ReadAllText(Path.Combine(coreFolderPath, VersionDat)).Trim();
@@ -77,10 +107,10 @@ namespace X4DataLoader
           galaxy.Version = version;
         }
       }
-      if (loadMods)
-      {
-        LoadMods(galaxy, coreFolderPath, gameFilesStructure, gameFiles, loadEnabledOnly, excludedMods);
-      }
+      // if (loadMods)
+      // {
+      //   LoadMods(galaxy, coreFolderPath, gameFilesStructure, gameFiles, loadEnabledOnly, excludedMods);
+      // }
       List<string> sources = GameFile.GetExtensions(gameFiles);
       foreach (ProcessingOrderItem orderItem in processingOrder)
       {
@@ -366,6 +396,7 @@ namespace X4DataLoader
               Path.Combine(extensionsFolder, mod.Folder),
               gameFilesStructure,
               galaxy.Extensions,
+              out int totallyPatchedFiles,
               mod,
               gameFiles
             );
@@ -385,11 +416,13 @@ namespace X4DataLoader
     private List<GameFile> CollectFiles(
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
+      out int filesPatchedCount,
       ExtensionInfo? extension = null,
       string relatedExtensionId = "",
       List<GameFile>? exitingGameFiles = null
     )
     {
+      filesPatchedCount = 0;
       extension ??= Vanilla;
       List<GameFile> result = [];
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
@@ -480,6 +513,8 @@ namespace X4DataLoader
                   if (patchedXML == null)
                   {
                     result.Add(gameFile);
+                    if (item.IsCountable)
+                      filesPatchedCount++;
                     Log.Error($"Failed to apply patch for file {gameFile.FileName} with extension {extension.Name}({extension.Id}).");
                   }
                   else
@@ -487,12 +522,16 @@ namespace X4DataLoader
                     existingGameFile.XML = patchedXML;
                     existingGameFile.Patched = true;
                     Log.Debug($"Patch applied for {gameFile.FileName} with extension {extension.Name}({extension.Id}).");
+                    if (item.IsCountable)
+                      filesPatchedCount++;
                   }
                 }
               }
               else
               {
                 result.Add(gameFile);
+                if (item.IsCountable)
+                  filesPatchedCount++;
               }
             }
             catch (ArgumentException e)
@@ -535,80 +574,51 @@ namespace X4DataLoader
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
       List<ExtensionInfo> extensions,
+      out int totallyProcessedFiles,
       ExtensionInfo? extensionFor = null,
       List<GameFile>? existingGameFiles = null,
       bool loadEnabledOnly = false
     )
     {
-      List<GameFile> result = existingGameFiles ?? ([]);
+      List<GameFile> result = [];
+      existingGameFiles ??= [];
       int previousCount = result.Count;
-      extensionFor ??= Vanilla;
       Log.Debug($"Previously gathered files: {previousCount}.");
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
-      // Scan for vanilla files
-      string relatedExtensionId = extensionFor == Vanilla ? "" : "vanilla";
-      List<GameFile> vanillaFiles = CollectFiles(coreFolderPath, gameFilesStructure, extensionFor, relatedExtensionId, result);
+      List<GameFile> vanillaFiles = CollectFiles(
+        coreFolderPath,
+        gameFilesStructure,
+        out totallyProcessedFiles,
+        extensionFor,
+        "vanilla",
+        existingGameFiles
+      );
       result.AddRange(vanillaFiles);
+      existingGameFiles.AddRange(vanillaFiles);
       Log.Debug($"Vanilla files identified.");
 
       // Scan for extension files
       string extensionsFolder = Path.Combine(coreFolderPath, ExtensionsFolder);
       Log.Debug($"Analyzing the folder structure of {extensionsFolder}, if it exists.");
 
-      if (extensionFor == Vanilla)
+      foreach (ExtensionInfo extension in extensions)
       {
-        foreach (string dlcId in Galaxy.DLCOrder)
+        List<GameFile> extensionFiles = [];
+        string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
+        extensionFiles = CollectFiles(
+          extensionFolder,
+          gameFilesStructure,
+          out int processedFiles,
+          extensionFor,
+          extension.Id,
+          existingGameFiles
+        );
+        totallyProcessedFiles += processedFiles;
+        if (extensionFiles.Count > 0)
         {
-          string dlcFolder = Path.Combine(extensionsFolder, dlcId);
-          if (Directory.Exists(dlcFolder))
-          {
-            ExtensionInfo? dlc;
-            string contentPath = Path.Combine(dlcFolder, ContentXml);
-            if (File.Exists(contentPath))
-            {
-              try
-              {
-                dlc = new(contentPath);
-              }
-              catch (ArgumentException e)
-              {
-                Log.Error($"Error loading DLC {contentPath}: {e.Message}");
-                continue;
-              }
-              if (string.IsNullOrEmpty(dlc.Id) && string.IsNullOrEmpty(dlc.Folder))
-              {
-                Log.Debug($"Skipping DLC {dlc.Name} because it has no ID or folder.");
-                continue;
-              }
-              if (loadEnabledOnly && !dlc.Enabled)
-              {
-                Log.Debug($"Skipping DLC {dlc.Name} because it is disabled.");
-                continue;
-              }
-              extensions.Add(dlc);
-              Log.Debug($"DLC identified: {dlc.Name}");
-              List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, dlc, relatedExtensionId, result);
-              if (dlcFiles.Count > 0)
-              {
-                result.AddRange(dlcFiles);
-                Log.Debug($"DLC files identified: {dlcFiles.Count} files found for {dlc.Name}.");
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        foreach (ExtensionInfo extension in extensions)
-        {
-          List<GameFile> extensionFiles = [];
-          string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
-          extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, extensionFor, extension.Id, result);
-          if (extensionFiles.Count > 0)
-          {
-            result.AddRange(extensionFiles);
-            Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extension.Name}.");
-          }
+          result.AddRange(extensionFiles);
+          existingGameFiles.AddRange(extensionFiles);
+          Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extension.Name}.");
         }
       }
       Log.Debug($"Total files added: {result.Count - previousCount} - of {coreFolderPath}");
@@ -630,6 +640,7 @@ namespace X4DataLoader
     public int GameVersion { get; set; }
     public int Version { get; set; }
     public bool Enabled { get; set; } = true;
+    public bool IsDlc { get; set; }
     public List<ModDependency> Dependencies { get; set; } = [];
 
     public ExtensionInfo(string path)
@@ -651,6 +662,7 @@ namespace X4DataLoader
         {
           Enabled = false;
         }
+        IsDlc = Id.StartsWith(DataLoader.DlcPrefix, StringComparison.OrdinalIgnoreCase);
         foreach (XElement dependencyElement in contentDoc.XPathSelectElements("/content/dependency"))
         {
           versionStr = dependencyElement.Attribute("version")?.Value;
@@ -676,6 +688,149 @@ namespace X4DataLoader
         Version = 0;
       }
     }
+
+    public static List<ExtensionInfo> LoadInstalledSorted(string gameRoot, bool dlcsOnly = true, bool loadEnabledOnly = false)
+    {
+      var result = new List<ExtensionInfo>();
+      if (string.IsNullOrWhiteSpace(gameRoot) || !Directory.Exists(gameRoot))
+        return result;
+
+      var extensionsRoot = Path.Combine(gameRoot, DataLoader.ExtensionsFolder);
+      if (!Directory.Exists(extensionsRoot))
+        return result;
+
+      var searchPattern = dlcsOnly ? $"{DataLoader.DlcPrefix}*" : "*";
+
+      var allDirs = Directory.EnumerateDirectories(extensionsRoot, searchPattern, SearchOption.TopDirectoryOnly).ToList();
+      if (allDirs.Count == 0)
+        return result;
+
+      var installed = new List<ExtensionInfo>();
+      foreach (var dir in allDirs)
+      {
+        var contentXml = Path.Combine(dir, DataLoader.ContentXml);
+        if (!File.Exists(contentXml))
+          continue;
+        try
+        {
+          var ext = new ExtensionInfo(contentXml);
+          if (string.IsNullOrEmpty(ext.Id) && string.IsNullOrEmpty(ext.Folder))
+            continue;
+          if (loadEnabledOnly && !ext.Enabled)
+            continue;
+          if (dlcsOnly && !ext.IsDlc)
+            continue;
+          installed.Add(ext);
+        }
+        catch
+        {
+          // ignore malformed content.xml
+        }
+      }
+
+      if (installed.Count == 0)
+        return result;
+
+      var idSet = new HashSet<string>(installed.Select(e => e.Id), StringComparer.OrdinalIgnoreCase);
+      var order = TopologicallySortExtensions(
+        installed,
+        e => e.Dependencies.Select(d => d.Id).Where(id => idSet.Contains(id)),
+        dlcFirst: !dlcsOnly
+      );
+
+      var byId = installed
+        .GroupBy(e => e.Id, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+      foreach (var id in order)
+      {
+        if (byId.TryGetValue(id, out var ext))
+          result.Add(ext);
+      }
+
+      return result;
+    }
+
+    private static List<string> TopologicallySortExtensions(
+      List<ExtensionInfo> nodes,
+      Func<ExtensionInfo, IEnumerable<string>> getDeps,
+      bool dlcFirst = false
+    )
+    {
+      var idComparer = StringComparer.OrdinalIgnoreCase;
+      var idSet = new HashSet<string>(nodes.Select(n => n.Id), idComparer);
+      var inDegree = new Dictionary<string, int>(idComparer);
+      var dependents = new Dictionary<string, List<string>>(idComparer);
+
+      foreach (var n in nodes)
+      {
+        inDegree[n.Id] = 0;
+      }
+
+      foreach (var n in nodes)
+      {
+        foreach (var depId in getDeps(n))
+        {
+          if (!idSet.Contains(depId))
+            continue;
+          if (!dependents.TryGetValue(depId, out var list))
+          {
+            list = new List<string>();
+            dependents[depId] = list;
+          }
+          list.Add(n.Id);
+          inDegree[n.Id] = inDegree.TryGetValue(n.Id, out var d) ? d + 1 : 1;
+        }
+      }
+
+      // Ready queues. If dlcFirst is set, we maintain two ready sets to pick DLCs before mods
+      var zeroDlc = new SortedSet<string>(idComparer);
+      var zeroMod = new SortedSet<string>(idComparer);
+      foreach (var kv in inDegree.Where(kv => kv.Value == 0))
+      {
+        var isDlc = nodes.First(n => string.Equals(n.Id, kv.Key, StringComparison.OrdinalIgnoreCase)).IsDlc;
+        (isDlc ? zeroDlc : zeroMod).Add(kv.Key);
+      }
+      var order = new List<string>(nodes.Count);
+      while ((zeroDlc.Count + zeroMod.Count) > 0)
+      {
+        string next;
+        if (dlcFirst && zeroDlc.Count > 0)
+        {
+          next = zeroDlc.Min!;
+          zeroDlc.Remove(next);
+        }
+        else
+        {
+          var set = zeroMod.Count > 0 ? zeroMod : zeroDlc; // if DLCs exhausted use mods (or vice versa)
+          next = set.Min!;
+          set.Remove(next);
+        }
+        order.Add(next);
+        if (dependents.TryGetValue(next, out var outs))
+        {
+          foreach (var v in outs.OrderBy(s => s, idComparer))
+          {
+            inDegree[v] = inDegree[v] - 1;
+            if (inDegree[v] == 0)
+            {
+              var isDlc = nodes.First(n => string.Equals(n.Id, v, StringComparison.OrdinalIgnoreCase)).IsDlc;
+              (isDlc ? zeroDlc : zeroMod).Add(v);
+            }
+          }
+        }
+      }
+
+      if (order.Count < nodes.Count)
+      {
+        foreach (var leftover in nodes.Select(n => n.Id).Except(order, idComparer).OrderBy(s => s, idComparer))
+        {
+          order.Add(leftover);
+        }
+      }
+
+      return order;
+    }
   }
 
   public enum MatchingModes
@@ -692,12 +847,19 @@ namespace X4DataLoader
     public string ProcedureId { get; set; } = procedureId;
   }
 
-  public class GameFilesStructureItem(string id, string folder, string[] possibleNames, MatchingModes matchingMode = MatchingModes.Exact)
+  public class GameFilesStructureItem(
+    string id,
+    string folder,
+    string[] possibleNames,
+    MatchingModes matchingMode = MatchingModes.Exact,
+    bool isCountable = true
+  )
   {
     public string Id { get; set; } = id;
     public string Folder { get; set; } = folder;
     public MatchingModes MatchingMode { get; set; } = matchingMode;
     public string[] PossibleNames { get; set; } = possibleNames;
+    public bool IsCountable { get; set; } = isCountable;
   }
 
   public class GameFile(
