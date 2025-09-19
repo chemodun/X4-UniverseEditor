@@ -387,35 +387,25 @@ namespace X4DataLoader
       List<GameFilesStructureItem> gameFilesStructure,
       ExtensionInfo? extension = null,
       string relatedExtensionId = "",
-      List<GameFile>? exitingGameFiles = null,
-      ContentExtractor? contentExtractor = null
+      List<GameFile>? exitingGameFiles = null
     )
     {
       extension ??= Vanilla;
       List<GameFile> result = [];
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
-      if (contentExtractor != null)
+      ContentExtractor contentExtractor = new(coreFolderPath);
+      if (contentExtractor.FileCount == 0)
       {
-        Log.Debug($"Reading files from catalog: {contentExtractor?.FileCount}");
+        return result;
       }
       foreach (GameFilesStructureItem item in gameFilesStructure)
       {
         string folderPath = Path.Combine(coreFolderPath, item.Folder);
-        if (contentExtractor != null)
+
+        if (!contentExtractor.FolderExists(item.Folder))
         {
-          if (!contentExtractor.FolderExists(item.Folder))
-          {
-            Log.Info($"Folder not found in catalog: {folderPath}");
-            continue;
-          }
-        }
-        else
-        {
-          if (!Directory.Exists(folderPath))
-          {
-            Log.Info($"Folder not found: {folderPath}");
-            continue;
-          }
+          Log.Info($"Folder not found in catalog: {folderPath}");
+          continue;
         }
         foreach (string fileItem in item.PossibleNames)
         {
@@ -429,65 +419,48 @@ namespace X4DataLoader
           };
           string[] files = [];
           List<CatEntry> catEntries = [];
-          if (contentExtractor != null)
-          {
-            string folderMask = string.Join("/", item.Folder, fileMask);
-            if (!string.IsNullOrEmpty(coreFolderPath))
-            {
-              folderMask = string.Join("/", coreFolderPath, folderMask);
-            }
-            catEntries = contentExtractor.GetFilesByMask(folderMask);
-            files = catEntries.Select(e => e.FilePath).ToArray();
-          }
-          else
-          {
-            files = Directory.GetFiles(folderPath, fileMask);
-          }
+
+          string folderMask = string.Join("/", item.Folder, fileMask);
+          catEntries = contentExtractor.GetFilesByMask(folderMask);
+          files = catEntries.Select(e => e.FilePath).ToArray();
           Log.Debug($"Found {files.Length} files for {item.Id} in {folderPath}");
           foreach (string file in files)
           {
             try
             {
               GameFile? gameFile;
-              if (contentExtractor != null)
+
+              try
               {
-                try
+                CatEntry entry = catEntries.Last(e => e.FilePath == file);
+                byte[] fileData = ContentExtractor.GetEntryData(entry);
+                if (fileData.Length == 0)
                 {
-                  CatEntry entry = catEntries.Last(e => e.FilePath == file);
-                  byte[] fileData = ContentExtractor.GetEntryData(entry);
-                  string extractedFileHash = ContentExtractor.CalculateMD5Hash(fileData);
-                  if (fileData.Length == 0)
-                  {
-                    Log.Warn($"File {file} is empty in catalog.");
-                    continue;
-                  }
-                  else if (extractedFileHash != entry.FileHash)
-                  {
-                    Log.Warn($"Warning: Hash mismatch for file {file}. Skipping extraction.");
-                    continue;
-                  }
-                  string fileContent = "";
-                  if (fileData.Length >= 3 && fileData[0] == 0xEF && fileData[1] == 0xBB && fileData[2] == 0xBF)
-                  {
-                    // Remove BOM if present
-                    fileContent = System.Text.Encoding.UTF8.GetString(fileData, 3, fileData.Length - 3);
-                  }
-                  else
-                  {
-                    fileContent = System.Text.Encoding.UTF8.GetString(fileData);
-                  }
-                  XDocument xmlDocument = XDocument.Parse(fileContent);
-                  gameFile = new(item.Id, coreFolderPath, file, extension, relatedExtensionId, false, xmlDocument.Root);
-                }
-                catch (Exception e)
-                {
-                  Log.Warn($"Error loading {file} from catalog: {e.Message}");
+                  Log.Warn($"File {file} is empty in catalog.");
                   continue;
                 }
+                else if (!contentExtractor.IsHashValid(entry, fileData))
+                {
+                  Log.Warn($"Warning: Hash mismatch for file {file}. Skipping extraction.");
+                  continue;
+                }
+                string fileContent = "";
+                if (fileData.Length >= 3 && fileData[0] == 0xEF && fileData[1] == 0xBB && fileData[2] == 0xBF)
+                {
+                  // Remove BOM if present
+                  fileContent = System.Text.Encoding.UTF8.GetString(fileData, 3, fileData.Length - 3);
+                }
+                else
+                {
+                  fileContent = System.Text.Encoding.UTF8.GetString(fileData);
+                }
+                XDocument xmlDocument = XDocument.Parse(fileContent);
+                gameFile = new(item.Id, coreFolderPath, file, extension, relatedExtensionId, false, xmlDocument.Root);
               }
-              else
+              catch (Exception e)
               {
-                gameFile = new(item.Id, coreFolderPath, file, extension, relatedExtensionId);
+                Log.Warn($"Error loading {file} from catalog: {e.Message}");
+                continue;
               }
               Log.Debug($"File {file} loaded.");
               X4DataLoadingEvent?.Invoke(this, new X4DataLoadingEventArgs(gameFile.FileName));
@@ -574,19 +547,7 @@ namespace X4DataLoader
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
       // Scan for vanilla files
       string relatedExtensionId = extensionFor == Vanilla ? "" : "vanilla";
-      ContentExtractor? contentExtractor = new(coreFolderPath);
-      if (contentExtractor.FileCount == 0)
-      {
-        contentExtractor = null;
-      }
-      List<GameFile> vanillaFiles = CollectFiles(
-        contentExtractor == null ? coreFolderPath : "",
-        gameFilesStructure,
-        extensionFor,
-        relatedExtensionId,
-        result,
-        contentExtractor
-      );
+      List<GameFile> vanillaFiles = CollectFiles(coreFolderPath, gameFilesStructure, extensionFor, relatedExtensionId, result);
       result.AddRange(vanillaFiles);
       Log.Debug($"Vanilla files identified.");
 
@@ -626,19 +587,7 @@ namespace X4DataLoader
               }
               extensions.Add(dlc);
               Log.Debug($"DLC identified: {dlc.Name}");
-              contentExtractor = new(dlcFolder);
-              if (contentExtractor.FileCount == 0)
-              {
-                contentExtractor = null;
-              }
-              List<GameFile> dlcFiles = CollectFiles(
-                contentExtractor == null ? dlcFolder : "",
-                gameFilesStructure,
-                dlc,
-                relatedExtensionId,
-                result,
-                contentExtractor
-              );
+              List<GameFile> dlcFiles = CollectFiles(dlcFolder, gameFilesStructure, dlc, relatedExtensionId, result);
               if (dlcFiles.Count > 0)
               {
                 result.AddRange(dlcFiles);
@@ -653,22 +602,8 @@ namespace X4DataLoader
         foreach (ExtensionInfo extension in extensions)
         {
           List<GameFile> extensionFiles = [];
-          if (contentExtractor != null)
-          {
-            string extensionFolder = string.Join('/', "extensions", extension.Folder);
-            if (contentExtractor.FolderExists(extensionFolder))
-            {
-              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, extensionFor, extension.Id, result, contentExtractor);
-            }
-          }
-          else
-          {
-            string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
-            if (Directory.Exists(extensionFolder))
-            {
-              extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, extensionFor, extension.Id, result);
-            }
-          }
+          string extensionFolder = Path.Combine(extensionsFolder, extension.Folder);
+          extensionFiles = CollectFiles(extensionFolder, gameFilesStructure, extensionFor, extension.Id, result);
           if (extensionFiles.Count > 0)
           {
             result.AddRange(extensionFiles);

@@ -640,7 +640,7 @@ namespace SharedWindows
         sourceFolder = Path.Combine(GameFolder, DataLoader.ExtensionsFolder, folder);
         extractToFolder = Path.Combine(extractToFolder, DataLoader.ExtensionsFolder, folder);
       }
-      ContentCopier extractor = new(sourceFolder);
+      ContentExtractor extractor = new(sourceFolder);
       List<CatEntry> catEntries = [];
       if (ExtractOnlyNeededData)
       {
@@ -732,85 +732,15 @@ namespace SharedWindows
     }
   }
 
-  public class CatalogEntry(ContentCopier? extractor, List<CatEntry>? entries, string extractToFolder)
+  public class CatalogEntry(ContentExtractor? extractor, List<CatEntry>? entries, string extractToFolder)
   {
-    public ContentCopier? Extractor = extractor;
+    public ContentExtractor? Extractor = extractor;
     public List<CatEntry>? Entries = entries;
     public string ExtractToFolder = extractToFolder;
 
     public int Count
     {
       get => Entries != null ? Entries.Count : 0;
-    }
-  }
-
-  public class ContentCopier(string folderPath, string pattern = "*.cat", bool excludeSignatures = true)
-    : ContentExtractor(folderPath, pattern, excludeSignatures)
-  {
-    private bool IsNotPacked { get; set; } = false;
-
-    protected override void InitializeCatalog(string pattern = "*.cat", bool excludeSignatures = true)
-    {
-      List<string> catFiles = [.. Directory.GetFiles(_folderPath, pattern)];
-      if (excludeSignatures)
-      {
-        catFiles = catFiles.Where(f => !f.EndsWith("_sig.cat")).ToList();
-      }
-      if (catFiles.Count == 0 && Directory.GetDirectories(_folderPath).Length > 0)
-      {
-        IsNotPacked = true;
-        List<string> files = [.. Directory.GetFiles(_folderPath, "*.*", SearchOption.AllDirectories)];
-        foreach (string file in files)
-        {
-          string relativePath = Path.GetRelativePath(_folderPath, file);
-          FileInfo fileInfo = new(file);
-          _catalog[relativePath.Replace("\\", "/")] = new CatEntry
-          {
-            FilePath = relativePath,
-            FileSize = fileInfo.Length,
-            FileOffset = 0,
-            FileDate = fileInfo.LastWriteTime,
-            FileHash = "",
-            DatFilePath = "",
-          };
-        }
-      }
-      else
-      {
-        base.InitializeCatalog(pattern, excludeSignatures);
-      }
-    }
-
-    public override void ExtractEntry(CatEntry catEntry, string extractToFolder, bool overwriteExistingFiles, bool skipVerification)
-    {
-      if (IsNotPacked)
-      {
-        Log.Debug($"Copying {catEntry.FilePath} from {_folderPath} to {extractToFolder}");
-        string sourceFile = Path.Combine(_folderPath, catEntry.FilePath);
-        string destFile = Path.Combine(extractToFolder, catEntry.FilePath);
-        if (File.Exists(destFile) && !overwriteExistingFiles)
-        {
-          Log.Warn($"File {catEntry.FilePath} already exists in {extractToFolder}");
-          return;
-        }
-        try
-        {
-          var directoryName = Path.GetDirectoryName(destFile);
-          if (directoryName != null)
-          {
-            Directory.CreateDirectory(directoryName);
-          }
-          File.Copy(sourceFile, destFile, overwriteExistingFiles);
-        }
-        catch (Exception ex)
-        {
-          Log.Error($"Error copying {catEntry.FilePath} from {sourceFile} to {destFile}", ex);
-        }
-      }
-      else
-      {
-        base.ExtractEntry(catEntry, extractToFolder, overwriteExistingFiles, skipVerification);
-      }
     }
   }
 }
