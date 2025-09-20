@@ -168,7 +168,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
-            Background="#33000000"
+            Background="#20000000"
             Panel.ZIndex="100">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ProgressBar IsIndeterminate="True" Width="400" Height="20"/>

@@ -192,7 +192,8 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <DockPanel>
+    <Grid>
+        <DockPanel>
         <fluent:Ribbon DockPanel.Dock="Top"
                        x:Name="RibbonMain"
                        SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
@@ -1265,11 +1266,14 @@
                 </DockPanel>
             </GroupBox>
         </DockPanel>
-        <!-- Busy overlay covering content under the ribbon -->
+        </Grid>
+        </DockPanel>
+        <!-- Busy overlay covering the whole window (ribbon + content) -->
         <Grid x:Name="BusyOverlay"
               Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
-              Background="#33000000"
-              Panel.ZIndex="100">
+              Background="#20000000"
+              Panel.ZIndex="999"
+              IsHitTestVisible="True">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ProgressBar IsIndeterminate="True" Width="440" Height="20"/>
                 <TextBlock Text="{Binding BusyMessage}"
@@ -1281,6 +1285,5 @@
                            HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
-        </Grid>
-    </DockPanel>
+    </Grid>
 </Window>
