@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:x4map="clr-namespace:X4Map;assembly=X4Map"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:attributeConverters="clr-namespace:SharedWindows.Converters;assembly=SharedWindows"
         Title="Galaxy Map"
         Height="600"
         Width="800"
@@ -19,8 +19,8 @@
             <Setter Property="Height"
                     Value="16"/>
         </Style>
+        <attributeConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
-    <xctk:BusyIndicator x:Name="MainBusyIndicator" IsBusy="False" BusyContent="Exporting Map...">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -57,12 +57,16 @@
                     LargeChange="100"
                     ToolTip="Adjust Galaxy Map scale"/>
             <Button Grid.Column="2"
-                Margin="5,0,0,0"
-                Width="32"
-                Height="32"
-                Click="ExportPngButton_Click"
-                ToolTip="Export Galaxy Map as PNG">
-                <TextBlock Text="🖼" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    Margin="5,0,0,0"
+                    Width="32"
+                    Height="32"
+                    Click="ExportPngButton_Click"
+                    ToolTip="Export Galaxy Map as PNG">
+                <Button.Content>
+                    <fa:IconImage Icon="FileImage"
+                                  IconFont="Solid"
+                                  Style="{StaticResource FontAwesomeIconStyle}"/>
+                </Button.Content>
             </Button>
         </Grid>
         <x4map:GalaxyMapViewer x:Name="GalaxyMapViewer"
@@ -158,6 +162,18 @@
                 </ItemsControl>
             </GroupBox>
         </Grid>
+        <Grid x:Name="BusyOverlay"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+            Background="#80000000"
+            Panel.ZIndex="100">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="20"/>
+                <TextBlock Text="{Binding BusyMessage}" Foreground="White" FontSize="16" Margin="10" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
     </Grid>
-    </xctk:BusyIndicator>
 </Window>

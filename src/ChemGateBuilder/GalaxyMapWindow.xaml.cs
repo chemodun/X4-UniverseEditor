@@ -61,6 +61,18 @@ namespace ChemGateBuilder
       }
     }
 
+    private bool _isBusy = false;
+    public bool IsBusy
+    {
+      get => _isBusy;
+      set
+      {
+        _isBusy = value;
+        OnPropertyChanged(nameof(IsBusy));
+      }
+    }
+    public string BusyMessage { get; set; } = "Exporting Map...";
+
     public GalaxyMapWindow(
       MainWindow mainWindow,
       CollectionViewSource sectorsViewSource,
@@ -111,38 +123,43 @@ namespace ChemGateBuilder
       }
     }
 
-    private void ExportPngButton_Click(object sender, RoutedEventArgs e)
+    private async void ExportPngButton_Click(object sender, RoutedEventArgs e)
     {
       var dialog = new Microsoft.Win32.SaveFileDialog
       {
         Filter = "PNG Image|*.png",
         Title = "Export Galaxy Map as PNG",
-        FileName = "GalaxyMap.png"
+        FileName = "GalaxyMap.png",
       };
       if (dialog.ShowDialog() != true)
-      {
         return;
-      }
 
+      IsBusy = true;
+      BusyMessage = "Exporting Map...";
 
-      // await Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.Background);
-      BackgroundWorker worker = new BackgroundWorker();
-      worker.DoWork += (s, args) => GalaxyMapViewer.ExportToPng(GalaxyMapCanvas, dialog.FileName);
-      worker.RunWorkerCompleted += (s, args) =>
+      await Task.Delay(100); // Let UI render busy overlay
+
+      try
       {
-        if (args.Error != null)
+        await Task.Run(() =>
         {
-          Log.Warn($"Error exporting PNG: {args.Error}");
-          MessageBox.Show($"Error exporting PNG: {args.Error.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        else
-        {
-          MessageBox.Show("Galaxy map exported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-        MainBusyIndicator.IsBusy = false; // Hide busy indicator
-      };
-      MainBusyIndicator.IsBusy = true;  // Show busy indicator
-      worker.RunWorkerAsync();
+          Dispatcher.Invoke(() =>
+          {
+            GalaxyMapViewer.ExportToPng(GalaxyMapCanvas, dialog.FileName).GetAwaiter().GetResult();
+          });
+        });
+
+        MessageBox.Show("Galaxy map exported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+      }
+      catch (Exception ex)
+      {
+        Log.Warn($"Error exporting PNG: {ex}");
+        MessageBox.Show($"Error exporting PNG: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      }
+      finally
+      {
+        IsBusy = false;
+      }
     }
 
     private void ButtonOptionsVisibility_Click(object sender, RoutedEventArgs e)
