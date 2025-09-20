@@ -76,6 +76,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#map-objects-tooltips]Map Objects Tooltips[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#galaxy-map]Galaxy Map[/url]
 [list]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#exporting-the-map-to-the-image-file-png]Exporting the map to the image file (png)[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#clusters-and-sectors-tooltips]Clusters and sectors tooltips[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#hiding-and-showing-the-dlcs-and-mods-on-a-map]Hiding and showing the DLC's and Mods on a map[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#showing-an-empty-cluster-cells]Showing an empty cluster cells[/url]
@@ -94,6 +95,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#license]License[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#changelog]Changelog[/url]
 [list]
+[*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0103---2025-09-20]0.10.3\] - 2025-09-20[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0102---2025-07-19]0.10.2\] - 2025-07-19[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0101---2025-07-18]0.10.1\] - 2025-07-18[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0100---2025-07-18]0.10.0\] - 2025-07-18[/url]
@@ -357,6 +359,12 @@ When you click the left mouse button on a sector, it will be selected as the dir
 
 Note: If you cannot see the sector you need on a map, but is is available in the list - it is probably because the located in cluster which coordinates cannot be aligned to the hexagonal grid. It will be a possible problem in appropriate Mod or DLC.
 
+[size=115][u]Exporting the map to the image file (png)[/u][/size]
+
+You can export the current view of the Galaxy Map to a PNG image file. This feature allows you to save and share the map view with others or use it for reference in your projects. To export the map, simply click the "Export Galaxy Map as PNG" button located at the top right corner of the Galaxy Map interface. Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation.
+
+Available from [b]version 0.10.3[/b].
+
 [size=115][u]Clusters and sectors tooltips[/u][/size]
 
 You can hover over the clusters and sectors on the map to view additional information about them:
@@ -423,8 +431,9 @@ Here are several screenshots from the game with the mod gates in the [b]Asteroid
 [size=130][u]Credits[/u][/size]
 [list]
 [*] [url=https://www.egosoft.com]EGOSOFT[/url] - for the game itself (In fact - for the series of games)!
-[*] Members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]x4_modding discord channel[/url] - for the answers, support, ideas and inspiration!
+[*] Members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]x4_modding discord channel[/url] - for their answers, support, ideas, and inspiration!
 [*] [url=https://steamcommunity.com/profiles/76561198005610231]SiliconStew[/url] - for the documentation of the Gate Rotation specifics!
+[*] [url=https://steamcommunity.com/id/sleaker]Sleaker[/url] - for the idea and initial implementation of the map exporting feature and hiding the "unnecessary" Mod's.
 [/list]
 [size=130][u]Useful Links[/u][/size]
 
@@ -442,6 +451,26 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][0.10.3] - 2025-09-20[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Fixed the wrong gate connection on Galaxy map, if Gate zones names are doubled by some Mods
+[*] If game version is not presented in the built-in list - it will be added automatically
+[*] Game version updated in the Gate Keeper mod [b]content.xml[/b] file on save
+[*] Mods not influenced on a map data is not shown in Mods list of Map Viewer window (Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation)
+[*] Save As.. button availability
+[/list]
+[*] Improved
+[list]
+[*] Get rid of the hardcoded DLC's list, i.e. Envoy Pack is loaded normally
+[*] Main window blur on the Game Data loading
+[/list]
+[*] Added
+[list]
+[*] Exporting the map to the image file (png) in the Map Viewer window (Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation)
+[/list]
+[/list]
 [size=125][u][0.10.2] - 2025-07-19[/u][/size]
 [list]
 [*] Added
