@@ -595,6 +595,34 @@ namespace ChemGateBuilder
 
     private readonly BackgroundWorker _backgroundWorker;
 
+    private bool _isBusy = false;
+    public bool IsBusy
+    {
+      get => _isBusy;
+      set
+      {
+        if (_isBusy != value)
+        {
+          _isBusy = value;
+          OnPropertyChanged(nameof(IsBusy));
+        }
+      }
+    }
+
+    private string _busyMessage = "";
+    public string BusyMessage
+    {
+      get => _busyMessage;
+      set
+      {
+        if (_busyMessage != value)
+        {
+          _busyMessage = value;
+          OnPropertyChanged(nameof(BusyMessage));
+        }
+      }
+    }
+
     // Constructor
     public MainWindow()
     {
@@ -777,6 +805,8 @@ namespace ChemGateBuilder
 
     private void LoadX4DataInBackgroundStart()
     {
+      IsBusy = true;
+      BusyMessage = "Preparing to load X4 data...";
       AllSectors.Clear();
       Galaxy.Clear();
       _backgroundWorker.DoWork += LoadX4DataInBackground;
@@ -794,7 +824,9 @@ namespace ChemGateBuilder
     {
       if (e.UserState is string progressText)
       {
-        StatusBar.SetStatusMessage($"Processing file: {progressText} ...", StatusMessageType.Info, true);
+        string message = $"Processing file: {progressText} ...";
+        StatusBar.SetStatusMessage(message, StatusMessageType.Info, true);
+        BusyMessage = message;
       }
     }
 
@@ -803,6 +835,8 @@ namespace ChemGateBuilder
       if (e.Error != null)
       {
         StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
+        BusyMessage = "Error loading X4 data.";
+        IsBusy = false;
       }
       _backgroundWorker.Dispose();
       var sectors = Galaxy.GetSectors();
@@ -827,6 +861,8 @@ namespace ChemGateBuilder
       OnPropertyChanged(nameof(IsDataLoaded));
       GateConnectionReset();
       StatusBar.SetStatusMessage("X4 data loaded successfully!", StatusMessageType.Info);
+      BusyMessage = "X4 data loaded successfully!";
+      IsBusy = false;
       RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
       if (DirectMode)
       {
