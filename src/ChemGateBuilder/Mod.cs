@@ -20,7 +20,7 @@ namespace ChemGateBuilder
     public static readonly string ModDescription = "This extension adds new gate connections between sectors";
     public static readonly string ModAuthor = "Chem O`Dun";
     public string ModFolderPath { get; private set; } = "";
-    private bool SelectFolder = true;
+    private readonly bool SelectFolder = true;
     private string Id = ModId;
     private string Name = ModName;
     private string Description = ModDescription;
@@ -169,7 +169,7 @@ namespace ChemGateBuilder
         foreach (GameFilesStructureItem item in gameFilesStructure)
         {
           Log.Debug($"Processing {item.Id} files");
-          List<GameFile> files = modFiles.Where(f => f.Id == item.Id).ToList();
+          List<GameFile> files = [.. modFiles.Where(f => f.Id == item.Id)];
           if (files.Count == 0)
           {
             Log.Warn($"No {item.Id} files found");
@@ -309,7 +309,7 @@ namespace ChemGateBuilder
         Directory.CreateDirectory(currentPath);
       }
       ModFolderPath = currentPath;
-      Connections = GalaxyConnections.Select(gc => gc.Connection).Where(c => c != null).ToList();
+      Connections = [.. GalaxyConnections.Select(gc => gc.Connection).Where(c => c != null)];
       Date = DateTime.Now.ToString("yyyy-MM-dd");
       VersionInitial = _version;
       SaveModXMLs(galaxy);

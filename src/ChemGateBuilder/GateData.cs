@@ -520,7 +520,7 @@ namespace ChemGateBuilder
             {
               if (sector != null)
               {
-                List<string> sectorMacros = galaxy.GetOppositeSectorsFromConnections(sector).Select(s => s.Macro).ToList();
+                List<string> sectorMacros = [.. galaxy.GetOppositeSectorsFromConnections(sector).Select(s => s.Macro)];
                 if (isDirect)
                 {
                   SectorDirectExistingObjectsMacros = sectorMacros;

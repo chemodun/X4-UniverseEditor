@@ -735,7 +735,8 @@ namespace ChemGateBuilder
       }
     }
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+    // Cache and reuse options for config serialization
+    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
     private void SaveConfiguration()
     {
@@ -771,7 +772,7 @@ namespace ChemGateBuilder
       {
         config.Data.X4GameFolder = X4GameFolder;
       }
-      var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
+      var jsonString = JsonSerializer.Serialize(config, JsonOptions);
       File.WriteAllText(_configFileName, jsonString);
     }
 
@@ -1198,7 +1199,7 @@ namespace ChemGateBuilder
 
     private List<string> GetConnectionNamesFromMod()
     {
-      return ChemGateKeeperMod.GalaxyConnections.Select(c => c.Connection.Name).ToList();
+      return [.. ChemGateKeeperMod.GalaxyConnections.Select(c => c.Connection.Name)];
     }
 
     private void ButtonSectorDirectSelectFromMap_Click(object sender, RoutedEventArgs e)
@@ -1362,7 +1363,12 @@ namespace ChemGateBuilder
       ButtonSectorMapExpand_Click(sender, e, false);
     }
 
-    public void ButtonSectorMapExpand_Click(object _, RoutedEventArgs e, bool isDirect)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+      "Style",
+      "IDE0060:Remove unused parameter",
+      Justification = "Required by WPF event handler signature"
+    )]
+    public void ButtonSectorMapExpand_Click(object _, RoutedEventArgs _e, bool isDirect)
     {
       if (GatesConnectionCurrent != null)
       {
