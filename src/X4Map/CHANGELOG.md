@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.6.0...X4Map@v0.6.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* **GalaxyMapViewer:** improve gate connection logic, fixes Bug in Gate matching Logic, i.e. Fixes [#140](https://github.com/chemodun/X4-UniverseEditor/issues/140) ([0ac01e7](https://github.com/chemodun/X4-UniverseEditor/commit/0ac01e787778f5c064521bdc4ce84564b3e7d21a))
+
+
+### Code Refactoring
+
+* **GalaxyMapSector:** expose Items property for sector items ([0ac01e7](https://github.com/chemodun/X4-UniverseEditor/commit/0ac01e787778f5c064521bdc4ce84564b3e7d21a))
+* **GalaxyMapViewer:** simplify DLC processing logic ([e3cda97](https://github.com/chemodun/X4-UniverseEditor/commit/e3cda97157e359b1d16b14c5d5f321ccb7243e9c))
+* **GalaxyMapViewer:** simplify GetUnprocessedClusters logic ([c15a326](https://github.com/chemodun/X4-UniverseEditor/commit/c15a3269b42b43417ff090607ad4d96019c802f7))
+* **GalaxyMapViewer:** simplify PNG export logic ([d3af168](https://github.com/chemodun/X4-UniverseEditor/commit/d3af168474c0b8a3e5c3309ce785e4c773bbfb06))
+* **GalaxyMapViewer:** update layout handling during PNG export ([c9d1dbb](https://github.com/chemodun/X4-UniverseEditor/commit/c9d1dbb87ee12b4b46bbcdfac563f601f3b9c481))
+* **GalaxyMapWindow:** refactor busy overlay during export process ([d3af168](https://github.com/chemodun/X4-UniverseEditor/commit/d3af168474c0b8a3e5c3309ce785e4c773bbfb06))
+
 ## [0.6.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.5.3...X4Map@v0.6.0) (2025-07-18)
 
 
