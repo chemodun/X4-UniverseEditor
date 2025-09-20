@@ -899,25 +899,16 @@ namespace ChemGateBuilder
           return;
         }
       }
-      var dialog = new System.Windows.Forms.FolderBrowserDialog
+      var dialog = new Microsoft.Win32.OpenFolderDialog
       {
-        Description = "Please select the folder where the X4 extracted data files are located.",
-        ShowNewFolderButton = false,
+        Title = "Please select the folder where the X4 extracted data files are located.",
       };
-      if (AllSectors.Count > 0)
-      {
-        dialog.SelectedPath = !string.IsNullOrEmpty(X4DataFolder) && X4DataFolder != "." ? $"{X4DataFolder}\\" : ".";
-      }
-      else
-      {
-        dialog.SelectedPath = "";
-        dialog.RootFolder = Environment.SpecialFolder.MyComputer; // Set the root folder to MyComputer
-      }
-      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+      // Microsoft.Win32.OpenFolderDialog does not support RootFolder/SelectedPath in the same way.
+      bool? result = dialog.ShowDialog();
 
-      if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+      if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
       {
-        string selectedPath = dialog.SelectedPath;
+        string selectedPath = dialog.FolderName;
         if (ValidateX4DataFolder(selectedPath, out string errorMessage))
         {
           X4DataFolder = selectedPath;
@@ -939,7 +930,7 @@ namespace ChemGateBuilder
 
     private void SelectX4GameFolder_Click(object? sender, RoutedEventArgs? e)
     {
-      System.Windows.Forms.OpenFileDialog dialog = new()
+      var dialog = new Microsoft.Win32.OpenFileDialog
       {
         InitialDirectory = string.IsNullOrEmpty(X4GameFolder)
           ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
@@ -948,8 +939,8 @@ namespace ChemGateBuilder
         Title = "Select the X4: Foundations executable",
       };
 
-      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-      if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
+      bool? result = dialog.ShowDialog();
+      if (result != true || string.IsNullOrWhiteSpace(dialog.FileName))
       {
         Log.Warn("No game folder selected");
         return;

@@ -98,7 +98,7 @@ namespace ChemGateBuilder
       string currentPath = previousMod != null ? previousMod.ModFolderPath : ModFolderPath;
       if (SelectFolder)
       {
-        System.Windows.Forms.OpenFileDialog dialog = new()
+        var dialog = new Microsoft.Win32.OpenFileDialog
         {
           InitialDirectory = string.IsNullOrEmpty(currentPath)
             ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
@@ -106,8 +106,8 @@ namespace ChemGateBuilder
           Filter = "Mod Content File|content.xml",
           Title = "Select a File",
         };
-        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-        if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
+        bool? result = dialog.ShowDialog();
+        if (result != true || string.IsNullOrWhiteSpace(dialog.FileName))
         {
           return false;
         }
@@ -258,12 +258,12 @@ namespace ChemGateBuilder
       string currentPath = ModFolderPath;
       if (string.IsNullOrEmpty(currentPath) || newLocation)
       {
-        System.Windows.Forms.FolderBrowserDialog dialog = new();
-        System.Windows.Forms.DialogResult folderSelect = dialog.ShowDialog();
+        var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Select a folder for the Mod" };
+        bool? folderSelect = dialog.ShowDialog();
 
-        if (folderSelect == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+        if (folderSelect == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
         {
-          currentPath = Path.Combine(dialog.SelectedPath, Id);
+          currentPath = Path.Combine(dialog.FolderName, Id);
         }
         else
         {
