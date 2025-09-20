@@ -114,6 +114,7 @@ namespace ChemGateBuilder
           OnPropertyChanged(nameof(ExtractedVisibility));
           OnPropertyChanged(nameof(GameFolderVisibility));
           SaveConfiguration();
+          LoadX4DataInBackgroundStart();
         }
       }
     }
