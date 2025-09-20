@@ -77,13 +77,15 @@ namespace X4DataLoader
       GameFiles.Clear();
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+      "Style",
+      "IDE0060:Remove unused parameter",
+      Justification = "Required by WPF event handler signature"
+    )]
     public void LoadFromXML(GameFile file, Galaxy galaxy, string procedureId)
     {
-      XElement? galaxyElement = file.XML.XPathSelectElement("/macros/macro");
-      if (galaxyElement == null)
-      {
-        throw new ArgumentException("Galaxy XML does not contain a macro element");
-      }
+      XElement? galaxyElement =
+        file.XML.XPathSelectElement("/macros/macro") ?? throw new ArgumentException("Galaxy XML does not contain a macro element");
       Name = XmlHelper.GetAttribute(galaxyElement, "name") ?? "";
       Reference = XmlHelper.GetAttribute(galaxyElement, "ref") ?? "";
       string galaxyClass = XmlHelper.GetAttribute(galaxyElement, "class") ?? "";

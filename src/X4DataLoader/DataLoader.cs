@@ -55,8 +55,7 @@ namespace X4DataLoader
           galaxy.Extensions,
           out processedFiles,
           extension,
-          gameFiles,
-          loadEnabledOnly
+          gameFiles
         );
         if (processedFiles == 0)
         {
@@ -120,7 +119,7 @@ namespace X4DataLoader
           Log.Warn($"File definition not found: {orderItem.Id}");
           continue;
         }
-        List<GameFile> filesToProcess = gameFiles.Where(f => f.Id == fileDefinition.Id).ToList();
+        List<GameFile> filesToProcess = [.. gameFiles.Where(f => f.Id == fileDefinition.Id)];
         Log.Debug($"Processing {filesToProcess.Count} files for {fileDefinition.Id}");
         foreach (GameFile file in filesToProcess)
         {
@@ -455,7 +454,7 @@ namespace X4DataLoader
 
           string folderMask = string.Join("/", item.Folder, fileMask);
           catEntries = contentExtractor.GetFilesByMask(folderMask);
-          files = catEntries.Select(e => e.FilePath).ToArray();
+          files = [.. catEntries.Select(e => e.FilePath)];
           Log.Debug($"Found {files.Length} files for {item.Id} in {folderPath}");
           foreach (string file in files)
           {
@@ -576,8 +575,7 @@ namespace X4DataLoader
       List<ExtensionInfo> extensions,
       out int totallyProcessedFiles,
       ExtensionInfo? extensionFor = null,
-      List<GameFile>? existingGameFiles = null,
-      bool loadEnabledOnly = false
+      List<GameFile>? existingGameFiles = null
     )
     {
       List<GameFile> result = [];
@@ -775,7 +773,7 @@ namespace X4DataLoader
             continue;
           if (!dependents.TryGetValue(depId, out var list))
           {
-            list = new List<string>();
+            list = [];
             dependents[depId] = list;
           }
           list.Add(n.Id);
@@ -891,19 +889,28 @@ namespace X4DataLoader
 
     public static List<GameFile> CloneList(List<GameFile> files, bool resetPatched = false)
     {
-      return files
-        .Select(f => new GameFile(f.Id, f.PathRelative, f.FileName, f.Extension, f.RelatedExtensionId, !resetPatched && f.Patched, f.XML))
-        .ToList();
+      return
+      [
+        .. files.Select(f => new GameFile(
+          f.Id,
+          f.PathRelative,
+          f.FileName,
+          f.Extension,
+          f.RelatedExtensionId,
+          !resetPatched && f.Patched,
+          f.XML
+        )),
+      ];
     }
 
     public static List<string> GetExtensions(List<GameFile> files)
     {
-      return files.Select(f => f.Extension.Id).Distinct().ToList();
+      return [.. files.Select(f => f.Extension.Id).Distinct()];
     }
 
     public static List<string> GetRelatedExtensions(List<GameFile> files, string extensionId)
     {
-      return files.Where(f => f.Extension.Id == extensionId).Select(f => f.RelatedExtensionId).Distinct().ToList();
+      return [.. files.Where(f => f.Extension.Id == extensionId).Select(f => f.RelatedExtensionId).Distinct()];
     }
   }
 }
