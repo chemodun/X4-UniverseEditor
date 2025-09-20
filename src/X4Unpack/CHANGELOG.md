@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.3...X4Unpack@v0.3.4) (2025-09-20)
+
+
+### Code Refactoring
+
+* **ContentExtractor:** enhance catalog initialization and file extraction ([aedaa08](https://github.com/chemodun/X4-UniverseEditor/commit/aedaa08229d04e6a52e32b16c18b6c3ce260b231))
+
 ## [0.3.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.2...X4Unpack@v0.3.3) (2025-07-18)
 
 
