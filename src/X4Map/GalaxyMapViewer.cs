@@ -901,7 +901,7 @@ namespace X4Map
 
     public static List<Cluster> GetUnprocessedClusters(List<GalaxyMapCell> cells)
     {
-      return cells.Where(cell => !cell.IsProcessed).Select(cell => cell.Cluster).ToList();
+      return [.. cells.Where(cell => !cell.IsProcessed).Select(cell => cell.Cluster)];
     }
   }
 
