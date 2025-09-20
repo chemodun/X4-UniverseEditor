@@ -60,6 +60,7 @@ You can download the tool from the following locations:
         - [Reset Button](#reset-button)
       - [Map Objects Tooltips](#map-objects-tooltips)
       - [Galaxy Map](#galaxy-map)
+        - [Exporting the map to the image file (png)](#exporting-the-map-to-the-image-file-png)
         - [Clusters and sectors tooltips](#clusters-and-sectors-tooltips)
         - [Hiding and showing the DLC's and Mods on a map](#hiding-and-showing-the-dlcs-and-mods-on-a-map)
         - [Showing an empty cluster cells](#showing-an-empty-cluster-cells)
@@ -72,6 +73,7 @@ You can download the tool from the following locations:
     - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
   - [License](#license)
   - [Changelog](#changelog)
+    - [\[0.10.3\] - 2025-09-20](#0103---2025-09-20)
     - [\[0.10.2\] - 2025-07-19](#0102---2025-07-19)
     - [\[0.10.1\] - 2025-07-18](#0101---2025-07-18)
     - [\[0.10.0\] - 2025-07-18](#0100---2025-07-18)
@@ -333,6 +335,12 @@ When you click the left mouse button on a sector, it will be selected as the dir
 
 Note: If you cannot see the sector you need on a map, but is is available in the list - it is probably because the located in cluster which coordinates cannot be aligned to the hexagonal grid. It will be a possible problem in appropriate Mod or DLC.
 
+##### Exporting the map to the image file (png)
+
+You can export the current view of the Galaxy Map to a PNG image file. This feature allows you to save and share the map view with others or use it for reference in your projects. To export the map, simply click the "Export Galaxy Map as PNG" button located at the top right corner of the Galaxy Map interface. Thanks to [@Sleaker](https://steamcommunity.com/id/sleaker) for the idea and initial implementation.
+
+Available from `version 0.10.3`.
+
 ##### Clusters and sectors tooltips
 
 You can hover over the clusters and sectors on the map to view additional information about them:
@@ -399,8 +407,9 @@ Here are several screenshots from the game with the mod gates in the `Asteroid B
 ## Credits
 
 - [EGOSOFT](https://www.egosoft.com) - for the game itself (In fact - for the series of games)!
-- Members of the [x4_modding discord channel](https://discord.com/channels/337098290917146624/502057640877228042) - for the answers, support, ideas and inspiration!
+- Members of the [x4_modding discord channel](https://discord.com/channels/337098290917146624/502057640877228042) - for their answers, support, ideas, and inspiration!
 - [SiliconStew](https://steamcommunity.com/profiles/76561198005610231) - for the documentation of the Gate Rotation specifics!
+- [Sleaker](https://steamcommunity.com/id/sleaker) - for the idea and initial implementation of the map exporting feature and hiding the "unnecessary" Mod's.
 
 ## Useful Links
 
@@ -417,6 +426,20 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.3] - 2025-09-20
+
+- Fixed
+  - Fixed the wrong gate connection on Galaxy map, if Gate zones names are doubled by some Mods
+  - If game version is not presented in the built-in list - it will be added automatically
+  - Game version updated in the Gate Keeper mod `content.xml` file on save
+  - Mods not influenced on a map data is not shown in Mods list of Map Viewer window (Thanks to [@Sleaker](https://steamcommunity.com/id/sleaker) for the idea and initial implementation)
+  - Save As.. button availability
+- Improved
+  - Get rid of the hardcoded DLC's list, i.e. Envoy Pack is loaded normally
+  - Main window blur on the Game Data loading
+- Added
+  - Exporting the map to the image file (png) in the Map Viewer window (Thanks to [@Sleaker](https://steamcommunity.com/id/sleaker) for the idea and initial implementation)
 
 ### [0.10.2] - 2025-07-19
 
