@@ -33,6 +33,7 @@ namespace X4Map
     protected Grid? Grid = null;
     protected TextBlock? TextBlock = null;
     private readonly SectorMap SectorMapHelper = new();
+    public List<SectorMapItem> Items => [.. SectorMapHelper.Items];
     private readonly double FrontSizeProportion = 0.12;
     private readonly double FrontSizeMax = 22;
 

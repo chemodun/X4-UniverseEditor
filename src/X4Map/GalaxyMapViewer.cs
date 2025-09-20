@@ -471,8 +471,18 @@ namespace X4Map
             {
               continue;
             }
-            SectorMapItem? gateDirect = SectorsItems.Find(item => item.Id == connection.PathDirect.Gate.Name);
-            SectorMapItem? gateOpposite = SectorsItems.Find(item => item.Id == connection.PathOpposite.Gate.Name);
+            GalaxyMapSector? sectorDirect = _sectors.Find(sc => sc.Macro == connection.PathDirect.Sector?.Macro);
+            if (sectorDirect == null)
+            {
+              continue;
+            }
+            GalaxyMapSector? sectorOpposite = _sectors.Find(sc => sc.Macro == connection.PathOpposite.Sector?.Macro);
+            if (sectorOpposite == null)
+            {
+              continue;
+            }
+            SectorMapItem? gateDirect = sectorDirect.Items.Find(item => item.Id == connection.PathDirect.Gate.Name);
+            SectorMapItem? gateOpposite = sectorOpposite.Items.Find(item => item.Id == connection.PathOpposite.Gate.Name);
             if (gateDirect == null || gateOpposite == null)
             {
               continue;
