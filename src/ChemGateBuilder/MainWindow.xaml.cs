@@ -879,6 +879,41 @@ namespace ChemGateBuilder
       }
       SectorsDirectViewSource.View.Refresh();
       SectorsOppositeViewSource.View.Refresh();
+      // Ensure detected version appears in the versions list, formatted as major.minor (minor 2 digits) and sorted
+      if (Galaxy.Version != 0)
+      {
+        string detectedVersion = $"{Galaxy.Version / 100}.{Galaxy.Version % 100:D2}";
+        if (!X4DataVersions.Contains(detectedVersion))
+        {
+          var sorted = X4DataVersions
+            .Concat([detectedVersion])
+            .Distinct()
+            .Select(s =>
+            {
+              var parts = (s ?? string.Empty).Split('.');
+              int major = 0;
+              int minor = 0;
+              if (parts.Length > 0)
+              {
+                _ = int.TryParse(parts[0], out major);
+              }
+              if (parts.Length > 1)
+              {
+                _ = int.TryParse(parts[1], out minor);
+              }
+              return (major, minor);
+            })
+            .OrderBy(v => v.major)
+            .ThenBy(v => v.minor)
+            .Select(v => $"{v.major}.{v.minor:D2}")
+            .ToList();
+          X4DataVersions.Clear();
+          foreach (var v in sorted)
+          {
+            X4DataVersions.Add(v);
+          }
+        }
+      }
       if (!X4DataVersionOverride && Galaxy.Version != 0 && Galaxy.Version != X4DataVersion)
       {
         X4DataVersion = Galaxy.Version;
@@ -902,6 +937,10 @@ namespace ChemGateBuilder
           ChemGateKeeperMod = newMod;
           IsModCanBeSaved = false;
         }
+      }
+      if (ChemGateKeeperMod.GalaxyConnections.Count == 0)
+      {
+        _chemGateKeeperMod.SetGameVersion(X4DataVersion);
       }
     }
 
@@ -1618,7 +1657,8 @@ namespace ChemGateBuilder
     {
       if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
       {
-        IsModCanBeSaved = !ChemGateKeeperMod.SaveData(Galaxy);
+        _chemGateKeeperMod.SetGameVersion(X4DataVersion);
+        IsModCanBeSaved = !_chemGateKeeperMod.SaveData(Galaxy);
       }
     }
 
@@ -1626,7 +1666,8 @@ namespace ChemGateBuilder
     {
       if (ChemGateKeeperMod.GalaxyConnections.Count > 0)
       {
-        IsModCanBeSaved = !ChemGateKeeperMod.SaveData(Galaxy, true);
+        _chemGateKeeperMod.SetGameVersion(X4DataVersion);
+        IsModCanBeSaved = !_chemGateKeeperMod.SaveData(Galaxy, true);
       }
     }
 
