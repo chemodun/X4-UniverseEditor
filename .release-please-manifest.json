@@ -11,9 +11,9 @@
   "filler-five": "0.0.0",
   "src/XMLPatch": "0.1.8",
   "filler-six": "0.0.0",
-  "src/X4Map": "0.6.0",
+  "src/X4Map": "0.6.1",
   "filler-seven": "0.0.0",
   "src/GalaxyEditor": "0.2.1",
   "filler-eight": "0.0.0",
-  "src/SharedWindows": "0.7.1"
+  "src/SharedWindows": "0.7.0"
 }
