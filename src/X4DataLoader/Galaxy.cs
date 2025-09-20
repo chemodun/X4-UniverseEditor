@@ -33,17 +33,6 @@ namespace X4DataLoader
     public List<GalaxyConnection> Connections { get; private set; } = [];
     public List<GameFile> GameFiles { get; private set; } = [];
 
-    public static readonly List<string> DLCOrder =
-    [
-      "ego_dlc_split",
-      "ego_dlc_terran",
-      "ego_dlc_pirate",
-      "ego_dlc_boron",
-      "ego_dlc_timelines",
-      "ego_dlc_mini_01",
-      "ego_dlc_mini_02",
-    ];
-
     public Galaxy()
     {
       Name = "";
