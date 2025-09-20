@@ -9,7 +9,7 @@ namespace SharedWindows
 {
   public partial class HtmlViewerWindow : Window
   {
-    private string _htmlFilePath;
+    private readonly string _htmlFilePath;
 
     // Event to notify parent window about errors
     public event EventHandler<HtmlViewerErrorEventArgs>? ErrorOccurred;
@@ -123,17 +123,10 @@ namespace SharedWindows
   }
 
   // Event args class for error handling
-  public class HtmlViewerErrorEventArgs : EventArgs
+  public class HtmlViewerErrorEventArgs(Exception? exception, string errorMessage, string filePath = "") : EventArgs
   {
-    public Exception? Exception { get; }
-    public string ErrorMessage { get; }
-    public string FilePath { get; }
-
-    public HtmlViewerErrorEventArgs(Exception? exception, string errorMessage, string filePath = "")
-    {
-      Exception = exception;
-      ErrorMessage = errorMessage;
-      FilePath = filePath;
-    }
+    public Exception? Exception { get; } = exception;
+    public string ErrorMessage { get; } = errorMessage;
+    public string FilePath { get; } = filePath;
   }
 }
