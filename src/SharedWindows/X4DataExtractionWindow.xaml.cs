@@ -380,7 +380,7 @@ namespace SharedWindows
 
     private void ButtonSelectGameFolder_Click(object sender, RoutedEventArgs e)
     {
-      System.Windows.Forms.OpenFileDialog dialog = new()
+      var dialog = new Microsoft.Win32.OpenFileDialog
       {
         InitialDirectory = string.IsNullOrEmpty(GameFolder)
           ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
@@ -389,8 +389,8 @@ namespace SharedWindows
         Title = "Select the X4: Foundations executable",
       };
 
-      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-      if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.FileName))
+      bool? result = dialog.ShowDialog();
+      if (result != true || string.IsNullOrWhiteSpace(dialog.FileName))
       {
         Log.Warn("No game folder selected");
         return;
@@ -412,15 +412,14 @@ namespace SharedWindows
 
     private void ButtonSelectExtractedDataLocationFolder_Click(object sender, RoutedEventArgs e)
     {
-      var dialog = new FolderBrowserDialog
+      var dialog2 = new Microsoft.Win32.OpenFolderDialog
       {
-        Description = "Select the folder where the folder with extracted data will be located.",
-        ShowNewFolderButton = true,
+        Title = "Select the folder where the folder with extracted data will be located.",
       };
 
-      if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      if (dialog2.ShowDialog() == true)
       {
-        ExtractedDataLocationFolder = dialog.SelectedPath;
+        ExtractedDataLocationFolder = dialog2.FolderName;
       }
     }
 
