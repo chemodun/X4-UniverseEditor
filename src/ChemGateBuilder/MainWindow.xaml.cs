@@ -114,7 +114,10 @@ namespace ChemGateBuilder
           OnPropertyChanged(nameof(ExtractedVisibility));
           OnPropertyChanged(nameof(GameFolderVisibility));
           SaveConfiguration();
-          LoadX4DataInBackgroundStart();
+          if (_initiated)
+          {
+            LoadX4DataInBackgroundStart();
+          }
         }
       }
     }
@@ -243,7 +246,7 @@ namespace ChemGateBuilder
       }
     }
 
-    public ObservableCollection<string> X4DataVersions { get; set; } = ["7.10", "7.50"];
+    public ObservableCollection<string> X4DataVersions { get; set; } = ["7.10", "7.50", "7.60"];
 
     private string _x4UniverseId = DataLoader.DefaultUniverseId;
     public string X4UniverseId
@@ -631,6 +634,7 @@ namespace ChemGateBuilder
         }
       }
     }
+    private bool _initiated = false;
 
     // Constructor
     public MainWindow()
@@ -682,7 +686,7 @@ namespace ChemGateBuilder
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
 
       GateMacros.Add(_gateMacroDefault);
-
+      _initiated = true;
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
         new Action(() =>
@@ -701,27 +705,38 @@ namespace ChemGateBuilder
 
         if (config != null)
         {
-          DirectMode = config.Mode.DirectMode;
-          X4DataFolder = config.Data.X4DataExtractedPath;
-          X4DataVersionOverride = config.Data.X4DataVersionOverride;
+          // Be resilient to older or manually edited configs where sections may be null
+          var mode = config.Mode ?? new ModeConfig();
+          var data = config.Data ?? new DataConfig();
+          var edit = config.Edit ?? new EditConfig();
+          var map = config.Map ?? new MapConfig();
+          var logging = config.Logging ?? new LoggingConfig();
+
+          DirectMode = mode.DirectMode;
+
+          X4DataFolder = data.X4DataExtractedPath ?? ".";
+          X4DataVersionOverride = data.X4DataVersionOverride;
           if (X4DataVersionOverride)
           {
-            X4DataVersion = config.Data.X4DataVersion;
+            X4DataVersion = data.X4DataVersion;
           }
-          if (!String.IsNullOrEmpty(config.Data.X4GameFolder))
+          if (!string.IsNullOrEmpty(data.X4GameFolder))
           {
-            X4GameFolder = config.Data.X4GameFolder;
+            X4GameFolder = data.X4GameFolder;
           }
-          LoadModsData = config.Data.LoadModsData;
-          GatesActiveByDefault = config.Edit.GatesActiveByDefault;
-          GatesMinimalDistanceBetween = config.Edit.GatesMinimalDistanceBetween;
-          if (config.Map.NonStandardUniverse && !String.IsNullOrEmpty(config.Map.NonStandardUniverseId))
+          LoadModsData = data.LoadModsData;
+
+          GatesActiveByDefault = edit.GatesActiveByDefault;
+          GatesMinimalDistanceBetween = edit.GatesMinimalDistanceBetween;
+
+          if (map.NonStandardUniverse && !string.IsNullOrEmpty(map.NonStandardUniverseId))
           {
-            X4UniverseId = config.Map.NonStandardUniverseId;
+            X4UniverseId = map.NonStandardUniverseId;
           }
-          MapColorsOpacity = config.Map.MapColorsOpacity;
-          LogLevel = config.Logging.LogLevel;
-          LogToFile = config.Logging.LogToFile;
+          MapColorsOpacity = map.MapColorsOpacity;
+
+          LogLevel = logging.LogLevel ?? "Warning";
+          LogToFile = logging.LogToFile;
         }
       }
       else
