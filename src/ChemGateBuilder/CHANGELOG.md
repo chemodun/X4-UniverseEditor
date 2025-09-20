@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.10.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.2...ChemGateBuilder@v0.10.3) (2025-09-20)
+
+
+### Code Refactoring
+
+* **DataLoader:** enhance file collection and extension handling ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **GalaxyMapViewer:** simplify PNG export logic ([d3af168](https://github.com/chemodun/X4-UniverseEditor/commit/d3af168474c0b8a3e5c3309ce785e4c773bbfb06))
+* **GalaxyMapWindow:** adjust BusyOverlay background opacity ([deb72b2](https://github.com/chemodun/X4-UniverseEditor/commit/deb72b287fbbb23e060c92cd5142c051054ef7c8))
+* **GalaxyMapWindow:** refactor busy overlay during export process ([d3af168](https://github.com/chemodun/X4-UniverseEditor/commit/d3af168474c0b8a3e5c3309ce785e4c773bbfb06))
+* **GalaxyMapWindow:** update busy overlay appearance ([7f9c556](https://github.com/chemodun/X4-UniverseEditor/commit/7f9c556476a47808b8eacb5fbdca60cc108771ec))
+* **GameFilesStructureItem:** add countable property ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **GateData:** simplify sector macro retrieval ([535f8b3](https://github.com/chemodun/X4-UniverseEditor/commit/535f8b300ffdaf32be60114bbbb0614e361ccba4))
+* **MainWindow:** add busy overlay and loading messages ([04e9153](https://github.com/chemodun/X4-UniverseEditor/commit/04e91531b6119f70f01366b634394697eb663305))
+* **MainWindow:** enable Save As based on mod content ([1ed506f](https://github.com/chemodun/X4-UniverseEditor/commit/1ed506fae92e958035968e89679c43d3b2fce688))
+* **MainWindow:** enhance version detection and sorting logic ([5515414](https://github.com/chemodun/X4-UniverseEditor/commit/55154140fe767e8d1af25c7b3a1a15b01dcc1acb))
+* **MainWindow:** improve data loading and configuration resilience ([bc33360](https://github.com/chemodun/X4-UniverseEditor/commit/bc33360fba78869251e2ac96ced24108865f5567))
+* **MainWindow:** load X4 data in background Mode change ([4f6673d](https://github.com/chemodun/X4-UniverseEditor/commit/4f6673ddb38808952959163039f283d064ae8dfe))
+* **MainWindow:** optimize JSON serialization options ([535f8b3](https://github.com/chemodun/X4-UniverseEditor/commit/535f8b300ffdaf32be60114bbbb0614e361ccba4))
+* **MainWindow:** replace FolderBrowserDialog with OpenFolderDialog ([26f6f79](https://github.com/chemodun/X4-UniverseEditor/commit/26f6f79ac9fd6851ff14075e5fc1f0f7ce265a8d))
+* **MainWindow:** restructure layout for BusyOverlay ([deb72b2](https://github.com/chemodun/X4-UniverseEditor/commit/deb72b287fbbb23e060c92cd5142c051054ef7c8))
+* **Mod:** enhance folder selection and connection retrieval ([535f8b3](https://github.com/chemodun/X4-UniverseEditor/commit/535f8b300ffdaf32be60114bbbb0614e361ccba4))
+* **Mod:** improve mod file processing ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* remove unused using directives from App.xaml.cs files ([d0badce](https://github.com/chemodun/X4-UniverseEditor/commit/d0badce43f3854723d4cb193b2c058b5459491e5))
+* **X4DataExtractionWindow:** streamline extension loading logic ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+
+
+### Documentation
+
+* **images:** add example image for Galaxy Map export ([402324c](https://github.com/chemodun/X4-UniverseEditor/commit/402324cdc960dbbc2feb89311e2fb56d11928bc3))
+* **README:** add export feature details and update changelog ([402324c](https://github.com/chemodun/X4-UniverseEditor/commit/402324cdc960dbbc2feb89311e2fb56d11928bc3))
+* **README:** Update README's files ([ffa5f96](https://github.com/chemodun/X4-UniverseEditor/commit/ffa5f962d26f7e81cf20e2716b17e95967ac3d6e))
+
 ## [0.10.2](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.1...ChemGateBuilder@v0.10.2) (2025-07-19)
 
 
