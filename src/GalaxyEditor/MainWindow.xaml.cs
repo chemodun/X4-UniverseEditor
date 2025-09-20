@@ -482,7 +482,7 @@ namespace GalaxyEditor
     }
     private readonly AssemblyInfo _assemblyInfoData;
     private readonly BitmapImage _appIcon;
-    private BackgroundWorker _backgroundWorker;
+    private readonly BackgroundWorker _backgroundWorker;
 
     public string WindowTitle
     {
@@ -563,7 +563,8 @@ namespace GalaxyEditor
       }
     }
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+    // Cache and reuse options for config serialization
+    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
     private void SaveConfiguration()
     {
@@ -588,7 +589,7 @@ namespace GalaxyEditor
       {
         config.Data.X4GameFolder = X4GameFolder;
       }
-      var jsonString = JsonSerializer.Serialize(config, _jsonSerializerOptions);
+      var jsonString = JsonSerializer.Serialize(config, JsonOptions);
       File.WriteAllText(_configFileName, jsonString);
     }
 

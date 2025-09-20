@@ -15,8 +15,8 @@ namespace GalaxyEditor
   public class GalaxyMod : INotifyPropertyChanged
   {
     private static readonly string ModFile = "GalaxyMod.json";
-    private static readonly List<string> modAttributesToSave = new()
-    {
+    private static readonly List<string> modAttributesToSave =
+    [
       "Name",
       "Id",
       "Version",
@@ -26,7 +26,21 @@ namespace GalaxyEditor
       "DLCList",
       "ModList",
       "TemplateConfig",
-    };
+    ];
+
+    // Cache JsonSerializerOptions instances to avoid per-call allocations (CA1869)
+    private static readonly JsonSerializerOptions SaveOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions LoadOptions = CreateLoadOptions();
+
+    private static JsonSerializerOptions CreateLoadOptions()
+    {
+      var options = new JsonSerializerOptions();
+      options.Converters.Add(new MapInfoJsonConverter());
+      options.Converters.Add(new ExtensionsInfoListJsonConverter());
+      options.Converters.Add(new ExtensionInfoJsonConverter());
+      return options;
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private string _name = "";
@@ -277,7 +291,7 @@ namespace GalaxyEditor
       {
         return;
       }
-      var options = new JsonSerializerOptions { WriteIndented = true };
+      var options = SaveOptions;
 
       var modData = new Dictionary<string, object>();
       foreach (var property in modAttributesToSave)
@@ -358,10 +372,7 @@ namespace GalaxyEditor
         {
           _isModLoading = true;
           Log.Debug($"Mod data loaded. Count: {modData.Count}");
-          var options = new JsonSerializerOptions();
-          options.Converters.Add(new MapInfoJsonConverter());
-          options.Converters.Add(new ExtensionsInfoListJsonConverter());
-          options.Converters.Add(new ExtensionInfoJsonConverter());
+          var options = LoadOptions;
           foreach (var property in modAttributesToSave)
           {
             if (modData.TryGetValue(property, out object? value))
