@@ -168,11 +168,11 @@
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
-            Background="#80000000"
+            Background="#33000000"
             Panel.ZIndex="100">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressBar IsIndeterminate="True" Width="200" Height="20"/>
-                <TextBlock Text="{Binding BusyMessage}" Foreground="White" FontSize="16" Margin="10" HorizontalAlignment="Center"/>
+                <ProgressBar IsIndeterminate="True" Width="400" Height="20"/>
+                <TextBlock Text="{Binding BusyMessage}" Foreground="Black" FontSize="16" Margin="10" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
     </Grid>
