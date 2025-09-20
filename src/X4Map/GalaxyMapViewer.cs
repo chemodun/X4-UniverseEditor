@@ -269,15 +269,11 @@ namespace X4Map
         Log.Error("Galaxy data is empty.");
         return;
       }
-      foreach (string dlcId in Galaxy.DLCOrder)
+      foreach (ExtensionInfo dlc in GalaxyData.DLCs)
       {
-        ExtensionInfo? dlc = GalaxyData.DLCs.Find(dlc => dlc.Id == dlcId);
-        if (dlc != null)
-        {
-          var extension = new MapOptions(dlc.Name, $"v.{dlc.Version}", dlc.Id, true);
-          extension.PropertyChanged += MapOptions_PropertyChanged;
-          DLCsOptions.Add(extension);
-        }
+        var extension = new MapOptions(dlc.Name, $"v.{dlc.Version}", dlc.Id, true);
+        extension.PropertyChanged += MapOptions_PropertyChanged;
+        DLCsOptions.Add(extension);
       }
       OptionsDLCsVisibilityState = DLCsOptions.Count > 0 ? Visibility.Visible : Visibility.Hidden;
       foreach (ExtensionInfo mod in GalaxyData.Mods)
