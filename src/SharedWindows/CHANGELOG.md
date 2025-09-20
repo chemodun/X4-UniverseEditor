@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.7.1](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.7.0...SharedWindows@v0.7.1) (2025-09-20)
+
+
+### Code Refactoring
+
+* **DataLoader:** enhance file collection and extension handling ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **DataLoader:** streamline content extraction logic ([892c3cb](https://github.com/chemodun/X4-UniverseEditor/commit/892c3cb13ce18b55c7b24d58d07146dacf0ee837))
+* **GameFilesStructureItem:** add countable property ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **HtmlViewerErrorEventArgs:** simplify constructor ([8b36a20](https://github.com/chemodun/X4-UniverseEditor/commit/8b36a2087aea5c768e6b5e24030dca67265d1401))
+* **HtmlViewerWindow:** change _htmlFilePath to readonly ([8b36a20](https://github.com/chemodun/X4-UniverseEditor/commit/8b36a2087aea5c768e6b5e24030dca67265d1401))
+* **Mod:** improve mod file processing ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **SharedWindows.csproj:** remove unused UseWindowsForms property ([472e5e5](https://github.com/chemodun/X4-UniverseEditor/commit/472e5e577740582dad656031448dad16ceed9e4a))
+* **X4DataExtractionWindow:** replace ContentCopier with ContentExtractor ([892c3cb](https://github.com/chemodun/X4-UniverseEditor/commit/892c3cb13ce18b55c7b24d58d07146dacf0ee837))
+* **X4DataExtractionWindow:** replace Windows Forms dialogs with WPF equivalents ([472e5e5](https://github.com/chemodun/X4-UniverseEditor/commit/472e5e577740582dad656031448dad16ceed9e4a))
+* **X4DataExtractionWindow:** streamline extension loading logic ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+
 ## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.6.0...SharedWindows@v0.7.0) (2025-07-18)
 
 
