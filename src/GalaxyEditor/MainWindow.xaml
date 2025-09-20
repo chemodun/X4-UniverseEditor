@@ -464,8 +464,8 @@
                                 VerticalAlignment="Center"
                                 TickFrequency="50"
                                 IsSnapToTickEnabled="True"
-                                Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorMinInternalSizeKm}}"
-                                Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorMaxInternalSizeKm}}"
+                                Minimum="{Binding Source={x:Static mapconstants:MapConstants.SectorInternalSizeMinKm}}"
+                                Maximum="{Binding Source={x:Static mapconstants:MapConstants.SectorInternalSizeMaxKm}}"
                                 Value="{Binding SectorRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Grid.Row="1" Grid.Column="2"
                                 />
