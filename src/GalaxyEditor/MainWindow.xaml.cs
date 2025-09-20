@@ -1079,25 +1079,15 @@ namespace GalaxyEditor
           return;
         }
       }
-      var dialog = new System.Windows.Forms.FolderBrowserDialog
+      var dialog = new Microsoft.Win32.OpenFolderDialog
       {
-        Description = "Please select the folder where the X4 extracted data files are located.",
-        ShowNewFolderButton = false,
+        Title = "Please select the folder where the X4 extracted data files are located.",
       };
-      if (GalaxyData != null && GalaxyData.Clusters.Count > 0)
-      {
-        dialog.SelectedPath = $"{X4DataFolder}\\";
-      }
-      else
-      {
-        dialog.SelectedPath = "";
-        dialog.RootFolder = Environment.SpecialFolder.MyComputer; // Set the root folder to MyComputer
-      }
-      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+      bool? result = dialog.ShowDialog();
 
-      if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+      if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
       {
-        string selectedPath = dialog.SelectedPath;
+        string selectedPath = dialog.FolderName;
         if (DataLoader.ValidateDataFolder(selectedPath, out string errorMessage))
         {
           X4DataFolder = selectedPath;

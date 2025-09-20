@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Windows;
 using Utilities.Logging;
 using X4DataLoader;
 using X4Map;
@@ -232,33 +232,27 @@ namespace GalaxyEditor
 
     public bool Create(MapInfo mapInfo, Galaxy galaxyData)
     {
-      var dialog = new System.Windows.Forms.FolderBrowserDialog
+      var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Please select the folder where the mod data will be located." };
+      bool? result = dialog.ShowDialog();
+      Log.Debug($"Selected folder: {dialog.FolderName}, Result: {result}");
+      if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
       {
-        Description = "Please select the folder where the mod data will be located.",
-        ShowNewFolderButton = true,
-        SelectedPath = "",
-        RootFolder = Environment.SpecialFolder.MyDocuments,
-      };
-      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-      Log.Debug($"Selected folder: {dialog.SelectedPath}, Result: {result}");
-      if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
-      {
-        Path = dialog.SelectedPath;
+        Path = dialog.FolderName;
         if (System.IO.Directory.GetFiles(Path).Length != 0 || System.IO.Directory.GetDirectories(Path).Length != 0)
         {
-          var warningResult = System.Windows.Forms.MessageBox.Show(
+          var warning = MessageBox.Show(
             "The selected folder is not empty. Are you sure?",
             "Folder Not Empty",
-            System.Windows.Forms.MessageBoxButtons.YesNo,
-            System.Windows.Forms.MessageBoxIcon.Warning
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning
           );
-          Log.Debug($"Folder not empty warning result: {warningResult}");
-          if (warningResult == System.Windows.Forms.DialogResult.No)
+          Log.Debug($"Folder not empty warning result: {warning}");
+          if (warning == MessageBoxResult.No)
           {
             return false;
           }
         }
-        Path = dialog.SelectedPath;
+        Path = dialog.FolderName;
         MapInfo = mapInfo;
         GameVersion = galaxyData.Version;
         foreach (var dlc in galaxyData.DLCs)
@@ -327,15 +321,15 @@ namespace GalaxyEditor
       Log.Debug($"Loading mod from path: {workingPath}");
       if (string.IsNullOrWhiteSpace(workingPath))
       {
-        var dialog = new System.Windows.Forms.OpenFileDialog
+        var dialog = new Microsoft.Win32.OpenFileDialog
         {
           Filter = "Galaxy Mod File|GalaxyMod.json",
           Title = "Select a Galaxy Mod File",
           InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
         };
-        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+        bool? result = dialog.ShowDialog();
         Log.Debug($"Selected file: {dialog.FileName}, Result: {result}");
-        if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.FileName))
+        if (result == true && !string.IsNullOrWhiteSpace(dialog.FileName))
         {
           workingPath = dialog.FileName;
         }
