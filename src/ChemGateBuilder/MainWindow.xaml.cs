@@ -403,7 +403,8 @@ namespace ChemGateBuilder
         {
           _isModCanBeSaved = value;
           OnPropertyChanged(nameof(IsModCanBeSaved));
-          IsModCanBeSavedAs = value && !string.IsNullOrEmpty(ChemGateKeeperMod.ModFolderPath);
+          // Save As should be enabled whenever Save is enabled OR the mod has any content loaded
+          UpdateIsModCanBeSavedAs();
         }
       }
     }
@@ -420,6 +421,12 @@ namespace ChemGateBuilder
           OnPropertyChanged(nameof(IsModCanBeSavedAs));
         }
       }
+    }
+
+    private void UpdateIsModCanBeSavedAs()
+    {
+      bool hasContent = ChemGateKeeperMod != null && ChemGateKeeperMod.GalaxyConnections.Count > 0;
+      IsModCanBeSavedAs = IsModCanBeSaved || (hasContent && IsGateCanBeCreated);
     }
 
     // Master sector list
@@ -530,6 +537,7 @@ namespace ChemGateBuilder
         {
           _isGateCanBeCreated = value;
           OnPropertyChanged(nameof(IsGateCanBeCreated));
+          UpdateIsModCanBeSavedAs();
         }
       }
     }
@@ -1574,11 +1582,13 @@ namespace ChemGateBuilder
           CurrentGalaxyConnection = null;
         }
         StatusBar.SetStatusMessage("Mod data loaded successfully.", StatusMessageType.Info);
+        UpdateIsModCanBeSavedAs(); // Enable Save As for non-empty mods immediately after load
       }
       else
       {
         StatusBar.SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
         Log.Warn("Mod data could not be loaded.");
+        UpdateIsModCanBeSavedAs();
       }
     }
 
