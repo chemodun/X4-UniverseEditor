@@ -338,11 +338,16 @@ namespace X4Map
 
       // Already on UI thread
       ExportToPngOnUI(sourceCanvas, filePath);
+      UpdateMap();
       return Task.CompletedTask;
     }
 
     private static void ExportToPngOnUI(Canvas sourceCanvas, string filePath)
     {
+      // Ensure layout is up-to-date
+      sourceCanvas.Measure(new Size(sourceCanvas.ActualWidth, sourceCanvas.ActualHeight));
+      sourceCanvas.Arrange(new Rect(new Size(sourceCanvas.ActualWidth, sourceCanvas.ActualHeight)));
+
       // Ensure layout is up-to-date on UI thread
       sourceCanvas.UpdateLayout();
       if (sourceCanvas.ActualWidth == 0 || sourceCanvas.ActualHeight == 0)
@@ -365,6 +370,7 @@ namespace X4Map
       encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(rtb));
       using var fs = System.IO.File.Open(filePath, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None);
       encoder.Save(fs);
+      fs.Close();
     }
 
     private void CreateMap()
