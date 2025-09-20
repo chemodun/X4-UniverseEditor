@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.6](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.5...X4DataLoader@v0.10.6) (2025-09-20)
+
+
+### Code Refactoring
+
+* **DataLoader:** enhance file collection and extension handling ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **DataLoader:** simplify file processing logic ([636fc0c](https://github.com/chemodun/X4-UniverseEditor/commit/636fc0c388cce04bfe43ddd122b2ff39fde2ff19))
+* **DataLoader:** streamline content extraction logic ([892c3cb](https://github.com/chemodun/X4-UniverseEditor/commit/892c3cb13ce18b55c7b24d58d07146dacf0ee837))
+* **Galaxy:** remove static DLCOrder list ([fdfe157](https://github.com/chemodun/X4-UniverseEditor/commit/fdfe157d9405ecb146111bcdfa0413a83703ec24))
+* **Galaxy:** streamline XML loading ([636fc0c](https://github.com/chemodun/X4-UniverseEditor/commit/636fc0c388cce04bfe43ddd122b2ff39fde2ff19))
+* **GameFilesStructureItem:** add countable property ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **Mod:** improve mod file processing ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+* **X4DataExtractionWindow:** replace ContentCopier with ContentExtractor ([892c3cb](https://github.com/chemodun/X4-UniverseEditor/commit/892c3cb13ce18b55c7b24d58d07146dacf0ee837))
+* **X4DataExtractionWindow:** streamline extension loading logic ([6108ddb](https://github.com/chemodun/X4-UniverseEditor/commit/6108ddb7ddee30c432becf8d657b13f32b247318))
+
 ## [0.10.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.4...X4DataLoader@v0.10.5) (2025-07-18)
 
 
