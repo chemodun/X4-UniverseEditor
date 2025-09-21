@@ -56,6 +56,7 @@ You can download the tool from the following locations:
       - [Opposite Sector Selection](#opposite-sector-selection)
       - [Add Gates Connection](#add-gates-connection)
       - [Modify Existing Connection](#modify-existing-connection)
+      - [Connection Deletion](#connection-deletion)
       - [Connection Editing Area Buttons](#connection-editing-area-buttons)
         - [Reset Button](#reset-button)
       - [Map Objects Tooltips](#map-objects-tooltips)
@@ -73,6 +74,7 @@ You can download the tool from the following locations:
     - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
   - [License](#license)
   - [Changelog](#changelog)
+    - [\[0.10.4\] - 2025-09-21](#0104---2025-09-21)
     - [\[0.10.3\] - 2025-09-20](#0103---2025-09-20)
     - [\[0.10.2\] - 2025-07-19](#0102---2025-07-19)
     - [\[0.10.1\] - 2025-07-18](#0101---2025-07-18)
@@ -299,6 +301,15 @@ One (`gold`) is the gate from the connection, and the other (`green`) is the gat
 
 ![Gate from connection moved to the new position](docs/images/update_gates_connection.gif)
 
+#### Connection Deletion
+
+It is not recommended, but is possible to delete the previously added connection.
+It will be followed by errors in the game debug logs on load, but everything will work fine.
+
+The better - simple to disable the connection by setting the "Gate Active" to `false` for both gates in the connection.
+
+**Warning**: Never delete a connection in a sector where you are in a game in current save. It will lead to a crash.
+
 #### Connection Editing Area Buttons
 
 There are two buttons at the bottom of the window:
@@ -426,6 +437,11 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.4] - 2025-09-21
+
+- Fixed
+  - On changing the "Load Mods" option - the tool will reload the game data automatically
 
 ### [0.10.3] - 2025-09-20
 
