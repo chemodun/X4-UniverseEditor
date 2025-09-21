@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.3...ChemGateBuilder@v0.10.4) (2025-09-21)
+
+
+### Bug Fixes
+
+* **MainWindow:** load X4 data in background after configuration change ([d0f2df6](https://github.com/chemodun/X4-UniverseEditor/commit/d0f2df670c7b8683a96fea0cfe3d0063f1d93cd2))
+
+
+### Documentation
+
+* **README:** add Connection Deletion section and update changelog ([2b988ec](https://github.com/chemodun/X4-UniverseEditor/commit/2b988ecf6286b6c67e5aaaa9733b2a0f435747e9))
+
 ## [0.10.3](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.2...ChemGateBuilder@v0.10.3) (2025-09-20)
 
 
