@@ -242,6 +242,10 @@ namespace ChemGateBuilder
           _loadModsData = value;
           OnPropertyChanged(nameof(LoadModsData));
           SaveConfiguration();
+          if (_initiated)
+          {
+            LoadX4DataInBackgroundStart();
+          }
         }
       }
     }
