@@ -69,6 +69,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#opposite-sector-selection]Opposite Sector Selection[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#add-gates-connection]Add Gates Connection[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#modify-existing-connection]Modify Existing Connection[/url]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#connection-deletion]Connection Deletion[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#connection-editing-area-buttons]Connection Editing Area Buttons[/url]
 [list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#reset-button]Reset Button[/url]
@@ -95,6 +96,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#license]License[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#changelog]Changelog[/url]
 [list]
+[*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0104---2025-09-21]0.10.4\] - 2025-09-21[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0103---2025-09-20]0.10.3\] - 2025-09-20[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0102---2025-07-19]0.10.2\] - 2025-07-19[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0101---2025-07-18]0.10.1\] - 2025-07-18[/url]
@@ -323,6 +325,15 @@ One ([b]gold[/b]) is the gate from the connection, and the other ([b]green[/b]) 
 
 [img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ChemGateBuilder/docs/images/update_gates_connection.gif[/img]
 
+[size=3][u]Connection Deletion[/u][/size]
+
+It is not recommended, but is possible to delete the previously added connection.
+It will be followed by errors in the game debug logs on load, but everything will work fine.
+
+The better - simple to disable the connection by setting the "Gate Active" to [b]false[/b] for both gates in the connection.
+
+[b]Warning[/b]: Never delete a connection in a sector where you are in a game in current save. It will lead to a crash.
+
 [size=3][u]Connection Editing Area Buttons[/u][/size]
 
 There are two buttons at the bottom of the window:
@@ -451,6 +462,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][0.10.4] - 2025-09-21[/i][/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] On changing the "Load Mods" option - the tool will reload the game data automatically
+[/list]
+[/list]
 [size=3][u][i][0.10.3] - 2025-09-20[/i][/u][/size]
 [list]
 [*] Fixed

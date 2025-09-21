@@ -257,6 +257,7 @@ Selection</a></li>
 <li><a href="#add-gates-connection">Add Gates Connection</a></li>
 <li><a href="#modify-existing-connection">Modify Existing
 Connection</a></li>
+<li><a href="#connection-deletion">Connection Deletion</a></li>
 <li><a href="#connection-editing-area-buttons">Connection Editing Area
 Buttons</a>
 <ul>
@@ -290,6 +291,7 @@ Issues Reporting</a></li>
 <li><a href="#license">License</a></li>
 <li><a href="#changelog">Changelog</a>
 <ul>
+<li><a href="#0104---2025-09-21">[0.10.4] - 2025-09-21</a></li>
 <li><a href="#0103---2025-09-20">[0.10.3] - 2025-09-20</a></li>
 <li><a href="#0102---2025-07-19">[0.10.2] - 2025-07-19</a></li>
 <li><a href="#0101---2025-07-18">[0.10.1] - 2025-07-18</a></li>
@@ -592,6 +594,14 @@ alt="Gate from connection moved to the new position" />
 <figcaption aria-hidden="true">Gate from connection moved to the new
 position</figcaption>
 </figure>
+<h4 id="connection-deletion">Connection Deletion</h4>
+<p>It is not recommended, but is possible to delete the previously added
+connection. It will be followed by errors in the game debug logs on
+load, but everything will work fine.</p>
+<p>The better - simple to disable the connection by setting the “Gate
+Active” to <code>false</code> for both gates in the connection.</p>
+<p><strong>Warning</strong>: Never delete a connection in a sector where
+you are in a game in current save. It will lead to a crash.</p>
 <h4 id="connection-editing-area-buttons">Connection Editing Area
 Buttons</h4>
 <p>There are two buttons at the bottom of the window:</p>
@@ -787,7 +797,15 @@ everyone!</p>
 <p>This project is licensed under the Apache License 2.0 - see the <a
 href="../../LICENSE">LICENSE</a> file for details.</p>
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">[0.10.3] - 2025-09-20</h3>
+<h3 id="section">[0.10.4] - 2025-09-21</h3>
+<ul>
+<li>Fixed
+<ul>
+<li>On changing the “Load Mods” option - the tool will reload the game
+data automatically</li>
+</ul></li>
+</ul>
+<h3 id="section-1">[0.10.3] - 2025-09-20</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -818,7 +836,7 @@ class="citation" data-cites="Sleaker">@Sleaker</span></a> for the idea
 and initial implementation)</li>
 </ul></li>
 </ul>
-<h3 id="section-1">[0.10.2] - 2025-07-19</h3>
+<h3 id="section-2">[0.10.2] - 2025-07-19</h3>
 <ul>
 <li>Added
 <ul>
@@ -826,7 +844,7 @@ and initial implementation)</li>
 <code>Reload</code> menu item</li>
 </ul></li>
 </ul>
-<h3 id="section-2">[0.10.1] - 2025-07-18</h3>
+<h3 id="section-3">[0.10.1] - 2025-07-18</h3>
 <ul>
 <li>Improved
 <ul>
@@ -834,7 +852,7 @@ and initial implementation)</li>
 default browser</li>
 </ul></li>
 </ul>
-<h3 id="section-3">[0.10.0] - 2025-07-18</h3>
+<h3 id="section-4">[0.10.0] - 2025-07-18</h3>
 <ul>
 <li>Added
 <ul>
@@ -842,7 +860,7 @@ default browser</li>
 <li>Gate rotation by mouse on the Sector map</li>
 </ul></li>
 </ul>
-<h3 id="section-4">[0.9.7] - 2025-07-18</h3>
+<h3 id="section-5">[0.9.7] - 2025-07-18</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -858,7 +876,7 @@ Map building, if their coordinates cannot be aligned to the hexagonal
 grid</li>
 </ul></li>
 </ul>
-<h3 id="section-5">[0.9.6] - 2025-03-14</h3>
+<h3 id="section-6">[0.9.6] - 2025-03-14</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -866,7 +884,7 @@ grid</li>
 some Mods)</li>
 </ul></li>
 </ul>
-<h3 id="section-6">[0.9.5] - 2025-03-05</h3>
+<h3 id="section-7">[0.9.5] - 2025-03-05</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -878,7 +896,7 @@ some Mods)</li>
 <li>Mods version is shown in the Galaxy map</li>
 </ul></li>
 </ul>
-<h3 id="section-7">[0.9.4] - 2025-03-04</h3>
+<h3 id="section-8">[0.9.4] - 2025-03-04</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -891,7 +909,7 @@ some Mods)</li>
 <li>Sector scaling on Sector map</li>
 </ul></li>
 </ul>
-<h3 id="section-8">[0.9.3] - 2025-02-28</h3>
+<h3 id="section-9">[0.9.3] - 2025-02-28</h3>
 <ul>
 <li>Added
 <ul>
@@ -903,7 +921,7 @@ some Mods)</li>
 <li>Debug log readability</li>
 </ul></li>
 </ul>
-<h3 id="section-9">[0.9.2] - 2025-02-25</h3>
+<h3 id="section-10">[0.9.2] - 2025-02-25</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -913,7 +931,7 @@ some Mods)</li>
 <li>Fixed mod loading order logic based on dependencies</li>
 </ul></li>
 </ul>
-<h3 id="section-10">[0.9.0] - 2025-02-24</h3>
+<h3 id="section-11">[0.9.0] - 2025-02-24</h3>
 <ul>
 <li>Added
 <ul>
@@ -924,7 +942,7 @@ some Mods)</li>
 <li>Procedures to work with EGOSOFT catalogs</li>
 </ul></li>
 </ul>
-<h3 id="section-11">[0.8.9] - 2025-02-20</h3>
+<h3 id="section-12">[0.8.9] - 2025-02-20</h3>
 <ul>
 <li>Added
 <ul>
@@ -936,7 +954,7 @@ some Mods)</li>
 edit</li>
 </ul></li>
 </ul>
-<h3 id="section-12">[0.8.8] - 2025-02-17</h3>
+<h3 id="section-13">[0.8.8] - 2025-02-17</h3>
 <ul>
 <li>Fixed
 <ul>
@@ -948,21 +966,21 @@ issue</li>
 <li>Internal procedure of game data loading</li>
 </ul></li>
 </ul>
-<h3 id="section-13">[0.8.6] - 2025-02-14</h3>
+<h3 id="section-14">[0.8.6] - 2025-02-14</h3>
 <ul>
 <li>Fixed
 <ul>
 <li>Fixed the issue with the mod loading to the tool</li>
 </ul></li>
 </ul>
-<h3 id="section-14">[0.8.5] - 2025-02-14</h3>
+<h3 id="section-15">[0.8.5] - 2025-02-14</h3>
 <ul>
 <li>Updated
 <ul>
 <li>Documentation</li>
 </ul></li>
 </ul>
-<h3 id="section-15">[0.8.4] - 2025-02-14</h3>
+<h3 id="section-16">[0.8.4] - 2025-02-14</h3>
 <ul>
 <li>Added
 <ul>
@@ -977,28 +995,28 @@ issue</li>
 <li>Mod changes detection logic</li>
 </ul></li>
 </ul>
-<h3 id="section-16">[0.8.3] - 2025-02-14</h3>
+<h3 id="section-17">[0.8.3] - 2025-02-14</h3>
 <ul>
 <li>Refactor
 <ul>
 <li>Changed internal logic of data loading (XMLPatch)</li>
 </ul></li>
 </ul>
-<h3 id="section-17">[0.8.2] - 2025-02-13</h3>
+<h3 id="section-18">[0.8.2] - 2025-02-13</h3>
 <ul>
 <li>Fixed
 <ul>
 <li>Fixed the extraction window behavior</li>
 </ul></li>
 </ul>
-<h3 id="section-18">[0.8.1] - 2025-02-13</h3>
+<h3 id="section-19">[0.8.1] - 2025-02-13</h3>
 <ul>
 <li>Improved
 <ul>
 <li>Mods can be extracted with the game data and DLC’s</li>
 </ul></li>
 </ul>
-<h3 id="section-19">[0.8.0] - 2025-02-13</h3>
+<h3 id="section-20">[0.8.0] - 2025-02-13</h3>
 <ul>
 <li>Added
 <ul>
@@ -1007,7 +1025,7 @@ issue</li>
 <li>Showing empty cluster cells (with coordinates on the tooltip)</li>
 </ul></li>
 </ul>
-<h3 id="section-20">[0.7.0] - 2025-02-11</h3>
+<h3 id="section-21">[0.7.0] - 2025-02-11</h3>
 <ul>
 <li>Added
 <ul>
@@ -1025,14 +1043,14 @@ extracted files</li>
 extracted the game files</strong></li>
 </ul></li>
 </ul>
-<h3 id="section-21">[0.6.0] - 2025-02-10</h3>
+<h3 id="section-22">[0.6.0] - 2025-02-10</h3>
 <ul>
 <li>Added
 <ul>
 <li>Extraction game files</li>
 </ul></li>
 </ul>
-<h3 id="section-22">[0.5.2] - 2025-02-08</h3>
+<h3 id="section-23">[0.5.2] - 2025-02-08</h3>
 <ul>
 <li>Added
 <ul>
@@ -1049,7 +1067,7 @@ detection</li>
 <li>Console version is gone</li>
 </ul></li>
 </ul>
-<h3 id="section-23">[0.4.3] - 2025-01-14</h3>
+<h3 id="section-24">[0.4.3] - 2025-01-14</h3>
 <ul>
 <li>Added
 <ul>
