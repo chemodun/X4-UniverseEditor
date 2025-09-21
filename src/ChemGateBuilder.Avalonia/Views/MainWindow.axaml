@@ -1,0 +1,174 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ChemGateBuilder.AvaloniaApp.Views.MainWindow"
+        Width="1200" Height="900"
+  Title="Chem Gate Builder (Avalonia)"
+  Opened="OnWindowOpened">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- Tabs as Ribbon replacement -->
+    <TabControl Margin="8" SelectedIndex="{Binding SelectedTabIndex}">
+      <TabItem Header="Mod">
+        <DockPanel Margin="8" LastChildFill="True">
+          <!-- Toolbar -->
+          <StackPanel Orientation="Horizontal" Spacing="8" DockPanel.Dock="Top">
+            <Button Content="New" IsEnabled="{Binding IsGateCanBeCreated}" Click="OnNewModClick"/>
+            <Button Content="Load" IsEnabled="{Binding IsDataLoaded}" Click="OnLoadModClick"/>
+            <Button Content="Save" IsEnabled="{Binding IsModCanBeSaved}" Click="OnSaveModClick"/>
+            <Button Content="Save as" IsEnabled="{Binding IsModCanBeSavedAs}" Click="OnSaveModAsClick"/>
+            <Button Content="Exit" Click="OnExitClick"/>
+          </StackPanel>
+
+          <!-- Connections list (parity with WPF list) -->
+          <StackPanel Spacing="8">
+            <TextBlock Text="Connections" FontWeight="Bold"/>
+            <ListBox ItemsSource="{Binding ModConnections}" SelectedItem="{Binding SelectedModConnection}" MinHeight="200">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{Binding SectorDirectName}"/>
+                    <TextBlock Text="↔"/>
+                    <TextBlock Text="{Binding SectorOppositeName}"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+              <!-- Editor for selected connection -->
+              <Border BorderBrush="#CCC" BorderThickness="1" Padding="8" CornerRadius="4" IsVisible="{Binding SelectedModConnection}">
+                <StackPanel Spacing="12">
+                  <TextBlock Text="Edit connection" FontWeight="Bold"/>
+                  <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                    <!-- Direct side -->
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Direct" FontStyle="Italic"/>
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="X (km)" Width="60"/>
+                      <NumericUpDown Width="100" Minimum="-100000" Maximum="100000" Value="{Binding EditDirectXKm, Mode=TwoWay}"/>
+                      <TextBlock Text="Y (km)" Width="60" Margin="12,0,0,0"/>
+                      <NumericUpDown Width="100" Minimum="-100000" Maximum="100000" Value="{Binding EditDirectYKm, Mode=TwoWay}"/>
+                      <TextBlock Text="Z (km)" Width="60" Margin="12,0,0,0"/>
+                      <NumericUpDown Width="100" Minimum="-100000" Maximum="100000" Value="{Binding EditDirectZKm, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="Angle (deg)" Width="80"/>
+                      <NumericUpDown Width="100" Minimum="-180" Maximum="180" Value="{Binding EditDirectAngleDeg, Mode=TwoWay}"/>
+                      <CheckBox Margin="12,0,0,0" Content="Active" IsChecked="{Binding EditDirectActive, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <!-- Opposite side -->
+                    <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Text="Opposite" FontStyle="Italic" Margin="0,12,0,0"/>
+                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="X (km)" Width="60"/>
+                      <NumericUpDown Width="100" Minimum="-100000" Maximum="100000" Value="{Binding EditOppositeXKm, Mode=TwoWay}"/>
+                      <TextBlock Text="Y (km)" Width="60" Margin="12,0,0,0"/>
+                      <NumericUpDown Width="100" Minimum="-100000" Maximum="100000" Value="{Binding EditOppositeYKm, Mode=TwoWay}"/>
+                      <TextBlock Text="Z (km)" Width="60" Margin="12,0,0,0"/>
+                      <NumericUpDown Width="100" Minimum="-100000" Maximum="100000" Value="{Binding EditOppositeZKm, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="Angle (deg)" Width="80"/>
+                      <NumericUpDown Width="100" Minimum="-180" Maximum="180" Value="{Binding EditOppositeAngleDeg, Mode=TwoWay}"/>
+                      <CheckBox Margin="12,0,0,0" Content="Active" IsChecked="{Binding EditOppositeActive, Mode=TwoWay}"/>
+                    </StackPanel>
+                  </Grid>
+
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Apply" Click="OnApplyConnectionEditClick"/>
+                    <Button Content="Duplicate" Click="OnDuplicateConnectionClick"/>
+                    <Button Content="Delete" Click="OnDeleteConnectionClick"/>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+          </StackPanel>
+        </DockPanel>
+      </TabItem>
+
+      <TabItem Header="X4 Data">
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="8">
+          <Button Content="Extract" Click="OnExtractX4DataClick"/>
+          <Button Content="Reload" Click="OnReloadX4DataClick"/>
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="Map">
+        <StackPanel Spacing="8" Margin="8">
+          <TextBlock Text="Map viewer (preview)" FontWeight="Bold"/>
+          <TextBlock Text="This will host the sector/cluster browser in a later step."/>
+          <StackPanel Orientation="Horizontal" Spacing="16">
+            <TextBlock Text="Clusters:"/>
+            <TextBlock Text="{Binding Path=_galaxy.Clusters.Count, FallbackValue=0}"/>
+            <TextBlock Text="Sectors:" Margin="16,0,0,0"/>
+            <TextBlock Text="{Binding Path=_galaxy.Sectors.Count, FallbackValue=0}"/>
+          </StackPanel>
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="Configuration">
+        <StackPanel Spacing="12" Margin="8">
+          <!-- Mode related -->
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="Direct mode:" VerticalAlignment="Center"/>
+            <CheckBox IsChecked="{Binding DirectMode}"/>
+          </StackPanel>
+
+          <!-- X4 Data related -->
+          <StackPanel Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding NoDirectMode}">
+              <TextBlock Text="X4 Data Folder:" VerticalAlignment="Center"/>
+              <Button Content="Select..." Click="OnSelectX4DataFolderClick"/>
+              <TextBlock Text="{Binding X4DataFolderPath}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding DirectMode}">
+              <TextBlock Text="X4 Game Folder:" VerticalAlignment="Center"/>
+              <Button Content="Select..." Click="OnSelectX4GameFolderClick"/>
+              <TextBlock Text="{Binding X4GameFolderPath}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="X4 Data Version:" VerticalAlignment="Center"/>
+              <CheckBox IsChecked="{Binding X4DataVersionOverride}" Content="Override"/>
+              <ComboBox Width="120" ItemsSource="{Binding X4DataVersions}" SelectedItem="{Binding X4DataVersionString}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Load Mods Data:" VerticalAlignment="Center"/>
+              <CheckBox IsChecked="{Binding LoadModsData}"/>
+            </StackPanel>
+            <Separator Margin="0,8"/>
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Gates active by default:" VerticalAlignment="Center"/>
+              <CheckBox IsChecked="{Binding GatesActiveByDefault}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Gates min distance:" VerticalAlignment="Center"/>
+              <NumericUpDown Minimum="0" Maximum="100000" Value="{Binding GatesMinimalDistanceBetween}" Width="120"/>
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </TabItem>
+    </TabControl>
+
+    <!-- Content area placeholder -->
+    <Border Grid.Row="1" Margin="8" BorderBrush="Gray" BorderThickness="1">
+      <TextBlock Text="Content area (map/editor placeholder)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Border>
+
+    <Border Grid.Row="2" Padding="8" Background="#0F000000">
+      <TextBlock Text="{Binding StatusBar.StatusMessage}"/>
+    </Border>
+
+    <Grid Grid.RowSpan="3" IsVisible="{Binding IsBusy}" Background="#66000000">
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ProgressBar IsIndeterminate="True" Width="400" Height="16"/>
+        <TextBlock Text="{Binding BusyMessage}" Margin="8"/>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

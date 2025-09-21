@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DB648324-1795-45B4-8690-40E133369449}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChemGateBuilder.Avalonia", "src\ChemGateBuilder.Avalonia\ChemGateBuilder.Avalonia.csproj", "{F1C3C9B7-AAAA-4E8F-AED3-0000AVALONIA001}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X4DataLoader", "src\X4DataLoader\X4DataLoader.csproj", "{2914354A-6510-41D0-A9AC-D4F282E06D3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "X4DataTestConsole", "src\X4DataTestConsole\X4DataTestConsole.csproj", "{C3949B30-EFC9-4E87-9566-726A549EF07E}"
