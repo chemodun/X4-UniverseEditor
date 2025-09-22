@@ -96,6 +96,7 @@ You can download the tool from the following locations:
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#license]License[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#changelog]Changelog[/url]
 [list]
+[*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0105---2025-09-22]0.10.5\] - 2025-09-22[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0104---2025-09-21]0.10.4\] - 2025-09-21[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0103---2025-09-20]0.10.3\] - 2025-09-20[/url]
 [*] [\[url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder/#0102---2025-07-19]0.10.2\] - 2025-07-19[/url]
@@ -462,6 +463,13 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][0.10.5] - 2025-09-22[/i][/u][/size]
+[list]
+[*] Improved
+[list]
+[*] Improved the map zooming by mouse wheel - now it is more faster
+[/list]
+[/list]
 [size=3][u][i][0.10.4] - 2025-09-21[/i][/u][/size]
 [list]
 [*] Fixed
