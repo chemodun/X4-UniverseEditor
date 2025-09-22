@@ -124,10 +124,11 @@ namespace X4DataLoader
       if (positionXML != null)
       {
         PositionXML = positionXML;
+        PositionSource = XmlHelper.GetAttribute(PositionXML, "_source") ?? PositionSource;
       }
-      if (!string.IsNullOrEmpty(source))
+      if (string.IsNullOrEmpty(PositionSource) && !string.IsNullOrEmpty(source))
       {
-        PositionSource = XmlHelper.GetAttribute(PositionXML, "_source") ?? source;
+        PositionSource = source;
       }
       if (!string.IsNullOrEmpty(fileName))
       {
