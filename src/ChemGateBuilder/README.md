@@ -442,7 +442,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 ### [0.10.5] - 2025-09-22
 
 - Improved
-  - Improved the map zooming by mouse wheel - now it is more faster
+  - Improved the map zooming by mouse wheel - now it is working faster
 
 ### [0.10.4] - 2025-09-21
 
