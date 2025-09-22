@@ -74,6 +74,7 @@ You can download the tool from the following locations:
     - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
   - [License](#license)
   - [Changelog](#changelog)
+    - [\[0.10.5\] - 2025-09-22](#0105---2025-09-22)
     - [\[0.10.4\] - 2025-09-21](#0104---2025-09-21)
     - [\[0.10.3\] - 2025-09-20](#0103---2025-09-20)
     - [\[0.10.2\] - 2025-07-19](#0102---2025-07-19)
@@ -437,6 +438,11 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.5] - 2025-09-22
+
+- Improved
+  - Improved the map zooming by mouse wheel - now it is more faster
 
 ### [0.10.4] - 2025-09-21
 
