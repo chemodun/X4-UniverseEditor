@@ -20,10 +20,10 @@ namespace X4Map
 {
   public class GalaxyMapViewer : ScrollViewer, INotifyPropertyChanged
   {
-    private bool _editorMode = true;
-    public Galaxy GalaxyData { get; private set; } = new();
-    public FactionColors FactionColors { get; private set; } = new();
-    private double _mapColorsOpacity = 0.5;
+    protected bool _editorMode = true;
+    public Galaxy GalaxyData { get; protected set; } = new();
+    public FactionColors FactionColors { get; protected set; } = new();
+    protected double _mapColorsOpacity = 0.5;
     public double MapColorsOpacity
     {
       get => _mapColorsOpacity;
@@ -37,12 +37,12 @@ namespace X4Map
         }
       }
     }
-    private readonly List<GalaxyMapCluster> _clusters = [];
-    private readonly List<GalaxyMapSector> _sectors = [];
-    private Canvas GalaxyCanvas { get; set; } = new();
-    private const double HexagonWidthDefault = 100; // Width of the hexagon in pixels
-    private static readonly double HexagonHeightDefault = HexagonWidthDefault * SectorMap.HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
-    private double _hexagonWidth = HexagonWidthDefault; // Width of the hexagon in pixels
+    protected readonly List<GalaxyMapCluster> _clusters = [];
+    protected readonly List<GalaxyMapSector> _sectors = [];
+    protected Canvas GalaxyCanvas { get; set; } = new();
+    protected const double HexagonWidthDefault = 100; // Width of the hexagon in pixels
+    protected static readonly double HexagonHeightDefault = HexagonWidthDefault * SectorMap.HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
+    protected double _hexagonWidth = HexagonWidthDefault; // Width of the hexagon in pixels
     public double HexagonWidth
     {
       get => _hexagonWidth;
@@ -56,13 +56,13 @@ namespace X4Map
       }
     } // Width of the hexagon in pixel
 
-    private double _hexagonHeight = HexagonWidthDefault * SectorMap.HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
+    protected double _hexagonHeight = HexagonWidthDefault * SectorMap.HexagonSizesRelation; // Height of the hexagon in pixels (Width * sqrt(3)/2)
     public double HexagonHeight
     {
       get => _hexagonHeight;
       set { }
     } // Height of the hexagon in pixels (Width * sqrt(3)/2)
-    private double _hexagonWidthMinimal = HexagonWidthDefault;
+    protected double _hexagonWidthMinimal = HexagonWidthDefault;
     public double HexagonWidthMinimal
     {
       get => _hexagonWidthMinimal;
@@ -72,7 +72,7 @@ namespace X4Map
         OnPropertyChanged(nameof(HexagonWidthMinimal));
       }
     }
-    private double _hexagonWidthMaximal = HexagonWidthDefault;
+    protected double _hexagonWidthMaximal = HexagonWidthDefault;
     public double HexagonWidthMaximal
     {
       get => _hexagonWidthMaximal;
@@ -82,7 +82,7 @@ namespace X4Map
         OnPropertyChanged(nameof(HexagonWidthMaximal));
       }
     }
-    private double _sectorRadius = MapConstants.SectorInternalSizeMinKm;
+    protected double _sectorRadius = MapConstants.SectorInternalSizeMinKm;
     public double SectorRadius
     {
       get => _sectorRadius;
@@ -100,18 +100,18 @@ namespace X4Map
     public static readonly int RowHeight = 17320000 / 2; // 17,320,000 meters for vertical (Z) axis
 
     public double ScaleFactor = 0.001; // Scaling factor to convert units to pixels
-    private double _canvasWidthBase = 0;
-    private double _canvasHeightBase = 0;
+    protected double _canvasWidthBase = 0;
+    protected double _canvasHeightBase = 0;
     public MapInfo MapInfo { get; set; } = new(0, 0, 0, 0);
-    private double scrollHorizontalOffset = 0;
-    private double canvasToScrollWidthDelta = 0;
-    private double canvasToScrollHeightDelta = 0;
-    private double scrollVerticalOffset = 0;
+    protected double scrollHorizontalOffset = 0;
+    protected double canvasToScrollWidthDelta = 0;
+    protected double canvasToScrollHeightDelta = 0;
+    protected double scrollVerticalOffset = 0;
     public Polygon? HexagonOnMouseRightButtonDown = null;
-    private Polygon? _hexagonOnMouseLeftButtonDown = null;
+    protected Polygon? _hexagonOnMouseLeftButtonDown = null;
 
-    private Polygon? _hexagonSelected = null;
-    private Polygon? _pressedHexagon = null;
+    protected Polygon? _hexagonSelected = null;
+    protected Polygon? _pressedHexagon = null;
     public Polygon? PressedHexagon
     {
       get => _pressedHexagon;
@@ -173,25 +173,25 @@ namespace X4Map
     public GalaxyMapSector? SelectedMapSector { get; set; } = null;
 
     // Fields to track panning state
-    private bool isPanning = false;
-    private Point panStartPoint = new();
-    private double canvasWidth = 0;
+    protected bool isPanning = false;
+    protected Point panStartPoint = new();
+    protected double canvasWidth = 0;
 
     // Deferred zoom fields
-    private readonly ScaleTransform _zoomScale = new(1.0, 1.0);
-    private readonly TranslateTransform _zoomTranslate = new(0.0, 0.0);
-    private double _deferredZoomScale = 1.0;
-    private double _zoomScalePrevious = 1.0;
-    private DispatcherTimer? _zoomCommitTimer;
-    private const double ZoomInStep = 1.1;
-    private const double ZoomOutStep = 1.0 / ZoomInStep;
-    private const double ZoomCommitDelayMs = 180; // debounce delay before committing layout
-    private const double ZoomMinFactor = 0.25; // relative to current HexagonWidth
-    private const double ZoomMaxFactor = 4.0; // relative to current HexagonWidth
-    private readonly List<GalaxyMapCell> MapCells = [];
+    protected readonly ScaleTransform _zoomScale = new(1.0, 1.0);
+    protected readonly TranslateTransform _zoomTranslate = new(0.0, 0.0);
+    protected double _deferredZoomScale = 1.0;
+    protected double _zoomScalePrevious = 1.0;
+    protected DispatcherTimer? _zoomCommitTimer;
+    protected const double ZoomInStep = 1.1;
+    protected const double ZoomOutStep = 1.0 / ZoomInStep;
+    protected const double ZoomCommitDelayMs = 180; // debounce delay before committing layout
+    protected const double ZoomMinFactor = 0.25; // relative to current HexagonWidth
+    protected const double ZoomMaxFactor = 4.0; // relative to current HexagonWidth
+    protected readonly List<GalaxyMapCell> MapCells = [];
     public List<SectorMapItem> SectorsItems = [];
     public ObservableCollection<MapOptions> DLCsOptions { get; set; } = [];
-    private Visibility _optionsDLCsVisibilityState = Visibility.Hidden;
+    protected Visibility _optionsDLCsVisibilityState = Visibility.Hidden;
     public Visibility OptionsDLCsVisibilityState
     {
       get => _optionsDLCsVisibilityState;
@@ -202,7 +202,7 @@ namespace X4Map
       }
     }
     public ObservableCollection<MapOptions> ModsOptions { get; set; } = [];
-    private Visibility _optionsModsVisibilityState = Visibility.Hidden;
+    protected Visibility _optionsModsVisibilityState = Visibility.Hidden;
     public Visibility OptionsModsVisibilityState
     {
       get => _optionsModsVisibilityState;
@@ -214,10 +214,8 @@ namespace X4Map
     }
     public ObservableCollection<MapOptions> DeveloperOptions { get; set; } = [];
     public MapOptions ShowEmptyClusterPlaces = new("Show Empty Cluster Cells", "", "EmptyCell", false);
-
-    private List<string> _extraConnectionsNames = [];
-    private Dictionary<string, List<ObjectInSector>> _extraObjects = [];
-    private readonly List<GalaxyMapInterConnection> InterConnections = [];
+    protected Dictionary<string, List<ObjectInSector>> _extraObjects = [];
+    protected readonly List<GalaxyMapInterConnection> InterConnections = [];
     public event EventHandler<SectorEventArgs>? OnPressedSector;
     public event EventHandler<ClusterEventArgs>? OnPressedCluster;
     public event EventHandler<CellEventArgs>? OnPressedCell;
@@ -230,8 +228,7 @@ namespace X4Map
       Canvas galaxyCanvas,
       double mapColorsOpacity,
       bool editorMode = true,
-      Dictionary<string, List<ObjectInSector>>? extraObjects = null,
-      List<string>? extraConnectionsNames = null
+      Dictionary<string, List<ObjectInSector>>? extraObjects = null
     )
     {
       _editorMode = editorMode;
@@ -240,7 +237,6 @@ namespace X4Map
       _mapColorsOpacity = mapColorsOpacity;
       _sectorRadius = MapConstants.SectorInternalSizeMinKm;
       _extraObjects = extraObjects ?? [];
-      _extraConnectionsNames = extraConnectionsNames ?? [];
       ShowEmptyClusterPlaces.PropertyChanged += MapOptions_PropertyChanged;
       DeveloperOptions.Add(ShowEmptyClusterPlaces);
       ScrollChanged += GalaxyMapViewer_ScrollChanged;
@@ -308,7 +304,7 @@ namespace X4Map
       CreateMap();
     }
 
-    private void PrepareGalaxyMap()
+    protected void PrepareGalaxyMap()
     {
       // Determine the rowId and columnId for each cluster and populate the dictionary
       foreach (var cluster in GalaxyData.Clusters)
@@ -377,7 +373,7 @@ namespace X4Map
       return Task.CompletedTask;
     }
 
-    private static void ExportToPngOnUI(Canvas sourceCanvas, string filePath)
+    protected static void ExportToPngOnUI(Canvas sourceCanvas, string filePath)
     {
       // Ensure layout is up-to-date
       sourceCanvas.Measure(new Size(sourceCanvas.ActualWidth, sourceCanvas.ActualHeight));
@@ -408,7 +404,7 @@ namespace X4Map
       fs.Close();
     }
 
-    private void CreateMap()
+    protected virtual void CreateMap()
     {
       double maxSectorRadius = SectorRadius;
       if (MapCells.Count == 0)
@@ -533,32 +529,11 @@ namespace X4Map
             InterConnections.Add(galaxyMapGateConnection);
           }
         }
-        foreach (string connectionName in _extraConnectionsNames)
-        {
-          if (connectionName == null)
-          {
-            continue;
-          }
-          List<SectorMapItem> extraGatesItems = SectorsItems.FindAll(item => item.Id == connectionName);
-          if (extraGatesItems.Count == 2)
-          {
-            GalaxyMapInterConnection galaxyMapGateConnection = new(extraGatesItems[0], extraGatesItems[1], true);
-            galaxyMapGateConnection.Create(GalaxyCanvas);
-            InterConnections.Add(galaxyMapGateConnection);
-          }
-        }
-        List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == SectorMap.NewGateId);
-        if (newGatesItems.Count == 2)
-        {
-          GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);
-          galaxyMapGateConnection.Create(GalaxyCanvas);
-          InterConnections.Add(galaxyMapGateConnection);
-        }
       }
       SectorRadius = maxSectorRadius;
     }
 
-    private void ScaleFactorUpdate()
+    protected void ScaleFactorUpdate()
     {
       double width = ActualWidth;
       double height = ActualHeight;
@@ -608,7 +583,7 @@ namespace X4Map
       }
     }
 
-    private void GalaxyMapViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+    protected void GalaxyMapViewer_SizeChanged(object sender, SizeChangedEventArgs e)
     {
       if (ActualWidth != 0 && ActualHeight != 0 && _canvasWidthBase != 0 && _canvasHeightBase != 0)
       {
@@ -617,7 +592,7 @@ namespace X4Map
       }
     }
 
-    private void GalaxyMapViewer_ScrollChanged(object sender, RoutedEventArgs e)
+    protected void GalaxyMapViewer_ScrollChanged(object sender, RoutedEventArgs e)
     {
       double viewportWidth = ViewportWidth;
       double viewportHeight = ViewportHeight;
@@ -647,7 +622,7 @@ namespace X4Map
       );
     }
 
-    private void AdjustOffset(
+    protected void AdjustOffset(
       bool isHorizontal,
       double currentCanvasSize,
       double viewportSize,
@@ -684,7 +659,7 @@ namespace X4Map
       previousDelta = newDelta;
     }
 
-    private void GalaxyMapViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    protected void GalaxyMapViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
       var clickedElement = e.OriginalSource as DependencyObject;
       if (clickedElement is TextBlock textBlock && textBlock.DataContext is Sector _sectorFromTextBlock)
@@ -761,7 +736,7 @@ namespace X4Map
       }
     }
 
-    private void GalaxyMapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    protected void GalaxyMapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
       var clickedElement = e.OriginalSource as DependencyObject;
       if (clickedElement is TextBlock textBlock && textBlock.DataContext is Sector _sectorFromTextBlock)
@@ -803,7 +778,7 @@ namespace X4Map
     }
 
     // Mouse Move - Perform Panning
-    private void GalaxyMapViewer_MouseMove(object sender, MouseEventArgs e)
+    protected void GalaxyMapViewer_MouseMove(object sender, MouseEventArgs e)
     {
       if (isPanning)
       {
@@ -824,7 +799,7 @@ namespace X4Map
     }
 
     // Mouse Left Button Up - End Panning
-    private void GalaxyMapViewer_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    protected void GalaxyMapViewer_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
       if (isPanning)
       {
@@ -904,7 +879,7 @@ namespace X4Map
       return new Point(viewportCenterX, viewportCenterY);
     }
 
-    private void CommitDeferredZoom()
+    protected void CommitDeferredZoom()
     {
       _zoomCommitTimer?.Stop();
       _zoomScalePrevious = IsNotZoomed() ? 1.0 : ExtentWidth / ViewportWidth;
@@ -925,7 +900,7 @@ namespace X4Map
       HexagonWidth = targetWidth;
     }
 
-    private void MapOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected void MapOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(MapOptions.IsChecked))
       {
@@ -996,7 +971,7 @@ namespace X4Map
     public int Row { get; set; } = row;
   }
 
-  class GalaxyMapCell(Cluster cluster, int col, int row, bool isProcessed = false)
+  public class GalaxyMapCell(Cluster cluster, int col, int row, bool isProcessed = false)
   {
     public MapPosition Position { get; set; } = new(col, row);
     public Cluster Cluster { get; set; } = cluster;
@@ -1021,7 +996,7 @@ namespace X4Map
 
   public class GalaxyMapInterConnection : INotifyPropertyChanged
   {
-    private SectorMapItem? _directItem;
+    protected SectorMapItem? _directItem;
     public SectorMapItem? DirectItem
     {
       get => _directItem;
@@ -1031,7 +1006,7 @@ namespace X4Map
         OnPropertyChanged(nameof(DirectItem));
       }
     }
-    private SectorMapItem? _oppositeItem;
+    protected SectorMapItem? _oppositeItem;
     public SectorMapItem? OppositeItem
     {
       get => _oppositeItem;
@@ -1052,8 +1027,8 @@ namespace X4Map
       get { return _oppositeItem?.Source ?? "unknown"; }
     }
 
-    private readonly bool IsGate = true;
-    private Line? Line = null;
+    protected readonly bool IsGate = true;
+    protected Line? Line = null;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -1130,10 +1105,10 @@ namespace X4Map
 
   public class MapOptions : INotifyPropertyChanged
   {
-    private string _name = string.Empty;
-    private string _version = string.Empty;
-    private string _id = string.Empty;
-    private bool _isChecked = false;
+    protected string _name = string.Empty;
+    protected string _version = string.Empty;
+    protected string _id = string.Empty;
+    protected bool _isChecked = false;
 
     public MapOptions(string name, string version, string id, bool isChecked)
     {
