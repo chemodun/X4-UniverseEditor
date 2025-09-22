@@ -638,7 +638,7 @@ namespace ChemGateBuilder
         }
       }
     }
-    private bool _initiated = false;
+    private readonly bool _initiated = false;
 
     // Constructor
     public MainWindow()
