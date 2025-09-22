@@ -108,13 +108,31 @@ namespace X4DataLoader
       FileName = fileName;
     }
 
-    public void SetPosition(Position position, string positionId, XElement positionXML, string source, string fileName)
+    public void SetPosition(
+      Position position,
+      string? positionId = null,
+      XElement? positionXML = null,
+      string? source = null,
+      string? fileName = null
+    )
     {
       Position = position;
-      PositionId = positionId;
-      PositionXML = positionXML;
-      PositionSource = XmlHelper.GetAttribute(positionXML, "_source") ?? source;
-      PositionFileName = fileName;
+      if (!string.IsNullOrEmpty(positionId))
+      {
+        PositionId = positionId;
+      }
+      if (positionXML != null)
+      {
+        PositionXML = positionXML;
+      }
+      if (!string.IsNullOrEmpty(source))
+      {
+        PositionSource = XmlHelper.GetAttribute(PositionXML, "_source") ?? source;
+      }
+      if (!string.IsNullOrEmpty(fileName))
+      {
+        PositionFileName = fileName;
+      }
     }
 
     public static Cluster? GetClusterByMacro(List<Cluster> clusters, string macro)
