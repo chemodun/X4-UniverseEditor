@@ -176,6 +176,18 @@ namespace X4Map
     private bool isPanning = false;
     private Point panStartPoint = new();
     private double canvasWidth = 0;
+
+    // Deferred zoom fields
+    private readonly ScaleTransform _zoomScale = new(1.0, 1.0);
+    private readonly TranslateTransform _zoomTranslate = new(0.0, 0.0);
+    private double _deferredZoomScale = 1.0;
+    private double _zoomScalePrevious = 1.0;
+    private DispatcherTimer? _zoomCommitTimer;
+    private const double ZoomInStep = 1.1;
+    private const double ZoomOutStep = 1.0 / ZoomInStep;
+    private const double ZoomCommitDelayMs = 180; // debounce delay before committing layout
+    private const double ZoomMinFactor = 0.25; // relative to current HexagonWidth
+    private const double ZoomMaxFactor = 4.0; // relative to current HexagonWidth
     private readonly List<GalaxyMapCell> MapCells = [];
     public List<SectorMapItem> SectorsItems = [];
     public ObservableCollection<MapOptions> DLCsOptions { get; set; } = [];
@@ -238,6 +250,15 @@ namespace X4Map
       GalaxyCanvas.PreviewMouseRightButtonDown += GalaxyMapViewer_MouseRightButtonDown;
       GalaxyCanvas.MouseMove += GalaxyMapViewer_MouseMove;
       GalaxyCanvas.MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
+
+      // Setup fast, GPU-accelerated deferred zoom transform
+      var tg = new TransformGroup();
+      tg.Children.Add(_zoomScale);
+      tg.Children.Add(_zoomTranslate);
+      GalaxyCanvas.RenderTransform = tg;
+      GalaxyCanvas.RenderTransformOrigin = new Point(0, 0);
+      _zoomCommitTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(ZoomCommitDelayMs), IsEnabled = false };
+      _zoomCommitTimer.Tick += (_, _) => CommitDeferredZoom();
     }
 
     public void RefreshGalaxyData()
@@ -316,6 +337,20 @@ namespace X4Map
 
       _canvasWidthBase = (MapInfo.ColumnMax - MapInfo.ColumnMin + 1) * 0.75 + 0.25;
       _canvasHeightBase = (MapInfo.RowMax - MapInfo.RowMin) * 0.5 + 1;
+    }
+
+    bool IsNotZoomed()
+    {
+      // Avoid division by zero
+      if (ExtentWidth == 0 || ExtentHeight == 0)
+        return true;
+
+      // Calculate scale factors
+      double scaleX = ExtentWidth / ViewportWidth;
+      double scaleY = ExtentHeight / ViewportHeight;
+
+      // If both are ~1, there's no zoom
+      return Math.Abs(scaleX - 1.0) < 0.0001 || Math.Abs(scaleY - 1.0) < 0.0001;
     }
 
     public Task ExportToPng(Canvas sourceCanvas, string filePath)
@@ -588,52 +623,65 @@ namespace X4Map
       double viewportHeight = ViewportHeight;
       double currentCanvasWidth = GalaxyCanvas.Width;
       double currentCanvasHeight = GalaxyCanvas.Height;
-      if (currentCanvasWidth - viewportWidth != canvasWidth && viewportWidth != 0 && viewportWidth != ActualWidth)
+
+      // Skip if viewport is invalid or unchanged
+      if (viewportWidth == 0 || viewportWidth == ActualWidth || currentCanvasWidth - viewportWidth == canvasWidth)
+        return;
+
+      AdjustOffset(
+        isHorizontal: true,
+        currentCanvasSize: currentCanvasWidth,
+        viewportSize: viewportWidth,
+        ref canvasToScrollWidthDelta,
+        scrollOffset: scrollHorizontalOffset,
+        scrollAction: ScrollToHorizontalOffset
+      );
+
+      AdjustOffset(
+        isHorizontal: false,
+        currentCanvasSize: currentCanvasHeight,
+        viewportSize: viewportHeight,
+        ref canvasToScrollHeightDelta,
+        scrollOffset: scrollVerticalOffset,
+        scrollAction: ScrollToVerticalOffset
+      );
+    }
+
+    private void AdjustOffset(
+      bool isHorizontal,
+      double currentCanvasSize,
+      double viewportSize,
+      ref double previousDelta,
+      double scrollOffset,
+      Action<double> scrollAction
+    )
+    {
+      if (currentCanvasSize <= viewportSize)
+        return;
+
+      double newDelta = currentCanvasSize - viewportSize;
+      if (Math.Abs(newDelta - previousDelta) < double.Epsilon)
+        return;
+
+      string axis = isHorizontal ? "Horizontal" : "Vertical";
+      Log.Debug($"{axis} Actual: {currentCanvasSize}, Viewport: {viewportSize}");
+
+      if (_zoomScalePrevious == 1.0)
       {
-        if (currentCanvasWidth > viewportWidth)
-        {
-          double newCanvasToScrollWidthDelta = currentCanvasWidth - viewportWidth;
-          if (newCanvasToScrollWidthDelta != canvasToScrollWidthDelta)
-          {
-            Log.Debug($"GalaxyCanvas.Width: {GalaxyCanvas.Width}, canvasWidth: {canvasWidth}");
-            Log.Debug($"ActualWidth: {ActualWidth}, ViewportWidth: {viewportWidth}");
-            if (scrollHorizontalOffset == 0 || canvasToScrollWidthDelta == 0)
-            {
-              Log.Debug($"Centering the map: new offsets: {newCanvasToScrollWidthDelta / 2}");
-              ScrollToHorizontalOffset(newCanvasToScrollWidthDelta / 2);
-            }
-            else
-            {
-              Log.Debug(
-                $"Scrolling the map: old offset: {scrollHorizontalOffset}, new offset: {scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta}"
-              );
-              ScrollToHorizontalOffset(scrollHorizontalOffset * newCanvasToScrollWidthDelta / canvasToScrollWidthDelta);
-            }
-            canvasToScrollWidthDelta = newCanvasToScrollWidthDelta;
-          }
-        }
-        if (currentCanvasHeight > viewportHeight)
-        {
-          double newCanvasToScrollHeightDelta = currentCanvasHeight - viewportHeight;
-          if (newCanvasToScrollHeightDelta != canvasToScrollHeightDelta)
-          {
-            Log.Debug($"ActualHeight: {ActualHeight}, ViewportHeight: {viewportHeight}");
-            if (scrollVerticalOffset == 0 || canvasToScrollHeightDelta == 0)
-            {
-              Log.Debug($"Centering the map: new offsets: {newCanvasToScrollHeightDelta / 2}");
-              ScrollToVerticalOffset(newCanvasToScrollHeightDelta / 2);
-            }
-            else
-            {
-              Log.Debug(
-                $"Scrolling the map: old offset: {scrollVerticalOffset}, new offset: {scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta}"
-              );
-              ScrollToVerticalOffset(scrollVerticalOffset * newCanvasToScrollHeightDelta / canvasToScrollHeightDelta);
-            }
-            canvasToScrollHeightDelta = newCanvasToScrollHeightDelta;
-          }
-        }
+        // Auto-center when zooming out to 100%
+        double newOffset = (currentCanvasSize - viewportSize) / 2;
+        Log.Debug($"Auto-centering {axis.ToLower()} offset to {newOffset}");
+        scrollAction(newOffset);
       }
+      else if (previousDelta > 0)
+      {
+        double newOffset = scrollOffset * (newDelta / previousDelta);
+
+        Log.Debug($"{axis} offset scale: {scrollOffset} -> {newOffset}");
+        scrollAction(newOffset);
+      }
+
+      previousDelta = newDelta;
     }
 
     private void GalaxyMapViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -808,19 +856,73 @@ namespace X4Map
     {
       if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
       {
-        double step = HexagonWidth / HexagonWidthMinimal < 2 ? 10 : HexagonWidthMinimal * 0.5;
-        if (e.Delta > 0)
-        {
-          // Zoom In
-          HexagonWidth = Math.Min(HexagonWidth + step, HexagonWidthMaximal);
-        }
-        else if (e.Delta < 0)
-        {
-          // Zoom Out
-          HexagonWidth = Math.Max(HexagonWidth - step, HexagonWidthMinimal);
-        }
+        // Smooth, deferred zoom: apply fast GPU transform now, commit layout later
+        double prevScale = _deferredZoomScale;
+        double factor = e.Delta > 0 ? ZoomInStep : ZoomOutStep;
+        double targetScale = prevScale * factor;
+
+        // Clamp the effective hexagon width to limits
+        double effectiveWidth = HexagonWidth * targetScale;
+        double clampedWidth = Math.Max(HexagonWidthMinimal * ZoomMinFactor, Math.Min(effectiveWidth, HexagonWidthMaximal * ZoomMaxFactor));
+        targetScale = clampedWidth / HexagonWidth;
+
+        _deferredZoomScale = targetScale;
+
+        // Apply zoom transform around viewport center
+        Point anchor = GetViewportCenterInCanvas();
+        _zoomScale.ScaleX = _deferredZoomScale;
+        _zoomScale.ScaleY = _deferredZoomScale;
+        _zoomTranslate.X = (1 - _deferredZoomScale) * anchor.X;
+        _zoomTranslate.Y = (1 - _deferredZoomScale) * anchor.Y;
+
+        // Restart debounce to commit
+        _zoomCommitTimer?.Stop();
+        _zoomCommitTimer?.Start();
         e.Handled = true;
       }
+    }
+
+    Point GetViewportCenterInCanvas()
+    {
+      // 1. Get scroll offsets and viewport size
+      double offsetX = HorizontalOffset;
+      double offsetY = VerticalOffset;
+      double viewportCenterX = offsetX + ViewportWidth / 2;
+      double viewportCenterY = offsetY + ViewportHeight / 2;
+
+      // 2. Inverse transform from visual space to canvas space
+      // If you're using RenderTransform (e.g. ScaleTransform), apply its inverse
+      var transform = GalaxyCanvas.RenderTransform as Transform;
+      if (transform != null && transform.Value.HasInverse)
+      {
+        var inverse = transform.Value;
+        inverse.Invert();
+        return inverse.Transform(new Point(viewportCenterX, viewportCenterY));
+      }
+
+      // 3. If no transform, return raw center in canvas coordinates
+      return new Point(viewportCenterX, viewportCenterY);
+    }
+
+    private void CommitDeferredZoom()
+    {
+      _zoomCommitTimer?.Stop();
+      _zoomScalePrevious = IsNotZoomed() ? 1.0 : ExtentWidth / ViewportWidth;
+      if (Math.Abs(_deferredZoomScale - 1.0) < 0.0001)
+      {
+        return;
+      }
+      // Compute target HexagonWidth within bounds and reset transform
+      double targetWidth = Math.Max(HexagonWidthMinimal, Math.Min(HexagonWidth * _deferredZoomScale, HexagonWidthMaximal));
+
+      _zoomScale.ScaleX = 1.0;
+      _zoomScale.ScaleY = 1.0;
+      _zoomTranslate.X = 0.0;
+      _zoomTranslate.Y = 0.0;
+      _deferredZoomScale = 1.0;
+
+      // Setting HexagonWidth will trigger UpdateMap and resize the layout-backed canvas
+      HexagonWidth = targetWidth;
     }
 
     private void MapOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
