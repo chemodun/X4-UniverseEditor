@@ -550,7 +550,7 @@ namespace X4Map
       }
     }
 
-    public void UpdateMap()
+    public virtual void UpdateMap()
     {
       if (GalaxyData.Clusters.Count == 0)
       {
