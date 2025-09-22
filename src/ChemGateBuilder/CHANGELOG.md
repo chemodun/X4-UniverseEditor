@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.5](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.4...ChemGateBuilder@v0.10.5) (2025-09-22)
+
+
+### Code Refactoring
+
+* **MainWindow:** change _initiated to readonly ([0af29a2](https://github.com/chemodun/X4-UniverseEditor/commit/0af29a2c891108f2eb0c4c7a57103b6027afbb46))
+
+
+### Documentation
+
+* **README:** update changelog for version 0.10.5 ([7fd6270](https://github.com/chemodun/X4-UniverseEditor/commit/7fd62700467f2ce0557ad1fbf3cbe6ea8ddb907b))
+* **README:** Update README's files ([3641048](https://github.com/chemodun/X4-UniverseEditor/commit/3641048aa000cb5837be67b80d2d489555849623))
+
 ## [0.10.4](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.3...ChemGateBuilder@v0.10.4) (2025-09-21)
 
 
