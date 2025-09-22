@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.6.1...X4Map@v0.6.2) (2025-09-22)
+
+
+### Code Refactoring
+
+* **GalaxyMapViewer:** implement deferred zoom functionality ([9f2770c](https://github.com/chemodun/X4-UniverseEditor/commit/9f2770c016bf65221342abe2568ee1c0c614b67e))
+
 ## [0.6.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.6.0...X4Map@v0.6.1) (2025-09-20)
 
 
