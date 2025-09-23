@@ -375,18 +375,23 @@ namespace X4Map
         Hexagon.Stroke = Cluster != null ? (Cluster.Source == "New" ? Brushes.DarkGreen : Brushes.Black) : Brushes.DarkGray;
         Hexagon.Tag = Cluster != null ? Cluster.Name : "Empty Map Cell";
         Hexagon.DataContext = Cluster == null ? this : Cluster;
+        if (Cluster != null && Cluster.Source != "New")
+        {
+          Create(map);
+        }
       }
     }
 
-    public virtual void Remove(Canvas canvas)
+    public virtual void Remove(GalaxyMapViewer map, Canvas canvas)
     {
       if (Hexagon != null)
       {
         canvas.Children.Remove(Hexagon);
       }
+
       foreach (GalaxyMapSector sector in Sectors)
       {
-        sector.Remove(canvas);
+        sector.Remove(map, canvas);
       }
     }
 

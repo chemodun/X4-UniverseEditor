@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Utilities.Logging;
 using X4DataLoader;
+using X4DataLoader.Helpers;
 using X4Map.Constants;
 
 namespace X4Map
@@ -269,7 +270,9 @@ namespace X4Map
       double scaleFactor
     )
     {
-      return new GalaxyMapCluster(x, y, mapPosition, canvas, cluster, position, hexagonWidth, hexagonHeight, scaleFactor);
+      var newCluster = new GalaxyMapCluster(x, y, mapPosition, canvas, cluster, position, hexagonWidth, hexagonHeight, scaleFactor);
+      _clusters.Add(newCluster);
+      return newCluster;
     }
 
     public virtual GalaxyMapSector CreateMapSector(
@@ -285,28 +288,35 @@ namespace X4Map
       bool isHalf = false
     )
     {
-      return new GalaxyMapSector(x, y, owner, canvas, cluster, sector, hexagonWidth, hexagonHeight, scaleFactor, isHalf);
+      var newSector = new GalaxyMapSector(x, y, owner, canvas, cluster, sector, hexagonWidth, hexagonHeight, scaleFactor, isHalf);
+      _sectors.Add(newSector);
+      return newSector;
     }
 
     public void RefreshGalaxyData()
     {
       if (_clusters.Count > 0)
       {
+        foreach (GalaxyMapSector sector in _sectors)
+        {
+          sector.Remove(this, GalaxyCanvas);
+        }
+        _sectors.Clear();
         foreach (GalaxyMapCluster cluster in _clusters)
         {
-          cluster.Remove(GalaxyCanvas);
+          cluster.Remove(this, GalaxyCanvas);
         }
+        _clusters.Clear();
         foreach (GalaxyMapInterConnection connection in InterConnections)
         {
           connection.Remove(GalaxyCanvas);
         }
+        InterConnections.Clear();
         foreach (SectorMapItem sector in SectorsItems)
         {
           sector.Remove(GalaxyCanvas);
         }
         MapInfo = new(0, 0, 0, 0);
-        _clusters.Clear();
-        InterConnections.Clear();
         SectorsItems.Clear();
         MapCells.Clear();
         DLCsOptions.Clear();
@@ -486,11 +496,6 @@ namespace X4Map
           {
             maxSectorRadius = sectorRadius;
           }
-          _clusters.Add(clusterMapCluster);
-          if (cluster != null)
-          {
-            _sectors.AddRange(clusterMapCluster.Sectors);
-          }
           if (cluster == null)
           {
             continue;
@@ -505,7 +510,7 @@ namespace X4Map
               {
                 continue;
               }
-              GalaxyMapInterConnection galaxyMapHighway = new(pointEntry, pointExit, false);
+              GalaxyMapInterConnectionHighWay galaxyMapHighway = new(highway, pointEntry, pointExit, false);
               galaxyMapHighway.Create(GalaxyCanvas);
               InterConnections.Add(galaxyMapHighway);
             }
@@ -555,13 +560,118 @@ namespace X4Map
             {
               continue;
             }
-            GalaxyMapInterConnection galaxyMapGateConnection = new(gateDirect, gateOpposite, true, connection.Source);
+            GalaxyMapInterConnection galaxyMapGateConnection = new(connection, gateDirect, gateOpposite, true, connection.Source);
             galaxyMapGateConnection.Create(GalaxyCanvas);
             InterConnections.Add(galaxyMapGateConnection);
           }
         }
       }
       SectorRadius = maxSectorRadius;
+    }
+
+    public void RemoveCluster(GalaxyMapCluster cluster)
+    {
+      if (cluster == null)
+      {
+        return;
+      }
+      cluster.Remove(this, GalaxyCanvas);
+      _clusters.Remove(cluster);
+      foreach (GalaxyMapSector sector in cluster.Sectors)
+      {
+        _sectors.Remove(sector);
+      }
+      cluster.Sectors.Clear();
+    }
+
+    public void RemoveSector(GalaxyMapSector sector)
+    {
+      if (sector == null)
+      {
+        return;
+      }
+      sector.Remove(this, GalaxyCanvas);
+      _sectors.Remove(sector);
+      GalaxyMapCluster? ownerCluster = _clusters.Find(cl => cl.Sectors.Contains(sector));
+      if (ownerCluster != null)
+      {
+        ownerCluster.Sectors.Remove(sector);
+        if (ownerCluster.Sectors.Count == 0)
+        {
+          RemoveCluster(ownerCluster);
+        }
+      }
+    }
+
+    protected void RefreshConnectionsForCluster(GalaxyMapCluster updatedCluster)
+    {
+      if (SectorsItems.Count > 0)
+      {
+        if (GalaxyData?.Connections.Count > 0)
+        {
+          foreach (
+            var connection in GalaxyData.Connections.Where(connection =>
+              (
+                connection.PathDirect?.Cluster != null
+                && StringHelper.EqualsIgnoreCase(connection.PathDirect.Cluster.Macro, updatedCluster.Cluster.Macro)
+              )
+              || (
+                connection.PathOpposite?.Sector != null
+                && StringHelper.EqualsIgnoreCase(connection.PathOpposite.Cluster.Macro, updatedCluster.Cluster.Macro)
+              )
+            )
+          )
+          {
+            if (
+              connection == null
+              || connection.PathDirect == null
+              || connection.PathDirect.Gate == null
+              || connection.PathDirect.Gate.Name == null
+              || connection.PathOpposite == null
+              || connection.PathOpposite.Gate == null
+              || connection.PathOpposite.Gate.Name == null
+            )
+            {
+              continue;
+            }
+            SectorMapItem? gateDirect = null;
+            SectorMapItem? gateOpposite = null;
+            if (StringHelper.EqualsIgnoreCase(connection.PathDirect.Cluster.Macro, updatedCluster.Cluster.Macro))
+            {
+              GalaxyMapSector? sectorDirect = _sectors.Find(sc => sc.Macro == connection.PathDirect.Sector?.Macro);
+              if (sectorDirect == null)
+              {
+                continue;
+              }
+              gateDirect = sectorDirect.Items.Find(item => item.Id == connection.PathDirect.Gate.Name);
+              if (gateDirect == null)
+              {
+                continue;
+              }
+            }
+
+            if (StringHelper.EqualsIgnoreCase(connection.PathOpposite.Cluster.Macro, updatedCluster.Cluster.Macro))
+            {
+              GalaxyMapSector? sectorOpposite = _sectors.Find(sc => sc.Macro == connection.PathOpposite.Sector?.Macro);
+              if (sectorOpposite == null)
+              {
+                continue;
+              }
+              gateOpposite = sectorOpposite.Items.Find(item => item.Id == connection.PathOpposite.Gate.Name);
+              if (gateOpposite == null)
+              {
+                continue;
+              }
+            }
+            GalaxyMapInterConnection interConnection = InterConnections.Find(ic => ic.Connection == connection);
+            if (interConnection != null)
+            {
+              interConnection.Remove(GalaxyCanvas);
+              interConnection.Create(GalaxyCanvas, gateDirect, gateOpposite);
+            }
+          }
+        }
+      }
     }
 
     protected void ScaleFactorUpdate()
@@ -1022,115 +1132,6 @@ namespace X4Map
     public static List<Cluster> GetUnprocessedClusters(List<GalaxyMapCell> cells)
     {
       return [.. cells.Where(cell => !cell.IsProcessed).Select(cell => cell.Cluster)];
-    }
-  }
-
-  public class GalaxyMapInterConnection : INotifyPropertyChanged
-  {
-    protected SectorMapItem? _directItem;
-    public SectorMapItem? DirectItem
-    {
-      get => _directItem;
-      set
-      {
-        _directItem = value;
-        OnPropertyChanged(nameof(DirectItem));
-      }
-    }
-    protected SectorMapItem? _oppositeItem;
-    public SectorMapItem? OppositeItem
-    {
-      get => _oppositeItem;
-      set
-      {
-        _oppositeItem = value;
-        OnPropertyChanged(nameof(OppositeItem));
-      }
-    }
-
-    public string SourceId = "unknown";
-    public string DirectSourceId
-    {
-      get { return _directItem?.Source ?? "unknown"; }
-    }
-    public string OppositeSourceId
-    {
-      get { return _oppositeItem?.Source ?? "unknown"; }
-    }
-
-    protected readonly bool IsGate = true;
-    protected Line? Line = null;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
-
-    public GalaxyMapInterConnection(SectorMapItem gateDirect, SectorMapItem gateOpposite, bool isGate = true, string sourceId = "unknown")
-    {
-      DirectItem = gateDirect;
-      OppositeItem = gateOpposite;
-      IsGate = isGate;
-      SourceId = sourceId;
-    }
-
-    public void Create(Canvas canvas)
-    {
-      if (DirectItem == null || OppositeItem == null)
-      {
-        return;
-      }
-
-      Line line = new() { DataContext = this, StrokeThickness = IsGate ? 2 : 1 };
-      if (IsGate)
-      {
-        if (DirectItem.Status == "active" && OppositeItem.Status == "active")
-        {
-          line.Stroke = DirectItem.From switch
-          {
-            "new" => Brushes.Green,
-            "mod" => Brushes.DarkOrange,
-            _ => Brushes.Gold,
-          };
-        }
-        else
-        {
-          line.Stroke = Brushes.DarkGray;
-        }
-      }
-      else
-      {
-        line.Stroke = Brushes.SkyBlue;
-      }
-      Binding x1Binding = new(path: "CenterX") { Source = DirectItem };
-      line.SetBinding(Line.X1Property, x1Binding);
-      Binding y1Binding = new(path: "CenterY") { Source = DirectItem };
-      line.SetBinding(Line.Y1Property, y1Binding);
-      Binding x2Binding = new(path: "CenterX") { Source = OppositeItem };
-      line.SetBinding(Line.X2Property, x2Binding);
-      Binding y2Binding = new(path: "CenterY") { Source = OppositeItem };
-      line.SetBinding(Line.Y2Property, y2Binding);
-      // Canvas.SetZIndex(line, -1);
-      canvas.Children.Add(line);
-      Line = line;
-    }
-
-    public void Remove(Canvas canvas)
-    {
-      if (Line != null)
-      {
-        canvas.Children.Remove(Line);
-      }
-    }
-
-    public void SetVisible(bool isVisible)
-    {
-      if (Line != null)
-      {
-        Line.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
-      }
     }
   }
 
