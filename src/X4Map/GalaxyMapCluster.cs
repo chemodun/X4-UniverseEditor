@@ -129,7 +129,17 @@ namespace X4Map
         Log.Debug(
           $"Col: {MapPosition.Column, 3} Row: {MapPosition.Row, 3}: Creating a single Sector '{sector.Name}' in Cluster '({Cluster.Name})'"
         );
-        GalaxyMapSector clusterMapSector = new(_x, _y, this, Canvas, Cluster, sector, HexagonWidth, HexagonHeight, ScaleFactor);
+        GalaxyMapSector clusterMapSector = map.CreateMapSector(
+          _x,
+          _y,
+          this,
+          Canvas,
+          Cluster,
+          sector,
+          HexagonWidth,
+          HexagonHeight,
+          ScaleFactor
+        );
         maxInternalSizeKm = clusterMapSector.Create(map);
         Sectors.Add(clusterMapSector);
       }
@@ -314,7 +324,7 @@ namespace X4Map
                   break;
               }
               Log.Debug($"Sector({index}) {Cluster.Sectors[index].Name}: Corner: {corners[index]}, Position: X = {x}, Y = {y}");
-              GalaxyMapSector clusterMapSector = new(
+              GalaxyMapSector clusterMapSector = map.CreateMapSector(
                 x,
                 y,
                 this,

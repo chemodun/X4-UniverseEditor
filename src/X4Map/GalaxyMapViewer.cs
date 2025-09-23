@@ -257,6 +257,37 @@ namespace X4Map
       _zoomCommitTimer.Tick += (_, _) => CommitDeferredZoom();
     }
 
+    public virtual GalaxyMapCluster CreateMapCluster(
+      double x,
+      double y,
+      MapPosition mapPosition,
+      Canvas canvas,
+      Cluster? cluster,
+      Position? position,
+      double hexagonWidth,
+      double hexagonHeight,
+      double scaleFactor
+    )
+    {
+      return new GalaxyMapCluster(x, y, mapPosition, canvas, cluster, position, hexagonWidth, hexagonHeight, scaleFactor);
+    }
+
+    public virtual GalaxyMapSector CreateMapSector(
+      double x,
+      double y,
+      GalaxyMapCluster owner,
+      Canvas canvas,
+      Cluster cluster,
+      Sector sector,
+      double hexagonWidth,
+      double hexagonHeight,
+      double scaleFactor,
+      bool isHalf = false
+    )
+    {
+      return new GalaxyMapSector(x, y, owner, canvas, cluster, sector, hexagonWidth, hexagonHeight, scaleFactor, isHalf);
+    }
+
     public void RefreshGalaxyData()
     {
       if (_clusters.Count > 0)
@@ -439,7 +470,7 @@ namespace X4Map
           MapPosition mapPosition = new(col, row);
           Cluster? cluster = GalaxyMapCell.GetCluster(MapCells, mapPosition);
           Position position = cluster != null ? cluster.Position : new Position(col * ColumnWidth, 0, row * RowHeight);
-          GalaxyMapCluster clusterMapCluster = new(
+          GalaxyMapCluster clusterMapCluster = CreateMapCluster(
             0.75 * (col - MapInfo.ColumnMin),
             (MapInfo.RowMax - row) * 0.5,
             mapPosition,
