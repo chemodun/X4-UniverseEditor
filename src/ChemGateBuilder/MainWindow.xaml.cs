@@ -1677,7 +1677,7 @@ namespace ChemGateBuilder
 
     public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e)
     {
-      X4DataExtractionWindow extractionWindow = new(_appIcon, X4GameFolder, X4DataFolder, LoadModsData) { Owner = this };
+      X4DataExtractionWindow extractionWindow = new(_appIcon, X4UniverseId, X4GameFolder, X4DataFolder, LoadModsData) { Owner = this };
       if (extractionWindow.ShowDialog() == true)
       {
         if (!string.IsNullOrEmpty(extractionWindow.GameFolder) && Directory.Exists(extractionWindow.GameFolder))

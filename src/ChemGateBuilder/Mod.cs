@@ -328,7 +328,7 @@ namespace ChemGateBuilder
       _paths.Clear();
       string connectionsText = "";
       XElement diffElement = new("diff");
-      XElement addElement = new("add", new XAttribute("sel", "/macros/macro[@name='XU_EP2_universe_macro']/connections"));
+      XElement addElement = new("add", new XAttribute("sel", $"/macros/macro[@name='{galaxy.Name}']/connections"));
       diffElement.Add(addElement);
       foreach (GalaxyConnection connection in Connections)
       {
