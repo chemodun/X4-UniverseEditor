@@ -353,7 +353,7 @@ namespace X4Map
       return maxInternalSizeKm; // Return the maximum internal size of the sectors in the cluster
     }
 
-    public void ReAssign(GalaxyMapViewer map, Cluster? cluster)
+    public virtual void ReAssign(GalaxyMapViewer map, Cluster? cluster)
     {
       Cluster = cluster;
       if (Hexagon != null)
@@ -375,23 +375,20 @@ namespace X4Map
         Hexagon.Stroke = Cluster != null ? (Cluster.Source == "New" ? Brushes.DarkGreen : Brushes.Black) : Brushes.DarkGray;
         Hexagon.Tag = Cluster != null ? Cluster.Name : "Empty Map Cell";
         Hexagon.DataContext = Cluster == null ? this : Cluster;
-        if (Cluster != null && Cluster.Source != "New")
-        {
-          Create(map);
-        }
       }
     }
 
-    public virtual void Remove(GalaxyMapViewer map, Canvas canvas)
+    public virtual void Clear(GalaxyMapViewer map, Canvas canvas)
     {
       if (Hexagon != null)
       {
         canvas.Children.Remove(Hexagon);
+        Hexagon = null;
       }
 
       foreach (GalaxyMapSector sector in Sectors)
       {
-        sector.Remove(map, canvas);
+        sector.Clear(map, canvas);
       }
     }
 

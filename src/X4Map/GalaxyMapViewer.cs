@@ -275,6 +275,19 @@ namespace X4Map
       return newCluster;
     }
 
+    public virtual void GalaxyMapClusterReassign(GalaxyMapCluster galaxyCluster, Cluster? cluster)
+    {
+      if (galaxyCluster == null)
+      {
+        return;
+      }
+      if (!_clusters.Contains(galaxyCluster))
+      {
+        _clusters.Add(galaxyCluster);
+      }
+      galaxyCluster.ReAssign(this, cluster);
+    }
+
     public virtual GalaxyMapSector CreateMapSector(
       double x,
       double y,
@@ -299,12 +312,12 @@ namespace X4Map
       {
         foreach (GalaxyMapSector sector in _sectors)
         {
-          sector.Remove(this, GalaxyCanvas);
+          sector.Clear(this, GalaxyCanvas);
         }
         _sectors.Clear();
         foreach (GalaxyMapCluster cluster in _clusters)
         {
-          cluster.Remove(this, GalaxyCanvas);
+          cluster.Clear(this, GalaxyCanvas);
         }
         _clusters.Clear();
         foreach (GalaxyMapInterConnection connection in InterConnections)
@@ -575,7 +588,7 @@ namespace X4Map
       {
         return;
       }
-      cluster.Remove(this, GalaxyCanvas);
+      cluster.Clear(this, GalaxyCanvas);
       _clusters.Remove(cluster);
       foreach (GalaxyMapSector sector in cluster.Sectors)
       {
@@ -590,7 +603,7 @@ namespace X4Map
       {
         return;
       }
-      sector.Remove(this, GalaxyCanvas);
+      sector.Clear(this, GalaxyCanvas);
       _sectors.Remove(sector);
       GalaxyMapCluster? ownerCluster = _clusters.Find(cl => cl.Sectors.Contains(sector));
       if (ownerCluster != null)
@@ -722,6 +735,26 @@ namespace X4Map
           );
         }
       }
+    }
+
+    public GalaxyMapCluster? GetClusterByMacro(string macro)
+    {
+      return _clusters.Find(cluster => StringHelper.EqualsIgnoreCase(cluster.Macro, macro));
+    }
+
+    public GalaxyMapSector? GetSectorByMacro(string macro)
+    {
+      return _sectors.Find(sector => StringHelper.EqualsIgnoreCase(sector.Macro, macro));
+    }
+
+    public GalaxyMapCluster? GetClusterBySectorMacro(string sectorMacro)
+    {
+      GalaxyMapSector? sector = GetSectorByMacro(sectorMacro);
+      if (sector != null)
+      {
+        return _clusters.Find(cluster => cluster.Sectors.Contains(sector));
+      }
+      return null;
     }
 
     protected void GalaxyMapViewer_SizeChanged(object sender, SizeChangedEventArgs e)

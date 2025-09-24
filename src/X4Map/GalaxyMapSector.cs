@@ -196,11 +196,14 @@ namespace X4Map
       return SectorMapHelper.InternalSizeKm;
     }
 
-    public override void Remove(GalaxyMapViewer map, Canvas canvas)
+    public override void Clear(GalaxyMapViewer map, Canvas canvas)
     {
       if (Grid != null)
       {
         canvas.Children.Remove(Grid);
+        Grid = null;
+        TextBlock = null;
+        Hexagon = null;
       }
       foreach (SectorMapItem item in SectorMapHelper.Items)
       {
