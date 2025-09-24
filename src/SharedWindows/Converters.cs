@@ -72,4 +72,21 @@ namespace SharedWindows.Converters
       return DependencyProperty.UnsetValue;
     }
   }
+
+  public class NumberToBrushConverter : IValueConverter
+  {
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (value is double d)
+      {
+        if (d < 0)
+          return System.Windows.Media.Brushes.SaddleBrown; // dark brown
+        if (d > 0)
+          return System.Windows.Media.Brushes.DarkGreen;
+      }
+      return System.Windows.Media.Brushes.Black;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+  }
 }
