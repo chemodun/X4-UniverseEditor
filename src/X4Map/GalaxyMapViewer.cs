@@ -618,18 +618,47 @@ namespace X4Map
 
     protected void RefreshConnectionsForCluster(GalaxyMapCluster updatedCluster)
     {
-      if (SectorsItems.Count > 0)
+      if (
+        SectorsItems.Count > 0
+        && updatedCluster != null
+        && updatedCluster.Cluster != null
+        && InterConnections != null
+        && InterConnections.Count > 0
+      )
       {
+        if (updatedCluster.Cluster.Sectors.Count > 1 && updatedCluster.Cluster.Highways.Count > 0)
+        {
+          foreach (HighwayClusterLevel highway in updatedCluster.Cluster.Highways.Cast<HighwayClusterLevel>())
+          {
+            SectorMapItem? pointEntry = SectorsItems.Find(item => item.Id == highway?.EntryPointPath?.Zone?.Name);
+            SectorMapItem? pointExit = SectorsItems.Find(item => item.Id == highway?.ExitPointPath?.Zone?.Name);
+            if (pointEntry == null || pointExit == null)
+            {
+              continue;
+            }
+
+            GalaxyMapInterConnectionHighWay? galaxyMapHighway =
+              InterConnections.Find(ic => ic is GalaxyMapInterConnectionHighWay gw && gw.Highway == highway)
+              as GalaxyMapInterConnectionHighWay;
+            if (galaxyMapHighway != null)
+            {
+              galaxyMapHighway.Remove(GalaxyCanvas);
+              galaxyMapHighway.Create(GalaxyCanvas, pointEntry, pointExit);
+            }
+          }
+        }
         if (GalaxyData?.Connections.Count > 0)
         {
           foreach (
             var connection in GalaxyData.Connections.Where(connection =>
               (
-                connection.PathDirect?.Cluster != null
+                connection != null
+                && connection.PathDirect?.Cluster != null
                 && StringHelper.EqualsIgnoreCase(connection.PathDirect.Cluster.Macro, updatedCluster.Cluster.Macro)
               )
               || (
-                connection.PathOpposite?.Sector != null
+                connection != null
+                && connection.PathOpposite?.Cluster != null
                 && StringHelper.EqualsIgnoreCase(connection.PathOpposite.Cluster.Macro, updatedCluster.Cluster.Macro)
               )
             )
@@ -638,9 +667,11 @@ namespace X4Map
             if (
               connection == null
               || connection.PathDirect == null
+              || connection.PathDirect.Cluster == null
               || connection.PathDirect.Gate == null
               || connection.PathDirect.Gate.Name == null
               || connection.PathOpposite == null
+              || connection.PathOpposite.Cluster == null
               || connection.PathOpposite.Gate == null
               || connection.PathOpposite.Gate.Name == null
             )
@@ -676,7 +707,7 @@ namespace X4Map
                 continue;
               }
             }
-            GalaxyMapInterConnection interConnection = InterConnections.Find(ic => ic.Connection == connection);
+            GalaxyMapInterConnection? interConnection = InterConnections.Find(ic => ic.Connection == connection);
             if (interConnection != null)
             {
               interConnection.Remove(GalaxyCanvas);
