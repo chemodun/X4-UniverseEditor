@@ -16,7 +16,9 @@ namespace SharedWindows
   public partial class X4DataExtractionWindow : Window, INotifyPropertyChanged
   {
     public static readonly string X4Executable = "X4.exe";
-    private readonly List<string> NeededFilesMasks = ["maps/xu_ep2_universe/*.xml", "libraries/*.*", "t/*.xml"];
+    private readonly List<string> _neededFilesMasks = ["maps/$UniverseId/*.xml", "libraries/*.*", "t/*.xml"];
+    private readonly List<string> NeededFilesMasks = [];
+
     private string _extractedDataLocationFolder = string.Empty;
     public string ExtractedDataLocationFolder
     {
@@ -243,6 +245,7 @@ namespace SharedWindows
 
     public X4DataExtractionWindow(
       BitmapImage icon,
+      string universeId,
       string gameFolder,
       string extractedDataLocationFolder,
       bool loadMods,
@@ -253,6 +256,10 @@ namespace SharedWindows
       DataContext = this;
       Icon = icon;
       LoadMods = loadMods;
+      foreach (var mask in _neededFilesMasks)
+      {
+        NeededFilesMasks.Add(mask.Replace("$UniverseId", universeId));
+      }
       if (extraNeededFilesMasks != null)
       {
         NeededFilesMasks.AddRange(extraNeededFilesMasks);
