@@ -86,7 +86,7 @@ namespace ChemGateBuilder
       SectorsList = sectorsViewSource;
       MainWindowReference = mainWindow;
       Galaxy = MainWindowReference.Galaxy;
-      GalaxyMapViewer.Connect(Galaxy!, GalaxyMapCanvas, mainWindow.MapColorsOpacity, false, extraObjects, extraConnectionsNames);
+      GalaxyMapViewer.Connect(Galaxy!, GalaxyMapCanvas, mainWindow.MapColorsOpacity, extraObjects, extraConnectionsNames);
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = false;
       GalaxyMapViewer.OnPressedSector += GalaxyMapViewer_SectorSelected;
       GalaxyMapViewer.RefreshGalaxyData();

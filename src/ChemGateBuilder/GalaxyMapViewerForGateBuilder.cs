@@ -16,12 +16,11 @@ namespace ChemGateBuilder
       Galaxy galaxy,
       Canvas galaxyCanvas,
       double mapColorsOpacity,
-      bool editorMode = true,
       Dictionary<string, List<ObjectInSector>>? extraObjects = null,
       List<string>? extraConnectionsNames = null
     )
     {
-      base.Connect(galaxy, galaxyCanvas, mapColorsOpacity, editorMode, extraObjects);
+      base.Connect(galaxy, galaxyCanvas, mapColorsOpacity, extraObjects);
       _extraConnectionsNames = extraConnectionsNames ?? [];
     }
 
@@ -37,7 +36,7 @@ namespace ChemGateBuilder
         List<SectorMapItem> extraGatesItems = SectorsItems.FindAll(item => item.Id == connectionName);
         if (extraGatesItems.Count == 2)
         {
-          GalaxyMapInterConnection galaxyMapGateConnection = new(extraGatesItems[0], extraGatesItems[1], true);
+          GalaxyMapInterConnection galaxyMapGateConnection = new(null, extraGatesItems[0], extraGatesItems[1], true);
           galaxyMapGateConnection.Create(GalaxyCanvas);
           InterConnections.Add(galaxyMapGateConnection);
         }
@@ -45,7 +44,7 @@ namespace ChemGateBuilder
       List<SectorMapItem> newGatesItems = SectorsItems.FindAll(item => item.Id == SectorMap.NewGateId);
       if (newGatesItems.Count == 2)
       {
-        GalaxyMapInterConnection galaxyMapGateConnection = new(newGatesItems[0], newGatesItems[1], true);
+        GalaxyMapInterConnection galaxyMapGateConnection = new(null, newGatesItems[0], newGatesItems[1], true);
         galaxyMapGateConnection.Create(GalaxyCanvas);
         InterConnections.Add(galaxyMapGateConnection);
       }
