@@ -419,14 +419,14 @@ namespace SharedWindows
 
     private void ButtonSelectExtractedDataLocationFolder_Click(object sender, RoutedEventArgs e)
     {
-      var dialog2 = new Microsoft.Win32.OpenFolderDialog
+      var dialog = new Microsoft.Win32.OpenFolderDialog
       {
         Title = "Select the folder where the folder with extracted data will be located.",
       };
-
-      if (dialog2.ShowDialog() == true)
+      dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+      if (dialog.ShowDialog() == true)
       {
-        ExtractedDataLocationFolder = dialog2.FolderName;
+        ExtractedDataLocationFolder = dialog.FolderName;
       }
     }
 
