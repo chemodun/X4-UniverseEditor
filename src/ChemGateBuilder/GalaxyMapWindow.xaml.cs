@@ -130,6 +130,7 @@ namespace ChemGateBuilder
         Filter = "PNG Image|*.png",
         Title = "Export Galaxy Map as PNG",
         FileName = "GalaxyMap.png",
+        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
       };
       if (dialog.ShowDialog() != true)
         return;

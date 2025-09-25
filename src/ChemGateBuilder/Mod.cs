@@ -19,7 +19,7 @@ namespace ChemGateBuilder
     public static readonly string ModName = "Chem Gate Keeper";
     public static readonly string ModDescription = "This extension adds new gate connections between sectors";
     public static readonly string ModAuthor = "Chem O`Dun";
-    public string ModFolderPath { get; private set; } = "";
+    public string ModFolderPath { get; set; } = "";
     private readonly bool SelectFolder = true;
     private string Id = ModId;
     private string Name = ModName;
@@ -259,6 +259,14 @@ namespace ChemGateBuilder
       if (string.IsNullOrEmpty(currentPath) || newLocation)
       {
         var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Select a folder for the Mod" };
+        if (string.IsNullOrEmpty(currentPath))
+        {
+          dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+        else
+        {
+          dialog.InitialDirectory = currentPath;
+        }
         bool? folderSelect = dialog.ShowDialog();
 
         if (folderSelect == true && !string.IsNullOrWhiteSpace(dialog.FolderName))

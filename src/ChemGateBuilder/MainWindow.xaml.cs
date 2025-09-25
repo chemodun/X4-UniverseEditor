@@ -933,17 +933,12 @@ namespace ChemGateBuilder
       RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
       if (DirectMode)
       {
-        string modPath = Path.Combine(X4GameFolder, "extensions", ChemGateKeeper.ModId);
-        if (Directory.Exists(modPath) && File.Exists(Path.Combine(modPath, "content.xml")))
-        {
-          ModLoad(modPath);
-        }
-        else
-        {
-          ChemGateKeeper newMod = new(modPath, X4UniverseId);
-          ChemGateKeeperMod = newMod;
-          IsModCanBeSaved = false;
-        }
+        ModLoad();
+        ButtonLoadMod.Header = "Reload";
+      }
+      else
+      {
+        ButtonLoadMod.Header = "Load";
       }
       if (ChemGateKeeperMod.GalaxyConnections.Count == 0)
       {
@@ -1010,7 +1005,14 @@ namespace ChemGateBuilder
       {
         Title = "Please select the folder where the X4 extracted data files are located.",
       };
-      // Microsoft.Win32.OpenFolderDialog does not support RootFolder/SelectedPath in the same way.
+      if (AllSectors.Count > 0)
+      {
+        dialog.InitialDirectory = !string.IsNullOrEmpty(X4DataFolder) && X4DataFolder != "." ? $"{X4DataFolder}\\" : ".";
+      }
+      else
+      {
+        dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+      }
       bool? result = dialog.ShowDialog();
 
       if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
@@ -1627,12 +1629,36 @@ namespace ChemGateBuilder
       ModLoad();
     }
 
-    public void ModLoad(string path = "")
+    public void ModLoad()
     {
       if (Galaxy == null)
       {
         StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
         return;
+      }
+      string path = "";
+      if (DirectMode)
+      {
+        path = Path.Combine(X4GameFolder, "extensions", ChemGateKeeper.ModId);
+        if (!(Directory.Exists(path) && File.Exists(Path.Combine(path, "content.xml"))))
+        {
+          path = string.Empty;
+          string message = "Error: Mod data could not be loaded: Mod folder or content.xml not found in the game extensions folder.";
+          StatusBar.SetStatusMessage(message, StatusMessageType.Error);
+          Log.Error(message);
+          if (ChemGateKeeperMod == null)
+          {
+            ChemGateKeeperMod = new(path, X4UniverseId);
+            _chemGateKeeperMod.SetGameVersion(_x4DataVersion);
+            IsModCanBeSaved = false;
+          }
+          else
+          {
+            ChemGateKeeperMod.ModFolderPath = path;
+          }
+          UpdateIsModCanBeSavedAs();
+          return;
+        }
       }
       ChemGateKeeper newMod = new(path, X4UniverseId);
       newMod.SetGameVersion(_x4DataVersion);

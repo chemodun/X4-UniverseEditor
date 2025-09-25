@@ -211,9 +211,9 @@
                         </fluent:Button.Icon>
                     </fluent:Button>
                     <fluent:Button Header="Load"
+                                   x:Name="ButtonLoadMod"
                                    IsEnabled="{Binding IsDataLoaded}"
                                    Click="ButtonLoadMod_Click"
-                                   Visibility="{Binding ExtractedVisibility}"
                                    Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="FileArrowUp"
