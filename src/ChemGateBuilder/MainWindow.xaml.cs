@@ -838,8 +838,11 @@ namespace ChemGateBuilder
       BusyMessage = "Preparing to load X4 data...";
       AllSectors.Clear();
       Galaxy.Clear();
+      _backgroundWorker.DoWork -= LoadX4DataInBackground;
       _backgroundWorker.DoWork += LoadX4DataInBackground;
+      _backgroundWorker.ProgressChanged -= LoadX4DataInBackgroundProgressChanged;
       _backgroundWorker.ProgressChanged += LoadX4DataInBackgroundProgressChanged;
+      _backgroundWorker.RunWorkerCompleted -= LoadX4DataInBackgroundCompleted;
       _backgroundWorker.RunWorkerCompleted += LoadX4DataInBackgroundCompleted;
       _backgroundWorker.RunWorkerAsync();
     }
