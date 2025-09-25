@@ -21,7 +21,6 @@ namespace X4Map
 {
   public class GalaxyMapViewer : ScrollViewer, INotifyPropertyChanged
   {
-    protected bool _editorMode = true;
     public Galaxy GalaxyData { get; protected set; } = new();
     public FactionColors FactionColors { get; protected set; } = new();
     protected double _mapColorsOpacity = 0.5;
@@ -118,6 +117,10 @@ namespace X4Map
       get => _pressedHexagon;
       set
       {
+        if (_pressedHexagon == value)
+        {
+          return;
+        }
         _pressedHexagon = value;
         OnPropertyChanged(nameof(PressedHexagon));
         if (value != null)
@@ -125,53 +128,33 @@ namespace X4Map
           if (value.DataContext is Sector sector && sector != null)
           {
             GalaxyMapSector? selectedMapSector = _sectors.Find(mapSector => mapSector.Macro == sector.Macro);
-            if (selectedMapSector != null && selectedMapSector == SelectedMapSector)
+            GalaxyMapCluster? selectedMapCluster = null;
+            if (selectedMapSector != null)
             {
-              SelectedMapSector = null;
+              selectedMapCluster = _clusters.Find(mapCluster => mapCluster.Sectors.Any(mapSector => mapSector.Macro == sector.Macro));
             }
-            else
-            {
-              SelectedMapSector = selectedMapSector;
-            }
-            if (SelectedMapSector != null)
-            {
-              GalaxyMapCluster? selectedMapCluster = _clusters.Find(mapCluster =>
-                mapCluster.Sectors.Any(mapSector => mapSector.Macro == sector.Macro)
-              );
-              SelectedMapCluster = selectedMapCluster;
-            }
-            else
-            {
-              SelectedMapCluster = null;
-            }
-            OnPressedSector?.Invoke(this, new SectorEventArgs(sector));
+            OnPressedSector?.Invoke(
+              this,
+              new SectorEventArgs(
+                sector,
+                selectedMapSector,
+                selectedMapCluster == null ? null : selectedMapCluster.Cluster,
+                selectedMapCluster
+              )
+            );
           }
           else if (value.DataContext is Cluster cluster && cluster != null)
           {
             GalaxyMapCluster? selectedMapCluster = _clusters.Find(mapCluster => mapCluster.Macro == cluster.Macro);
-            if (selectedMapCluster != null && selectedMapCluster == SelectedMapCluster)
-            {
-              SelectedMapCluster = null;
-            }
-            else
-            {
-              SelectedMapCluster = selectedMapCluster;
-            }
-            SelectedMapSector = null;
-            OnPressedCluster?.Invoke(this, new ClusterEventArgs(cluster));
+            OnPressedCluster?.Invoke(this, new ClusterEventArgs(cluster, selectedMapCluster));
           }
           else if (value.DataContext is GalaxyMapCluster galaxyMapCluster && galaxyMapCluster != null)
           {
-            SelectedMapCluster = galaxyMapCluster == SelectedMapCluster ? null : galaxyMapCluster;
-            SelectedMapSector = null;
             OnPressedCell?.Invoke(this, new CellEventArgs(galaxyMapCluster));
           }
         }
       }
     }
-
-    public GalaxyMapCluster? SelectedMapCluster { get; set; } = null;
-    public GalaxyMapSector? SelectedMapSector { get; set; } = null;
 
     // Fields to track panning state
     protected bool isPanning = false;
@@ -228,11 +211,9 @@ namespace X4Map
       Galaxy galaxy,
       Canvas galaxyCanvas,
       double mapColorsOpacity,
-      bool editorMode = true,
       Dictionary<string, List<ObjectInSector>>? extraObjects = null
     )
     {
-      _editorMode = editorMode;
       GalaxyData = galaxy;
       GalaxyCanvas = galaxyCanvas;
       _mapColorsOpacity = mapColorsOpacity;
@@ -901,44 +882,35 @@ namespace X4Map
       if (HexagonOnMouseRightButtonDown != null)
       {
         Log.Debug($"Right button down on {HexagonOnMouseRightButtonDown.Tag}");
-        if (_editorMode)
-        {
-          if (_hexagonSelected != null && _hexagonSelected != HexagonOnMouseRightButtonDown)
-          {
-            _hexagonSelected.StrokeThickness = 1;
-          }
-          _hexagonSelected = HexagonOnMouseRightButtonDown;
-          if (_hexagonSelected != null)
-          {
-            _hexagonSelected.StrokeThickness = 3;
-          }
-        }
         if (HexagonOnMouseRightButtonDown.DataContext is Sector sector && sector != null)
         {
-          SelectedMapSector = _sectors.Find(mapSector => mapSector.Macro == sector.Macro);
-          if (SelectedMapSector != null)
+          GalaxyMapSector? selectedMapSector = _sectors.Find(mapSector => mapSector.Macro == sector.Macro);
+          GalaxyMapCluster? selectedMapCluster = null;
+          if (selectedMapSector != null)
           {
-            SelectedMapCluster = _clusters.Find(mapCluster => mapCluster.Sectors.Any(mapSector => mapSector.Macro == sector.Macro));
+            selectedMapCluster = _clusters.Find(mapCluster => mapCluster.Sectors.Any(mapSector => mapSector.Macro == sector.Macro));
           }
-          else
-          {
-            SelectedMapCluster = null;
-          }
-          OnRightPressedSector?.Invoke(this, new SectorEventArgs(sector));
+          OnRightPressedSector?.Invoke(
+            this,
+            new SectorEventArgs(
+              sector,
+              selectedMapSector,
+              selectedMapCluster == null ? null : selectedMapCluster.Cluster,
+              selectedMapCluster
+            )
+          );
         }
         else if (HexagonOnMouseRightButtonDown.DataContext is Cluster cluster && cluster != null)
         {
-          SelectedMapCluster = _clusters.Find(mapCluster => mapCluster.Macro == cluster.Macro);
-          SelectedMapSector = null;
-          OnRightPressedCluster?.Invoke(this, new ClusterEventArgs(cluster));
+          GalaxyMapCluster? selectedMapCluster = _clusters.Find(mapCluster => mapCluster.Macro == cluster.Macro);
+          OnRightPressedCluster?.Invoke(this, new ClusterEventArgs(cluster, selectedMapCluster));
         }
         else if (HexagonOnMouseRightButtonDown.DataContext is GalaxyMapCluster galaxyMapCluster && galaxyMapCluster != null)
         {
-          SelectedMapCluster = galaxyMapCluster;
-          SelectedMapSector = null;
           OnRightPressedCell?.Invoke(this, new CellEventArgs(galaxyMapCluster));
         }
       }
+      HexagonOnMouseRightButtonDown = null;
     }
 
     protected void GalaxyMapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1011,22 +983,6 @@ namespace X4Map
         isPanning = false;
         GalaxyCanvas.ReleaseMouseCapture();
         this.Cursor = Cursors.Arrow;
-      }
-      if (_editorMode)
-      {
-        if (_hexagonSelected != null)
-        {
-          _hexagonSelected.StrokeThickness = 1;
-          _hexagonSelected = _hexagonSelected == _hexagonOnMouseLeftButtonDown ? null : _hexagonOnMouseLeftButtonDown;
-        }
-        else
-        {
-          _hexagonSelected = _hexagonOnMouseLeftButtonDown;
-        }
-        if (_hexagonSelected != null)
-        {
-          _hexagonSelected.StrokeThickness = 3;
-        }
       }
       PressedHexagon = _hexagonOnMouseLeftButtonDown;
       _hexagonOnMouseLeftButtonDown = null;
@@ -1147,19 +1103,22 @@ namespace X4Map
     }
   }
 
-  public class SectorEventArgs(Sector? selectedSector) : EventArgs
+  public class CellEventArgs(GalaxyMapCluster? cell) : EventArgs
   {
-    public Sector? PressedSector { get; } = selectedSector;
+    public bool PressedLeft { get; set; } = true;
+    public GalaxyMapCluster? PressedCell { get; } = cell;
   }
 
-  public class ClusterEventArgs(Cluster? selectedCluster) : EventArgs
+  public class ClusterEventArgs(Cluster? cluster, GalaxyMapCluster? cell) : CellEventArgs(cell)
   {
-    public Cluster? PressedCluster { get; } = selectedCluster;
+    public Cluster? PressedCluster { get; } = cluster;
   }
 
-  public class CellEventArgs(GalaxyMapCluster? selectedCell) : EventArgs
+  public class SectorEventArgs(Sector? sector, GalaxyMapSector? mapSector, Cluster? cluster, GalaxyMapCluster? cell)
+    : ClusterEventArgs(cluster, cell)
   {
-    public GalaxyMapCluster? PressedCell { get; } = selectedCell;
+    public Sector? PressedSector { get; } = sector;
+    public GalaxyMapSector? PressedMapSector { get; } = mapSector;
   }
 
   public class MapInfo(int minCol, int maxCol, int minRow, int maxRow)
