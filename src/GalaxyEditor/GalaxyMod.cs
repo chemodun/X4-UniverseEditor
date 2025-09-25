@@ -247,6 +247,7 @@ namespace GalaxyEditor
     public bool Create(MapInfo mapInfo, Galaxy galaxyData)
     {
       var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Please select the folder where the mod data will be located." };
+      dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
       bool? result = dialog.ShowDialog();
       Log.Debug($"Selected folder: {dialog.FolderName}, Result: {result}");
       if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))

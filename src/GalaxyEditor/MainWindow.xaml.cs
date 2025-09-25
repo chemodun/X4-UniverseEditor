@@ -182,30 +182,41 @@ namespace GalaxyEditor
         }
       }
     }
+    private string _x4UniverseId = DataLoader.DefaultUniverseId;
+    public string X4UniverseId
+    {
+      get => _x4UniverseId;
+      set
+      {
+        if (_x4UniverseId != value)
+        {
+          _x4UniverseId = value;
+          OnPropertyChanged(nameof(X4UniverseId));
+          X4UniverseIdIsDefault = value == DataLoader.DefaultUniverseId;
+          SaveConfiguration();
+        }
+      }
+    }
+    private bool _x4UniverseIdIsDefault = true;
+    public bool X4UniverseIdIsDefault
+    {
+      get => _x4UniverseIdIsDefault;
+      set
+      {
+        if (_x4UniverseIdIsDefault != value)
+        {
+          _x4UniverseIdIsDefault = value;
+          OnPropertyChanged(nameof(X4UniverseIdIsDefault));
+          if (value)
+          {
+            X4UniverseId = DataLoader.DefaultUniverseId;
+          }
+        }
+      }
+    }
     private readonly List<string> ExtraNeededFilesMasks = [];
-    private readonly List<GameFilesStructureItem> X4DataStructure =
-    [
-      new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
-      new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
-      new GameFilesStructureItem(id: "sounds", folder: "libraries", ["sound_library.xml"]),
-      new GameFilesStructureItem(id: "icons", folder: "libraries", ["icons.xml"]),
-      new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
-      new GameFilesStructureItem(id: "clusters", folder: "maps/xu_ep2_universe", ["clusters.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "sectors", folder: "maps/xu_ep2_universe", ["sectors.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "zones", folder: "maps/xu_ep2_universe", ["zones.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "races", folder: "libraries", ["races.xml"]),
-      new GameFilesStructureItem(id: "factions", folder: "libraries", ["factions.xml"]),
-      new GameFilesStructureItem(id: "modules", folder: "libraries", ["modules.xml"]),
-      new GameFilesStructureItem(id: "modulegroups", folder: "libraries", ["modulegroups.xml"]),
-      new GameFilesStructureItem(id: "constructionplans", folder: "libraries", ["constructionplans.xml"]),
-      new GameFilesStructureItem(id: "stationgroups", folder: "libraries", ["stationgroups.xml"]),
-      new GameFilesStructureItem(id: "stations", folder: "libraries", ["stations.xml"]),
-      new GameFilesStructureItem(id: "god", folder: "libraries", ["god.xml"]),
-      new GameFilesStructureItem(id: "sechighways", folder: "maps/xu_ep2_universe", ["sechighways.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "zonehighways", folder: "maps/xu_ep2_universe", ["zonehighways.xml"], MatchingModes.Suffix),
-      new GameFilesStructureItem(id: "galaxy", folder: "maps/xu_ep2_universe", ["galaxy.xml"]),
-      new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
-    ];
+    private readonly List<GameFilesStructureItem> X4DataStructure = [];
+
     private readonly List<ProcessingOrderItem> X4PDataProcessingOrder =
     [
       new ProcessingOrderItem("translations", ""),
@@ -467,18 +478,105 @@ namespace GalaxyEditor
         }
       }
     }
+    private GalaxyMapCluster? _selectedMapCluster = null;
+    public GalaxyMapCluster? SelectedMapCluster
+    {
+      get => _selectedMapCluster;
+      set
+      {
+        if (_selectedMapCluster != value)
+        {
+          if (_selectedMapCluster != null)
+          {
+            string message =
+              _selectedMapCluster.Cluster == null
+                ? $"Unselected cell: {_selectedMapCluster.MapPosition.Column}, {_selectedMapCluster.MapPosition.Row}"
+                : $"Unselected cluster: {_selectedMapCluster.Cluster?.Name ?? ""}";
+            Log.Debug(message);
+            StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+          }
+          if (value != null)
+          {
+            string message =
+              value.Cluster == null
+                ? $"Selected cell: {value.MapPosition.Column}, {value.MapPosition.Row}"
+                : $"Selected cluster: {value.Cluster?.Name ?? ""}";
+            Log.Debug(message);
+            StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+          }
+          if (value != null && value.Hexagon != null)
+          {
+            value.Hexagon.StrokeThickness = 3;
+          }
+          if (_selectedMapCluster != null && _selectedMapCluster.Hexagon != null)
+          {
+            _selectedMapCluster.Hexagon.StrokeThickness = 1;
+          }
+          _selectedMapCluster = value;
+          if (_selectedMapCluster != null)
+          {
+            SelectedMapSector = null;
+          }
+          OnPropertyChanged(nameof(SelectedMapCluster));
+          OnPropertyChanged(nameof(SelectedSectorItemInfo));
+          OnPropertyChanged(nameof(SelectedClusterItemInfo));
+          OnPropertyChanged(nameof(SelectedCellItemInfo));
+        }
+      }
+    }
+
+    private GalaxyMapSector? _selectedMapSector = null;
+    public GalaxyMapSector? SelectedMapSector
+    {
+      get => _selectedMapSector;
+      set
+      {
+        if (_selectedMapSector != value)
+        {
+          if (_selectedMapSector != null)
+          {
+            string message = $"Unselected sector: {_selectedMapSector.Sector?.Name ?? ""}";
+            Log.Debug(message);
+            StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+          }
+          if (value != null)
+          {
+            string message = $"Selected sector: {value.Sector?.Name ?? ""}";
+            Log.Debug(message);
+            StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+          }
+          if (value != null && value.Hexagon != null)
+          {
+            value.Hexagon.StrokeThickness = 3;
+          }
+          if (_selectedMapSector != null && _selectedMapSector.Hexagon != null)
+          {
+            _selectedMapSector.Hexagon.StrokeThickness = 1;
+          }
+          _selectedMapSector = value;
+          if (_selectedMapSector != null)
+          {
+            SelectedMapCluster = null;
+          }
+          OnPropertyChanged(nameof(SelectedMapSector));
+          OnPropertyChanged(nameof(SelectedSectorItemInfo));
+          OnPropertyChanged(nameof(SelectedClusterItemInfo));
+          OnPropertyChanged(nameof(SelectedCellItemInfo));
+        }
+      }
+    }
 
     public CellItemInfo SelectedCellItemInfo
     {
-      get => new(GalaxyMapViewer.SelectedMapCluster);
+      get => new(SelectedMapCluster);
     }
     public ClusterItemInfo SelectedClusterItemInfo
     {
-      get => new(GalaxyMapViewer.SelectedMapCluster?.Cluster);
+      get => new(SelectedMapCluster?.Cluster);
     }
     public SectorItemInfo SelectedSectorItemInfo
     {
-      get => new(GalaxyMapViewer.SelectedMapSector?.Sector);
+      get => new(SelectedMapSector?.Sector);
     }
     private readonly AssemblyInfo _assemblyInfoData;
     private readonly BitmapImage _appIcon;
@@ -505,6 +603,30 @@ namespace GalaxyEditor
       DataContext = this;
       _assemblyInfoData = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
+      X4DataStructure.AddRange(
+        [
+          new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"]),
+          new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
+          new GameFilesStructureItem(id: "sounds", folder: "libraries", ["sound_library.xml"]),
+          new GameFilesStructureItem(id: "icons", folder: "libraries", ["icons.xml"]),
+          new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
+          new GameFilesStructureItem(id: "clusters", folder: $"maps/{X4UniverseId}", ["clusters.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "sectors", folder: $"maps/{X4UniverseId}", ["sectors.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "zones", folder: $"maps/{X4UniverseId}", ["zones.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "races", folder: "libraries", ["races.xml"]),
+          new GameFilesStructureItem(id: "factions", folder: "libraries", ["factions.xml"]),
+          new GameFilesStructureItem(id: "modules", folder: "libraries", ["modules.xml"]),
+          new GameFilesStructureItem(id: "modulegroups", folder: "libraries", ["modulegroups.xml"]),
+          new GameFilesStructureItem(id: "constructionplans", folder: "libraries", ["constructionplans.xml"]),
+          new GameFilesStructureItem(id: "stationgroups", folder: "libraries", ["stationgroups.xml"]),
+          new GameFilesStructureItem(id: "stations", folder: "libraries", ["stations.xml"]),
+          new GameFilesStructureItem(id: "god", folder: "libraries", ["god.xml"]),
+          new GameFilesStructureItem(id: "sechighways", folder: $"maps/{X4UniverseId}", ["sechighways.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "zonehighways", folder: $"maps/{X4UniverseId}", ["zonehighways.xml"], MatchingModes.Suffix),
+          new GameFilesStructureItem(id: "galaxy", folder: $"maps/{X4UniverseId}", ["galaxy.xml"]),
+          new GameFilesStructureItem(id: "patchactions", folder: "libraries", ["patchactions.xml"]),
+        ]
+      );
       // Title = $"{_assemblyInfoData.Product} - {_assemblyInfoData.Version}";
       GalaxyData = new Galaxy();
       Canvas galaxyCanvas = (Canvas)FindName("GalaxyMapCanvas");
@@ -690,16 +812,10 @@ namespace GalaxyEditor
       // Your code to run when the event is raised
       if (e.PressedCell != null)
       {
-        string actionString = GalaxyMapViewer.SelectedMapCluster != null ? "Selected" : "Unselected";
-        string message = $"{actionString} cell: {e.PressedCell.MapPosition.Column}, {e.PressedCell.MapPosition.Row}";
-        Log.Debug(message);
-        StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+        SelectedMapCluster = SelectedMapCluster == e.PressedCell ? null : e.PressedCell;
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCell")!;
         // Show the cell details
       }
-      OnPropertyChanged(nameof(SelectedSectorItemInfo));
-      OnPropertyChanged(nameof(SelectedClusterItemInfo));
-      OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
     private void GalaxyMapViewer_OnPressedCluster(object? sender, ClusterEventArgs e)
@@ -707,16 +823,10 @@ namespace GalaxyEditor
       // Your code to run when the event is raised
       if (e.PressedCluster != null)
       {
-        string actionString = GalaxyMapViewer.SelectedMapCluster != null ? "Selected" : "Unselected";
-        string message = $"{actionString} cluster: {e.PressedCluster.Name}";
-        Log.Debug(message);
-        StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+        SelectedMapCluster = SelectedMapCluster == e.PressedCell ? null : e.PressedCell;
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCluster")!;
         // Show the sector details
       }
-      OnPropertyChanged(nameof(SelectedSectorItemInfo));
-      OnPropertyChanged(nameof(SelectedClusterItemInfo));
-      OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
     private void GalaxyMapViewer_OnPressedSector(object? sender, SectorEventArgs e)
@@ -724,16 +834,10 @@ namespace GalaxyEditor
       // Your code to run when the event is raised
       if (e.PressedSector != null)
       {
-        string actionString = GalaxyMapViewer.SelectedMapSector != null ? "Selected" : "Unselected";
-        string message = $"{actionString} sector: {e.PressedSector.Name}";
-        Log.Debug(message);
-        StatusBar.SetStatusMessage(message, StatusMessageType.Info);
+        SelectedMapSector = SelectedMapSector == e.PressedMapSector ? null : e.PressedMapSector;
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSector")!;
         // Show the sector details
       }
-      OnPropertyChanged(nameof(SelectedSectorItemInfo));
-      OnPropertyChanged(nameof(SelectedClusterItemInfo));
-      OnPropertyChanged(nameof(SelectedCellItemInfo));
     }
 
     private void GalaxyMapViewer_OnRightPressedCell(object? sender, CellEventArgs e)
@@ -743,10 +847,8 @@ namespace GalaxyEditor
       {
         string message = $"Right button pressed on cell: {e.PressedCell.MapPosition.Column}, {e.PressedCell.MapPosition.Row}";
         Log.Debug(message);
-        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCell")!;
-        OnPropertyChanged(nameof(SelectedSectorItemInfo));
-        OnPropertyChanged(nameof(SelectedClusterItemInfo));
-        OnPropertyChanged(nameof(SelectedCellItemInfo));
+        SelectedMapCluster = SelectedMapCluster == e.PressedCell ? null : e.PressedCell;
+        RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCluster")!;
         HexagonContextMenu(null, null, e.PressedCell);
         // Show the cell details
       }
@@ -759,10 +861,8 @@ namespace GalaxyEditor
       {
         string message = $"Right button pressed on cluster: {e.PressedCluster.Name}";
         Log.Debug(message);
+        SelectedMapCluster = SelectedMapCluster == e.PressedCell ? null : e.PressedCell;
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabCluster")!;
-        OnPropertyChanged(nameof(SelectedSectorItemInfo));
-        OnPropertyChanged(nameof(SelectedClusterItemInfo));
-        OnPropertyChanged(nameof(SelectedCellItemInfo));
         HexagonContextMenu(null, e.PressedCluster, null);
         // Show the sector details
       }
@@ -775,11 +875,9 @@ namespace GalaxyEditor
       {
         string message = $"Right button pressed on sector: {e.PressedSector.Name}";
         Log.Debug(message);
+        SelectedMapSector = SelectedMapSector == e.PressedMapSector ? null : e.PressedMapSector;
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabSector")!;
         HexagonContextMenu(e.PressedSector, null, null);
-        OnPropertyChanged(nameof(SelectedSectorItemInfo));
-        OnPropertyChanged(nameof(SelectedClusterItemInfo));
-        OnPropertyChanged(nameof(SelectedCellItemInfo));
         // MenuItem menuItem = new MenuItem { Header = "Action" };
         // Show the sector details
       }
@@ -809,7 +907,7 @@ namespace GalaxyEditor
         menuItem = new System.Windows.Forms.ToolStripMenuItem("Delete");
         menuItem.Click += DeleteSector_Click;
         contextMenu.Items.Add(menuItem);
-        cluster = GalaxyMapViewer.SelectedMapCluster?.Cluster;
+        cluster = SelectedMapCluster?.Cluster;
       }
       if (cluster != null)
       {
@@ -869,34 +967,31 @@ namespace GalaxyEditor
 
     public void EditSector_Click(object? sender, EventArgs e)
     {
-      if (GalaxyMapViewer.SelectedMapSector != null)
+      if (SelectedMapSector != null)
       {
-        MessageBox.Show($"Action triggered - Edit for {GalaxyMapViewer.SelectedMapSector.Sector?.Name}!");
+        MessageBox.Show($"Action triggered - Edit for {SelectedMapSector.Sector?.Name}!");
       }
     }
 
     public void DeleteSector_Click(object? sender, EventArgs e)
     {
-      if (GalaxyMapViewer.SelectedMapSector != null)
+      if (SelectedMapSector != null)
       {
-        MessageBox.Show($"Action triggered - Delete for {GalaxyMapViewer.SelectedMapSector.Sector?.Name}!");
+        MessageBox.Show($"Action triggered - Delete for {SelectedMapSector.Sector?.Name}!");
       }
     }
 
     public void ViewCluster_Click(object? sender, EventArgs e)
     {
-      if (GalaxyMapViewer.SelectedMapCluster != null)
+      if (SelectedMapCluster != null)
       {
         if (CurrentMod == null)
         {
           MessageBox.Show("No mod loaded to edit the cluster!");
           return;
         }
-        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(
-          CurrentMod.Clusters,
-          GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? ""
-        );
-        Cluster? cluster = GalaxyData.GetClusterById(GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? "");
+        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(CurrentMod.Clusters, SelectedMapCluster.Cluster?.Id ?? "");
+        Cluster? cluster = GalaxyData.GetClusterById(SelectedMapCluster.Cluster?.Id ?? "");
         ClusterEditWindow clusterEditWindow = new(_appIcon, unifyCluster, cluster, null, GalaxyData, GalaxyReferences, null, false)
         {
           Owner = this,
@@ -914,18 +1009,15 @@ namespace GalaxyEditor
 
     public void EditCluster_Click(object? sender, EventArgs e)
     {
-      if (GalaxyMapViewer.SelectedMapCluster != null)
+      if (SelectedMapCluster != null)
       {
         if (CurrentMod == null)
         {
           MessageBox.Show("No mod loaded to edit the cluster!");
           return;
         }
-        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(
-          CurrentMod.Clusters,
-          GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? ""
-        );
-        Cluster? cluster = GalaxyData.GetClusterById(GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? "");
+        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(CurrentMod.Clusters, SelectedMapCluster.Cluster?.Id ?? "");
+        Cluster? cluster = GalaxyData.GetClusterById(SelectedMapCluster.Cluster?.Id ?? "");
         ClusterEditWindow clusterEditWindow = new(_appIcon, unifyCluster, cluster, null, GalaxyData, GalaxyReferences) { Owner = this };
         if (clusterEditWindow.ShowDialog() == true)
         {
@@ -933,13 +1025,13 @@ namespace GalaxyEditor
           {
             Log.Debug($"Updating cluster {unifyCluster.Name} ...");
             unifyCluster.UpdateFrom(clusterEditWindow.Cluster);
-            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, unifyCluster.GetCluster());
+            SelectedMapCluster.ReAssign(GalaxyMapViewer, unifyCluster.GetCluster());
           }
           else
           {
             Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
             CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
-            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
+            SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
           }
         }
       }
@@ -947,12 +1039,9 @@ namespace GalaxyEditor
 
     public void DeleteCluster_Click(object? sender, EventArgs e)
     {
-      if (CurrentMod != null && GalaxyMapViewer.SelectedMapCluster != null)
+      if (CurrentMod != null && SelectedMapCluster != null)
       {
-        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(
-          CurrentMod.Clusters,
-          GalaxyMapViewer.SelectedMapCluster.Cluster?.Id ?? ""
-        );
+        UnifyItemCluster? unifyCluster = UnifyItemCluster.SearchById(CurrentMod.Clusters, SelectedMapCluster.Cluster?.Id ?? "");
         if (unifyCluster != null)
         {
           MessageBoxResult result = MessageBox.Show(
@@ -965,7 +1054,7 @@ namespace GalaxyEditor
           {
             Log.Debug($"Deleting cluster {unifyCluster.Name} ...");
             CurrentMod.Clusters.Remove(unifyCluster);
-            GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, null);
+            SelectedMapCluster.ReAssign(GalaxyMapViewer, null);
           }
         }
       }
@@ -973,7 +1062,7 @@ namespace GalaxyEditor
 
     public void AddCluster_Click(object? sender, EventArgs e)
     {
-      if (GalaxyMapViewer.SelectedMapCluster != null)
+      if (SelectedMapCluster != null)
       {
         if (CurrentMod == null)
         {
@@ -984,7 +1073,7 @@ namespace GalaxyEditor
           _appIcon,
           null,
           null,
-          GalaxyMapViewer.SelectedMapCluster.Position,
+          SelectedMapCluster.Position,
           GalaxyData,
           GalaxyReferences,
           CurrentMod.NewClusterId
@@ -996,7 +1085,7 @@ namespace GalaxyEditor
         {
           Log.Debug($"Adding cluster {clusterEditWindow.Cluster.Name} ...");
           CurrentMod.Clusters.Add(clusterEditWindow.Cluster);
-          GalaxyMapViewer.SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
+          SelectedMapCluster.ReAssign(GalaxyMapViewer, clusterEditWindow.Cluster.GetCluster());
         }
       }
     }
@@ -1032,7 +1121,7 @@ namespace GalaxyEditor
 
     public void ButtonExtractX4Data_Click(object sender, RoutedEventArgs e)
     {
-      X4DataExtractionWindow extractionWindow = new(_appIcon, X4GameFolder, X4DataFolder, LoadModsData, ExtraNeededFilesMasks)
+      X4DataExtractionWindow extractionWindow = new(_appIcon, X4UniverseId, X4GameFolder, X4DataFolder, LoadModsData, ExtraNeededFilesMasks)
       {
         Owner = this,
       };
@@ -1084,6 +1173,7 @@ namespace GalaxyEditor
       {
         Title = "Please select the folder where the X4 extracted data files are located.",
       };
+      dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
       bool? result = dialog.ShowDialog();
 
       if (result == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
