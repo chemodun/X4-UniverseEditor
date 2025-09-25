@@ -898,7 +898,7 @@ namespace X4DataLoader
           f.Extension,
           f.RelatedExtensionId,
           !resetPatched && f.Patched,
-          f.XML
+          new XElement(f.XML)
         )),
       ];
     }
