@@ -135,6 +135,10 @@ namespace X4Map
       {
         return maxInternalSizeKm;
       }
+      // Sync geometry with current map zoom/layout
+      HexagonWidth = map.HexagonWidth;
+      HexagonHeight = map.HexagonHeight;
+      ScaleFactor = map.ScaleFactor;
       if (Cluster != null && Cluster.Sectors.Count == 1)
       {
         Sector sector = Cluster.Sectors[0];
@@ -368,6 +372,10 @@ namespace X4Map
     public virtual void ReAssign(GalaxyMapViewer map, Cluster? cluster)
     {
       Cluster = cluster;
+      // Safeguard: ensure geometry matches current map zoom/layout even when we don't recreate visuals
+      HexagonWidth = map.HexagonWidth;
+      HexagonHeight = map.HexagonHeight;
+      ScaleFactor = map.ScaleFactor;
       if (Hexagon != null)
       {
         Hexagon.ToolTip =
@@ -387,6 +395,15 @@ namespace X4Map
         Hexagon.Stroke = Cluster != null ? (Cluster.Source == "New" ? Brushes.DarkGreen : Brushes.Black) : Brushes.DarkGray;
         Hexagon.Tag = Cluster != null ? Cluster.Name : "Empty Map Cell";
         Hexagon.DataContext = Cluster == null ? this : Cluster;
+
+        // Refresh polygon points and position immediately to reflect current geometry
+        UpdatePoints();
+        Hexagon.Points = Points;
+        if (Canvas != null)
+        {
+          Canvas.SetLeft(Hexagon, X);
+          Canvas.SetTop(Hexagon, Y);
+        }
       }
     }
 
