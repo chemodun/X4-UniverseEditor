@@ -571,9 +571,15 @@ namespace X4Map
       }
       cluster.Clear(this, GalaxyCanvas);
       _clusters.Remove(cluster);
-      foreach (GalaxyMapSector sector in cluster.Sectors)
+      for (int i = cluster.Sectors.Count - 1; i >= 0; i--)
       {
-        _sectors.Remove(sector);
+        GalaxyMapSector sector = cluster.Sectors[i];
+        if (sector == null)
+        {
+          continue;
+        }
+        cluster.Sectors.Remove(sector);
+        RemoveSector(sector);
       }
       cluster.Sectors.Clear();
       cluster.Cluster = null;
@@ -596,7 +602,7 @@ namespace X4Map
           RemoveCluster(ownerCluster);
         }
       }
-      Sector = null;
+      sector.Sector = null;
     }
 
     protected void RefreshConnectionsForCluster(GalaxyMapCluster updatedCluster)
