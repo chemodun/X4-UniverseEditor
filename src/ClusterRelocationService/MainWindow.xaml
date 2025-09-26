@@ -1,0 +1,739 @@
+﻿<Window x:Class="ClusterRelocationService.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:xthemes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=Xceed.Wpf.Toolkit"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClusterRelocationService"
+        xmlns:mapConverters="clr-namespace:X4Map.Converters;assembly=X4Map"
+        xmlns:attributeConverters="clr-namespace:SharedWindows.Converters;assembly=SharedWindows"
+        xmlns:fluent="urn:fluent-ribbon"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+        mc:Ignorable="d"
+        Title="Cluster Moving Service"
+        MinWidth="1200"
+        MinHeight="940"
+        Icon="{StaticResource ProgramIcon}"
+        WindowStartupLocation="CenterScreen"
+        Name="ClusterRelocationService">
+    <!-- DataContext="{Binding Main, Source={StaticResource Locator}}" -->
+    <Window.Resources>
+        <DataTemplate x:Key="SectorTemplate">
+            <StackPanel Orientation="Horizontal"
+                        Margin="0">
+                <TextBlock Text="{Binding Name}"
+                           Margin="0"
+                           Width="200"/>
+                <TextBlock Text="{Binding Source}"
+                           Margin="0"
+                           Foreground="DarkGray"/>
+            </StackPanel>
+        </DataTemplate>
+        <mapConverters:HexagonPointsConverter x:Key="HexagonPointsConverter"/>
+        <attributeConverters:BoolInverseConverter x:Key="BoolInverseConverter"/>
+        <attributeConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <attributeConverters:BoolInverseToVisibilityConverter x:Key="BoolInverseToVisibilityConverter"/>
+        <attributeConverters:NumberToBrushConverter x:Key="NumberToBrushConverter"/>
+        <attributeConverters:BoldIfDifferentConverter x:Key="BoldIfDifferentConverter"/>
+
+
+        <Style x:Key="SectorComboBoxItemStyle"
+               TargetType="ComboBoxItem">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Selectable}"
+                             Value="False">
+                    <Setter Property="Foreground"
+                            Value="Gray"/>
+                    <Setter Property="IsEnabled"
+                            Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RightAlignedTextBlockStyle"
+               TargetType="TextBlock">
+            <Setter Property="TextAlignment"
+                    Value="Right"/>
+        </Style>
+        <Style x:Key="RightAlignedTextBoxStyle"
+               TargetType="TextBox">
+            <Setter Property="TextAlignment"
+                    Value="Right"/>
+        </Style>
+        <Style x:Key="DataGridCenterColumnHeaderStyle"
+               TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center"/>
+        </Style>
+        <Style x:Key="{x:Static xthemes:ResourceKeys.SpinnerButtonStyleKey}"
+               TargetType="RepeatButton">
+            <Setter Property="Background"
+                    Value="#EBEBEB"/>
+            <Setter Property="BorderBrush"
+                    Value="DarkGray"/>
+        </Style>
+        <Style x:Key="FluentButtonStyle"
+               TargetType="fluent:Button">
+            <Setter Property="Width"
+                    Value="60"/>
+        </Style>
+        <Style x:Key="FontAwesomeIconStyle"
+               TargetType="fa:IconImage">
+            <Setter Property="Width"
+                    Value="20"/>
+            <Setter Property="Height"
+                    Value="20"/>
+            <Setter Property="Foreground"
+                    Value="Gray"/>
+        </Style>
+        <Style x:Key="StatusMessageStyle"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="Black"/>
+            <!-- Default color -->
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}"
+                             Value="Info">
+                    <Setter Property="Foreground"
+                            Value="Blue"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}"
+                             Value="Warning">
+                    <Setter Property="Foreground"
+                            Value="DarkOrange"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StatusBar.StatusMessageType}"
+                             Value="Error">
+                    <Setter Property="Foreground"
+                            Value="DarkRed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <DockPanel>
+        <fluent:Ribbon DockPanel.Dock="Top"
+                       x:Name="RibbonMain"
+                       SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+            <fluent:RibbonTabItem Header="Mod"
+                                  x:Name="RibbonTabMod">
+                <fluent:RibbonGroupBox Header="Mod Actions">
+                    <fluent:Button Header="New"
+                                   IsEnabled="{Binding HasRelocated}"
+                                   Click="ButtonNewMod_Click"
+                                   Visibility="{Binding ExtractedVisibility}"
+                                   Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileCirclePlus"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Load"
+                                   x:Name="ButtonLoadMod"
+                                   IsEnabled="{Binding IsDataLoaded}"
+                                   Click="ButtonLoadMod_Click"
+                                   Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileArrowUp"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Save"
+                                   IsEnabled="{Binding IsModCanBeSaved}"
+                                   Click="ButtonSaveMod_Click"
+                                   Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileArrowDown"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Save as"
+                                   IsEnabled="{Binding IsModCanBeSavedAs}"
+                                   Click="ButtonSaveModAs_Click"
+                                   Visibility="{Binding ExtractedVisibility}"
+                                   Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FilePen"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Export clusters"
+                                   IsEnabled="{Binding IsModCanBeSavedAs}"
+                                   Click="ButtonExportClusters_Click"
+                                   Visibility="{Binding ExportClustersIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                   Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="FileExport"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Program">
+                    <fluent:Button Header="Exit"
+                                   Click="ButtonExit_Click"
+                                   Style="{StaticResource FluentButtonStyle}">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="XMark"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="X4 Data"
+                                  x:Name="RibbonTabX4Data"
+                                  Visibility="{Binding ExtractedVisibility}">
+                <fluent:RibbonGroupBox Header="X4 Data">
+                    <fluent:Button Header="Extract"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonExtractX4Data_Click">
+                        <fluent:Button.Icon>
+                            <StaticResource ResourceKey="XIcon"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Reload"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonReloadX4Data_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="Rotate"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Configuration"
+                                  x:Name="RibbonTabConfiguration">
+                <fluent:RibbonGroupBox Header="Mode Options">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Direct mode:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="2"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding DirectMode}"
+                                  ToolTip="Work without extraction"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="X4 Data Options">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="X4 Data Folder:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding ExtractedVisibility}"/>
+                        <fluent:Button Header="{Binding X4DataFolderPath}"
+                                       Grid.Row="0"
+                                       Grid.Column="1"
+                                       Grid.ColumnSpan="2"
+                                       Click="SelectX4DataFolder_Click"
+                                       SizeDefinition="Middle"
+                                       MinWidth="100"
+                                       MaxWidth="200"
+                                       HorizontalAlignment="Left"
+                                       ToolTip="{Binding X4DataFolderPath}"
+                                       Visibility="{Binding ExtractedVisibility}">
+                            <fluent:Button.Icon>
+                                <StaticResource ResourceKey="XIcon"/>
+                            </fluent:Button.Icon>
+                        </fluent:Button>
+                        <Label Content="X4 Game Folder:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding GameFolderVisibility}"/>
+                        <fluent:Button Header="{Binding X4GameFolderPath}"
+                                       Grid.Row="0"
+                                       Grid.Column="1"
+                                       Grid.ColumnSpan="2"
+                                       Click="SelectX4GameFolder_Click"
+                                       SizeDefinition="Middle"
+                                       MinWidth="100"
+                                       MaxWidth="200"
+                                       HorizontalAlignment="Left"
+                                       ToolTip="{Binding X4GameFolderPath}"
+                                       Visibility="{Binding GameFolderVisibility}">
+                            <fluent:Button.Icon>
+                                <StaticResource ResourceKey="XIcon"/>
+                            </fluent:Button.Icon>
+                        </fluent:Button>
+                        <Label Content="X4 Data Version:"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding X4DataVersionOverride}"
+                                  Visibility="{Binding ExtractedVisibility}"
+                                  ToolTip="Override the detected version"/>
+                        <ComboBox x:Name="X4DataVersionComboBox"
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  Margin="0"
+                                  IsEnabled="{Binding NoDirectMode}"
+                                  SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
+                                  ItemsSource="{Binding X4DataVersions}"/>
+                        <Label Content="Load Mods Data:"
+                               Grid.Row="2"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="2"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding LoadModsData}"
+                                  ToolTip="Load Mods data, not only official DLC's"/>
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Map Options">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Colors opacity:"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="5"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   TextAlignment="Right"
+                                   Text="{Binding MapColorsOpacity, StringFormat='{}{0:F2}'}"/>
+                        <Slider x:Name="MapColorsOpacitySlider"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                MinWidth="80"
+                                VerticalAlignment="Center"
+                                TickFrequency="0.05"
+                                IsSnapToTickEnabled="True"
+                                Minimum="0"
+                                Maximum="1"
+                                Value="{Binding MapColorsOpacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Grid.Row="0"
+                                Grid.Column="2"/>
+                        <Label Content="Universe (default):"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                        <CheckBox Margin="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Grid.Row="1"
+                                  Grid.Column="1"
+                                  IsChecked="{Binding X4UniverseIdIsDefault}"/>
+                        <TextBox Text="{Binding X4UniverseId}"
+                                 Grid.Row="1"
+                                 Grid.Column="2"
+                                 VerticalAlignment="Center"
+                                 IsEnabled="{Binding X4UniverseIdIsDefault, Converter={StaticResource BoolInverseConverter}}"/>
+
+                    </Grid>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Relocation Options">
+                    <StackPanel>
+                        <CheckBox Content="&quot;Full Mess&quot; is Enabled"
+                                  Margin="5"
+                                  IsChecked="{Binding FullMessIsEnabled}"/>
+                        <CheckBox Content="Export of Clusters is Enabled"
+                                  Margin="5"
+                                  IsChecked="{Binding ExportClustersIsEnabled}"/>
+                    </StackPanel>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Logging Options">
+                    <StackPanel>
+                        <ComboBox x:Name="LoggingLevelComboBox"
+                                  Margin="5"
+                                  SelectedValuePath="Content"
+                                  SelectedValue="{Binding LogLevel, Mode=TwoWay}">
+                            <ComboBoxItem Content="Error"/>
+                            <ComboBoxItem Content="Warning"/>
+                            <ComboBoxItem Content="Info"/>
+                            <ComboBoxItem Content="Debug"/>
+                        </ComboBox>
+                        <CheckBox Content="Enable Writing to File"
+                                  Margin="5"
+                                  IsChecked="{Binding LogToFile}"/>
+                    </StackPanel>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="Help"
+                                  x:Name="RibbonTabHelp">
+                <fluent:RibbonGroupBox Header="Help Actions">
+                    <fluent:Button Header="Readme"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonReadme_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="Readme"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="About"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonAbout_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="InfoCircle"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+        </fluent:Ribbon>
+        <Grid x:Name="MainContentGrid">
+            <DockPanel LastChildFill="True"
+                       IsEnabled="{Binding IsDataLoaded}"
+                       x:Name="MainDockPanel">
+            <!-- StatusBar Docked to Bottom -->
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusBar.StatusMessage}"
+                               Style="{StaticResource StatusMessageStyle}"/>
+                </StatusBarItem>
+            </StatusBar>
+            <GroupBox Header="{Binding ClusterRelocationServiceMod.Title}"
+                      DockPanel.Dock="Top"
+                      Margin="5">
+                <DockPanel VerticalAlignment="Stretch"
+                           LastChildFill="True">
+                    <GroupBox Header="{Binding RelocatedClusters.Count}" HeaderStringFormat="Relocated Clusters: {0}"
+                              DockPanel.Dock="Bottom"
+                              Margin="5"
+                              Height="150"
+                              VerticalAlignment="Stretch">
+                        <Grid Margin="5"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="160"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid x:Name="DataGridGalaxyConnections"
+                                      ItemsSource="{Binding RelocatedClusters}"
+                                      SelectedItem="{Binding RelocatedClusterCurrent, Mode=TwoWay}"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      AutoGenerateColumns="False"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="5"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      MinHeight="80"
+                                      IsEnabled="{Binding NoClusterInRelocationProcess}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Cluster"
+                                                        Binding="{Binding Name}"
+                                                        MinWidth="320"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="Macro"
+                                                        Binding="{Binding Macro}"
+                                                        Width="*"/>
+                                    <DataGridTextColumn Header="X, Original"
+                                                        Binding="{Binding XOriginal, StringFormat={}{0:N0}}"
+                                                        Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Foreground"
+                                                        Value="{Binding XOriginal, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                <Setter Property="FontWeight">
+                                                    <Setter.Value>
+                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                            <Binding Path="XOriginal"/>
+                                                            <Binding Path="XCurrent"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="X, Current"
+                                                        Binding="{Binding XCurrent, StringFormat={}{0:N0}}"
+                                                        Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Foreground"
+                                                        Value="{Binding XCurrent, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                <Setter Property="FontWeight">
+                                                    <Setter.Value>
+                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                            <Binding Path="XOriginal"/>
+                                                            <Binding Path="XCurrent"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Z, Original"
+                                                        Binding="{Binding ZOriginal, StringFormat={}{0:N0}}"
+                                                        Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Foreground"
+                                                        Value="{Binding ZOriginal, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                <Setter Property="FontWeight">
+                                                    <Setter.Value>
+                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                            <Binding Path="ZOriginal"/>
+                                                            <Binding Path="ZCurrent"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Z, Current"
+                                                        Binding="{Binding ZCurrent, StringFormat={}{0:N0}}"
+                                                        Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Foreground"
+                                                        Value="{Binding ZCurrent, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                <Setter Property="FontWeight">
+                                                    <Setter.Value>
+                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                            <Binding Path="ZOriginal"/>
+                                                            <Binding Path="ZCurrent"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <Grid Grid.Column="1" Margin="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/> <!-- button row -->
+                                    <RowDefinition Height="*" />   <!-- takes all available space -->
+                                    <RowDefinition Height="Auto"/> <!-- button row -->
+                                </Grid.RowDefinitions>
+
+                                <Button x:Name="ButtonRelocationCancel"
+                                        Content="Cancel Relocation"
+                                        ToolTip="This will revert the relocation and restore the cluster position to original"
+                                        Grid.Row="0"
+                                        Margin="0,5,0,0"
+                                        Width="140"
+                                        IsEnabled="{Binding IsRelocationCanBeCancelled}"
+                                        Click="ButtonRelocationCancel_Click"/>
+                                <Button x:Name="ButtonRelocationFullMess"
+                                        Content="Make a &quot;Full Mess&quot;"
+                                        ToolTip="This will relocate all clusters to the new unpredictable positions"
+                                        Grid.Row="2"
+                                        Margin="0,5,0,0"
+                                        Width="140"
+                                        Visibility="{Binding FullMessIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Click="ButtonRelocationFullMess_Click"/>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Galaxy Map"
+                              Margin="5"
+                              DockPanel.Dock="Top">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/> <!-- Label  -->
+                                    <ColumnDefinition Width="*"/>    <!-- Slider -->
+                                    <ColumnDefinition Width="Auto"/> <!-- Button -->
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Scale:"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"/>
+                                <Slider x:Name="HexagonWidthSlider"
+                                        Grid.Column="1"
+                                        Minimum="{Binding ElementName=GalaxyMapViewer, Path=HexagonWidthMinimal}"
+                                        Maximum="{Binding ElementName=GalaxyMapViewer, Path=HexagonWidthMaximal}"
+                                        Value="{Binding ElementName=GalaxyMapViewer, Path=HexagonWidth}"
+                                        TickFrequency="10"
+                                        IsSnapToTickEnabled="True"
+                                        TickPlacement="BottomRight"
+                                        SmallChange="10"
+                                        LargeChange="100"
+                                        ToolTip="Adjust Galaxy Map scale"/>
+                                <Button Grid.Column="2"
+                                        Margin="5,0,0,0"
+                                        Width="32"
+                                        Height="32"
+                                        Click="ExportPngButton_Click"
+                                        ToolTip="Export Galaxy Map as PNG">
+                                    <Button.Content>
+                                        <fa:IconImage Icon="FileImage"
+                                                    IconFont="Solid"
+                                                    Style="{StaticResource FontAwesomeIconStyle}"/>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                            <local:GalaxyMapViewerForClusterRelocation x:Name="GalaxyMapViewer"
+                                                Grid.Row="1"
+                                                HorizontalScrollBarVisibility="Auto"
+                                                VerticalScrollBarVisibility="Auto"
+                                                Background="LightGray">
+                                <Canvas x:Name="GalaxyMapCanvas"
+                                        Background="LightGray"/>
+                            </local:GalaxyMapViewerForClusterRelocation>
+                            <Grid Grid.Row="1"
+                                Grid.Column="1"
+                                Background="LightGray">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Row="0"
+                                        Grid.Column="0"
+                                        Margin="0"
+                                        Width="20"
+                                        Height="20"
+                                        Click="ButtonOptionsVisibility_Click"
+                                        Foreground="DarkGray"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        ToolTip="Toggle options visibility">
+                                    <Button.Content>
+                                        <fa:IconImage Icon="{Binding OptionsVisibilitySymbol}"
+                                                    Style="{StaticResource FontAwesomeIconStyle}"/>
+                                    </Button.Content>
+                                </Button>
+                                <StackPanel Grid.Row="1"
+                                            Grid.Column="0"
+                                            Orientation="Vertical"
+                                            Visibility="{Binding OptionsVisibilityState}"
+                                            Width="{Binding OptionsWidth}">
+                                    <GroupBox Header="DLC's"
+                                            Margin="5"
+                                            Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsDLCsVisibilityState}">
+                                        <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=DLCsOptions}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Name}"
+                                                            IsChecked="{Binding IsChecked}"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </GroupBox>
+                                    <GroupBox Header="Mods"
+                                            Margin="5"
+                                            Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsModsVisibilityState}">
+                                        <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=ModsOptions}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <CheckBox Content="{Binding Name}"
+                                                                IsChecked="{Binding IsChecked}"
+                                                                Grid.Column="0"/>
+                                                        <TextBlock Text="{Binding Version}"
+                                                                Margin="5,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Right"
+                                                                Grid.Column="1"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </GroupBox>
+                                </StackPanel>
+                                <GroupBox Header="Developer options"
+                                        Margin="5"
+                                        Grid.Row="2"
+                                        Visibility="Hidden"
+                                        Width="{Binding OptionsWidth}">
+                                    <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer,  Path=DeveloperOptions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Content="{Binding Name}"
+                                                        IsChecked="{Binding IsChecked}"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </GroupBox>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                </DockPanel>
+            </GroupBox>
+        </DockPanel>
+        </Grid>
+        </DockPanel>
+        <!-- Busy overlay covering the whole window (ribbon + content) -->
+        <Grid x:Name="BusyOverlay"
+              Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+              Background="#20000000"
+              Panel.ZIndex="999"
+              IsHitTestVisible="True">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="440" Height="20"/>
+                <TextBlock Text="{Binding BusyMessage}"
+                           Foreground="Black"
+                           FontSize="16"
+                           Margin="10"
+                           FontWeight="SemiBold"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Width="Auto"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -16,5 +16,7 @@
   "src/GalaxyEditor": "0.2.1",
   "filler-eight": "0.0.0",
   "src/SharedWindows": "0.7.1",
-  "filler-nine": "0.0.0"
+  "filler-nine": "0.0.0",
+  "src/ClusterRelocationService": "1.0.0",
+  "filler-ten": "0.0.0"
 }

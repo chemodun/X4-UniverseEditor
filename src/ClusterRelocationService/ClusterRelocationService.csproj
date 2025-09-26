@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets/program.ico</ApplicationIcon> <!-- Set Application Icon -->
+    <Version>$(Version)</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <Copyright>Developed by Chem O`Dun</Copyright>
+    <Product>Cluster Relocation Service</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
+    <ProjectReference Include="..\Logger\Logger.csproj" />
+    <ProjectReference Include="..\X4Unpack\X4Unpack.csproj" />
+    <ProjectReference Include="..\X4Map\X4Map.csproj" />
+    <ProjectReference Include="..\SharedWindows\SharedWindows.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\program.ico" />
+    <Resource Include="Assets\x4.ico" />
+    <Resource Include="Assets\galaxymap.ico" />
+    <Resource Include="Assets\mapob_jumpgate_default.png" />
+    <Resource Include="Assets\mapob_jumpgate_map_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_map_inactive.png" />
+    <Resource Include="Assets\mapob_jumpgate_mod_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_mod_inactive.png" />
+    <Resource Include="Assets\mapob_jumpgate_new_active.png" />
+    <Resource Include="Assets\mapob_jumpgate_new_inactive.png" />
+    <Resource Include="Assets\mapob_superhighway_default.png" />
+    <Resource Include="Assets\mapob_superhighway_map_active.png" />
+    <Resource Include="Assets\mapob_superhighway_map_inactive.png" />
+    <Resource Include="Assets\mapob_equipmentdock.png" />
+    <Resource Include="Assets\mapob_shipyard.png" />
+    <Resource Include="Assets\mapob_tradestation.png" />
+    <Resource Include="Assets\mapob_wharf.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25103.5738" />
+    <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="NLog" Version="5.3.4" />
+  </ItemGroup>
+
+</Project>

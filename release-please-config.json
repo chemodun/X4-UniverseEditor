@@ -84,6 +84,13 @@
         "Directory.Build.props"
       ]
     },
+    "src/ClusterRelocationService": {
+      "package-name": "ClusterRelocationService",
+      "release-type": "simple",
+      "extra-files": [
+        "Directory.Build.props"
+      ]
+    },
     "src/Logger": {
       "package-name": "Logger",
       "release-type": "simple",
