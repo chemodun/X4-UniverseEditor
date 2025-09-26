@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.RightsManagement;
 using System.Threading.Tasks;
@@ -109,6 +110,7 @@ namespace X4Map
     protected double scrollVerticalOffset = 0;
     public Polygon? HexagonOnMouseRightButtonDown = null;
     protected Polygon? _hexagonOnMouseLeftButtonDown = null;
+    protected SectorMapItem? _sectorMapItemOnMouseLeftButtonDown = null;
 
     protected Polygon? _hexagonSelected = null;
     protected Polygon? _pressedHexagon = null;
@@ -203,9 +205,11 @@ namespace X4Map
     public event EventHandler<SectorEventArgs>? OnPressedSector;
     public event EventHandler<ClusterEventArgs>? OnPressedCluster;
     public event EventHandler<CellEventArgs>? OnPressedCell;
+    public event EventHandler<SectorItemEventArgs>? OnPressedSectorItem;
     public event EventHandler<SectorEventArgs>? OnRightPressedSector;
     public event EventHandler<ClusterEventArgs>? OnRightPressedCluster;
     public event EventHandler<CellEventArgs>? OnRightPressedCell;
+    public event EventHandler<SectorItemEventArgs>? OnRightPressedSectorItem;
 
     public void Connect(
       Galaxy galaxy,
@@ -887,6 +891,12 @@ namespace X4Map
       {
         HexagonOnMouseRightButtonDown = _galaxyClusterFromPolygon.Hexagon;
       }
+      else if (clickedElement is Image image && image.DataContext is SectorMapItem sectorItem)
+      {
+        // Special case: right-click on an item image inside a sector
+        OnRightPressedSectorItem?.Invoke(this, new SectorItemEventArgs(sectorItem));
+        return;
+      }
       if (HexagonOnMouseRightButtonDown != null)
       {
         Log.Debug($"Right button down on {HexagonOnMouseRightButtonDown.Tag}");
@@ -955,6 +965,16 @@ namespace X4Map
       {
         _hexagonOnMouseLeftButtonDown = _galaxyClusterFromPolygon.Hexagon;
       }
+      else if (clickedElement is Image image && image.DataContext is SectorMapItem sectorItem)
+      {
+        // Special case: left-click on an item image inside a sector
+        _sectorMapItemOnMouseLeftButtonDown = sectorItem;
+        _hexagonOnMouseLeftButtonDown = null;
+      }
+      if (_hexagonOnMouseLeftButtonDown != null)
+      {
+        _sectorMapItemOnMouseLeftButtonDown = null;
+      }
       isPanning = true;
       panStartPoint = e.GetPosition(this);
       scrollHorizontalOffset = HorizontalOffset;
@@ -975,6 +995,7 @@ namespace X4Map
           return;
         }
         _hexagonOnMouseLeftButtonDown = null;
+        _sectorMapItemOnMouseLeftButtonDown = null;
         // Adjust the ScrollViewer's offsets
         ScrollToHorizontalOffset(scrollHorizontalOffset - deltaX);
         ScrollToVerticalOffset(scrollVerticalOffset - deltaY);
@@ -993,6 +1014,11 @@ namespace X4Map
         this.Cursor = Cursors.Arrow;
       }
       PressedHexagon = _hexagonOnMouseLeftButtonDown;
+      if (_sectorMapItemOnMouseLeftButtonDown != null)
+      {
+        OnPressedSectorItem?.Invoke(this, new SectorItemEventArgs(_sectorMapItemOnMouseLeftButtonDown));
+        _sectorMapItemOnMouseLeftButtonDown = null;
+      }
       _hexagonOnMouseLeftButtonDown = null;
     }
 
@@ -1127,6 +1153,25 @@ namespace X4Map
   {
     public Sector? PressedSector { get; } = sector;
     public GalaxyMapSector? PressedMapSector { get; } = mapSector;
+  }
+
+  public class SectorItemEventArgs : EventArgs
+  {
+    public SectorMapItem? PressedSectorItem { get; } = null;
+    public Sector? PressedSector { get; } = null;
+
+    public SectorItemEventArgs(SectorMapItem? item)
+      : base()
+    {
+      PressedSectorItem = item;
+      if (item != null)
+      {
+        if (item.SectorMap != null && item.SectorMap.MapHexagon != null && item.SectorMap.MapHexagon.DataContext is Sector sector)
+        {
+          PressedSector = sector;
+        }
+      }
+    }
   }
 
   public class MapInfo(int minCol, int maxCol, int minRow, int maxRow)
