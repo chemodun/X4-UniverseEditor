@@ -116,6 +116,18 @@ namespace X4Map
       (HexagonCorner.LeftBottom, HexagonCorner.RightBottom),
     ];
 
+    protected Brush DefaultStroke
+    {
+      get
+      {
+        if (Cluster == null)
+        {
+          return Brushes.DarkGray;
+        }
+        return Cluster.Source == "New" ? Brushes.DarkGreen : Brushes.Black;
+      }
+    }
+
     public virtual double Create(GalaxyMapViewer map)
     {
       double maxInternalSizeKm = 0;

@@ -576,6 +576,7 @@ namespace X4Map
         _sectors.Remove(sector);
       }
       cluster.Sectors.Clear();
+      cluster.Cluster = null;
     }
 
     public void RemoveSector(GalaxyMapSector sector)
@@ -595,6 +596,7 @@ namespace X4Map
           RemoveCluster(ownerCluster);
         }
       }
+      Sector = null;
     }
 
     protected void RefreshConnectionsForCluster(GalaxyMapCluster updatedCluster)
