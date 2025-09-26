@@ -89,4 +89,19 @@ namespace SharedWindows.Converters
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
   }
+
+  public class BoldIfDifferentConverter : IMultiValueConverter
+  {
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+      if (values.Length == 2 && values[0] is double orig && values[1] is double curr)
+      {
+        return Math.Round(orig) != Math.Round(curr) ? FontWeights.Bold : FontWeights.Normal;
+      }
+      return FontWeights.Normal;
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+      throw new NotImplementedException();
+  }
 }
