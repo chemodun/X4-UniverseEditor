@@ -174,8 +174,14 @@ namespace X4Map
     protected const double ZoomCommitDelayMs = 180; // debounce delay before committing layout
     protected const double ZoomMinFactor = 0.25; // relative to current HexagonWidth
     protected const double ZoomMaxFactor = 4.0; // relative to current HexagonWidth
+
+    // Anchor for precise scroll preservation during zoom commit
+    protected Point _zoomAnchorCanvas = new(0, 0);
+    protected Point _zoomAnchorViewport = new(0, 0);
+    protected bool _isZoomCommitting = false;
     protected readonly List<GalaxyMapCell> MapCells = [];
     public List<SectorMapItem> SectorsItems = [];
+    protected ScrollContentPresenter? _viewportPresenter = null;
     public ObservableCollection<MapOptions> DLCsOptions { get; set; } = [];
     protected Visibility _optionsDLCsVisibilityState = Visibility.Hidden;
     public Visibility OptionsDLCsVisibilityState
@@ -232,6 +238,10 @@ namespace X4Map
       GalaxyCanvas.PreviewMouseRightButtonDown += GalaxyMapViewer_MouseRightButtonDown;
       GalaxyCanvas.MouseMove += GalaxyMapViewer_MouseMove;
       GalaxyCanvas.MouseLeftButtonUp += GalaxyMapViewer_MouseLeftButtonUp;
+
+      // Ensure template is applied so we can locate the viewport presenter
+      ApplyTemplate();
+      _viewportPresenter = FindDescendant<ScrollContentPresenter>(this);
 
       // Setup fast, GPU-accelerated deferred zoom transform
       var tg = new TransformGroup();
@@ -385,7 +395,7 @@ namespace X4Map
       double scaleY = ExtentHeight / ViewportHeight;
 
       // If both are ~1, there's no zoom
-      return Math.Abs(scaleX - 1.0) < 0.0001 || Math.Abs(scaleY - 1.0) < 0.0001;
+      return Math.Abs(scaleX - 1.0) < 0.0001 && Math.Abs(scaleY - 1.0) < 0.0001;
     }
 
     public Task ExportToPng(Canvas sourceCanvas, string filePath)
@@ -792,6 +802,11 @@ namespace X4Map
 
     protected void GalaxyMapViewer_ScrollChanged(object sender, RoutedEventArgs e)
     {
+      if (_isZoomCommitting)
+      {
+        // During explicit zoom anchor commit, skip heuristic offset scaling to avoid fighting our precise offsets
+        return;
+      }
       double viewportWidth = ViewportWidth;
       double viewportHeight = ViewportHeight;
       double currentCanvasWidth = GalaxyCanvas.Width;
@@ -1038,8 +1053,10 @@ namespace X4Map
 
         _deferredZoomScale = targetScale;
 
-        // Apply zoom transform around viewport center
-        Point anchor = GetViewportCenterInCanvas();
+        // Apply zoom transform around mouse position (more natural anchoring)
+        Point anchor = GetMouseAnchorInCanvas(e);
+        _zoomAnchorViewport = GetMouseInViewport(e);
+        _zoomAnchorCanvas = anchor; // remember anchor to preserve position precisely on commit
         _zoomScale.ScaleX = _deferredZoomScale;
         _zoomScale.ScaleY = _deferredZoomScale;
         _zoomTranslate.X = (1 - _deferredZoomScale) * anchor.X;
@@ -1050,6 +1067,61 @@ namespace X4Map
         _zoomCommitTimer?.Start();
         e.Handled = true;
       }
+    }
+
+    Point GetMouseAnchorInCanvas(MouseEventArgs e)
+    {
+      // Mouse position relative to the canvas
+      Point p = e.GetPosition(GalaxyCanvas);
+      // Convert to pre-transform canvas space if a render transform is active
+      var transform = GalaxyCanvas.RenderTransform as Transform;
+      if (transform != null && transform.Value.HasInverse)
+      {
+        var inverse = transform.Value;
+        inverse.Invert();
+        p = inverse.Transform(p);
+      }
+      // Clamp to canvas bounds to avoid NaNs at edges
+      double w = double.IsNaN(GalaxyCanvas.Width) ? 0 : GalaxyCanvas.Width;
+      double h = double.IsNaN(GalaxyCanvas.Height) ? 0 : GalaxyCanvas.Height;
+      p.X = Math.Max(0, Math.Min(p.X, w));
+      p.Y = Math.Max(0, Math.Min(p.Y, h));
+      return p;
+    }
+
+    Point GetMouseInViewport(MouseEventArgs e)
+    {
+      // Mouse position relative to the real viewport (ScrollContentPresenter) if available
+      var presenter = _viewportPresenter ??= FindDescendant<ScrollContentPresenter>(this);
+      Point p = presenter != null ? e.GetPosition(presenter) : e.GetPosition(this);
+      // Clamp to current viewport bounds
+      double w = presenter?.ActualWidth ?? ViewportWidth;
+      double h = presenter?.ActualHeight ?? ViewportHeight;
+      if (double.IsNaN(w) || double.IsInfinity(w))
+        w = ActualWidth;
+      if (double.IsNaN(h) || double.IsInfinity(h))
+        h = ActualHeight;
+      p.X = Math.Max(0, Math.Min(p.X, w));
+      p.Y = Math.Max(0, Math.Min(p.Y, h));
+      return p;
+    }
+
+    static T? FindDescendant<T>(DependencyObject? root)
+      where T : DependencyObject
+    {
+      if (root == null)
+        return null;
+      int count = VisualTreeHelper.GetChildrenCount(root);
+      for (int i = 0; i < count; i++)
+      {
+        var child = VisualTreeHelper.GetChild(root, i);
+        if (child is T t)
+          return t;
+        var result = FindDescendant<T>(child);
+        if (result != null)
+          return result;
+      }
+      return null;
     }
 
     Point GetViewportCenterInCanvas()
@@ -1082,17 +1154,47 @@ namespace X4Map
       {
         return;
       }
-      // Compute target HexagonWidth within bounds and reset transform
-      double targetWidth = Math.Max(HexagonWidthMinimal, Math.Min(HexagonWidth * _deferredZoomScale, HexagonWidthMaximal));
-
-      _zoomScale.ScaleX = 1.0;
-      _zoomScale.ScaleY = 1.0;
-      _zoomTranslate.X = 0.0;
-      _zoomTranslate.Y = 0.0;
-      _deferredZoomScale = 1.0;
+      // Compute target HexagonWidth within bounds
+      double oldWidth = HexagonWidth;
+      double targetWidth = Math.Max(HexagonWidthMinimal, Math.Min(oldWidth * _deferredZoomScale, HexagonWidthMaximal));
+      double ratio = oldWidth == 0 ? 1.0 : (targetWidth / oldWidth);
 
       // Setting HexagonWidth will trigger UpdateMap and resize the layout-backed canvas
+      _isZoomCommitting = true;
       HexagonWidth = targetWidth;
+      // Apply scroll offset immediately after layout completes to avoid any intermediate wrong frame
+      EventHandler? onLayoutUpdated = null;
+      onLayoutUpdated = (s, e) =>
+      {
+        // Detach immediately to run only once
+        GalaxyCanvas.LayoutUpdated -= onLayoutUpdated;
+
+        // Compute desired offsets so that the anchored canvas point maps to the SAME viewport position (mouse)
+        double desiredH = _zoomAnchorCanvas.X * ratio - _zoomAnchorViewport.X;
+        double desiredV = _zoomAnchorCanvas.Y * ratio - _zoomAnchorViewport.Y;
+        // Clamp to valid range using current canvas dimensions
+        double maxH = Math.Max(0.0, GalaxyCanvas.Width - ViewportWidth);
+        double maxV = Math.Max(0.0, GalaxyCanvas.Height - ViewportHeight);
+        if (double.IsFinite(desiredH))
+          ScrollToHorizontalOffset(Math.Max(0.0, Math.Min(desiredH, maxH)));
+        if (double.IsFinite(desiredV))
+          ScrollToVerticalOffset(Math.Max(0.0, Math.Min(desiredV, maxV)));
+
+        // Clear the transient GPU transform (content already aligned by scroll)
+        _zoomScale.ScaleX = 1.0;
+        _zoomScale.ScaleY = 1.0;
+        _zoomTranslate.X = 0.0;
+        _zoomTranslate.Y = 0.0;
+        _deferredZoomScale = 1.0;
+
+        // Sync ScrollChanged heuristics baseline to avoid a late proportional adjustment
+        scrollHorizontalOffset = HorizontalOffset;
+        scrollVerticalOffset = VerticalOffset;
+        canvasToScrollWidthDelta = Math.Max(0.0, GalaxyCanvas.Width - ViewportWidth);
+        canvasToScrollHeightDelta = Math.Max(0.0, GalaxyCanvas.Height - ViewportHeight);
+        _isZoomCommitting = false;
+      };
+      GalaxyCanvas.LayoutUpdated += onLayoutUpdated;
     }
 
     protected void MapOptions_PropertyChanged(object? sender, PropertyChangedEventArgs e)
