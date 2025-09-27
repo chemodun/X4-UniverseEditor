@@ -28,6 +28,7 @@ namespace ClusterRelocationService
     public DataConfig Data { get; set; } = new DataConfig();
     public RelocationConfig Relocation { get; set; } = new RelocationConfig();
     public LoggingConfig Logging { get; set; } = new LoggingConfig();
+    public OtherConfig Other { get; set; } = new OtherConfig();
   }
 
   public class ModeConfig
@@ -96,6 +97,30 @@ namespace ClusterRelocationService
     }
   }
 
+  public class OtherConfig
+  {
+    private bool _checkForUpdatesOnStartUp = false;
+    public bool CheckForUpdatesOnStartUp
+    {
+      get => _checkForUpdatesOnStartUp;
+      set
+      {
+        if (_checkForUpdatesOnStartUp != value)
+        {
+          _checkForUpdatesOnStartUp = value;
+          OnPropertyChanged(nameof(CheckForUpdatesOnStartUp));
+        }
+      }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+  }
+
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
@@ -117,7 +142,7 @@ namespace ClusterRelocationService
           OnPropertyChanged(nameof(ExtractedVisibility));
           OnPropertyChanged(nameof(GameFolderVisibility));
           SaveConfiguration();
-          if (_initiated)
+          if (_hasBeenInitialized)
           {
             ClusterRelocationServiceMod = new("", X4UniverseId);
             LoadX4DataInBackgroundStart();
@@ -143,6 +168,22 @@ namespace ClusterRelocationService
         }
       }
     }
+
+    private bool _checkForUpdatesOnStartUp = false;
+    public bool CheckForUpdatesOnStartUp
+    {
+      get => _checkForUpdatesOnStartUp;
+      set
+      {
+        if (_checkForUpdatesOnStartUp != value)
+        {
+          _checkForUpdatesOnStartUp = value;
+          OnPropertyChanged(nameof(CheckForUpdatesOnStartUp));
+          SaveConfiguration();
+        }
+      }
+    }
+
     private readonly List<GameFilesStructureItem> X4DataStructure = [];
 
     private readonly List<ProcessingOrderItem> X4PDataProcessingOrder =
@@ -248,7 +289,7 @@ namespace ClusterRelocationService
           _loadModsData = value;
           OnPropertyChanged(nameof(LoadModsData));
           SaveConfiguration();
-          if (_initiated)
+          if (_hasBeenInitialized)
           {
             LoadX4DataInBackgroundStart();
           }
@@ -593,7 +634,7 @@ namespace ClusterRelocationService
         }
       }
     }
-    private readonly bool _initiated = false;
+    private bool _hasBeenInitialized = false;
 
     private GalaxyMapClusterForClusterRelocation? _markedForRelocation = null;
     private Visibility _optionsVisibilityState = Visibility.Hidden;
@@ -695,7 +736,6 @@ namespace ClusterRelocationService
       RelocatedClusters.CollectionChanged += RelocatedClusters_CollectionChanged;
 
       GalaxyMapViewer.RefreshGalaxyData();
-      _initiated = true;
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
         new Action(() =>
@@ -720,6 +760,7 @@ namespace ClusterRelocationService
           var map = config.Map ?? new MapConfig();
           var relocation = config.Relocation ?? new RelocationConfig();
           var logging = config.Logging ?? new LoggingConfig();
+          var other = config.Other ?? new OtherConfig();
 
           DirectMode = mode.DirectMode;
 
@@ -746,6 +787,8 @@ namespace ClusterRelocationService
 
           LogLevel = logging.LogLevel ?? "Warning";
           LogToFile = logging.LogToFile;
+
+          CheckForUpdatesOnStartUp = other.CheckForUpdatesOnStartUp;
         }
       }
       else
@@ -774,6 +817,7 @@ namespace ClusterRelocationService
         Map = new MapConfig { MapColorsOpacity = MapColorsOpacity },
         Relocation = new RelocationConfig { ExportClustersIsEnabled = ExportClustersIsEnabled, FullMessIsEnabled = FullMessIsEnabled },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
+        Other = new OtherConfig { CheckForUpdatesOnStartUp = CheckForUpdatesOnStartUp },
       };
       if (X4UniverseId != DataLoader.DefaultUniverseId)
       {
@@ -865,13 +909,14 @@ namespace ClusterRelocationService
 
     private async void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
+      _backgroundWorker.Dispose();
       if (e.Error != null)
       {
         StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
         IsBusy = false;
+        _hasBeenInitialized = true;
         return;
       }
-      _backgroundWorker.Dispose();
       _baseGameFiles = GameFile.CloneList(Galaxy.GameFiles, true);
       var sectors = Galaxy.GetSectors();
       // Ensure detected version appears in the versions list, formatted as major.minor (minor 2 digits) and sorted
@@ -931,6 +976,14 @@ namespace ClusterRelocationService
       if (RelocatedClusters.Count == 0)
       {
         _clusterRelocationServiceMod.SetGameVersion(X4DataVersion);
+      }
+      if (!_hasBeenInitialized)
+      {
+        if (CheckForUpdatesOnStartUp)
+        {
+          UpdateChecker.onCheckUpdatePressedAsync(this, StatusBar, Assembly.GetExecutingAssembly(), true);
+        }
+        _hasBeenInitialized = true;
       }
       IsBusy = false;
     }
@@ -1504,17 +1557,14 @@ namespace ClusterRelocationService
       LoadX4DataInBackgroundStart();
     }
 
+    public void ButtonCheckUpdate_Click(object sender, RoutedEventArgs e)
+    {
+      UpdateChecker.onCheckUpdatePressedAsync(this, StatusBar, Assembly.GetExecutingAssembly());
+    }
+
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
     {
-      Dictionary<string, string> informationalLinks = new()
-      {
-        { "GitHub", "https://github.com/chemodun/X4-UniverseEditor" },
-        { "EGOSOFT Forum", "https://forum.egosoft.com/viewtopic.php?p=5262362" },
-        { "Nexus", "https://www.nexusmods.com/x4foundations/mods/1835" },
-      };
-
-      AssemblyInfo assemblyInfo = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
-      AboutWindow aboutWindow = new(_appIcon, assemblyInfo, informationalLinks) { Owner = this };
+      AboutWindow aboutWindow = new(_appIcon, Assembly.GetExecutingAssembly()) { Owner = this };
       aboutWindow.ShowDialog();
     }
 

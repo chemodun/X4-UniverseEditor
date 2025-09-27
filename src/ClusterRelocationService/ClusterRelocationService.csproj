@@ -16,6 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyMetadata Include="RepositoryUrl" Value="https://github.com/chemodun/X4-UniverseEditor" />
+    <AssemblyMetadata Include="NexusModsUrl" Value="https://www.nexusmods.com/x4foundations/mods/1835/" />
+    <AssemblyMetadata Include="EgosoftForumUrl" Value="https://forum.egosoft.com/viewtopic.php?p=5262362" />
+    <AssemblyMetadata Include="Author" Value="Chem O`Dun" />
+    <AssemblyMetadata Include="SubProject" Value="ClusterRelocationService" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\X4DataLoader\X4DataLoader.csproj" />
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <ProjectReference Include="..\X4Unpack\X4Unpack.csproj" />
