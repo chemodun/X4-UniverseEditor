@@ -21,13 +21,21 @@ namespace SharedWindows
     public string Version { get; set; }
     public string Copyright { get; set; }
     public List<string> Components { get; set; }
-    public Dictionary<string, string> InformationalLinks { get; set; }
+    public Dictionary<string, string> InformationalLinks { get; set; } = new();
 
-    public AboutWindow(BitmapImage icon, AssemblyInfo assemblyInfo, Dictionary<string, string> informationalLinks)
+    public AboutWindow(BitmapImage icon, Assembly assembly)
     {
       InitializeComponent();
       DataContext = this;
-      InformationalLinks = informationalLinks;
+      AssemblyInfo assemblyInfo = AssemblyInfo.GetAssemblyInfo(assembly);
+      // Grab all AssemblyMetadata attributes
+      var metadata = assembly.GetCustomAttributes<AssemblyMetadataAttribute>().ToDictionary(a => a.Key, a => a.Value ?? string.Empty);
+      if (metadata.TryGetValue("NexusModsUrl", out var nexusModsUrl))
+        InformationalLinks["Nexus Mods"] = nexusModsUrl;
+      if (metadata.TryGetValue("EgosoftForumUrl", out var egosoftForumUrl))
+        InformationalLinks["Egosoft Forum"] = egosoftForumUrl;
+      if (metadata.TryGetValue("RepositoryUrl", out var gitHubUrl))
+        InformationalLinks["GitHub"] = gitHubUrl;
       // Get the version information from the assembly
       var version = assemblyInfo.Version;
       Version = $"Version {version?.ToString()}";
