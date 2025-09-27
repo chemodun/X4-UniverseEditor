@@ -340,7 +340,27 @@ namespace ClusterRelocationService
       {
         if (cluster.Cluster != null)
         {
+          if (cluster.Cluster.PositionXML != null && cluster.Cluster.PositionXML.Element("offset") == null)
+          {
+            XElement offset = new("offset");
+            XElement position = new(
+              "position",
+              new XAttribute("x", $"{cluster.Cluster.Position.X:F0}"),
+              new XAttribute("y", $"{cluster.Cluster.Position.Y:F0}"),
+              new XAttribute("z", $"{cluster.Cluster.Position.Z:F0}")
+            );
+            offset.Add(position);
+            XElement addElement = new(
+              "add",
+              new XAttribute("sel", $"/macros/macro[@name='{galaxy.Name}']/connections/connection[@name='{cluster.Cluster.PositionId}']")
+            );
+            addElement.Add(offset);
+            diffElement.Add(addElement);
+            continue;
+          }
+
           bool isAdded = false;
+
           XElement? replaceX = ReplaceElementForPositionAxis(galaxy, cluster.Cluster.PositionId, "x", cluster.XOriginal, cluster.XCurrent);
           if (replaceX != null)
           {
