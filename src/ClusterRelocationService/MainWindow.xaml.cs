@@ -47,8 +47,8 @@ namespace ClusterRelocationService
     public string X4GameFolder { get; set; } = "";
     public string X4DataExtractedPath { get; set; } = ".";
     public bool X4DataVersionOverride { get; set; } = false;
-    public int X4DataVersion { get; set; } = 710;
-    public bool LoadModsData { get; set; } = false;
+    public int X4DataVersion { get; set; } = 760;
+    public bool LoadModsData { get; set; } = true;
   }
 
   public class RelocationConfig
@@ -237,7 +237,7 @@ namespace ClusterRelocationService
       }
     }
 
-    private bool _loadModsData = false;
+    private bool _loadModsData = true;
     public bool LoadModsData
     {
       get => _loadModsData;
@@ -940,7 +940,7 @@ namespace ClusterRelocationService
       RelocatedClusters.Clear();
       RelocatedClusterCurrent = null;
       var queue = new Queue<RelocatedCluster>(ClusterRelocationServiceMod.RelocatedClustersList);
-      int maxPasses = queue.Count + 3; // Prevent infinite loop
+      int maxPasses = queue.Count + 2; // Prevent infinite loop
       int passes = 0;
 
       while (queue.Count > 0 && passes < maxPasses)
@@ -950,7 +950,7 @@ namespace ClusterRelocationService
         {
           var rc = queue.Dequeue();
           var occupied = GalaxyMapViewer.IsRelocatedClusterTargetLocationOccupied(rc);
-          if (occupied && passes != maxPasses - 2)
+          if (occupied && passes > 2)
           {
             queue.Enqueue(rc); // retry later
           }
@@ -1252,6 +1252,19 @@ namespace ClusterRelocationService
         StatusBar.SetStatusMessage("Error: Mod loading is disabled in the configuration.", StatusMessageType.Error);
         return;
       }
+      if (ClusterRelocationServiceMod.IsModChanged(RelocatedClusters))
+      {
+        MessageBoxResult confirm = MessageBox.Show(
+          "The current mod has unsaved changes. Loading a mod will discard these changes. Continue?",
+          "Confirm Load Mod",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (confirm == MessageBoxResult.No)
+        {
+          return;
+        }
+      }
       BusyMessage = "Loading Mod data...";
       IsBusy = true;
       await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
@@ -1286,7 +1299,6 @@ namespace ClusterRelocationService
         path = Path.Combine(X4GameFolder, "extensions", RelocatedClustersMod.ModId);
         if (!(Directory.Exists(path) && File.Exists(Path.Combine(path, "content.xml"))))
         {
-          path = string.Empty;
           string message = "Error: Mod data could not be loaded: Mod folder or content.xml not found in the game extensions folder.";
           StatusBar.SetStatusMessage(message, StatusMessageType.Error);
           Log.Error(message);
@@ -1393,8 +1405,12 @@ namespace ClusterRelocationService
       if (RelocatedClusters.Count > 0)
       {
         _clusterRelocationServiceMod.SetGameVersion(X4DataVersion);
-        IsModCanBeSaved =
-          !_clusterRelocationServiceMod.SaveData(Galaxy, RelocatedClusters) || _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
+        bool saved = _clusterRelocationServiceMod.SaveData(Galaxy, RelocatedClusters);
+        StatusBar.SetStatusMessage(
+          saved ? "Mod data saved successfully." : "Error: Mod data could not be saved.",
+          saved ? StatusMessageType.Info : StatusMessageType.Error
+        );
+        IsModCanBeSaved = !saved || _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
       }
     }
 
@@ -1403,9 +1419,12 @@ namespace ClusterRelocationService
       if (RelocatedClusters.Count > 0)
       {
         _clusterRelocationServiceMod.SetGameVersion(X4DataVersion);
-        IsModCanBeSaved =
-          !_clusterRelocationServiceMod.SaveData(Galaxy, RelocatedClusters, true)
-          || _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
+        bool saved = _clusterRelocationServiceMod.SaveData(Galaxy, RelocatedClusters);
+        StatusBar.SetStatusMessage(
+          saved ? "Mod data saved successfully." : "Error: Mod data could not be saved.",
+          saved ? StatusMessageType.Info : StatusMessageType.Error
+        );
+        IsModCanBeSaved = !saved || _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
       }
     }
 

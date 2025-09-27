@@ -12,7 +12,7 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
         Title="Cluster Moving Service"
-        MinWidth="1200"
+        MinWidth="1670"
         MinHeight="940"
         Icon="{StaticResource ProgramIcon}"
         WindowStartupLocation="CenterScreen"
