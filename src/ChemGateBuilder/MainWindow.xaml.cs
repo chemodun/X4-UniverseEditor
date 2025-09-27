@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -25,6 +26,7 @@ namespace ChemGateBuilder
     public MapConfig Map { get; set; } = new MapConfig();
     public DataConfig Data { get; set; } = new DataConfig();
     public LoggingConfig Logging { get; set; } = new LoggingConfig();
+    public OtherConfig Other { get; set; } = new OtherConfig();
   }
 
   public class ModeConfig
@@ -93,6 +95,30 @@ namespace ChemGateBuilder
     }
   }
 
+  public class OtherConfig
+  {
+    private bool _checkForUpdatesOnStartUp = false;
+    public bool CheckForUpdatesOnStartUp
+    {
+      get => _checkForUpdatesOnStartUp;
+      set
+      {
+        if (_checkForUpdatesOnStartUp != value)
+        {
+          _checkForUpdatesOnStartUp = value;
+          OnPropertyChanged(nameof(CheckForUpdatesOnStartUp));
+        }
+      }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+  }
+
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
@@ -114,7 +140,7 @@ namespace ChemGateBuilder
           OnPropertyChanged(nameof(ExtractedVisibility));
           OnPropertyChanged(nameof(GameFolderVisibility));
           SaveConfiguration();
-          if (_initiated)
+          if (_hasBeenInitialized)
           {
             LoadX4DataInBackgroundStart();
           }
@@ -139,6 +165,22 @@ namespace ChemGateBuilder
         }
       }
     }
+
+    private bool _checkForUpdatesOnStartUp = false;
+    public bool CheckForUpdatesOnStartUp
+    {
+      get => _checkForUpdatesOnStartUp;
+      set
+      {
+        if (_checkForUpdatesOnStartUp != value)
+        {
+          _checkForUpdatesOnStartUp = value;
+          OnPropertyChanged(nameof(CheckForUpdatesOnStartUp));
+          SaveConfiguration();
+        }
+      }
+    }
+
     private readonly List<GameFilesStructureItem> X4DataStructure = [];
 
     private readonly List<ProcessingOrderItem> X4PDataProcessingOrder =
@@ -242,7 +284,7 @@ namespace ChemGateBuilder
           _loadModsData = value;
           OnPropertyChanged(nameof(LoadModsData));
           SaveConfiguration();
-          if (_initiated)
+          if (_hasBeenInitialized)
           {
             LoadX4DataInBackgroundStart();
           }
@@ -638,7 +680,7 @@ namespace ChemGateBuilder
         }
       }
     }
-    private readonly bool _initiated = false;
+    private bool _hasBeenInitialized = false;
 
     // Constructor
     public MainWindow()
@@ -690,7 +732,6 @@ namespace ChemGateBuilder
       _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = false };
 
       GateMacros.Add(_gateMacroDefault);
-      _initiated = true;
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
         new Action(() =>
@@ -715,6 +756,7 @@ namespace ChemGateBuilder
           var edit = config.Edit ?? new EditConfig();
           var map = config.Map ?? new MapConfig();
           var logging = config.Logging ?? new LoggingConfig();
+          var other = config.Other ?? new OtherConfig();
 
           DirectMode = mode.DirectMode;
 
@@ -741,6 +783,8 @@ namespace ChemGateBuilder
 
           LogLevel = logging.LogLevel ?? "Warning";
           LogToFile = logging.LogToFile;
+
+          CheckForUpdatesOnStartUp = other.CheckForUpdatesOnStartUp;
         }
       }
       else
@@ -771,6 +815,7 @@ namespace ChemGateBuilder
         Edit = new EditConfig { GatesActiveByDefault = GatesActiveByDefault, GatesMinimalDistanceBetween = GatesMinimalDistanceBetween },
         Map = new MapConfig { MapColorsOpacity = MapColorsOpacity },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
+        Other = new OtherConfig { CheckForUpdatesOnStartUp = CheckForUpdatesOnStartUp },
       };
       if (X4UniverseId != DataLoader.DefaultUniverseId)
       {
@@ -864,13 +909,15 @@ namespace ChemGateBuilder
 
     private void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
+      _backgroundWorker.Dispose();
       if (e.Error != null)
       {
         StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
         BusyMessage = "Error loading X4 data.";
         IsBusy = false;
+        _hasBeenInitialized = true;
+        return;
       }
-      _backgroundWorker.Dispose();
       var sectors = Galaxy.GetSectors();
 
       foreach (var sector in sectors.Values.OrderBy(s => s.Name))
@@ -943,6 +990,14 @@ namespace ChemGateBuilder
       if (ChemGateKeeperMod.GalaxyConnections.Count == 0)
       {
         _chemGateKeeperMod.SetGameVersion(X4DataVersion);
+      }
+      if (!_hasBeenInitialized)
+      {
+        if (CheckForUpdatesOnStartUp)
+        {
+          UpdateChecker.onCheckUpdatePressedAsync(this, StatusBar, Assembly.GetExecutingAssembly(), true);
+        }
+        _hasBeenInitialized = true;
       }
     }
 
@@ -1727,17 +1782,14 @@ namespace ChemGateBuilder
       LoadX4DataInBackgroundStart();
     }
 
+    public void ButtonCheckUpdate_Click(object sender, RoutedEventArgs e)
+    {
+      UpdateChecker.onCheckUpdatePressedAsync(this, StatusBar, Assembly.GetExecutingAssembly());
+    }
+
     public void ButtonAbout_Click(object sender, RoutedEventArgs e)
     {
-      Dictionary<string, string> informationalLinks = new()
-      {
-        { "GitHub", "https://github.com/chemodun/X4-UniverseEditor" },
-        { "EGOSOFT Forum", "https://forum.egosoft.com/viewtopic.php?p=5262362" },
-        { "Nexus", "https://www.nexusmods.com/x4foundations/mods/1587/" },
-      };
-
-      AssemblyInfo assemblyInfo = AssemblyInfo.GetAssemblyInfo(Assembly.GetExecutingAssembly());
-      AboutWindow aboutWindow = new(_appIcon, assemblyInfo, informationalLinks) { Owner = this };
+      AboutWindow aboutWindow = new(_appIcon, Assembly.GetExecutingAssembly()) { Owner = this };
       aboutWindow.ShowDialog();
     }
 

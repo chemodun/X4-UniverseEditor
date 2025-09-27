@@ -496,6 +496,13 @@
                                   IsChecked="{Binding LogToFile}"/>
                     </StackPanel>
                 </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Other Options">
+                    <StackPanel>
+                        <CheckBox Content="Check for Updates on StartUp"
+                                  Margin="5"
+                                  IsChecked="{Binding CheckForUpdatesOnStartUp}"/>
+                    </StackPanel>
+                </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="Help"
                                   x:Name="RibbonTabHelp">
@@ -505,6 +512,14 @@
                                    Click="ButtonReadme_Click">
                         <fluent:Button.Icon>
                             <fa:IconImage Icon="Readme"
+                                          Style="{StaticResource FontAwesomeIconStyle}"/>
+                        </fluent:Button.Icon>
+                    </fluent:Button>
+                    <fluent:Button Header="Check update"
+                                   Style="{StaticResource FluentButtonStyle}"
+                                   Click="ButtonCheckUpdate_Click">
+                        <fluent:Button.Icon>
+                            <fa:IconImage Icon="CloudArrowDown"
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
