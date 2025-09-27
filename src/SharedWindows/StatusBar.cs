@@ -15,6 +15,9 @@ namespace SharedWindows
   public class StatusBarMessage : INotifyPropertyChanged
   {
     private string _statusMessage = "Ready";
+    private string? _pendingMessage;
+    private StatusMessageType _pendingType;
+    private bool _pendingInfinity;
     public string StatusMessage
     {
       get => _statusMessage;
@@ -47,6 +50,8 @@ namespace SharedWindows
 
     private bool Infinity { get; set; }
 
+    private bool IsActive => (Infinity || (_statusMessageTimer?.IsEnabled ?? false));
+
     private void StartStatusMessageTimer()
     {
       // Stop existing timer if any
@@ -64,6 +69,22 @@ namespace SharedWindows
     private void StatusMessageTimer_Tick(object? sender, EventArgs e)
     {
       _statusMessageTimer?.Stop();
+      _statusMessageTimer = null;
+
+      // If there is a pending suppressed message, show it now instead of clearing
+      if (!string.IsNullOrEmpty(_pendingMessage))
+      {
+        var msg = _pendingMessage;
+        var type = _pendingType;
+        var inf = _pendingInfinity;
+        _pendingMessage = null;
+        _pendingInfinity = false;
+
+        // Display the pending message (this will start/reset timer appropriately)
+        SetStatusMessage(msg!, type, inf);
+        return;
+      }
+
       StatusMessage = string.Empty; // Clear the message
       StatusMessageType = StatusMessageType.Info; // Reset the message type
     }
@@ -71,6 +92,23 @@ namespace SharedWindows
     // Method to set status message with type
     public void SetStatusMessage(string message, StatusMessageType messageType, bool infinity = false)
     {
+      // Suppress lower-priority messages while a higher-priority message is active (timer not finished)
+      // Allow equal or higher priority to replace immediately.
+      if (IsActive && messageType < _statusMessageType)
+      {
+        // If current message is infinite, do not enqueue lower-priority message; simply ignore
+        if (Infinity)
+        {
+          return;
+        }
+
+        // Store as pending to show after current timer elapses
+        _pendingMessage = message;
+        _pendingType = messageType;
+        _pendingInfinity = infinity;
+        return;
+      }
+
       Infinity = infinity;
       StatusMessageType = messageType;
       StatusMessage = message;
