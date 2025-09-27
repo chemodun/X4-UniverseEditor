@@ -204,7 +204,6 @@ namespace ClusterRelocationService
     )
     {
       RelocatedCluster? relocatedCluster = currentClusterRelocated;
-      bool isCurrentClusterRelocated = relocatedCluster != null;
       if (currentCluster == null || targetCluster == null || currentCluster.Cluster == null)
       {
         return relocatedCluster;
@@ -213,13 +212,13 @@ namespace ClusterRelocationService
       RemoveCluster(currentCluster);
       GalaxyMapClusterReassign(currentCluster, null);
       RemoveCluster(targetCluster);
-      if (!isCurrentClusterRelocated)
+      if (relocatedCluster == null)
       {
         relocatedCluster = new RelocatedCluster(galaxyCluster);
       }
       currentCluster.IsRelocated = false;
       currentCluster.IsCurrent = false;
-      galaxyCluster.SetPosition(new Position(targetCluster.OriginalX, targetCluster.OriginalY, targetCluster.OriginalZ));
+      relocatedCluster.SetPosition(new Position(targetCluster.OriginalX, targetCluster.OriginalY, targetCluster.OriginalZ));
       GalaxyMapClusterReassign(targetCluster, galaxyCluster);
       targetCluster.IsRelocated = true;
       RefreshConnectionsForCluster(targetCluster);

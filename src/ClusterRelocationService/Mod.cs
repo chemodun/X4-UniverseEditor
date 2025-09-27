@@ -207,7 +207,7 @@ namespace ClusterRelocationService
                         && (position.X != cluster.Position.X || position.Z != cluster.Position.Z)
                       )
                       {
-                        RelocatedCluster clusterRelocated = new(cluster);
+                        RelocatedCluster clusterRelocated = new(cluster, position.X, position.Z);
                         cluster.SetPosition(position);
                         RelocatedClustersList.Add(clusterRelocated);
                       }
@@ -434,21 +434,24 @@ namespace ClusterRelocationService
           RelocatedCluster? found = relocatedClusters.FirstOrDefault(c =>
             StringHelper.EqualsIgnoreCase(c.Cluster.Macro, cluster.Cluster.Macro)
           );
-          if (found == null || PositionHelper.IsSamePosition(found.Cluster.Position, cluster.Cluster.Position) == false)
+          if (found == null || cluster.HasEqualTarget(found) == false)
           {
             result = true;
             break;
           }
         }
-        foreach (RelocatedCluster cluster in relocatedClusters)
+        if (!result)
         {
-          RelocatedCluster? found = RelocatedClustersList.FirstOrDefault(c =>
-            StringHelper.EqualsIgnoreCase(c.Cluster.Macro, cluster.Cluster.Macro)
-          );
-          if (found == null || PositionHelper.IsSamePosition(found.Cluster.Position, cluster.Cluster.Position) == false)
+          foreach (RelocatedCluster cluster in relocatedClusters)
           {
-            result = true;
-            break;
+            RelocatedCluster? found = RelocatedClustersList.FirstOrDefault(c =>
+              StringHelper.EqualsIgnoreCase(c.Cluster.Macro, cluster.Cluster.Macro)
+            );
+            if (found == null || found.HasEqualTarget(cluster) == false)
+            {
+              result = true;
+              break;
+            }
           }
         }
       }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Windows;
 using X4DataLoader;
 using X4Map;
@@ -74,22 +75,65 @@ namespace ClusterRelocationService
       get => _cluster == null ? 0 : _cluster.Position.Z;
     }
 
-    public RelocatedCluster(Cluster cluster)
+    private double _xTarget = 0.0;
+    public double XTarget
+    {
+      get => _xTarget;
+      set
+      {
+        _xTarget = value;
+        OnPropertyChanged(nameof(XTarget));
+      }
+    }
+
+    private double _zTarget = 0.0;
+    public double ZTarget
+    {
+      get => _zTarget;
+      set
+      {
+        _zTarget = value;
+        OnPropertyChanged(nameof(ZTarget));
+      }
+    }
+
+    public RelocatedCluster(Cluster cluster, double? targetX = null, double? targetZ = null)
     {
       _cluster = cluster;
       _xOriginal = cluster.Position.X;
       _zOriginal = cluster.Position.Z;
+      _xTarget = targetX ?? _xOriginal;
+      _zTarget = targetZ ?? _zOriginal;
     }
 
     public void ReAssignCluster(Cluster cluster, Position position)
     {
       _cluster = cluster;
       cluster.SetPosition(position);
+      _xTarget = position.X;
+      _zTarget = position.Z;
       OnPropertyChanged(nameof(Cluster));
       OnPropertyChanged(nameof(Name));
       OnPropertyChanged(nameof(Macro));
       OnPropertyChanged(nameof(XCurrent));
       OnPropertyChanged(nameof(ZCurrent));
+    }
+
+    public void SetPosition(Position position)
+    {
+      if (_cluster != null)
+      {
+        _cluster.SetPosition(position);
+        _xTarget = position.X;
+        _zTarget = position.Z;
+        OnPropertyChanged(nameof(XCurrent));
+        OnPropertyChanged(nameof(ZCurrent));
+      }
+    }
+
+    public bool HasEqualTarget(RelocatedCluster other)
+    {
+      return other != null && _xTarget == other._xTarget && _zTarget == other._zTarget;
     }
 
     public void ResetPosition()
