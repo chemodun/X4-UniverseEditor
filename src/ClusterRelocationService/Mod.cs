@@ -19,7 +19,7 @@ namespace ClusterRelocationService
     public static readonly string ModFolder = "relocated_clusters";
     public static readonly string ModName = "Relocated Clusters";
     public static readonly string ModDescription =
-      "This extension relocates an existing Clusters to a new position on a Galaxy Map.\n !Attention! Require an external utility 'Cluster Relocation Service' from the https://www.nexusmods.com/x4foundations/mods/1835/ !";
+      "\n\nTransform the entire Galaxy with a single click!\n\nThis extension allows you to relocate existing clusters to a new position on the Galaxy Map.\n\nImportant notice!\n\nThis feature requires the external utility Cluster Relocation Service to function.\n\nPlease download it from the https://www.nexusmods.com/x4foundations/mods/1835/.\n";
     public static readonly string ModAuthor = "Chem O`Dun";
     public string ModFolderPath { get; set; } = "";
     private readonly bool SelectFolder = true;
@@ -313,7 +313,6 @@ namespace ClusterRelocationService
         Directory.CreateDirectory(currentPath);
       }
       ModFolderPath = currentPath;
-      // Connections = [.. RelocatedClustersList.Select(gc => gc.Connection).Where(c => c != null)];
       Date = DateTime.Now.ToString("yyyy-MM-dd");
       VersionInitial = _version;
       RelocatedClustersList.Clear();
