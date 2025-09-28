@@ -405,5 +405,6 @@ FodyWeavers.xsd
 # Application specific
 ChemGateBuilder.json
 ChemGalaxyEditor.json
+ClusterRelocationService.json
 
 dist/
