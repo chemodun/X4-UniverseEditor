@@ -268,8 +268,6 @@ And when you press a button to select the folder, the tool will propose two ways
 
 After selecting the folder, the tool will start loading the game data.
 
-[spoiler][img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/[/img][/spoiler]
-
 There is a link on wiki related to the tool for the extraction - [url=https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/]X Catalog Tool[/url].
 
 [size=115][u]Without Extracted Game Files[/u][/size]
@@ -281,8 +279,6 @@ Now everything is simple:
 [*] Select the folder where will be placed new folder with the extracted game files. It will be created automatically with a name containing the current game version. Like "X4v800-extracted".
 [*] Press the "Extract Data" button.
 [/list]
-[spoiler][img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/[/img][/spoiler]
-
 There are several options to extract the game files:
 [list]
 [*] Extract only needed data - this will extract only the data needed for the tool to work. It will be faster than the full extraction.
@@ -317,7 +313,7 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=130][u]Changelog[/u][/size]
 
-[size=125][u][1.0.0] - 2025-09-27[/u][/size]
+[size=125][u][1.0.0] - 2025-09-28[/u][/size]
 [list]
 [*] Added
 [list]
