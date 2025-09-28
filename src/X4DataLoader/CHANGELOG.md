@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.6...X4DataLoader@v0.11.0) (2025-09-28)
+
+
+### Features
+
+* **PositionHelpers:** add PositionHelper class with IsSamePosition method ([8fc8c1a](https://github.com/chemodun/X4-UniverseEditor/commit/8fc8c1a9350ea9c1419732a65ca5dfe17c5afee8))
+
+
+### Bug Fixes
+
+* **Cluster:** update PositionSource assignment logic ([7e5f5f1](https://github.com/chemodun/X4-UniverseEditor/commit/7e5f5f1a495240ace1fad30f2b8728f56096ef05))
+
+
+### Code Refactoring
+
+* **Cluster:** update SetPosition method signature and logic ([7b793d7](https://github.com/chemodun/X4-UniverseEditor/commit/7b793d71264858eb6a981412ecf8fe658a978ac1))
+* **DataLoader:** modify XML element handling ([6491f9d](https://github.com/chemodun/X4-UniverseEditor/commit/6491f9d732624d041fd64888d56467ba8967acf0))
+
 ## [0.10.6](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.5...X4DataLoader@v0.10.6) (2025-09-20)
 
 
