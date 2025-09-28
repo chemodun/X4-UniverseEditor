@@ -1337,6 +1337,11 @@ namespace ClusterRelocationService
 
     public async void ButtonLoadMod_Click(object sender, RoutedEventArgs e)
     {
+      if (_markedForRelocation != null)
+      {
+        _markedForRelocation.IsMarkedForRelocation = false;
+        _markedForRelocation = null;
+      }
       if (Galaxy == null || Galaxy.Sectors.Count == 0)
       {
         StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
@@ -1866,6 +1871,10 @@ namespace ClusterRelocationService
         StringHelper.EqualsIgnoreCase(rc.Cluster.Macro, _markedForRelocation.Cluster.Macro)
       );
       RelocatedCluster? relocatedCluster = GalaxyMapViewer.RelocateCluster(_markedForRelocation, targetCell, currentClusterRelocated);
+      if (currentClusterRelocated != null)
+      {
+        IsModCanBeSaved = _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
+      }
       if (relocatedCluster != null)
       {
         RelocatedClusterCurrent = null;
