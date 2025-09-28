@@ -15,7 +15,7 @@ namespace ClusterRelocationService
 {
   public class RelocatedClustersMod : INotifyPropertyChanged
   {
-    public static readonly string ModId = "ws_3576312532";
+    public static readonly string ModId = "ws_3576466840";
     public static readonly string ModFolder = "relocated_clusters";
     public static readonly string ModName = "Relocated Clusters";
     public static readonly string ModDescription =
