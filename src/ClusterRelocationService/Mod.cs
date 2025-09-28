@@ -222,7 +222,7 @@ namespace ClusterRelocationService
                         && (position.X != cluster.Position.X || position.Z != cluster.Position.Z)
                       )
                       {
-                        RelocatedCluster clusterRelocated = new(cluster, position.X, position.Z);
+                        RelocatedCluster clusterRelocated = new(cluster, null, null, position.X, position.Z);
                         cluster.SetPosition(position);
                         RelocatedClustersList.Add(clusterRelocated);
                       }
@@ -320,7 +320,9 @@ namespace ClusterRelocationService
       {
         if (cluster.Cluster != null)
         {
-          RelocatedClustersList.Add(cluster);
+          RelocatedClustersList.Add(
+            new RelocatedCluster(cluster.Cluster, cluster.XOriginal, cluster.ZOriginal, cluster.XCurrent, cluster.ZCurrent)
+          );
         }
       }
       SaveModXMLs(galaxy);

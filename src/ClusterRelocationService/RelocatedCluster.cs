@@ -97,11 +97,17 @@ namespace ClusterRelocationService
       }
     }
 
-    public RelocatedCluster(Cluster cluster, double? targetX = null, double? targetZ = null)
+    public RelocatedCluster(
+      Cluster cluster,
+      double? xOriginal = null,
+      double? zOriginal = null,
+      double? targetX = null,
+      double? targetZ = null
+    )
     {
       _cluster = cluster;
-      _xOriginal = cluster.Position.X;
-      _zOriginal = cluster.Position.Z;
+      _xOriginal = xOriginal ?? cluster.Position.X;
+      _zOriginal = zOriginal ?? cluster.Position.Z;
       _xTarget = targetX ?? _xOriginal;
       _zTarget = targetZ ?? _zOriginal;
     }
