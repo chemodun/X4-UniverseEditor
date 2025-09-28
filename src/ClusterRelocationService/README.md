@@ -33,7 +33,7 @@ You can download the tool from the following locations:
 
 ## Installation
 
-Simply [download](#download) the latest version and extract it to any folder.
+Simply download the latest version and extract it to any folder.
 
 You can place it anywhere on your computer, as it doesn't require installation.
 
