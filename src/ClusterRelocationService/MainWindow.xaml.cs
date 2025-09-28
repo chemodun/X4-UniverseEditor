@@ -136,6 +136,19 @@ namespace ClusterRelocationService
       {
         if (_directMode != value)
         {
+          if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
+          {
+            var choice = MessageBox.Show(
+              "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
+              "Reload X4 Data",
+              MessageBoxButton.YesNo,
+              MessageBoxImage.Warning
+            );
+            if (choice != MessageBoxResult.Yes)
+            {
+              return; // User chose not to proceed
+            }
+          }
           _directMode = value;
           OnPropertyChanged(nameof(DirectMode));
           OnPropertyChanged(nameof(NoDirectMode));
@@ -244,7 +257,7 @@ namespace ClusterRelocationService
       }
     }
 
-    private int _x4DataVersion = 710;
+    private int _x4DataVersion = 760;
     public int X4DataVersion
     {
       get => _x4DataVersion;
@@ -286,6 +299,19 @@ namespace ClusterRelocationService
       {
         if (_loadModsData != value)
         {
+          if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
+          {
+            var choice = MessageBox.Show(
+              "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
+              "Reload X4 Data",
+              MessageBoxButton.YesNo,
+              MessageBoxImage.Warning
+            );
+            if (choice != MessageBoxResult.Yes)
+            {
+              return; // User chose not to proceed
+            }
+          }
           _loadModsData = value;
           OnPropertyChanged(nameof(LoadModsData));
           SaveConfiguration();
@@ -879,9 +905,12 @@ namespace ClusterRelocationService
       }
     }
 
-    private void LoadX4DataInBackgroundStart()
+    private async void LoadX4DataInBackgroundStart()
     {
       IsBusy = true;
+      _clusterRelocationServiceMod = new("", X4UniverseId);
+      _clusterRelocationServiceMod.SetGameVersion(_x4DataVersion);
+      await ResetRelocations();
       BusyMessage = "Preparing to load X4 data...";
       Galaxy.Clear();
       _backgroundWorker.DoWork -= LoadX4DataInBackground;
@@ -1162,6 +1191,19 @@ namespace ClusterRelocationService
 
     private void SelectX4GameFolder_Click(object? sender, RoutedEventArgs? e)
     {
+      if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
+      {
+        var choice = MessageBox.Show(
+          "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
+          "Reload X4 Data",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (choice != MessageBoxResult.Yes)
+        {
+          return; // User chose not to proceed
+        }
+      }
       var dialog = new Microsoft.Win32.OpenFileDialog
       {
         InitialDirectory = string.IsNullOrEmpty(X4GameFolder)
@@ -1372,7 +1414,7 @@ namespace ClusterRelocationService
       }
       RelocatedClustersMod newMod = new(path, X4UniverseId);
       newMod.SetGameVersion(_x4DataVersion);
-      await ResetRelocation();
+      await ResetRelocations();
       if (newMod.LoadData(Galaxy, _baseGameFiles, ClusterRelocationServiceMod))
       {
         ClusterRelocationServiceMod = newMod;
@@ -1397,8 +1439,12 @@ namespace ClusterRelocationService
       await AssignRelocatedClusters();
     }
 
-    private async Task ResetRelocation()
+    private async Task ResetRelocations()
     {
+      if (RelocatedClusters.Count == 0)
+      {
+        return;
+      }
       var queue = new Queue<RelocatedCluster>(RelocatedClusters);
       int maxPasses = queue.Count; // Prevent infinite loop
       int passes = 0;
@@ -1457,7 +1503,7 @@ namespace ClusterRelocationService
         _markedForRelocation.IsMarkedForRelocation = false;
         _markedForRelocation = null;
       }
-      await ResetRelocation();
+      await ResetRelocations();
       await GalaxyMapViewer.MakeFullMess(Galaxy, RelocatedClusters);
       IsModCanBeSaved = ClusterRelocationServiceMod.IsModChanged(RelocatedClusters);
     }
@@ -1563,6 +1609,19 @@ namespace ClusterRelocationService
 
     public void ButtonReloadX4Data_Click(object sender, RoutedEventArgs e)
     {
+      if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
+      {
+        var choice = MessageBox.Show(
+          "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
+          "Reload X4 Data",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (choice != MessageBoxResult.Yes)
+        {
+          return; // User chose not to proceed
+        }
+      }
       LoadX4DataInBackgroundStart();
     }
 
