@@ -15,9 +15,11 @@ namespace ClusterRelocationService
 {
   public class RelocatedClustersMod : INotifyPropertyChanged
   {
-    public static readonly string ModId = "relocated_clusters";
+    public static readonly string ModId = "ws_3576312532";
+    public static readonly string ModFolder = "relocated_clusters";
     public static readonly string ModName = "Relocated Clusters";
-    public static readonly string ModDescription = "This extension relocates an existing Clusters to a new position on a Galaxy Map";
+    public static readonly string ModDescription =
+      "This extension relocates an existing Clusters to a new position on a Galaxy Map.\n !Attention! Require an external utility 'Cluster Relocation Service' from the https://www.nexusmods.com/x4foundations/mods/1835/ !";
     public static readonly string ModAuthor = "Chem O`Dun";
     public string ModFolderPath { get; set; } = "";
     private readonly bool SelectFolder = true;
@@ -133,7 +135,12 @@ namespace ClusterRelocationService
           new GameFilesStructureItem(id: "galaxy", folder: $"maps/{UniverseId}", ["galaxy.xml"]),
         ];
         DataLoader dataLoader = new();
-        ExtensionInfo modRelocatedClusters = new("") { Id = ModId, Name = ModName };
+        ExtensionInfo modRelocatedClusters = new("")
+        {
+          Id = ModId,
+          Folder = ModFolder,
+          Name = ModName,
+        };
         List<GameFile> existingGameFiles = GameFile.CloneList(baseGameFiles, true);
         dataLoader.GatherFiles(
           currentPath,
@@ -145,7 +152,15 @@ namespace ClusterRelocationService
         );
         if (contentElement == null || totallyPatchedFiles == 0)
         {
-          MessageBox.Show("The selected folder does not contain a valid mod", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+          if (!File.Exists(Path.Combine(currentPath, "ext_01.cat")))
+          {
+            MessageBox.Show(
+              "The selected folder does not contain a valid mod",
+              "Invalid Folder",
+              MessageBoxButton.OK,
+              MessageBoxImage.Error
+            );
+          }
           return false;
         }
         List<GameFile> modFiles = [.. existingGameFiles.Where(f => f.Patched)];
@@ -252,7 +267,7 @@ namespace ClusterRelocationService
 
         if (folderSelect == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
         {
-          currentPath = Path.Combine(dialog.FolderName, Id);
+          currentPath = Path.Combine(dialog.FolderName, ModFolder);
         }
         else
         {
@@ -334,7 +349,6 @@ namespace ClusterRelocationService
         return;
       }
       _extensionsRequired.Clear();
-      string connectionsText = "";
       XElement diffElement = new("diff");
       foreach (RelocatedCluster cluster in RelocatedClustersList)
       {
@@ -390,15 +404,7 @@ namespace ClusterRelocationService
       content.SetAttributeValue("date", _date);
       content.SetAttributeValue("save", Save);
       content.SetAttributeValue("sync", Sync);
-      content.SetAttributeValue("description", Description + connectionsText);
-      List<int> languages = [7, 33, 37, 39, 44, 49, 55, 81, 82, 86, 88, 380];
-      foreach (int language in languages)
-      {
-        XElement text = new("text");
-        text.SetAttributeValue("language", $"{language}");
-        text.SetAttributeValue("description", Description + connectionsText);
-        content.Add(text);
-      }
+      content.SetAttributeValue("description", Description);
       content.Add(new XElement("dependency", new XAttribute("version", $"{GameVersion}")));
       List<ExtensionInfo> extensions = galaxy.Extensions;
       foreach (ExtensionInfo extension in extensions)

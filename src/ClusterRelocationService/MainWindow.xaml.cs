@@ -1349,7 +1349,7 @@ namespace ClusterRelocationService
       string path = string.Empty;
       if (DirectMode)
       {
-        path = Path.Combine(X4GameFolder, "extensions", RelocatedClustersMod.ModId);
+        path = Path.Combine(X4GameFolder, "extensions", RelocatedClustersMod.ModFolder);
         if (!(Directory.Exists(path) && File.Exists(Path.Combine(path, "content.xml"))))
         {
           string message = "Error: Mod data could not be loaded: Mod folder or content.xml not found in the game extensions folder.";
@@ -1381,8 +1381,17 @@ namespace ClusterRelocationService
       }
       else
       {
-        StatusBar.SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
-        Log.Warn("Mod data could not be loaded.");
+        if (File.Exists(Path.Combine(path, "ext_01.cat")))
+        {
+          ClusterRelocationServiceMod = new(path, X4UniverseId);
+          _clusterRelocationServiceMod.SetGameVersion(_x4DataVersion);
+          StatusBar.SetStatusMessage("Found Steam stub. Let's start moving clusters ...", StatusMessageType.Info);
+        }
+        else
+        {
+          StatusBar.SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
+          Log.Warn("Mod data could not be loaded.");
+        }
         UpdateIsModCanBeSavedAs();
       }
       await AssignRelocatedClusters();
