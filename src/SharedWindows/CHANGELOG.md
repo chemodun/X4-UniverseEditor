@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.8.0](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.7.1...SharedWindows@v0.8.0) (2025-09-28)
+
+
+### Features
+
+* **AboutWindow:** add informational links from assembly metadata ([bc19829](https://github.com/chemodun/X4-UniverseEditor/commit/bc19829cb7c8b85707aa339b803a48b480c3b759))
+* **Converters:** add BoldIfDifferentConverter for font weight adjustment ([69331f0](https://github.com/chemodun/X4-UniverseEditor/commit/69331f0c4467c389df89d86282d15430981f710b))
+* **Converters:** add NumberToBrushConverter for double to brush mapping ([1dac890](https://github.com/chemodun/X4-UniverseEditor/commit/1dac89023c5838d87d4dcaa9bcec63537327b417))
+* **UpdateChecker:** implement GitHub update checking functionality ([bc19829](https://github.com/chemodun/X4-UniverseEditor/commit/bc19829cb7c8b85707aa339b803a48b480c3b759))
+* **X4DataExtractionWindow:** update needed files masks for dynamic universe ID ([56bd5fc](https://github.com/chemodun/X4-UniverseEditor/commit/56bd5fc310df169763bba1548d8642d139376071))
+
+
+### Code Refactoring
+
+* **StatusBarMessage:** clear pending message on new status update ([3fbc992](https://github.com/chemodun/X4-UniverseEditor/commit/3fbc99217d683ae41a29026932632e484ca4f3a7))
+* **StatusBarMessage:** enhance status message handling ([84e4a70](https://github.com/chemodun/X4-UniverseEditor/commit/84e4a70e1a8fd6f0220cfd99ed399bf246cc7597))
+* **UpdateChecker:** enhance update check messaging ([fbafc78](https://github.com/chemodun/X4-UniverseEditor/commit/fbafc784cd0c573151f55282fb2b94958c25805c))
+* **X4DataExtractionWindow:** improve folder dialog initialization ([0081620](https://github.com/chemodun/X4-UniverseEditor/commit/0081620f137fd9203a4af41460077623f1961ef2))
+
 ## [0.7.1](https://github.com/chemodun/X4-UniverseEditor/compare/SharedWindows@v0.7.0...SharedWindows@v0.7.1) (2025-09-20)
 
 
