@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build-and-release-cgb:
     runs-on: windows-latest
     if: startsWith(github.event.release.tag_name, 'ChemGateBuilder@') || github.event_name == 'workflow_dispatch'
     steps:
@@ -82,9 +82,82 @@ jobs:
           files: |
             ${{ github.event_name == 'release' && '.zip$' || '*.zip' }}
 
+  build-and-release-crs:
+    runs-on: windows-latest
+    if: startsWith(github.event.release.tag_name, 'ClusterRelocationService@') || github.event_name == 'workflow_dispatch'
+    steps:
+      # Step 1: Checkout the repository
+      -
+        name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set dotnet SDK
+      -
+        name: Setup dotnet SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      # Step 3: Install dependencies
+      -
+        name: Install dependencies
+        run: dotnet restore
+
+      # Step 4: Build Executables
+      -
+        name: Build
+        run: dotnet publish src/ClusterRelocationService/ClusterRelocationService.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
+        shell: powershell
+
+      # Step 5: Compress to zip
+      -
+        name: Compress to zip
+        run: |
+          mkdir -p ClusterRelocationService
+          cp -r src/ClusterRelocationService/bin/Release/net8.0-windows/win-x64/publish/*.exe ClusterRelocationService
+          cp -r src/ClusterRelocationService/bin/Release/net8.0-windows/win-x64/publish/*.dll ClusterRelocationService
+          cp src/ClusterRelocationService/README.html ClusterRelocationService
+          mkdir -p ClusterRelocationService/docs
+          cp -r src/ClusterRelocationService/docs/images ClusterRelocationService/docs/
+          7z a -tzip ClusterRelocationService.zip ClusterRelocationService
+        shell: powershell
+
+      # Step 6: Upload Archive as Artifact
+      -
+        name: Upload Archive as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: executable-archive
+          path: |
+            ClusterRelocationService.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+
+      # Step 7: Attach ClusterRelocationService Archive to Release
+      -
+        name: Attach ClusterRelocationService Archive to Release
+        uses: softprops/action-gh-release@v2
+        if: ${{ github.event_name == 'release' }}
+        with:
+          files: ClusterRelocationService.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+
+      # Step 8: Add scan with VirusTotal
+      -
+        name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v4
+        with:
+          update_release_body: true
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          github_token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          request_rate: 4
+          files: |
+            ${{ github.event_name == 'release' && '.zip$' || '*.zip' }}
+
   delete-release:
     runs-on: ubuntu-latest
-    if: github.event_name  == 'release' && ! startsWith(github.event.release.tag_name, 'ChemGateBuilder@')
+    if: github.event_name  == 'release' && ! startsWith(github.event.release.tag_name, 'ChemGateBuilder@') && ! startsWith(github.event.release.tag_name, 'ClusterRelocationService@')
     steps:
       # Step 1: Checkout the repository
       -
