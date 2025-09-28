@@ -313,7 +313,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
-### [1.0.0] - 2025-09-28
+### [1.1.0] - 2025-09-28
 
 - Added
   - Initial public version
