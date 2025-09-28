@@ -195,9 +195,13 @@ namespace SharedWindows
       bool onStartUp = false
     )
     {
+      if (onStartUp)
+      {
+        await Task.Delay(2000);
+      }
+      statusBar.SetStatusMessage("Checking for utility updates ...", StatusMessageType.Info);
       try
       {
-        statusBar.SetStatusMessage("Checking for updates ...", StatusMessageType.Info);
         if (assembly == null)
         {
           statusBar.SetStatusMessage("No assembly provided for update check.", StatusMessageType.Error);
@@ -234,10 +238,10 @@ namespace SharedWindows
             int cmp = CompareVersionsSafe(current, latest);
             if (cmp < 0)
             {
-              statusBar.SetStatusMessage($"New version available: {latestVersionStr}", StatusMessageType.Info);
+              statusBar.SetStatusMessage($"New version of {componentId} available: {latestVersionStr}", StatusMessageType.Info);
               var choice = MessageBox.Show(
                 mainWindow,
-                $"A new version is available (current: {currentStr}, latest: {latestVersionStr}).\n\nOpen the Nexus Mods page now?",
+                $"A new version of {componentId} is available (current: {currentStr}, latest: {latestVersionStr}).\n\nOpen the Nexus Mods page now?",
                 "Update available",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Information
@@ -257,7 +261,7 @@ namespace SharedWindows
             }
             else
             {
-              statusBar.SetStatusMessage("You are on the latest version.", StatusMessageType.Info);
+              statusBar.SetStatusMessage($"You are on the latest version of {componentId}.", StatusMessageType.Info);
               if (!onStartUp) // avoid bothering user on startup
               {
                 MessageBox.Show(
@@ -272,17 +276,17 @@ namespace SharedWindows
           }
           else
           {
-            statusBar.SetStatusMessage($"Latest version: {latestVersionStr}", StatusMessageType.Info);
+            statusBar.SetStatusMessage($"Latest version of {componentId}: {latestVersionStr}", StatusMessageType.Info);
           }
         }
         else
         {
-          statusBar.SetStatusMessage("Could not determine the latest version.", StatusMessageType.Warning);
+          statusBar.SetStatusMessage($"Could not determine the latest version of {componentId}.", StatusMessageType.Warning);
           if (!onStartUp) // avoid bothering user on startup
           {
             MessageBox.Show(
               mainWindow,
-              "Could not determine the latest version.",
+              $"Could not determine the latest version of {componentId}.",
               "Check update",
               MessageBoxButton.OK,
               MessageBoxImage.Warning
