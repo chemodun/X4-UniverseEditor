@@ -18,7 +18,7 @@
   <ItemGroup>
     <AssemblyMetadata Include="RepositoryUrl" Value="https://github.com/chemodun/X4-UniverseEditor" />
     <AssemblyMetadata Include="NexusModsUrl" Value="https://www.nexusmods.com/x4foundations/mods/1835/" />
-    <AssemblyMetadata Include="EgosoftForumUrl" Value="https://forum.egosoft.com/viewtopic.php?p=5262362" />
+    <AssemblyMetadata Include="EgosoftForumUrl" Value="https://forum.egosoft.com/viewtopic.php?t=473093" />
     <AssemblyMetadata Include="Author" Value="Chem O`Dun" />
     <AssemblyMetadata Include="SubProject" Value="ClusterRelocationService" />
   </ItemGroup>
