@@ -268,8 +268,6 @@ And when you press a button to select the folder, the tool will propose two ways
 
 After selecting the folder, the tool will start loading the game data.
 
-![First start](docs/images/)
-
 There is a link on wiki related to the tool for the extraction - [X Catalog Tool](https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/).
 
 ##### Without Extracted Game Files
@@ -280,8 +278,6 @@ Now everything is simple:
 - Select the folder with the game files.
 - Select the folder where will be placed new folder with the extracted game files. It will be created automatically with a name containing the current game version. Like "X4v800-extracted".
 - Press the "Extract Data" button.
-
-![First start with Extraction](docs/images/)
 
 There are several options to extract the game files:
 
@@ -317,7 +313,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
-### [1.0.0] - 2025-09-27
+### [1.0.0] - 2025-09-28
 
 - Added
   - Initial public version
