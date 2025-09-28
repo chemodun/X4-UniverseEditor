@@ -1,5 +1,7 @@
 # X4 Cluster Relocation Service
 
+**Transform the entire Galaxy with a single click!**
+
 This tool allows you to relocate clusters in the X4: Foundations game universe. It provides a user-friendly interface to select clusters, define new locations, and update the game data accordingly.
 
 After relocating clusters, you can save the changes as a mod (`Relocated Clusters`) that can be easily loaded into the game.
@@ -11,7 +13,7 @@ It based on funny "hidden" feature of the game engine, which allows you to defin
 ## Features
 
 - User-friendly interface for selecting and relocating clusters.
-- Has no make you game dependant on a `Relocated Clusters` mod. Simply remove it, and continue to play as usual.
+- Has no make you game dependant on a `Relocated Clusters` mod. Simply remove it and continue to play as usual.
 - Ability to define new locations for clusters.
 - Option to relocate all clusters randomly in one go.
 - Validation of new locations to ensure they are valid within the game universe.
@@ -26,14 +28,22 @@ If you use the connections in mods, please mention the author and the tool in th
 
 You can download the tool from the following locations:
 
-- [Releases on GitHub](https://github.com/chemodun/X4-UniverseEditor/releases)
 - [Nexus](https://www.nexusmods.com/x4foundations/mods/1835)
+- [Releases on GitHub](https://github.com/chemodun/X4-UniverseEditor/releases)
 
 ## Installation
 
 Simply [download](#download) the latest version and extract it to any folder.
 
 You can place it anywhere on your computer, as it doesn't require installation.
+
+## Video on YouTube
+
+There is a video on YouTube demonstrating the tool's features and results in the game:
+
+- [X4 Cluster Relocation Service - Demo](https://www.youtube.com/watch?v=_pJWPhHJ-zw)
+- [X4 Cluster Relocation Service - In-game map after "Full Mess"](https://www.youtube.com/watch?v=htOmHchP6es)
+- [X4 Cluster Relocation Service -  Flying via Highway Ring after "Full Mess"](https://www.youtube.com/watch?v=pgoBqIiB7sk)
 
 ## Usage
 
@@ -49,7 +59,7 @@ On the first start, the tool will inform you that you need to select the game fo
 If you will unselect `Direct Mode` - you will go via start process in "Expert" mode: [First Start in the "Expert" Mode](#first-start-in-the-expert-mode) section.
 
 After selecting the game folder, the tool will start loading the game data.
-![First start in Direct Mode](docs/images/)
+![First start in Direct Mode](docs/images/first_start.gif)
 
 #### Direct Mode First Mod Creation
 
@@ -57,8 +67,6 @@ After loading the game data, you will see the main window and the Galaxy Map.
 Please take in account - the Sectors ownership is equal to the initial game state, without any changes from the current save.
 When you will be finish with the connections, you can save the mod via the `Mod` -> `Save` menu item.
 Mod will be saved in the game `Extensions` folder, under `relocated_clusters` folder.
-
-![First mod creation in Direct Mode](docs/images/)
 
 #### Direct Mode Second and Other starts
 
@@ -68,7 +76,7 @@ You can cancel the existing relocation, or add new, or relocated already relocat
 
 After that you can save the mod via the `Mod` -> `Save` menu item.
 
-![Second and other starts in Direct Mode](docs/images/)
+![Second and other starts in Direct Mode](docs/images/next_starts.gif)
 
 #### Direct Mode To "Expert" Mode and Vice Versa
 
@@ -98,6 +106,8 @@ When you click the any mouse button on a Cluster(or Sector) - it will show the `
 
 To relocate a cluster, you have to make a two-step process:
 
+![Relocating Clusters](docs/images/relocating_clusters.gif)
+
 ###### Marking a Cluster for Relocation
 
 To relocate a cluster, simply click on the desired cluster on the Galaxy Map and select `Mark for Relocation` from the context menu. This action will mark the cluster for relocation, and it will be highlighted on the map.
@@ -114,7 +124,7 @@ Cluster will be marked by Blue border on the map.
 
 Previously  relocated cluster will be marked by Green border on the map.
 
-###### Unmarking a Cluster
+###### Unmark a Cluster
 
 If you change your mind and decide not to relocate a cluster, simply click on the marked cluster again and select `Unmark for Relocation` from the context menu. This action will unmark the cluster.
 
@@ -157,6 +167,8 @@ When enabled, you will see a button `Make a "Full Mess"` under the `Cancel Reloc
 
 When you press it, all clusters will be relocated one by one to random cells on the map.
 
+![Full Mess Relocation](docs/images/make_a_full_mess.gif)
+
 ### Save the Mod
 
 When you finish with the connections, you can save the mod via the `Mod` -> `Save` menu item. Please ensure you have completed all necessary edits before saving to avoid losing data.
@@ -167,7 +179,11 @@ And can be used immediately after loading the game.
 
 If you want to break current changes at once, before they are saved - and revert to a previously saved version, you can load it via the `Mod` -> `Reload` menu item.
 
-### Configuration Menu
+![Reload the Mod](docs/images/reload_mod.gif)
+
+### Configuration
+
+![Configuration](docs/images/configuration.png)
 
 #### Mode Options
 
@@ -215,7 +231,7 @@ Disabled by default.
 
 ###### Export of Clusters is Enabled
 
-You can enable or disable the export of relocated clusters as a full clusers connection list, which can be used in mods.
+You can enable or disable the export of relocated clusters as a full clusters connection list, which can be used in mods.
 
 Disabled by default.
 
@@ -228,6 +244,12 @@ You can set the log level to control the verbosity of the logging output. This i
 ##### Enable writing to File
 
 You can enable or disable writing log output to a file. This is useful for keeping a record of the tool's operations for later review or troubleshooting.
+
+#### Other Options
+
+##### Check for Updates on StartUp
+
+You can enable or disable the automatic check for updates when the tool starts. This ensures you are always using the latest version of the tool with the newest features and bug fixes.
 
 ### "Expert" Mode
 
