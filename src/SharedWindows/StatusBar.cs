@@ -108,6 +108,13 @@ namespace SharedWindows
         _pendingInfinity = infinity;
         return;
       }
+      else
+      {
+        // Clear any pending message if a new message is being shown immediately
+        _pendingMessage = null;
+        _pendingType = StatusMessageType.Info;
+        _pendingInfinity = false;
+      }
 
       Infinity = infinity;
       StatusMessageType = messageType;
