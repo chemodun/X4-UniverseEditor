@@ -1,0 +1,329 @@
+[h1]X4 Cluster Relocation Service[/h1]
+
+[b]Transform the entire Galaxy with a single click![/b]
+
+This tool allows you to relocate clusters in the X4: Foundations game universe. It provides a user-friendly interface to select clusters, define new locations, and update the game data accordingly.
+
+After relocating clusters, you can save the changes as a mod ([b]Relocated Clusters[/b]) that can be easily loaded into the game.
+
+In addition to the Cluster per Cluster relocation, the tool also allows you to [b]Make a "Full Mess"[/b] in the galaxy by relocating all clusters in one go to random locations.
+
+It based on funny "hidden" feature of the game engine, which allows you to define or breaks new locations of the clusters without any influence on a game stability and processes. The relocation mod is not affecting on you save games, so you can safely remove/change it at any time.
+
+[h2][b]Features[/b][/h2]
+[list]
+[*] User-friendly interface for selecting and relocating clusters.
+[*] Has no make you game dependant on a [b]Relocated Clusters[/b] mod. Simply remove it and continue to play as usual.
+[*] Ability to define new locations for clusters.
+[*] Option to relocate all clusters randomly in one go.
+[*] Validation of new locations to ensure they are valid within the game universe.
+[*] Can be used by modders to simplify relocation of their clusters.
+[/list]
+[h2][b]Disclaimer[/b][/h2]
+
+Anyone can use the new Clusters location export in their mods.
+If you use the connections in mods, please mention the author and the tool in the mod description.
+
+[h2][b]Download[/b][/h2]
+
+You can download the tool from the following locations:
+[list]
+[*] [url=https://www.nexusmods.com/x4foundations/mods/1835]Nexus[/url]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/releases]Releases on GitHub[/url]
+[/list]
+[h2][b]Installation[/b][/h2]
+
+Simply [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/#download]download[/url] the latest version and extract it to any folder.
+
+You can place it anywhere on your computer, as it doesn't require installation.
+
+[h2][b]Video on YouTube[/b][/h2]
+
+There is a video on YouTube demonstrating the tool's features and results in the game:
+[list]
+[*] X4 Cluster Relocation Service - Demo
+[previewyoutube=_pJWPhHJ-zw;full][/previewyoutube]
+[*] X4 Cluster Relocation Service - In-game map after "Full Mess"
+[previewyoutube=htOmHchP6es;full][/previewyoutube]
+[*] X4 Cluster Relocation Service -  Flying via Highway Ring after "Full Mess"
+[previewyoutube=pgoBqIiB7sk;full][/previewyoutube]
+[/list]
+[h2][b]Usage[/b][/h2]
+
+[h2]Direct Mode[/h2]
+
+In the Direct Mode, you just need to select the game folder and start playing with the Clusters relocation.
+In this case the tool will load the game data directly from the game files.
+The mod will be saved in the game [b]Extensions[/b] folder, under [b]relocated_clusters[/b] folder.
+
+[h3][b]Direct Mode First Start[/b][/h3]
+
+On the first start, the tool will inform you that you need to select the game folder, and will switch to the options menu tab.
+If you will unselect [b]Direct Mode[/b] - you will go via start process in "Expert" mode: [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/#first-start-in-the-expert-mode]First Start in the "Expert" Mode[/url] section.
+
+After selecting the game folder, the tool will start loading the game data.
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/first_start.gif[/img]
+
+[h3][b]Direct Mode First Mod Creation[/b][/h3]
+
+After loading the game data, you will see the main window and the Galaxy Map.
+Please take in account - the Sectors ownership is equal to the initial game state, without any changes from the current save.
+When you will be finish with the connections, you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item.
+Mod will be saved in the game [b]Extensions[/b] folder, under [b]relocated_clusters[/b] folder.
+
+[h3][b]Direct Mode Second and Other starts[/b][/h3]
+
+On the next starts tool will automatically load not only game data, but also the "Relocated Clusters" mod data. So, after starting you will see the the map with the already relocated clusters.
+
+You can cancel the existing relocation, or add new, or relocated already relocated clusters.
+
+After that you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/next_starts.gif[/img]
+
+[h3][b]Direct Mode To "Expert" Mode and Vice Versa[/b][/h3]
+
+At any time you can switch between the Direct Mode and the "Expert" Mode. Just go to the options menu and select or unselect the [b]Direct Mode[/b] checkbox.
+Always will reload the game data and the mod data. Please take in account - in "Expert" Mode you have manually specify the mod location. And moreover, in "Expert" Mode you will work with extracted game files, not with the game files directly.
+
+[h2]Main Window[/h2]
+
+After starting, you will see the main window with a Galaxy Map.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/main_window.png[/img]
+
+[h3][b]Galaxy Map[/b][/h3]
+
+The Galaxy Map allows you to navigate through various sectors in the game. You can zoom in and out to view details about each sector and the gates within them. Using the map, you can select sectors to use in the gate connections.
+
+For zooming, there are two options available:
+[list]
+[*] Use the slider at the top of the map.
+[*] Use the mouse wheel while holding the [b]Ctrl[/b] key.
+[/list]
+Additionally, you can drag the map with the left mouse button when it is zoomed in.
+
+When you click the any mouse button on a Cluster(or Sector) - it will show the [b]Context Menu[/b] with the options to [b]Mark for Relocation[/b] or [b]Cancel Relocation[/b] (if the cluster is already relocated).
+
+[h3][u]Relocating a Cluster[/u][/h3]
+
+To relocate a cluster, you have to make a two-step process:
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/relocating_clusters.gif[/img]
+
+[h3]Marking a Cluster for Relocation[/h3]
+
+To relocate a cluster, simply click on the desired cluster on the Galaxy Map and select [b]Mark for Relocation[/b] from the context menu. This action will mark the cluster for relocation, and it will be highlighted on the map.
+In addition, the cell grid will be shown on the map to help you visualize the new location.
+
+[h3]Choosing a New Location[/h3]
+
+After marking a cluster for relocation, click on the desired empty cell on the map where you want to move the cluster. And again, a context menu will appear. Select [b]Relocate Here[/b] to move the cluster to the new location.
+
+[h3]Magic[/h3]
+
+And that's it! The cluster will be relocated to the new position, and the map will update to reflect the change.
+Cluster will be marked by Blue border on the map.
+
+Previously  relocated cluster will be marked by Green border on the map.
+
+[h3]Unmark a Cluster[/h3]
+
+If you change your mind and decide not to relocate a cluster, simply click on the marked cluster again and select [b]Unmark for Relocation[/b] from the context menu. This action will unmark the cluster.
+
+Or simply [b]Mark[/b] any other cluster - the previously marked one will be unmarked automatically.
+
+[h3][u]Canceling a Relocation[/u][/h3]
+
+If you want to revert a relocation and return a cluster to its original position, click on the relocated cluster and select [b]Cancel Relocation[/b] from the context menu. This action will move the cluster back to its initial location.
+
+Please note that if the original position is already occupied by another cluster, the cancellation will not be possible. And this menu item will be disabled.
+
+[h3][b]Relocated Clusters List[/b][/h3]
+
+On the bottom of the main window, there is a list of relocated clusters. This list provides an overview of all clusters that have been relocated, including their names, macro ids, original and new coordinates.
+
+[h3][u]Canceling a Relocation from the List[/u][/h3]
+
+To cancel a relocation from the list, simply select the desired cluster in the list and click the [b]Cancel Relocation[/b] button located right next to the list. This action will revert the selected cluster to its original position.
+
+[h3][u]Focusing on the Map from the List[/u][/h3]
+
+To focus on a specific relocated cluster on the map, select the desired cluster in the list and the border of the selected item will be highlighted on the map as in a list.
+
+[h3][u]Exporting the map to the image file (png)[/u][/h3]
+
+You can export the current view of the Galaxy Map to a PNG image file. This feature allows you to save and share the map view with others or use it for reference in your projects. To export the map, simply click the "Export Galaxy Map as PNG" button located at the top right corner of the Galaxy Map interface.
+
+Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation for the [url=https://www.nexusmods.com/x4foundations/mods/1587/]Chem Gate Builder[/url] mod.
+
+[h3][u]Hiding and showing the DLC's and Mods on a map[/u][/h3]
+
+You can toggle the visibility of DLCs and Mods on the map to focus on your current editing tasks.
+
+Please note that only hiding the Clusters and Sectors from the view, but not removing them from the game data. You will not able relocate the Clusters on the positions occupied by the hidden ones.
+
+[h2]Full Mess Relocation[/h2]
+
+You can enable or disable the "Full Mess" option, which allows you to relocate all clusters randomly in one go.
+When enabled, you will see a button [b]Make a "Full Mess"[/b] under the [b]Cancel Relocation[/b] button, in the right side of the relocated clusters list.
+
+When you press it, all clusters will be relocated one by one to random cells on the map.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/make_a_full_mess.gif[/img]
+
+[h2]Save the Mod[/h2]
+
+When you finish with the connections, you can save the mod via the [b]Mod[/b] -> [b]Save[/b] menu item. Please ensure you have completed all necessary edits before saving to avoid losing data.
+After that, the mod will be saved/updated in the appropriate subfolder in the [b]Extensions[/b] folder of the game.
+And can be used immediately after loading the game.
+
+[h2]Reload the Mod[/h2]
+
+If you want to break current changes at once, before they are saved - and revert to a previously saved version, you can load it via the [b]Mod[/b] -> [b]Reload[/b] menu item.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/reload_mod.gif[/img]
+
+[h2]Configuration[/h2]
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/configuration.png[/img]
+
+[h3][b]Mode Options[/b][/h3]
+
+[h3][u]Direct Mode Checkbox[/u][/h3]
+
+Already described above in the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/#direct-mode]Direct Mode[/url] section.
+
+[h3][b]X4 Data Options[/b][/h3]
+
+[h3][u]Game Folder Selection[/u][/h3]
+
+You need to select the folder where the game is installed. This is typically the folder where the game's executable file ([b]X4.exe[/b]) is located.
+
+You can change it any time by pressing the current folder path text.
+
+[h3][u]X4 Data Version[/u][/h3]
+
+Mostly to show which game version is currently selected.
+
+[h3][u]Load Mods Data[/u][/h3]
+
+You can toggle the loading of mods along with the game data and DLCs. This is useful if you want to work with mods in the tool. The mods will be loaded from the [b]extensions[/b] folder in the game folder.
+Enabled by default.
+Not recommended to unselect it. You can be in trouble if will place the relocated cluster on the position occupied by the modded one.
+
+Please note that loading the mods will not make your [b]Relocated Clusters[/b] mod dependant on them. It will depend only on the DLC's and Mods which are contains the clusters you are relocating.
+
+[h3][b]Map Options[/b][/h3]
+
+[h3][u]Color Opacity[/u][/h3]
+
+You can adjust the opacity of the colors used in the map to suit your preferences. This setting allows you to make the map more visually appealing or easier to read based on your needs.
+
+[h3][u]Universe ID[/u][/h3]
+
+You can specify a custom universe ID to work with a different game universe. This is useful if you are working with mods that create their own universes or if you want to test changes in a separate environment.
+
+[h3][u]Relocation Options[/u][/h3]
+
+[h3]Full Mess is Enabled[/h3]
+
+You can enable or disable the [b]Make a "Full Mess"[/b] button visibility, which allows you to relocate all clusters randomly in one go.
+
+Disabled by default.
+
+[h3]Export of Clusters is Enabled[/h3]
+
+You can enable or disable the export of relocated clusters as a full clusters connection list, which can be used in mods.
+
+Disabled by default.
+
+[h3][b]Logging Options[/b][/h3]
+
+[h3][u]Log Level[/u][/h3]
+
+You can set the log level to control the verbosity of the logging output. This is useful for debugging or monitoring the tool's operations.
+
+[h3][u]Enable writing to File[/u][/h3]
+
+You can enable or disable writing log output to a file. This is useful for keeping a record of the tool's operations for later review or troubleshooting.
+
+[h3][b]Other Options[/b][/h3]
+
+[h3][u]Check for Updates on StartUp[/u][/h3]
+
+You can enable or disable the automatic check for updates when the tool starts. This ensures you are always using the latest version of the tool with the newest features and bug fixes.
+
+[h2]"Expert" Mode[/h2]
+
+[h3][b]First Start in the "Expert" Mode[/b][/h3]
+
+On the first start, the tool will inform you that you need to select the folder with the game files.
+
+If you will unselect the [b]Direct Mode[/b] - you will go via the start process described below.
+
+And when you press a button to select the folder, the tool will propose two ways to do it:
+[list]
+[*] Select the extracted game folder. If you already have it - simply press the "Yes" button.
+[*] Extract the game files. If you don't have the game files extracted, you can press the "No" button to initiate the extraction.
+[/list]
+[h3][u]With Extracted Game Files[/u][/h3]
+
+After selecting the folder, the tool will start loading the game data.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/[/img]
+
+There is a link on wiki related to the tool for the extraction - [url=https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/]X Catalog Tool[/url].
+
+[h3][u]Without Extracted Game Files[/u][/h3]
+
+You will be forwarded to the menu containing the button to start the extraction. Please press it to start the extraction.
+Now everything is simple:
+[list]
+[*] Select the folder with the game files.
+[*] Select the folder where will be placed new folder with the extracted game files. It will be created automatically with a name containing the current game version. Like "X4v800-extracted".
+[*] Press the "Extract Data" button.
+[/list]
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/[/img]
+
+There are several options to extract the game files:
+[list]
+[*] Extract only needed data - this will extract only the data needed for the tool to work. It will be faster than the full extraction.
+[*] Verify extracted data - this will check the consistency of the extracted data. Recommended to use it every time you extract the data.
+[*] Overwrite existing files - this will overwrite the existing files in the output folder. Again, recommended to use it every time you extract the data.
+[*] Set as source and load after extraction - this will set the extracted folder as the source for the game data and load it after the extraction.
+[/list]
+Additionally, you can unselect some DLC's or Mods, if you don't want to extract them.
+
+[h3][u]Reloading the Game Data[/u][/h3]
+
+If you need to reload the game data, especially if the Mod or DLC was updated (for example, if you are mod developer, and want to know how the galaxy map will look after your changes) - you can do it via the [b]X4 Data[/b] -> [b]Reload[/b] menu item.
+
+[h2][b]Credits[/b][/h2]
+[list]
+[*] [url=https://www.egosoft.com]EGOSOFT[/url] - for the game itself (In fact - for the series of games)!
+[*] Members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]x4_modding discord channel[/url] - for their answers, support, ideas, and inspiration!
+[/list]
+[h2][b]Useful Links[/b][/h2]
+
+[h2]EGOSOFT Forum[/h2]
+
+There is a topic on the [url=https://forum.egosoft.com/viewtopic.php?p=?????]EGOSOFT forum[/url] about the tool. You can ask questions, share your thoughts, or provide feedback there.
+
+[h2]GitHub Repository Issues Reporting[/h2]
+
+Please report any issues or bugs encountered while using the tool. You can submit your reports through the [url=https://github.com/chemodun/X4-UniverseEditor/issues]GitHub repository Issues[/url]. Your contributions help improve the tool for everyone!
+
+[h2][b]License[/b][/h2]
+
+This project is licensed under the Apache License 2.0 - see the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/../../LICENSE]LICENSE[/url] file for details.
+
+[h2][b]Changelog[/b][/h2]
+
+[h2][1.0.0] - 2025-09-27[/h2]
+[list]
+[*] Added
+[list]
+[*] Initial public version
+[/list]
+[/list]

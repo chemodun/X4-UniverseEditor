@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="x4-cluster-relocation-service">X4 Cluster Relocation
+Service</h1>
+<p><strong>Transform the entire Galaxy with a single click!</strong></p>
+<p>This tool allows you to relocate clusters in the X4: Foundations game
+universe. It provides a user-friendly interface to select clusters,
+define new locations, and update the game data accordingly.</p>
+<p>After relocating clusters, you can save the changes as a mod
+(<code>Relocated Clusters</code>) that can be easily loaded into the
+game.</p>
+<p>In addition to the Cluster per Cluster relocation, the tool also
+allows you to <code>Make a "Full Mess"</code> in the galaxy by
+relocating all clusters in one go to random locations.</p>
+<p>It based on funny “hidden” feature of the game engine, which allows
+you to define or breaks new locations of the clusters without any
+influence on a game stability and processes. The relocation mod is not
+affecting on you save games, so you can safely remove/change it at any
+time.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>User-friendly interface for selecting and relocating clusters.</li>
+<li>Has no make you game dependant on a <code>Relocated Clusters</code>
+mod. Simply remove it and continue to play as usual.</li>
+<li>Ability to define new locations for clusters.</li>
+<li>Option to relocate all clusters randomly in one go.</li>
+<li>Validation of new locations to ensure they are valid within the game
+universe.</li>
+<li>Can be used by modders to simplify relocation of their
+clusters.</li>
+</ul>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>Anyone can use the new Clusters location export in their mods. If you
+use the connections in mods, please mention the author and the tool in
+the mod description.</p>
+<h2 id="download">Download</h2>
+<p>You can download the tool from the following locations:</p>
+<ul>
+<li><a
+href="https://www.nexusmods.com/x4foundations/mods/1835">Nexus</a></li>
+<li><a
+href="https://github.com/chemodun/X4-UniverseEditor/releases">Releases
+on GitHub</a></li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>Simply <a href="#download">download</a> the latest version and
+extract it to any folder.</p>
+<p>You can place it anywhere on your computer, as it doesn’t require
+installation.</p>
+<h2 id="video-on-youtube">Video on YouTube</h2>
+<p>There is a video on YouTube demonstrating the tool’s features and
+results in the game:</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=_pJWPhHJ-zw">X4 Cluster
+Relocation Service - Demo</a></li>
+<li><a href="https://www.youtube.com/watch?v=htOmHchP6es">X4 Cluster
+Relocation Service - In-game map after “Full Mess”</a></li>
+<li><a href="https://www.youtube.com/watch?v=pgoBqIiB7sk">X4 Cluster
+Relocation Service - Flying via Highway Ring after “Full Mess”</a></li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h3 id="direct-mode">Direct Mode</h3>
+<p>In the Direct Mode, you just need to select the game folder and start
+playing with the Clusters relocation. In this case the tool will load
+the game data directly from the game files. The mod will be saved in the
+game <code>Extensions</code> folder, under
+<code>relocated_clusters</code> folder.</p>
+<h4 id="direct-mode-first-start">Direct Mode First Start</h4>
+<p>On the first start, the tool will inform you that you need to select
+the game folder, and will switch to the options menu tab. If you will
+unselect <code>Direct Mode</code> - you will go via start process in
+“Expert” mode: <a href="#first-start-in-the-expert-mode">First Start in
+the “Expert” Mode</a> section.</p>
+<p>After selecting the game folder, the tool will start loading the game
+data. <img src="docs/images/first_start.gif"
+alt="First start in Direct Mode" /></p>
+<h4 id="direct-mode-first-mod-creation">Direct Mode First Mod
+Creation</h4>
+<p>After loading the game data, you will see the main window and the
+Galaxy Map. Please take in account - the Sectors ownership is equal to
+the initial game state, without any changes from the current save. When
+you will be finish with the connections, you can save the mod via the
+<code>Mod</code> -&gt; <code>Save</code> menu item. Mod will be saved in
+the game <code>Extensions</code> folder, under
+<code>relocated_clusters</code> folder.</p>
+<h4 id="direct-mode-second-and-other-starts">Direct Mode Second and
+Other starts</h4>
+<p>On the next starts tool will automatically load not only game data,
+but also the “Relocated Clusters” mod data. So, after starting you will
+see the the map with the already relocated clusters.</p>
+<p>You can cancel the existing relocation, or add new, or relocated
+already relocated clusters.</p>
+<p>After that you can save the mod via the <code>Mod</code> -&gt;
+<code>Save</code> menu item.</p>
+<figure>
+<img src="docs/images/next_starts.gif"
+alt="Second and other starts in Direct Mode" />
+<figcaption aria-hidden="true">Second and other starts in Direct
+Mode</figcaption>
+</figure>
+<h4 id="direct-mode-to-expert-mode-and-vice-versa">Direct Mode To
+“Expert” Mode and Vice Versa</h4>
+<p>At any time you can switch between the Direct Mode and the “Expert”
+Mode. Just go to the options menu and select or unselect the
+<code>Direct Mode</code> checkbox. Always will reload the game data and
+the mod data. Please take in account - in “Expert” Mode you have
+manually specify the mod location. And moreover, in “Expert” Mode you
+will work with extracted game files, not with the game files
+directly.</p>
+<h3 id="main-window">Main Window</h3>
+<p>After starting, you will see the main window with a Galaxy Map.</p>
+<figure>
+<img src="docs/images/main_window.png" alt="Main window" />
+<figcaption aria-hidden="true">Main window</figcaption>
+</figure>
+<h4 id="galaxy-map">Galaxy Map</h4>
+<p>The Galaxy Map allows you to navigate through various sectors in the
+game. You can zoom in and out to view details about each sector and the
+gates within them. Using the map, you can select sectors to use in the
+gate connections.</p>
+<p>For zooming, there are two options available:</p>
+<ul>
+<li>Use the slider at the top of the map.</li>
+<li>Use the mouse wheel while holding the <code>Ctrl</code> key.</li>
+</ul>
+<p>Additionally, you can drag the map with the left mouse button when it
+is zoomed in.</p>
+<p>When you click the any mouse button on a Cluster(or Sector) - it will
+show the <code>Context Menu</code> with the options to
+<code>Mark for Relocation</code> or <code>Cancel Relocation</code> (if
+the cluster is already relocated).</p>
+<h5 id="relocating-a-cluster">Relocating a Cluster</h5>
+<p>To relocate a cluster, you have to make a two-step process:</p>
+<figure>
+<img src="docs/images/relocating_clusters.gif"
+alt="Relocating Clusters" />
+<figcaption aria-hidden="true">Relocating Clusters</figcaption>
+</figure>
+<h6 id="marking-a-cluster-for-relocation">Marking a Cluster for
+Relocation</h6>
+<p>To relocate a cluster, simply click on the desired cluster on the
+Galaxy Map and select <code>Mark for Relocation</code> from the context
+menu. This action will mark the cluster for relocation, and it will be
+highlighted on the map. In addition, the cell grid will be shown on the
+map to help you visualize the new location.</p>
+<h6 id="choosing-a-new-location">Choosing a New Location</h6>
+<p>After marking a cluster for relocation, click on the desired empty
+cell on the map where you want to move the cluster. And again, a context
+menu will appear. Select <code>Relocate Here</code> to move the cluster
+to the new location.</p>
+<h6 id="magic">Magic</h6>
+<p>And that’s it! The cluster will be relocated to the new position, and
+the map will update to reflect the change. Cluster will be marked by
+Blue border on the map.</p>
+<p>Previously relocated cluster will be marked by Green border on the
+map.</p>
+<h6 id="unmark-a-cluster">Unmark a Cluster</h6>
+<p>If you change your mind and decide not to relocate a cluster, simply
+click on the marked cluster again and select
+<code>Unmark for Relocation</code> from the context menu. This action
+will unmark the cluster.</p>
+<p>Or simply <code>Mark</code> any other cluster - the previously marked
+one will be unmarked automatically.</p>
+<h5 id="canceling-a-relocation">Canceling a Relocation</h5>
+<p>If you want to revert a relocation and return a cluster to its
+original position, click on the relocated cluster and select
+<code>Cancel Relocation</code> from the context menu. This action will
+move the cluster back to its initial location.</p>
+<p>Please note that if the original position is already occupied by
+another cluster, the cancellation will not be possible. And this menu
+item will be disabled.</p>
+<h4 id="relocated-clusters-list">Relocated Clusters List</h4>
+<p>On the bottom of the main window, there is a list of relocated
+clusters. This list provides an overview of all clusters that have been
+relocated, including their names, macro ids, original and new
+coordinates.</p>
+<h5 id="canceling-a-relocation-from-the-list">Canceling a Relocation
+from the List</h5>
+<p>To cancel a relocation from the list, simply select the desired
+cluster in the list and click the <code>Cancel Relocation</code> button
+located right next to the list. This action will revert the selected
+cluster to its original position.</p>
+<h5 id="focusing-on-the-map-from-the-list">Focusing on the Map from the
+List</h5>
+<p>To focus on a specific relocated cluster on the map, select the
+desired cluster in the list and the border of the selected item will be
+highlighted on the map as in a list.</p>
+<h5 id="exporting-the-map-to-the-image-file-png">Exporting the map to
+the image file (png)</h5>
+<p>You can export the current view of the Galaxy Map to a PNG image
+file. This feature allows you to save and share the map view with others
+or use it for reference in your projects. To export the map, simply
+click the “Export Galaxy Map as PNG” button located at the top right
+corner of the Galaxy Map interface.</p>
+<p>Thanks to <a href="https://steamcommunity.com/id/sleaker"><span
+class="citation" data-cites="Sleaker">@Sleaker</span></a> for the idea
+and initial implementation for the <a
+href="https://www.nexusmods.com/x4foundations/mods/1587/">Chem Gate
+Builder</a> mod.</p>
+<h5 id="hiding-and-showing-the-dlcs-and-mods-on-a-map">Hiding and
+showing the DLC’s and Mods on a map</h5>
+<p>You can toggle the visibility of DLCs and Mods on the map to focus on
+your current editing tasks.</p>
+<p>Please note that only hiding the Clusters and Sectors from the view,
+but not removing them from the game data. You will not able relocate the
+Clusters on the positions occupied by the hidden ones.</p>
+<h3 id="full-mess-relocation">Full Mess Relocation</h3>
+<p>You can enable or disable the “Full Mess” option, which allows you to
+relocate all clusters randomly in one go. When enabled, you will see a
+button <code>Make a "Full Mess"</code> under the
+<code>Cancel Relocation</code> button, in the right side of the
+relocated clusters list.</p>
+<p>When you press it, all clusters will be relocated one by one to
+random cells on the map.</p>
+<figure>
+<img src="docs/images/make_a_full_mess.gif"
+alt="Full Mess Relocation" />
+<figcaption aria-hidden="true">Full Mess Relocation</figcaption>
+</figure>
+<h3 id="save-the-mod">Save the Mod</h3>
+<p>When you finish with the connections, you can save the mod via the
+<code>Mod</code> -&gt; <code>Save</code> menu item. Please ensure you
+have completed all necessary edits before saving to avoid losing data.
+After that, the mod will be saved/updated in the appropriate subfolder
+in the <code>Extensions</code> folder of the game. And can be used
+immediately after loading the game.</p>
+<h3 id="reload-the-mod">Reload the Mod</h3>
+<p>If you want to break current changes at once, before they are saved -
+and revert to a previously saved version, you can load it via the
+<code>Mod</code> -&gt; <code>Reload</code> menu item.</p>
+<figure>
+<img src="docs/images/reload_mod.gif" alt="Reload the Mod" />
+<figcaption aria-hidden="true">Reload the Mod</figcaption>
+</figure>
+<h3 id="configuration">Configuration</h3>
+<figure>
+<img src="docs/images/configuration.png" alt="Configuration" />
+<figcaption aria-hidden="true">Configuration</figcaption>
+</figure>
+<h4 id="mode-options">Mode Options</h4>
+<h5 id="direct-mode-checkbox">Direct Mode Checkbox</h5>
+<p>Already described above in the <a href="#direct-mode">Direct Mode</a>
+section.</p>
+<h4 id="x4-data-options">X4 Data Options</h4>
+<h5 id="game-folder-selection">Game Folder Selection</h5>
+<p>You need to select the folder where the game is installed. This is
+typically the folder where the game’s executable file
+(<code>X4.exe</code>) is located.</p>
+<p>You can change it any time by pressing the current folder path
+text.</p>
+<h5 id="x4-data-version">X4 Data Version</h5>
+<p>Mostly to show which game version is currently selected.</p>
+<h5 id="load-mods-data">Load Mods Data</h5>
+<p>You can toggle the loading of mods along with the game data and DLCs.
+This is useful if you want to work with mods in the tool. The mods will
+be loaded from the <code>extensions</code> folder in the game folder.
+Enabled by default. Not recommended to unselect it. You can be in
+trouble if will place the relocated cluster on the position occupied by
+the modded one.</p>
+<p>Please note that loading the mods will not make your
+<code>Relocated Clusters</code> mod dependant on them. It will depend
+only on the DLC’s and Mods which are contains the clusters you are
+relocating.</p>
+<h4 id="map-options">Map Options</h4>
+<h5 id="color-opacity">Color Opacity</h5>
+<p>You can adjust the opacity of the colors used in the map to suit your
+preferences. This setting allows you to make the map more visually
+appealing or easier to read based on your needs.</p>
+<h5 id="universe-id">Universe ID</h5>
+<p>You can specify a custom universe ID to work with a different game
+universe. This is useful if you are working with mods that create their
+own universes or if you want to test changes in a separate
+environment.</p>
+<h5 id="relocation-options">Relocation Options</h5>
+<h6 id="full-mess-is-enabled">Full Mess is Enabled</h6>
+<p>You can enable or disable the <code>Make a "Full Mess"</code> button
+visibility, which allows you to relocate all clusters randomly in one
+go.</p>
+<p>Disabled by default.</p>
+<h6 id="export-of-clusters-is-enabled">Export of Clusters is
+Enabled</h6>
+<p>You can enable or disable the export of relocated clusters as a full
+clusters connection list, which can be used in mods.</p>
+<p>Disabled by default.</p>
+<h4 id="logging-options">Logging Options</h4>
+<h5 id="log-level">Log Level</h5>
+<p>You can set the log level to control the verbosity of the logging
+output. This is useful for debugging or monitoring the tool’s
+operations.</p>
+<h5 id="enable-writing-to-file">Enable writing to File</h5>
+<p>You can enable or disable writing log output to a file. This is
+useful for keeping a record of the tool’s operations for later review or
+troubleshooting.</p>
+<h4 id="other-options">Other Options</h4>
+<h5 id="check-for-updates-on-startup">Check for Updates on StartUp</h5>
+<p>You can enable or disable the automatic check for updates when the
+tool starts. This ensures you are always using the latest version of the
+tool with the newest features and bug fixes.</p>
+<h3 id="expert-mode">“Expert” Mode</h3>
+<h4 id="first-start-in-the-expert-mode">First Start in the “Expert”
+Mode</h4>
+<p>On the first start, the tool will inform you that you need to select
+the folder with the game files.</p>
+<p>If you will unselect the <code>Direct Mode</code> - you will go via
+the start process described below.</p>
+<p>And when you press a button to select the folder, the tool will
+propose two ways to do it:</p>
+<ul>
+<li>Select the extracted game folder. If you already have it - simply
+press the “Yes” button.</li>
+<li>Extract the game files. If you don’t have the game files extracted,
+you can press the “No” button to initiate the extraction.</li>
+</ul>
+<h5 id="with-extracted-game-files">With Extracted Game Files</h5>
+<p>After selecting the folder, the tool will start loading the game
+data.</p>
+<figure>
+<img src="docs/images/" alt="First start" />
+<figcaption aria-hidden="true">First start</figcaption>
+</figure>
+<p>There is a link on wiki related to the tool for the extraction - <a
+href="https://wiki.egosoft.com:1337/X4%20Foundations%20Wiki/Modding%20Support/X%20Catalog%20Tool/">X
+Catalog Tool</a>.</p>
+<h5 id="without-extracted-game-files">Without Extracted Game Files</h5>
+<p>You will be forwarded to the menu containing the button to start the
+extraction. Please press it to start the extraction. Now everything is
+simple:</p>
+<ul>
+<li>Select the folder with the game files.</li>
+<li>Select the folder where will be placed new folder with the extracted
+game files. It will be created automatically with a name containing the
+current game version. Like “X4v800-extracted”.</li>
+<li>Press the “Extract Data” button.</li>
+</ul>
+<figure>
+<img src="docs/images/" alt="First start with Extraction" />
+<figcaption aria-hidden="true">First start with Extraction</figcaption>
+</figure>
+<p>There are several options to extract the game files:</p>
+<ul>
+<li>Extract only needed data - this will extract only the data needed
+for the tool to work. It will be faster than the full extraction.</li>
+<li>Verify extracted data - this will check the consistency of the
+extracted data. Recommended to use it every time you extract the
+data.</li>
+<li>Overwrite existing files - this will overwrite the existing files in
+the output folder. Again, recommended to use it every time you extract
+the data.</li>
+<li>Set as source and load after extraction - this will set the
+extracted folder as the source for the game data and load it after the
+extraction.</li>
+</ul>
+<p>Additionally, you can unselect some DLC’s or Mods, if you don’t want
+to extract them.</p>
+<h5 id="reloading-the-game-data">Reloading the Game Data</h5>
+<p>If you need to reload the game data, especially if the Mod or DLC was
+updated (for example, if you are mod developer, and want to know how the
+galaxy map will look after your changes) - you can do it via the
+<code>X4 Data</code> -&gt; <code>Reload</code> menu item.</p>
+<h2 id="credits">Credits</h2>
+<ul>
+<li><a href="https://www.egosoft.com">EGOSOFT</a> - for the game itself
+(In fact - for the series of games)!</li>
+<li>Members of the <a
+href="https://discord.com/channels/337098290917146624/502057640877228042">x4_modding
+discord channel</a> - for their answers, support, ideas, and
+inspiration!</li>
+</ul>
+<h2 id="useful-links">Useful Links</h2>
+<h3 id="egosoft-forum">EGOSOFT Forum</h3>
+<p>There is a topic on the <a
+href="https://forum.egosoft.com/viewtopic.php?p=?????">EGOSOFT forum</a>
+about the tool. You can ask questions, share your thoughts, or provide
+feedback there.</p>
+<h3 id="github-repository-issues-reporting">GitHub Repository Issues
+Reporting</h3>
+<p>Please report any issues or bugs encountered while using the tool.
+You can submit your reports through the <a
+href="https://github.com/chemodun/X4-UniverseEditor/issues">GitHub
+repository Issues</a>. Your contributions help improve the tool for
+everyone!</p>
+<h2 id="license">License</h2>
+<p>This project is licensed under the Apache License 2.0 - see the <a
+href="../../LICENSE">LICENSE</a> file for details.</p>
+<h2 id="changelog">Changelog</h2>
+<h3 id="section">[1.0.0] - 2025-09-27</h3>
+<ul>
+<li>Added
+<ul>
+<li>Initial public version</li>
+</ul></li>
+</ul>
+</body>
+</html>
