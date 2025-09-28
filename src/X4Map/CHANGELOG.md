@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.6.2...X4Map@v0.7.0) (2025-09-28)
+
+
+### Features
+
+* **GalaxyMapInterConnection:** add GalaxyMapInterConnection class ([18e3e53](https://github.com/chemodun/X4-UniverseEditor/commit/18e3e534fe59b7d270351456d6117591959f441a))
+* **GalaxyMapViewer:** add sector item event handling ([043d715](https://github.com/chemodun/X4-UniverseEditor/commit/043d71574c8eefb0bac14058d9a98739c01a62ba))
+
+
+### Bug Fixes
+
+* **GalaxyMapViewer:** enhance connection refresh logic for clusters ([0a49986](https://github.com/chemodun/X4-UniverseEditor/commit/0a4998625ef6ae55130ba9646cbd56b987d94058))
+* **GalaxyMapViewer:** enhance zoom functionality and scroll preservation ([b00f3ee](https://github.com/chemodun/X4-UniverseEditor/commit/b00f3ee00a6c895010bc713c3ec6ea37fb3f95a0))
+
+
+### Code Refactoring
+
+* **GalaxyMapCluster:** add DefaultStroke property for stroke color logic ([eb352e8](https://github.com/chemodun/X4-UniverseEditor/commit/eb352e84a0a368ee2ea565a4b68d7a4264d7fc49))
+* **GalaxyMapCluster:** change ReAssign method to virtual ([c8ddda2](https://github.com/chemodun/X4-UniverseEditor/commit/c8ddda22c04a2e0295c49cac108809eecbfc7cdc))
+* **GalaxyMapCluster:** synchronize geometry with map layout ([b29acbf](https://github.com/chemodun/X4-UniverseEditor/commit/b29acbff034aecbb99374621c32c6dac4b4b961d))
+* **GalaxyMapCluster:** update Remove method to accept GalaxyMapViewer ([18e3e53](https://github.com/chemodun/X4-UniverseEditor/commit/18e3e534fe59b7d270351456d6117591959f441a))
+* **GalaxyMapCluster:** update sector creation to use CreateMapSector ([4bbff45](https://github.com/chemodun/X4-UniverseEditor/commit/4bbff45062ddd41b87f1924739518a34e684fbac))
+* **GalaxyMapSector:** modify Remove method to accept GalaxyMapViewer ([18e3e53](https://github.com/chemodun/X4-UniverseEditor/commit/18e3e534fe59b7d270351456d6117591959f441a))
+* **GalaxyMapSector:** rename Remove method to Clear ([c8ddda2](https://github.com/chemodun/X4-UniverseEditor/commit/c8ddda22c04a2e0295c49cac108809eecbfc7cdc))
+* **GalaxyMapViewer:** add CreateMapCluster and CreateMapSector methods ([4bbff45](https://github.com/chemodun/X4-UniverseEditor/commit/4bbff45062ddd41b87f1924739518a34e684fbac))
+* **GalaxyMapViewer:** change private fields to protected ([9ff6662](https://github.com/chemodun/X4-UniverseEditor/commit/9ff66624d659cf8d20ad8f2fe928d3879a848578))
+* **GalaxyMapViewer:** change UpdateMap method to virtual ([dde83c2](https://github.com/chemodun/X4-UniverseEditor/commit/dde83c28dca30adfc24ba1bcbcd067151c683832))
+* **GalaxyMapViewer:** optimize sector removal logic ([1421a6d](https://github.com/chemodun/X4-UniverseEditor/commit/1421a6d7914d8fe1e0cfb7670494312e5551eeb8))
+* **GalaxyMapViewer:** reset cluster reference on sector removal ([eb352e8](https://github.com/chemodun/X4-UniverseEditor/commit/eb352e84a0a368ee2ea565a4b68d7a4264d7fc49))
+* **GalaxyMapViewer:** simplify sector and cluster selection logic ([3d5bd9b](https://github.com/chemodun/X4-UniverseEditor/commit/3d5bd9b6d33d6bf9acdd2ffd4a55aa58ca955aef))
+* **GalaxyMapViewer:** update method calls to use Clear ([c8ddda2](https://github.com/chemodun/X4-UniverseEditor/commit/c8ddda22c04a2e0295c49cac108809eecbfc7cdc))
+
 ## [0.6.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.6.1...X4Map@v0.6.2) (2025-09-22)
 
 
