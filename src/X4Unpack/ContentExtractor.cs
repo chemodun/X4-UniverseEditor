@@ -84,6 +84,28 @@ namespace X4Unpack
       return p;
     }
 
+    private static FileInfo? GetFileInfo(string path)
+    {
+      try
+      {
+        FileInfo? fi = new FileInfo(path);
+        if (fi != null && fi.LinkTarget != null)
+        {
+          // If the file is a symlink, resolve the link target
+          var fil = new FileInfo(fi.LinkTarget);
+          if (fil != null && fil.Exists)
+          {
+            fi = fil;
+          }
+        }
+        return fi;
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
     private void BuildCatalogFromFileSystem()
     {
       if (!Directory.Exists(_folderPath))
@@ -96,7 +118,11 @@ namespace X4Unpack
         {
           var rel = Path.GetRelativePath(_folderPath, fullPath);
           rel = NormalizeKey(rel);
-          var fi = new FileInfo(fullPath);
+          var fi = GetFileInfo(fullPath);
+          if (fi == null || !fi.Exists)
+          {
+            continue;
+          }
           _catalog[rel] = new CatEntry
           {
             FilePath = rel,
