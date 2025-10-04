@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.1.0...ClusterRelocationService@v1.1.1) (2025-10-04)
+
+
+### Documentation
+
+* **README:** improve clarity of galaxy relocation feature ([7c0bb78](https://github.com/chemodun/X4-UniverseEditor/commit/7c0bb7804059b957dfe5ee0c634188851b4ae32f))
+* **README:** Update README's files ([f759f78](https://github.com/chemodun/X4-UniverseEditor/commit/f759f780a157ec08b7113ad4f4cf6febd2a8cc64))
+
 ## [1.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.0.0...ClusterRelocationService@v1.1.0) (2025-09-28)
 
 
