@@ -41,7 +41,7 @@ namespace X4DataLoader
     {
       Log.Debug($"Starting to load galaxy data from {coreFolderPath}");
       galaxy.Clear();
-      List<ExtensionInfo> allExtensions = ExtensionInfo.LoadInstalledSorted(coreFolderPath, !loadMods);
+      List<ExtensionInfo> allExtensions = ExtensionInfo.LoadInstalledSorted(coreFolderPath, !loadMods, loadEnabledOnly);
       List<GameFile> gameFiles = CollectFiles(coreFolderPath, gameFilesStructure, out int processedFiles, Vanilla, "", null);
       foreach (ExtensionInfo extension in allExtensions)
       {
