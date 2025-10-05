@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.4...X4Unpack@v0.3.5) (2025-10-05)
+
+
+### Bug Fixes
+
+* **ContentExtractor:** add GetFileInfo to handle symlinks. Fixes Mods which are symlinked by Vortex mod manager fail to load ([816caba](https://github.com/chemodun/X4-UniverseEditor/commit/816caba44651558c9d69257c68771198a7f7c375))
+
 ## [0.3.4](https://github.com/chemodun/X4-UniverseEditor/compare/X4Unpack@v0.3.3...X4Unpack@v0.3.4) (2025-09-20)
 
 
