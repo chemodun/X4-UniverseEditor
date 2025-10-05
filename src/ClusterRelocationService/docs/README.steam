@@ -19,6 +19,7 @@ It based on funny "hidden" feature of the game engine, which allows you to defin
 [*] Ability to define new locations for clusters.
 [*] Option to relocate all clusters randomly in one go.
 [*] Validation of new locations to ensure they are valid within the game universe.
+[*] Can be used to resolve the issue with overlaid clusters, when several clusters have equal coordinates.
 [*] Can be used by modders to simplify relocation of their clusters.
 [/list]
 [h2][b]Disclaimer[/b][/h2]
@@ -47,8 +48,10 @@ There is a video on YouTube demonstrating the tool's features and results in the
 [previewyoutube=_pJWPhHJ-zw;full][/previewyoutube]
 [*] X4 Cluster Relocation Service - In-game map after "Full Mess"
 [previewyoutube=htOmHchP6es;full][/previewyoutube]
-[*] X4 Cluster Relocation Service -  Flying via Highway Ring after "Full Mess"
+[*] X4 Cluster Relocation Service - Flying via Highway Ring after "Full Mess"
 [previewyoutube=pgoBqIiB7sk;full][/previewyoutube]
+[*] X4 Cluster Relocation Service - Resolving Overlaid Clusters Issue
+[previewyoutube=-iil3PYGCD4;full][/previewyoutube]
 [/list]
 [h2][b]Usage[/b][/h2]
 
@@ -107,6 +110,8 @@ Additionally, you can drag the map with the left mouse button when it is zoomed 
 
 When you click the any mouse button on a Cluster(or Sector) - it will show the [b]Context Menu[/b] with the options to [b]Mark for Relocation[/b] or [b]Cancel Relocation[/b] (if the cluster is already relocated).
 
+If there any overlaid clusters (clusters that occupy the same space) - they will be highlighted by [b]OrangeRed[/b] border on the map.
+
 [h3][u]Relocating a Cluster[/u][/h3]
 
 To relocate a cluster, you have to make a two-step process:
@@ -117,6 +122,12 @@ To relocate a cluster, you have to make a two-step process:
 
 To relocate a cluster, simply click on the desired cluster on the Galaxy Map and select [b]Mark for Relocation[/b] from the context menu. This action will mark the cluster for relocation, and it will be highlighted on the map.
 In addition, the cell grid will be shown on the map to help you visualize the new location.
+
+[h3]Overlaid Clusters[/h3]
+
+If there are any overlaid clusters (clusters that occupy the same space), they will be highlighted by [b]OrangeRed[/b] border on the map. Context menu item [b]Mark for Relocation[/b] will show as visible on map cluster, as well as a list of underlying clusters below it.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/context_menu_if_overlaid.png[/img]
 
 [h3]Choosing a New Location[/h3]
 
@@ -318,6 +329,19 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [h2][b]Changelog[/b][/h2]
 
+[h2][1.2.0] - 2025-10-06[/h2]
+[list]
+[*] Added
+[list]
+[*] Ability to work with underlying clusters (clusters that hidden under other, when occupy the same space).
+[/list]
+[*] Fixed
+[list]
+[*] Disabled Mods influenced on sorting order
+[*] SymLinks used by Vortex Mod Manager not processed right
+[*] Some other minor bugs
+[/list]
+[/list]
 [h2][1.1.0] - 2025-09-28[/h2]
 [list]
 [*] Added

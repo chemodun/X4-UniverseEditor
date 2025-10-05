@@ -197,6 +197,8 @@ mod. Simply remove it and continue to play as usual.</li>
 <li>Option to relocate all clusters randomly in one go.</li>
 <li>Validation of new locations to ensure they are valid within the game
 universe.</li>
+<li>Can be used to resolve the issue with overlaid clusters, when
+several clusters have equal coordinates.</li>
 <li>Can be used by modders to simplify relocation of their
 clusters.</li>
 </ul>
@@ -227,6 +229,8 @@ Relocation Service - Demo</a></li>
 Relocation Service - In-game map after “Full Mess”</a></li>
 <li><a href="https://www.youtube.com/watch?v=pgoBqIiB7sk">X4 Cluster
 Relocation Service - Flying via Highway Ring after “Full Mess”</a></li>
+<li><a href="https://www.youtube.com/watch?v=-iil3PYGCD4">X4 Cluster
+Relocation Service - Resolving Overlaid Clusters Issue</a></li>
 </ul>
 <h2 id="usage">Usage</h2>
 <h3 id="direct-mode">Direct Mode</h3>
@@ -299,6 +303,9 @@ is zoomed in.</p>
 show the <code>Context Menu</code> with the options to
 <code>Mark for Relocation</code> or <code>Cancel Relocation</code> (if
 the cluster is already relocated).</p>
+<p>If there any overlaid clusters (clusters that occupy the same space)
+- they will be highlighted by <code>OrangeRed</code> border on the
+map.</p>
 <h5 id="relocating-a-cluster">Relocating a Cluster</h5>
 <p>To relocate a cluster, you have to make a two-step process:</p>
 <figure>
@@ -313,6 +320,18 @@ Galaxy Map and select <code>Mark for Relocation</code> from the context
 menu. This action will mark the cluster for relocation, and it will be
 highlighted on the map. In addition, the cell grid will be shown on the
 map to help you visualize the new location.</p>
+<h6 id="overlaid-clusters">Overlaid Clusters</h6>
+<p>If there are any overlaid clusters (clusters that occupy the same
+space), they will be highlighted by <code>OrangeRed</code> border on the
+map. Context menu item <code>Mark for Relocation</code> will show as
+visible on map cluster, as well as a list of underlying clusters below
+it.</p>
+<figure>
+<img src="docs/images/context_menu_if_overlaid.png"
+alt="Context menu if underlying clusters exists" />
+<figcaption aria-hidden="true">Context menu if underlying clusters
+exists</figcaption>
+</figure>
 <h6 id="choosing-a-new-location">Choosing a New Location</h6>
 <p>After marking a cluster for relocation, click on the desired empty
 cell on the map where you want to move the cluster. And again, a context
@@ -545,7 +564,21 @@ everyone!</p>
 <p>This project is licensed under the Apache License 2.0 - see the <a
 href="../../LICENSE">LICENSE</a> file for details.</p>
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">[1.1.0] - 2025-09-28</h3>
+<h3 id="section">[1.2.0] - 2025-10-06</h3>
+<ul>
+<li>Added
+<ul>
+<li>Ability to work with underlying clusters (clusters that hidden under
+other, when occupy the same space).</li>
+</ul></li>
+<li>Fixed
+<ul>
+<li>Disabled Mods influenced on sorting order</li>
+<li>SymLinks used by Vortex Mod Manager not processed right</li>
+<li>Some other minor bugs</li>
+</ul></li>
+</ul>
+<h3 id="section-1">[1.1.0] - 2025-09-28</h3>
 <ul>
 <li>Added
 <ul>
