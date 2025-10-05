@@ -49,7 +49,7 @@ namespace X4DataLoader
           continue;
         if (excludedMods != null && excludedMods.Contains(extension.Id))
           continue;
-        List<GameFile> extensionFiles = GatherFiles(
+        GatherFiles(
           Path.Combine(coreFolderPath, ExtensionsFolder, extension.Folder),
           gameFilesStructure,
           galaxy.Extensions,
@@ -62,7 +62,7 @@ namespace X4DataLoader
           Log.Info($"No files were loaded for extension '{extension.Name}' - this extension will be skipped.");
           continue;
         }
-        gameFiles.AddRange(extensionFiles);
+        // gameFiles.AddRange(extensionFiles);
         if (extension.IsDlc)
         {
           galaxy.DLCs.Add(extension);
@@ -106,10 +106,6 @@ namespace X4DataLoader
           galaxy.Version = version;
         }
       }
-      // if (loadMods)
-      // {
-      //   LoadMods(galaxy, coreFolderPath, gameFilesStructure, gameFiles, loadEnabledOnly, excludedMods);
-      // }
       List<string> sources = GameFile.GetExtensions(gameFiles);
       foreach (ProcessingOrderItem orderItem in processingOrder)
       {
@@ -391,7 +387,7 @@ namespace X4DataLoader
           {
             ExtensionInfo mod = mods[modId];
             var previousTotalFiles = gameFiles.Count;
-            List<GameFile> modFiles = GatherFiles(
+            GatherFiles(
               Path.Combine(extensionsFolder, mod.Folder),
               gameFilesStructure,
               galaxy.Extensions,
@@ -569,7 +565,7 @@ namespace X4DataLoader
       }
     }
 
-    public List<GameFile> GatherFiles(
+    public void GatherFiles(
       string coreFolderPath,
       List<GameFilesStructureItem> gameFilesStructure,
       List<ExtensionInfo> extensions,
@@ -578,9 +574,8 @@ namespace X4DataLoader
       List<GameFile>? existingGameFiles = null
     )
     {
-      List<GameFile> result = [];
       existingGameFiles ??= [];
-      int previousCount = result.Count;
+      int previousCount = existingGameFiles.Count;
       Log.Debug($"Previously gathered files: {previousCount}.");
       Log.Debug($"Analyzing the folder structure of {coreFolderPath}");
       List<GameFile> vanillaFiles = CollectFiles(
@@ -591,7 +586,6 @@ namespace X4DataLoader
         "vanilla",
         existingGameFiles
       );
-      result.AddRange(vanillaFiles);
       existingGameFiles.AddRange(vanillaFiles);
       Log.Debug($"Vanilla files identified.");
 
@@ -614,13 +608,11 @@ namespace X4DataLoader
         totallyProcessedFiles += processedFiles;
         if (extensionFiles.Count > 0)
         {
-          result.AddRange(extensionFiles);
           existingGameFiles.AddRange(extensionFiles);
           Log.Debug($"Extension files identified: {extensionFiles.Count} files found for {extension.Name}.");
         }
       }
-      Log.Debug($"Total files added: {result.Count - previousCount} - of {coreFolderPath}");
-      return result;
+      Log.Debug($"Total files added: {existingGameFiles.Count - previousCount} - of {coreFolderPath}");
     }
   }
 
