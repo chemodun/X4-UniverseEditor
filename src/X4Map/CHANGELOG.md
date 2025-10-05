@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.7.0...X4Map@v0.7.1) (2025-10-05)
+
+
+### Code Refactoring
+
+* **GalaxyMapCluster:** update cluster brush handling ([f10c759](https://github.com/chemodun/X4-UniverseEditor/commit/f10c75991429069827778d33f03487f7a44bbd66))
+* **GalaxyMapViewer:** streamline interconnection logic ([f10c759](https://github.com/chemodun/X4-UniverseEditor/commit/f10c75991429069827778d33f03487f7a44bbd66))
+
 ## [0.7.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4Map@v0.6.2...X4Map@v0.7.0) (2025-09-28)
 
 
