@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.11.0...X4DataLoader@v0.11.1) (2025-10-05)
+
+
+### Bug Fixes
+
+* **DataLoader:** refactor GatherFiles to fix Information about extensions is loaded twice ([4865c0f](https://github.com/chemodun/X4-UniverseEditor/commit/4865c0f35ef7ab18098cc9978b96febf0da402cd))
+* **DataLoader:** update LoadInstalledSorted to include loadEnabledOnly parameter. Fixes Filter mods that are disabled in-game ([8898990](https://github.com/chemodun/X4-UniverseEditor/commit/889899022818a009b1c0ce86886c7be20a914d86))
+
 ## [0.11.0](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.10.6...X4DataLoader@v0.11.0) (2025-09-28)
 
 
