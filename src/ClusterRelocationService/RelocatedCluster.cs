@@ -19,6 +19,10 @@ namespace ClusterRelocationService
       {
         name += $" ({cluster.Sectors[0].Name})";
       }
+      else if (cluster.Sectors.Count > 1 && !cluster.Sectors.Any(s => s.Name.StartsWith(cluster.Name)))
+      {
+        name += $" ({cluster.Sectors[0].Name}, ...)";
+      }
       return name;
     }
 
