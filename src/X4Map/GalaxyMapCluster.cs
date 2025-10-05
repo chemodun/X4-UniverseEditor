@@ -122,9 +122,9 @@ namespace X4Map
       {
         if (Cluster == null)
         {
-          return Brushes.DarkGray;
+          return GalaxyMapViewer.BrushClusterEmpty;
         }
-        return Cluster.Source == "New" ? Brushes.DarkGreen : Brushes.Black;
+        return Cluster.Source == "New" ? Brushes.DarkGreen : GalaxyMapViewer.BrushClusterDefault;
       }
     }
 
@@ -167,7 +167,7 @@ namespace X4Map
         );
         Hexagon = new()
         {
-          Stroke = Cluster != null ? Brushes.Black : Brushes.DarkGray,
+          Stroke = Cluster != null ? GalaxyMapViewer.BrushClusterDefault : GalaxyMapViewer.BrushClusterEmpty,
           StrokeThickness = 1,
           Fill = Brushes.Transparent,
           Tag = Cluster != null ? Cluster.Name : "Empty Map Cell",

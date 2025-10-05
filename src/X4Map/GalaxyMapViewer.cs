@@ -100,6 +100,9 @@ namespace X4Map
     public static readonly int ColumnWidth = 15000000; // 15,000,000 meters for horizontal (X) axis
     public static readonly int RowHeight = 17320000 / 2; // 17,320,000 meters for vertical (Z) axis
 
+    public static System.Windows.Media.Brush BrushClusterDefault = System.Windows.Media.Brushes.Black;
+    public static System.Windows.Media.Brush BrushClusterEmpty = System.Windows.Media.Brushes.DarkGray;
+
     public double ScaleFactor = 0.001; // Scaling factor to convert units to pixels
     protected double _canvasWidthBase = 0;
     protected double _canvasHeightBase = 0;
@@ -281,6 +284,10 @@ namespace X4Map
         _clusters.Add(galaxyCluster);
       }
       galaxyCluster.ReAssign(this, cluster);
+      if (cluster != null)
+      {
+        RefreshConnectionsForCluster(galaxyCluster);
+      }
     }
 
     public virtual GalaxyMapSector CreateMapSector(
@@ -541,40 +548,45 @@ namespace X4Map
         {
           foreach (GalaxyConnection connection in GalaxyData.Connections)
           {
-            if (
-              connection.PathDirect == null
-              || connection.PathDirect.Gate == null
-              || connection.PathDirect.Gate.Name == null
-              || connection.PathOpposite == null
-              || connection.PathOpposite.Gate == null
-              || connection.PathOpposite.Gate.Name == null
-            )
-            {
-              continue;
-            }
-            GalaxyMapSector? sectorDirect = _sectors.Find(sc => sc.Macro == connection.PathDirect.Sector?.Macro);
-            if (sectorDirect == null)
-            {
-              continue;
-            }
-            GalaxyMapSector? sectorOpposite = _sectors.Find(sc => sc.Macro == connection.PathOpposite.Sector?.Macro);
-            if (sectorOpposite == null)
-            {
-              continue;
-            }
-            SectorMapItem? gateDirect = sectorDirect.Items.Find(item => item.Id == connection.PathDirect.Gate.Name);
-            SectorMapItem? gateOpposite = sectorOpposite.Items.Find(item => item.Id == connection.PathOpposite.Gate.Name);
-            if (gateDirect == null || gateOpposite == null)
-            {
-              continue;
-            }
-            GalaxyMapInterConnection galaxyMapGateConnection = new(connection, gateDirect, gateOpposite, true, connection.Source);
-            galaxyMapGateConnection.Create(GalaxyCanvas);
-            InterConnections.Add(galaxyMapGateConnection);
+            AddInterConnection(connection);
           }
         }
       }
       SectorRadius = maxSectorRadius;
+    }
+
+    protected void AddInterConnection(GalaxyConnection connection)
+    {
+      if (
+        connection.PathDirect == null
+        || connection.PathDirect.Gate == null
+        || connection.PathDirect.Gate.Name == null
+        || connection.PathOpposite == null
+        || connection.PathOpposite.Gate == null
+        || connection.PathOpposite.Gate.Name == null
+      )
+      {
+        return;
+      }
+      GalaxyMapSector? sectorDirect = _sectors.Find(sc => sc.Macro == connection.PathDirect.Sector?.Macro);
+      if (sectorDirect == null)
+      {
+        return;
+      }
+      GalaxyMapSector? sectorOpposite = _sectors.Find(sc => sc.Macro == connection.PathOpposite.Sector?.Macro);
+      if (sectorOpposite == null)
+      {
+        return;
+      }
+      SectorMapItem? gateDirect = sectorDirect.Items.Find(item => item.Id == connection.PathDirect.Gate.Name);
+      SectorMapItem? gateOpposite = sectorOpposite.Items.Find(item => item.Id == connection.PathOpposite.Gate.Name);
+      if (gateDirect == null || gateOpposite == null)
+      {
+        return;
+      }
+      GalaxyMapInterConnection galaxyMapGateConnection = new(connection, gateDirect, gateOpposite, true, connection.Source);
+      galaxyMapGateConnection.Create(GalaxyCanvas);
+      InterConnections.Add(galaxyMapGateConnection);
     }
 
     public void RemoveCluster(GalaxyMapCluster cluster)
@@ -648,6 +660,12 @@ namespace X4Map
               galaxyMapHighway.Remove(GalaxyCanvas);
               galaxyMapHighway.Create(GalaxyCanvas, pointEntry, pointExit);
             }
+            else
+            {
+              galaxyMapHighway = new(highway, pointEntry, pointExit, false);
+              galaxyMapHighway.Create(GalaxyCanvas);
+            }
+            InterConnections.Add(galaxyMapHighway);
           }
         }
         if (GalaxyData?.Connections.Count > 0)
@@ -715,6 +733,10 @@ namespace X4Map
             {
               interConnection.Remove(GalaxyCanvas);
               interConnection.Create(GalaxyCanvas, gateDirect, gateOpposite);
+            }
+            else
+            {
+              AddInterConnection(connection);
             }
           }
         }
