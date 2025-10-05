@@ -663,6 +663,7 @@ namespace ClusterRelocationService
     private bool _hasBeenInitialized = false;
 
     private GalaxyMapClusterForClusterRelocation? _markedForRelocation = null;
+    private Cluster? _markedForRelocationOverlapped = null;
     private Visibility _optionsVisibilityState = Visibility.Hidden;
     private string _optionsVisibilitySymbol = "CircleLeft";
     private double _optionsWidth = 10;
@@ -1753,7 +1754,11 @@ namespace ClusterRelocationService
 
           contextMenu.Items.Add(headerItem);
           contextMenu.Items.Add(new Separator());
-          var menuItem = new MenuItem { Header = mapCell.IsMarkedForRelocation ? "Unmark for Relocation" : "Mark for Relocation" };
+          var menuItem = new MenuItem
+          {
+            Header =
+              mapCell.IsMarkedForRelocation && _markedForRelocationOverlapped == null ? "Unmark for Relocation" : "Mark for Relocation",
+          };
           menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell);
           contextMenu.Items.Add(menuItem);
           if (mapCell.IsRelocated)
@@ -1774,6 +1779,47 @@ namespace ClusterRelocationService
                   "Unable to revert relocation: the original location is currently in use.",
                   StatusMessageType.Warning
                 );
+              }
+            }
+          }
+          if (mapCell.IsOverlapping)
+          {
+            List<Cluster> overlappingClusters = GalaxyMapViewer.GetOverlappedClusters(mapCell);
+            if (overlappingClusters.Count > 0)
+            {
+              contextMenu.Items.Add(new Separator());
+              var overlappingHeader = new MenuItem
+              {
+                Header = $"Overlapped Clusters ({overlappingClusters.Count})",
+                FontWeight = FontWeights.Bold,
+                IsEnabled = false,
+              };
+              contextMenu.Items.Add(overlappingHeader);
+              contextMenu.Items.Add(new Separator());
+              foreach (var overlappingCluster in overlappingClusters)
+              {
+                var headerOfOverlappedItem = new MenuItem
+                {
+                  Header = $"Cluster: \"{overlappingCluster.Name ?? string.Empty}\"",
+                  FontWeight = FontWeights.Bold,
+                  IsEnabled = false,
+                };
+                if (overlappingCluster.Sectors.Count == 1 && overlappingCluster.Sectors[0].Name != overlappingCluster.Name)
+                {
+                  headerOfOverlappedItem.Header += $"\nSector : \"{overlappingCluster.Sectors[0].Name}\"";
+                }
+
+                contextMenu.Items.Add(headerOfOverlappedItem);
+                contextMenu.Items.Add(new Separator());
+                menuItem = new MenuItem
+                {
+                  Header =
+                    mapCell.IsMarkedForRelocation && _markedForRelocationOverlapped == overlappingCluster
+                      ? "Unmark for Relocation"
+                      : "Mark for Relocation",
+                };
+                menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell, overlappingCluster);
+                contextMenu.Items.Add(menuItem);
               }
             }
           }
@@ -1809,21 +1855,42 @@ namespace ClusterRelocationService
       }
     }
 
-    public void ContextMenuMarkClusterForRelocation(GalaxyMapClusterForClusterRelocation? cluster)
+    public void ContextMenuMarkClusterForRelocation(GalaxyMapClusterForClusterRelocation? cluster, Cluster? overlapped = null)
     {
-      if (cluster == null || Galaxy == null)
+      if (cluster == null || cluster.Cluster == null || Galaxy == null)
       {
         return;
+      }
+      if (_markedForRelocation == cluster && cluster.IsMarkedForRelocation && cluster.IsOverlapping)
+      {
+        if (_markedForRelocationOverlapped != null || overlapped != null)
+        {
+          if (overlapped != _markedForRelocationOverlapped)
+          {
+            BusyMessage =
+              $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlapped != null ? _markedForRelocationOverlapped : cluster.Cluster)}\" unmarked for relocation.";
+            _markedForRelocationOverlapped = overlapped;
+            BusyMessage =
+              $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlapped != null ? _markedForRelocationOverlapped : cluster.Cluster)}\" marked for relocation. Please define a target.";
+            return;
+          }
+        }
       }
       if (cluster.IsMarkedForRelocation)
       {
         GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = false;
         cluster.IsMarkedForRelocation = false;
+        Cluster clusterForName = cluster.Cluster;
+        if (_markedForRelocationOverlapped != null)
+        {
+          clusterForName = _markedForRelocationOverlapped;
+        }
         _markedForRelocation = null;
+        _markedForRelocationOverlapped = null;
         NoClusterInRelocationInProcess = true;
         if (cluster.Cluster != null)
         {
-          BusyMessage = $"Sector \"{RelocatedCluster.GetClusterName(cluster.Cluster)}\" unmarked for relocation.";
+          BusyMessage = $"Cluster \"{RelocatedCluster.GetClusterName(clusterForName)}\" unmarked for relocation.";
         }
       }
       else
@@ -1835,10 +1902,12 @@ namespace ClusterRelocationService
         GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
         cluster.IsMarkedForRelocation = true;
         _markedForRelocation = cluster;
+        _markedForRelocationOverlapped = overlapped;
         NoClusterInRelocationInProcess = false;
         if (cluster.Cluster != null)
         {
-          BusyMessage = $"Sector \"{RelocatedCluster.GetClusterName(cluster.Cluster)}\" marked for relocation. Please define a target.";
+          BusyMessage =
+            $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlapped ?? cluster.Cluster)}\" marked for relocation. Please define a target.";
         }
       }
     }

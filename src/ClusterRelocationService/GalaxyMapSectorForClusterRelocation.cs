@@ -61,6 +61,22 @@ namespace ClusterRelocationService
       }
     }
 
+    private bool _isOverlapped = false;
+    public bool IsOverlapped
+    {
+      get => _isOverlapped;
+      set
+      {
+        if (_isOverlapped == value)
+        {
+          return;
+        }
+        _isOverlapped = value;
+        UpdateStatus();
+        OnPropertyChanged(nameof(IsOverlapped));
+      }
+    }
+
     public GalaxyMapSectorForClusterRelocation(
       double x,
       double y,
@@ -74,6 +90,13 @@ namespace ClusterRelocationService
       bool isHalf = false
     )
       : base(x, y, owner, canvas, cluster, sector, hexagonWidth, hexagonHeight, scaleFactor, isHalf) { }
+
+    public override double Create(GalaxyMapViewer map)
+    {
+      double result = base.Create(map);
+      UpdateStatus();
+      return result;
+    }
 
     private void SetMark(System.Windows.Media.Brush? brush)
     {
@@ -122,6 +145,10 @@ namespace ClusterRelocationService
       else if (IsRelocated)
       {
         SetMark(GalaxyMapViewerForClusterRelocation.BrushRelocated);
+      }
+      else if (IsOverlapped)
+      {
+        SetMark(GalaxyMapViewerForClusterRelocation.BrushIfOverlapped);
       }
       else
       {

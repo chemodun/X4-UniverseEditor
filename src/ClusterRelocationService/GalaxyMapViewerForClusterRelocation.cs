@@ -17,7 +17,7 @@ namespace ClusterRelocationService
     public static System.Windows.Media.Brush BrushRelocated = System.Windows.Media.Brushes.DarkGreen;
     public static System.Windows.Media.Brush BrushCurrent = SystemColors.HighlightBrush;
     public static System.Windows.Media.Brush BrushOnRelocation = System.Windows.Media.Brushes.DarkRed;
-
+    public static System.Windows.Media.Brush BrushIfOverlapped = System.Windows.Media.Brushes.OrangeRed;
     private RelocatedCluster? _relocatedClusterCurrent = null;
 
     public override GalaxyMapCluster CreateMapCluster(
@@ -44,6 +44,10 @@ namespace ClusterRelocationService
         scaleFactor
       );
       _clusters.Add(newCluster);
+      if (checkIfClusterOverlapped(newCluster))
+      {
+        newCluster.IsOverlapping = true;
+      }
       return newCluster;
     }
 
@@ -73,7 +77,35 @@ namespace ClusterRelocationService
         isHalf
       );
       _sectors.Add(newSector);
+      if (cluster.Sectors.Count == 1 && owner is GalaxyMapClusterForClusterRelocation ownerForRelocation)
+      {
+        if (ownerForRelocation.IsOverlapping)
+        {
+          newSector.IsOverlapped = true;
+        }
+      }
+      ;
       return newSector;
+    }
+
+    public bool checkIfClusterOverlapped(GalaxyMapClusterForClusterRelocation cluster)
+    {
+      return GetOverlappedClusters(cluster).Count > 0;
+    }
+
+    public List<Cluster> GetOverlappedClusters(GalaxyMapClusterForClusterRelocation cluster)
+    {
+      return GalaxyData
+        .Clusters.Where(c =>
+          c != null
+          && c != null
+          && cluster.Cluster != null
+          && !StringHelper.EqualsIgnoreCase(c.Macro, cluster.Cluster.Macro)
+          && Math.Abs(c.Position.X - cluster.OriginalX) < ColumnWidth
+          && Math.Abs(c.Position.Z - cluster.OriginalZ) < RowHeight
+          && c.Position.Y == cluster.OriginalY
+        )
+        .ToList();
     }
 
     public event EventHandler<RelocationMessageEventArgs>? OnRelocationMessage;

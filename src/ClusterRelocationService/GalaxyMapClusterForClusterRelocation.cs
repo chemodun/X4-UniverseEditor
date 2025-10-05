@@ -59,6 +59,22 @@ namespace ClusterRelocationService
       }
     }
 
+    private bool _isOverlapped = false;
+    public bool IsOverlapping
+    {
+      get => _isOverlapped;
+      set
+      {
+        if (_isOverlapped == value)
+        {
+          return;
+        }
+        _isOverlapped = value;
+        UpdateStatus();
+        OnPropertyChanged(nameof(IsOverlapping));
+      }
+    }
+
     public GalaxyMapClusterForClusterRelocation(
       double x,
       double y,
@@ -88,6 +104,13 @@ namespace ClusterRelocationService
         Hexagon.Stroke = DefaultStroke;
         Hexagon.StrokeThickness = 1;
       }
+    }
+
+    public override double Create(GalaxyMapViewer map)
+    {
+      double result = base.Create(map);
+      UpdateStatus();
+      return result;
     }
 
     public override void ReAssign(GalaxyMapViewer map, Cluster? cluster)
@@ -135,6 +158,10 @@ namespace ClusterRelocationService
       else if (IsRelocated)
       {
         SetMark(GalaxyMapViewerForClusterRelocation.BrushRelocated);
+      }
+      else if (IsOverlapping)
+      {
+        SetMark(GalaxyMapViewerForClusterRelocation.BrushIfOverlapped);
       }
       else
       {
