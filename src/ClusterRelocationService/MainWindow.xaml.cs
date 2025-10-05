@@ -323,6 +323,8 @@ namespace ClusterRelocationService
       }
     }
 
+    bool _isFullReloadNeeded = false;
+
     public ObservableCollection<string> X4DataVersions { get; set; } = ["7.10", "7.50", "7.60"];
 
     private string _x4UniverseId = DataLoader.DefaultUniverseId;
@@ -663,7 +665,7 @@ namespace ClusterRelocationService
     private bool _hasBeenInitialized = false;
 
     private GalaxyMapClusterForClusterRelocation? _markedForRelocation = null;
-    private Cluster? _markedForRelocationOverlapped = null;
+    private Cluster? _markedForRelocationOverlaid = null;
     private Visibility _optionsVisibilityState = Visibility.Hidden;
     private string _optionsVisibilitySymbol = "CircleLeft";
     private double _optionsWidth = 10;
@@ -940,6 +942,7 @@ namespace ClusterRelocationService
     private async void LoadX4DataInBackgroundCompleted(object? sender, RunWorkerCompletedEventArgs e)
     {
       _backgroundWorker.Dispose();
+      _isFullReloadNeeded = false;
       if (e.Error != null)
       {
         StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
@@ -1041,12 +1044,12 @@ namespace ClusterRelocationService
           {
             GalaxyMapClusterForClusterRelocation? targetCluster = GalaxyMapViewer.GetTargetClusterForRelocated(rc);
             GalaxyMapClusterForClusterRelocation? currentCluster = GalaxyMapViewer.GetMapClusterForRelocated(rc);
-            if (targetCluster == null || currentCluster == null)
+            if (targetCluster == null)
             {
               Log.Error($"Could not find target or current cluster for relocation: {rc.Cluster.Id}");
               continue; // skip this one
             }
-            if (occupied)
+            if (occupied && currentCluster != null)
             {
               Log.Warn($"Target location still occupied for relocation: {rc.Cluster.Id}. Resetting position.");
               GalaxyMapClusterForClusterRelocation? interimCluster = GalaxyMapViewer.GetRandomFreeCluster();
@@ -1066,19 +1069,38 @@ namespace ClusterRelocationService
               }
               continue; // skip this one
             }
-            rc.ResetPosition();
-            RelocatedCluster? relocated = GalaxyMapViewer.RelocateCluster(currentCluster, targetCluster);
-            if (relocated != null)
+            if (currentCluster != null)
             {
-              RelocatedClusters.Add(relocated);
-              await Task.Delay(5);
-              await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+              rc.ResetPosition();
+              RelocatedCluster? relocated = GalaxyMapViewer.RelocateCluster(currentCluster, targetCluster);
+              if (relocated != null)
+              {
+                RelocatedClusters.Add(relocated);
+                await Task.Delay(5);
+                await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+              }
+            }
+            else
+            {
+              rc.ResetPosition();
+              RelocatedCluster relocated = new(rc.Cluster);
+              relocated.Cluster.SetPosition(targetCluster.Position);
+              GalaxyMapViewer.GalaxyMapClusterReassign(targetCluster, relocated.Cluster);
+              targetCluster.IsRelocated = true;
+              if (relocated != null)
+              {
+                ClusterRelocationServiceMod.RelocatedClustersList.Remove(rc);
+                ClusterRelocationServiceMod.RelocatedClustersList.Add(relocated);
+                RelocatedClusters.Add(relocated);
+                await Task.Delay(5);
+                await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
+              }
             }
           }
         }
         passes++;
       }
-
+      GalaxyMapViewer.ReCheckCovers();
       // Any still in queue after maxPasses could not be canceled
       if (queue.Count > 0)
       {
@@ -1365,6 +1387,21 @@ namespace ClusterRelocationService
         {
           return;
         }
+      }
+      if (_isFullReloadNeeded)
+      {
+        MessageBoxResult confirm = MessageBox.Show(
+          "Loading a mod requires reloading the X4 data. Any unsaved changes will be lost. Continue?",
+          "Confirm Reload X4 Data",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning
+        );
+        if (confirm == MessageBoxResult.No)
+        {
+          return;
+        }
+        LoadX4DataInBackgroundStart();
+        return; // Will load mod after data load completes
       }
       BusyMessage = "Loading Mod data...";
       IsBusy = true;
@@ -1757,7 +1794,7 @@ namespace ClusterRelocationService
           var menuItem = new MenuItem
           {
             Header =
-              mapCell.IsMarkedForRelocation && _markedForRelocationOverlapped == null ? "Unmark for Relocation" : "Mark for Relocation",
+              mapCell.IsMarkedForRelocation && _markedForRelocationOverlaid == null ? "Unmark for Relocation" : "Mark for Relocation",
           };
           menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell);
           contextMenu.Items.Add(menuItem);
@@ -1782,43 +1819,43 @@ namespace ClusterRelocationService
               }
             }
           }
-          if (mapCell.IsOverlapping)
+          if (mapCell.IsCovers)
           {
-            List<Cluster> overlappingClusters = GalaxyMapViewer.GetOverlappedClusters(mapCell);
-            if (overlappingClusters.Count > 0)
+            List<Cluster> overlaidClusters = GalaxyMapViewer.GetOverlaidClusters(mapCell);
+            if (overlaidClusters.Count > 0)
             {
               contextMenu.Items.Add(new Separator());
-              var overlappingHeader = new MenuItem
+              var coversHeader = new MenuItem
               {
-                Header = $"Overlapped Clusters ({overlappingClusters.Count})",
+                Header = $"Underlying Clusters ({overlaidClusters.Count})",
                 FontWeight = FontWeights.Bold,
                 IsEnabled = false,
               };
-              contextMenu.Items.Add(overlappingHeader);
+              contextMenu.Items.Add(coversHeader);
               contextMenu.Items.Add(new Separator());
-              foreach (var overlappingCluster in overlappingClusters)
+              foreach (var overlaidCluster in overlaidClusters)
               {
-                var headerOfOverlappedItem = new MenuItem
+                var headerOfOverlaidItem = new MenuItem
                 {
-                  Header = $"Cluster: \"{overlappingCluster.Name ?? string.Empty}\"",
+                  Header = $"Cluster: \"{overlaidCluster.Name ?? string.Empty}\"",
                   FontWeight = FontWeights.Bold,
                   IsEnabled = false,
                 };
-                if (overlappingCluster.Sectors.Count == 1 && overlappingCluster.Sectors[0].Name != overlappingCluster.Name)
+                if (overlaidCluster.Sectors.Count == 1 && overlaidCluster.Sectors[0].Name != overlaidCluster.Name)
                 {
-                  headerOfOverlappedItem.Header += $"\nSector : \"{overlappingCluster.Sectors[0].Name}\"";
+                  headerOfOverlaidItem.Header += $"\nSector : \"{overlaidCluster.Sectors[0].Name}\"";
                 }
 
-                contextMenu.Items.Add(headerOfOverlappedItem);
+                contextMenu.Items.Add(headerOfOverlaidItem);
                 contextMenu.Items.Add(new Separator());
                 menuItem = new MenuItem
                 {
                   Header =
-                    mapCell.IsMarkedForRelocation && _markedForRelocationOverlapped == overlappingCluster
+                    mapCell.IsMarkedForRelocation && _markedForRelocationOverlaid == overlaidCluster
                       ? "Unmark for Relocation"
                       : "Mark for Relocation",
                 };
-                menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell, overlappingCluster);
+                menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell, overlaidCluster);
                 contextMenu.Items.Add(menuItem);
               }
             }
@@ -1855,23 +1892,23 @@ namespace ClusterRelocationService
       }
     }
 
-    public void ContextMenuMarkClusterForRelocation(GalaxyMapClusterForClusterRelocation? cluster, Cluster? overlapped = null)
+    public void ContextMenuMarkClusterForRelocation(GalaxyMapClusterForClusterRelocation? cluster, Cluster? overlaid = null)
     {
       if (cluster == null || cluster.Cluster == null || Galaxy == null)
       {
         return;
       }
-      if (_markedForRelocation == cluster && cluster.IsMarkedForRelocation && cluster.IsOverlapping)
+      if (_markedForRelocation == cluster && cluster.IsMarkedForRelocation && cluster.IsCovers)
       {
-        if (_markedForRelocationOverlapped != null || overlapped != null)
+        if (_markedForRelocationOverlaid != null || overlaid != null)
         {
-          if (overlapped != _markedForRelocationOverlapped)
+          if (overlaid != _markedForRelocationOverlaid)
           {
             BusyMessage =
-              $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlapped != null ? _markedForRelocationOverlapped : cluster.Cluster)}\" unmarked for relocation.";
-            _markedForRelocationOverlapped = overlapped;
+              $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlaid != null ? _markedForRelocationOverlaid : cluster.Cluster)}\" unmarked for relocation.";
+            _markedForRelocationOverlaid = overlaid;
             BusyMessage =
-              $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlapped != null ? _markedForRelocationOverlapped : cluster.Cluster)}\" marked for relocation. Please define a target.";
+              $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlaid != null ? _markedForRelocationOverlaid : cluster.Cluster)}\" marked for relocation. Please define a target.";
             return;
           }
         }
@@ -1881,12 +1918,12 @@ namespace ClusterRelocationService
         GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = false;
         cluster.IsMarkedForRelocation = false;
         Cluster clusterForName = cluster.Cluster;
-        if (_markedForRelocationOverlapped != null)
+        if (_markedForRelocationOverlaid != null)
         {
-          clusterForName = _markedForRelocationOverlapped;
+          clusterForName = _markedForRelocationOverlaid;
         }
         _markedForRelocation = null;
-        _markedForRelocationOverlapped = null;
+        _markedForRelocationOverlaid = null;
         NoClusterInRelocationInProcess = true;
         if (cluster.Cluster != null)
         {
@@ -1902,12 +1939,12 @@ namespace ClusterRelocationService
         GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = true;
         cluster.IsMarkedForRelocation = true;
         _markedForRelocation = cluster;
-        _markedForRelocationOverlapped = overlapped;
+        _markedForRelocationOverlaid = overlaid;
         NoClusterInRelocationInProcess = false;
         if (cluster.Cluster != null)
         {
           BusyMessage =
-            $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlapped ?? cluster.Cluster)}\" marked for relocation. Please define a target.";
+            $"Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocationOverlaid ?? cluster.Cluster)}\" marked for relocation. Please define a target.";
         }
       }
     }
@@ -1936,27 +1973,54 @@ namespace ClusterRelocationService
       BusyMessage = $"Relocating Cluster \"{RelocatedCluster.GetClusterName(_markedForRelocation.Cluster)}\" ...";
       _markedForRelocation.IsMarkedForRelocation = false;
       GalaxyMapViewer.ShowEmptyClusterPlaces.IsChecked = false;
-      RelocatedCluster? currentClusterRelocated = RelocatedClusters.FirstOrDefault(rc =>
-        StringHelper.EqualsIgnoreCase(rc.Cluster.Macro, _markedForRelocation.Cluster.Macro)
-      );
-      RelocatedCluster? relocatedCluster = GalaxyMapViewer.RelocateCluster(_markedForRelocation, targetCell, currentClusterRelocated);
-      if (currentClusterRelocated != null)
+      List<Cluster> overlaidClusters = GalaxyMapViewer.GetOverlaidClusters(_markedForRelocation);
+      _isFullReloadNeeded = overlaidClusters.Count > 0;
+      if (_markedForRelocationOverlaid == null)
       {
-        IsModCanBeSaved = _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
-      }
-      if (relocatedCluster != null)
-      {
-        RelocatedClusterCurrent = null;
-        if (!RelocatedClusters.Contains(relocatedCluster))
+        RelocatedCluster? currentClusterRelocated = RelocatedClusters.FirstOrDefault(rc =>
+          StringHelper.EqualsIgnoreCase(rc.Cluster.Macro, _markedForRelocation.Cluster.Macro)
+        );
+        RelocatedCluster? relocatedCluster = GalaxyMapViewer.RelocateCluster(_markedForRelocation, targetCell, currentClusterRelocated);
+        if (currentClusterRelocated != null)
         {
-          RelocatedClusters.Add(relocatedCluster);
+          IsModCanBeSaved = _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
+        }
+        if (relocatedCluster != null)
+        {
+          RelocatedClusterCurrent = null;
+          if (!RelocatedClusters.Contains(relocatedCluster))
+          {
+            RelocatedClusters.Add(relocatedCluster);
+            RelocatedClusterCurrent = RelocatedClusters.Last();
+          }
+          else
+          {
+            RelocatedClusterCurrent = relocatedCluster;
+          }
+        }
+        if (_markedForRelocation.IsCovers)
+        {
+          if (overlaidClusters.Count > 0)
+          {
+            GalaxyMapViewer.GalaxyMapClusterReassign(_markedForRelocation, overlaidClusters[0]);
+          }
+        }
+      }
+      else
+      {
+        Position position = targetCell.Position;
+        if (position != null)
+        {
+          RelocatedCluster clusterRelocated = new(_markedForRelocationOverlaid);
+          _markedForRelocationOverlaid.SetPosition(position);
+          RelocatedClusters.Add(clusterRelocated);
           RelocatedClusterCurrent = RelocatedClusters.Last();
-        }
-        else
-        {
-          RelocatedClusterCurrent = relocatedCluster;
+          GalaxyMapViewer.GalaxyMapClusterReassign(targetCell, _markedForRelocationOverlaid);
+          targetCell.IsRelocated = true;
+          _markedForRelocationOverlaid = null;
         }
       }
+      GalaxyMapViewer.IsCovers(_markedForRelocation);
       _markedForRelocation = null;
       NoClusterInRelocationInProcess = true;
     }

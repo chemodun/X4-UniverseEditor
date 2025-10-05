@@ -59,19 +59,19 @@ namespace ClusterRelocationService
       }
     }
 
-    private bool _isOverlapped = false;
-    public bool IsOverlapping
+    private bool _isCovers = false;
+    public bool IsCovers
     {
-      get => _isOverlapped;
+      get => _isCovers;
       set
       {
-        if (_isOverlapped == value)
+        if (_isCovers == value)
         {
           return;
         }
-        _isOverlapped = value;
+        _isCovers = value;
         UpdateStatus();
-        OnPropertyChanged(nameof(IsOverlapping));
+        OnPropertyChanged(nameof(IsCovers));
       }
     }
 
@@ -143,6 +143,7 @@ namespace ClusterRelocationService
             galaxyMapSector.IsMarkedForRelocation = IsMarkedForRelocation;
             galaxyMapSector.IsCurrent = IsCurrent;
             galaxyMapSector.IsRelocated = IsRelocated;
+            galaxyMapSector.IsCovers = IsCovers;
           }
         }
         return;
@@ -155,13 +156,13 @@ namespace ClusterRelocationService
       {
         SetMark(GalaxyMapViewerForClusterRelocation.BrushCurrent);
       }
+      else if (IsCovers)
+      {
+        SetMark(GalaxyMapViewerForClusterRelocation.BrushIfCovers);
+      }
       else if (IsRelocated)
       {
         SetMark(GalaxyMapViewerForClusterRelocation.BrushRelocated);
-      }
-      else if (IsOverlapping)
-      {
-        SetMark(GalaxyMapViewerForClusterRelocation.BrushIfOverlapped);
       }
       else
       {

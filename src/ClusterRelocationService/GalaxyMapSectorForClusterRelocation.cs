@@ -12,7 +12,6 @@ namespace ClusterRelocationService
 {
   public class GalaxyMapSectorForClusterRelocation : GalaxyMapSector
   {
-    private System.Windows.Media.Brush? _originalStroke = null;
     private bool _isMoved = false;
     public bool IsRelocated
     {
@@ -61,19 +60,19 @@ namespace ClusterRelocationService
       }
     }
 
-    private bool _isOverlapped = false;
-    public bool IsOverlapped
+    private bool _isCovers = false;
+    public bool IsCovers
     {
-      get => _isOverlapped;
+      get => _isCovers;
       set
       {
-        if (_isOverlapped == value)
+        if (_isCovers == value)
         {
           return;
         }
-        _isOverlapped = value;
+        _isCovers = value;
         UpdateStatus();
-        OnPropertyChanged(nameof(IsOverlapped));
+        OnPropertyChanged(nameof(IsCovers));
       }
     }
 
@@ -106,21 +105,13 @@ namespace ClusterRelocationService
       }
       if (brush != null)
       {
-        if (_originalStroke == null)
-        {
-          _originalStroke = Hexagon.Stroke;
-        }
         Hexagon.Stroke = brush;
         Hexagon.StrokeThickness = 3;
       }
       else
       {
-        if (_originalStroke != null)
-        {
-          Hexagon.Stroke = _originalStroke;
-          Hexagon.StrokeThickness = 1;
-          _originalStroke = null;
-        }
+        Hexagon.Stroke = GalaxyMapViewerForClusterRelocation.BrushClusterDefault;
+        Hexagon.StrokeThickness = 1;
       }
     }
 
@@ -142,13 +133,13 @@ namespace ClusterRelocationService
       {
         SetMark(GalaxyMapViewerForClusterRelocation.BrushCurrent);
       }
+      else if (IsCovers)
+      {
+        SetMark(GalaxyMapViewerForClusterRelocation.BrushIfCovers);
+      }
       else if (IsRelocated)
       {
         SetMark(GalaxyMapViewerForClusterRelocation.BrushRelocated);
-      }
-      else if (IsOverlapped)
-      {
-        SetMark(GalaxyMapViewerForClusterRelocation.BrushIfOverlapped);
       }
       else
       {
