@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.1.0...ClusterRelocationService@v1.2.0) (2025-10-05)
+
+
+### Features
+
+* **content:** update version and description for relocated clusters ([eaaf7d7](https://github.com/chemodun/X4-UniverseEditor/commit/eaaf7d7569a561cdac3c60043c0b4ca3724d1290))
+* **GalaxyMapClusterForClusterRelocation:** add IsOverlapping property and update status handling ([7fb8250](https://github.com/chemodun/X4-UniverseEditor/commit/7fb825020bed05ec450370ab2d665c51fe68b7fb))
+* **GalaxyMapSectorForClusterRelocation:** add IsOverlapped property and update status handling ([7fb8250](https://github.com/chemodun/X4-UniverseEditor/commit/7fb825020bed05ec450370ab2d665c51fe68b7fb))
+* **GalaxyMapViewerForClusterRelocation:** implement overlapping cluster checks ([7fb8250](https://github.com/chemodun/X4-UniverseEditor/commit/7fb825020bed05ec450370ab2d665c51fe68b7fb))
+* **README:** enhance documentation for overlaid clusters handling ([d86ffce](https://github.com/chemodun/X4-UniverseEditor/commit/d86ffce6e90eddff6b4e96233c0356028a39d3bf))
+
+
+### Bug Fixes
+
+* **MainWindow:** update context menu for overlapping clusters ([7fb8250](https://github.com/chemodun/X4-UniverseEditor/commit/7fb825020bed05ec450370ab2d665c51fe68b7fb))
+* **MainWindow:** update relocation logic for overlaid clusters ([71956f7](https://github.com/chemodun/X4-UniverseEditor/commit/71956f78e1f81d0d44b0cdfeca811f52ccd342b3))
+* **README:** correct context menu description for overlaid clusters ([d86ffce](https://github.com/chemodun/X4-UniverseEditor/commit/d86ffce6e90eddff6b4e96233c0356028a39d3bf))
+* **RelocatedCluster:** enhance cluster name formatting for multiple sectors ([83a82ae](https://github.com/chemodun/X4-UniverseEditor/commit/83a82ae30b14925f167caaf0657bce75da411063))
+
+
+### Code Refactoring
+
+* **GalaxyMapClusterForClusterRelocation:** rename IsOverlapping to IsCovers ([71956f7](https://github.com/chemodun/X4-UniverseEditor/commit/71956f78e1f81d0d44b0cdfeca811f52ccd342b3))
+
+
+### Documentation
+
+* **ClusterRelocationService:** more images ([a2061c0](https://github.com/chemodun/X4-UniverseEditor/commit/a2061c05aecd06b6a02af99563d7174661502c47))
+* **README:** improve clarity of galaxy relocation feature ([7c0bb78](https://github.com/chemodun/X4-UniverseEditor/commit/7c0bb7804059b957dfe5ee0c634188851b4ae32f))
+* **README:** Update README's files ([a158917](https://github.com/chemodun/X4-UniverseEditor/commit/a158917d4e4a0815f48f1f858e675d727ab43dbf))
+* **README:** Update README's files ([f759f78](https://github.com/chemodun/X4-UniverseEditor/commit/f759f780a157ec08b7113ad4f4cf6febd2a8cc64))
+
 ## [1.1.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.0.0...ClusterRelocationService@v1.1.0) (2025-09-28)
 
 
