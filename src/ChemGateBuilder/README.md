@@ -435,7 +435,7 @@ Here are several screenshots from the game with the mod gates in the `Asteroid B
 - [EGOSOFT](https://www.egosoft.com) - for the game itself (In fact - for the series of games)!
 - Members of the [x4_modding discord channel](https://discord.com/channels/337098290917146624/502057640877228042) - for their answers, support, ideas, and inspiration!
 - [SiliconStew](https://steamcommunity.com/profiles/76561198005610231) - for the documentation of the Gate Rotation specifics!
-- [Sleaker](https://steamcommunity.com/id/sleaker) - for the idea and initial implementation of the map exporting feature and hiding the "unnecessary" Mod's.
+- [Sleaker](https://steamcommunity.com/id/sleaker) - for the idea and initial implementation of the map exporting feature and hiding the "unnecessary" Mod's. And for the continuous bug reports and support!
 
 ## Useful Links
 
