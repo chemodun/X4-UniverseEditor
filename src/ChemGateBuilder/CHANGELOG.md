@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.10.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.5...ChemGateBuilder@v0.10.6) (2025-10-11)
+
+
+### Bug Fixes
+
+* **GalaxyMapWindow:** update connection call to match new method signature ([4c68f22](https://github.com/chemodun/X4-UniverseEditor/commit/4c68f2217262cda1e7548383e521c5461b4052ff))
+* **MainWindow:** update background worker event handlers ([a7d1d54](https://github.com/chemodun/X4-UniverseEditor/commit/a7d1d5452433315b588bd4e2ba5b2489c7f7606b))
+* **MainWindow:** update load button header based on mode ([368e060](https://github.com/chemodun/X4-UniverseEditor/commit/368e060c0d581d9423336f54719a97a18d72aaaf))
+* **Mod:** set initial directory for mod folder selection dialog ([368e060](https://github.com/chemodun/X4-UniverseEditor/commit/368e060c0d581d9423336f54719a97a18d72aaaf))
+* **README:** update changelog for version 0.10.5 ([9b8af09](https://github.com/chemodun/X4-UniverseEditor/commit/9b8af096056fe2723aedf7b655673c560c4bb741))
+* **README:** update changelog for version 0.10.6 ([dd21f7d](https://github.com/chemodun/X4-UniverseEditor/commit/dd21f7debd7246554c5e62ea3581290dee321f41))
+
+
+### Code Refactoring
+
+* **ChemGateBuilder:** add assembly metadata ([b70bc2d](https://github.com/chemodun/X4-UniverseEditor/commit/b70bc2d5bc3518075cbf2ae984baeee11a459d88))
+* **ChemGateBuilder:** add update check functionality ([b70bc2d](https://github.com/chemodun/X4-UniverseEditor/commit/b70bc2d5bc3518075cbf2ae984baeee11a459d88))
+* **GalaxyMapViewerForGateBuilder:** add GalaxyMapViewerForGateBuilder class ([d511e7c](https://github.com/chemodun/X4-UniverseEditor/commit/d511e7cb4d0c40e5ecd9afed1f1dff01acfd337e))
+* **GalaxyMapViewerForGateBuilder:** remove unused editorMode parameter ([4c68f22](https://github.com/chemodun/X4-UniverseEditor/commit/4c68f2217262cda1e7548383e521c5461b4052ff))
+* **GalaxyMapWindow:** set initial directory for PNG export dialog ([368e060](https://github.com/chemodun/X4-UniverseEditor/commit/368e060c0d581d9423336f54719a97a18d72aaaf))
+* **Mod:** update selector for galaxy connections ([00585de](https://github.com/chemodun/X4-UniverseEditor/commit/00585de79dcd8092b286acd4a2c509e0bbc38e74))
+* **X4DataExtractionWindow:** pass X4UniverseId to extraction window ([00585de](https://github.com/chemodun/X4-UniverseEditor/commit/00585de79dcd8092b286acd4a2c509e0bbc38e74))
+
+
+### Miscellaneous Chores
+
+* **docs/images:** remove unused GalaxyMapAddSectors images ([3c96c46](https://github.com/chemodun/X4-UniverseEditor/commit/3c96c4676bab3361bc8545a98d4ead7f418f7a9c))
+
+
+### Documentation
+
+* **README:** add update check functionality ([e86ee33](https://github.com/chemodun/X4-UniverseEditor/commit/e86ee33fdecc276d0f0967b3289293580185f721))
+* **README:** update acknowledgments section ([a8745e7](https://github.com/chemodun/X4-UniverseEditor/commit/a8745e7fb88102aa71b2a889823edec3132644e9))
+* **README:** update changelog for version 0.10.6 ([e86ee33](https://github.com/chemodun/X4-UniverseEditor/commit/e86ee33fdecc276d0f0967b3289293580185f721))
+* **README:** Update README's files ([8aeaa49](https://github.com/chemodun/X4-UniverseEditor/commit/8aeaa49cbc4ed971237494e8a5d41f3a98c34658))
+* **README:** Update README's files ([44b0e90](https://github.com/chemodun/X4-UniverseEditor/commit/44b0e90b05218ae5698cf675c9f18ddf487b2eb2))
+* **README:** Update README's files ([41349ce](https://github.com/chemodun/X4-UniverseEditor/commit/41349ce3d050442fd070792b7b4e386d11fbb545))
+* **README:** Update README's files ([45c96fc](https://github.com/chemodun/X4-UniverseEditor/commit/45c96fc81f1da7f225ee15a119976c6940af4b92))
+
 ## [0.10.5](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.4...ChemGateBuilder@v0.10.5) (2025-09-22)
 
 
