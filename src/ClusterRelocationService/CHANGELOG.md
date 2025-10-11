@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.2.0...ClusterRelocationService@v1.2.1) (2025-10-11)
+
+
+### Documentation
+
+* **ClusterRelocationService:** add YouTube thumbnail image ([2cdc53f](https://github.com/chemodun/X4-UniverseEditor/commit/2cdc53faa4f2d66b176cb0ea7bd8287296e69f7b))
+
 ## [1.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.1.0...ClusterRelocationService@v1.2.0) (2025-10-05)
 
 
