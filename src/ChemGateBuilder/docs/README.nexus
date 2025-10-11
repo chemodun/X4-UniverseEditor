@@ -85,6 +85,11 @@ You can download the tool from the following locations:
 [/list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#save-the-mod]Save the Mod[/url]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#load-the-mod]Load the Mod[/url]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#check-for-updates]Check for Updates[/url]
+[list]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#by-menu-item]By Menu Item[/url]
+[*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#on-tool-start]On Tool Start[/url]
+[/list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#overview-new-gates-in-the-tool-and-in-the-game]Overview New Gates in the Tool and in the Game[/url]
 [/list]
 [*] [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ChemGateBuilder#credits]Credits[/url]
@@ -425,6 +430,16 @@ This was made to avoid selecting the wrong folder.
 
 After loading the mod, you will see the connections in the list and the gates on the map for the first connection. This visibility confirms the successful loading of the mod and aids in verifying the gate configurations.
 
+[size=3][u][i]Check for Updates[/i][/u][/size]
+
+[size=3][u]By Menu Item[/u][/size]
+
+You can check for updates by clicking the [b]Check for Updates[/b] menu item in the [b]Help[/b] menu. This will prompt the tool to check for any available updates and notify you if a new version is found or if you are already using the latest version.
+
+[size=3][u]On Tool Start[/u][/size]
+
+You can also enable the option to check for updates automatically when the tool starts. This can be done by selecting the appropriate checkbox in the options menu. When enabled, the tool will check for updates each time it is launched and inform you if a new version is available.
+
 [size=3][u][i]Overview New Gates in the Tool and in the Game[/i][/u][/size]
 
 There is a short overview of the mod in the tool to see the gate locations.
@@ -466,6 +481,10 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 
 [size=3][u][i][0.10.6] - 2025-10-11[/i][/u][/size]
 [list]
+[*] Added
+[list]
+[*] Possibility to check for updates as by clicking the [b]Check for Updates[/b] menu item in the [b]Help[/b] menu, as well as on the tool start.
+[/list]
 [*] Fixed
 [list]
 [*] Improve gate connection logic, fixes Bug in Gate matching Logic.
@@ -491,6 +510,15 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [/list]
 [size=3][u][i][0.10.3] - 2025-09-20[/i][/u][/size]
 [list]
+[*] Added
+[list]
+[*] Exporting the map to the image file (png) in the Map Viewer window (Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation)
+[/list]
+[*] Improved
+[list]
+[*] Get rid of the hardcoded DLC's list, i.e. Envoy Pack is loaded normally
+[*] Main window blur on the Game Data loading
+[/list]
 [*] Fixed
 [list]
 [*] Fixed the wrong gate connection on Galaxy map, if Gate zones names are doubled by some Mods
@@ -498,15 +526,6 @@ This project is licensed under the Apache License 2.0 - see the [url=https://git
 [*] Game version updated in the Gate Keeper mod [b]content.xml[/b] file on save
 [*] Mods not influenced on a map data is not shown in Mods list of Map Viewer window (Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation)
 [*] Save As.. button availability
-[/list]
-[*] Improved
-[list]
-[*] Get rid of the hardcoded DLC's list, i.e. Envoy Pack is loaded normally
-[*] Main window blur on the Game Data loading
-[/list]
-[*] Added
-[list]
-[*] Exporting the map to the image file (png) in the Map Viewer window (Thanks to [url=https://steamcommunity.com/id/sleaker]@Sleaker[/url] for the idea and initial implementation)
 [/list]
 [/list]
 [size=3][u][i][0.10.2] - 2025-07-19[/i][/u][/size]
