@@ -462,7 +462,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
   - Improve gate connection logic, fixes Bug in Gate matching Logic.
   - Disabled Mods influenced on sorting order in the `Direct` mode.
   - SymLinks used by Vortex Mod Manager not processed right
-  - Information from the extensions files are loaded twice
+  - Information from the extension's files are loaded twice
   - Other minor fixes and improvements
 
 ### [0.10.5] - 2025-09-22
