@@ -74,6 +74,7 @@ You can download the tool from the following locations:
     - [GitHub Repository Issues Reporting](#github-repository-issues-reporting)
   - [License](#license)
   - [Changelog](#changelog)
+    - [\[0.10.6\] - 2025-10-11](#0106---2025-10-11)
     - [\[0.10.5\] - 2025-09-22](#0105---2025-09-22)
     - [\[0.10.4\] - 2025-09-21](#0104---2025-09-21)
     - [\[0.10.3\] - 2025-09-20](#0103---2025-09-20)
@@ -438,6 +439,15 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [0.10.6] - 2025-10-11
+
+- Fixed
+  - Improve gate connection logic, fixes Bug in Gate matching Logic.
+  - Disabled Mods influenced on sorting order in the `Direct` mode.
+  - SymLinks used by Vortex Mod Manager not processed right
+  - Information from the extensions files are loaded twice
+  - Other minor fixes and improvements
 
 ### [0.10.5] - 2025-09-22
 
