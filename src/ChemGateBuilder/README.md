@@ -67,6 +67,9 @@ You can download the tool from the following locations:
         - [Showing an empty cluster cells](#showing-an-empty-cluster-cells)
     - [Save the Mod](#save-the-mod)
     - [Load the Mod](#load-the-mod)
+    - [Check for Updates](#check-for-updates)
+      - [By Menu Item](#by-menu-item)
+      - [On Tool Start](#on-tool-start)
     - [Overview New Gates in the Tool and in the Game](#overview-new-gates-in-the-tool-and-in-the-game)
   - [Credits](#credits)
   - [Useful Links](#useful-links)
@@ -401,6 +404,16 @@ This was made to avoid selecting the wrong folder.
 
 After loading the mod, you will see the connections in the list and the gates on the map for the first connection. This visibility confirms the successful loading of the mod and aids in verifying the gate configurations.
 
+### Check for Updates
+
+#### By Menu Item
+
+You can check for updates by clicking the `Check for Updates` menu item in the `Help` menu. This will prompt the tool to check for any available updates and notify you if a new version is found or if you are already using the latest version.
+
+#### On Tool Start
+
+You can also enable the option to check for updates automatically when the tool starts. This can be done by selecting the appropriate checkbox in the options menu. When enabled, the tool will check for updates each time it is launched and inform you if a new version is available.
+
 ### Overview New Gates in the Tool and in the Game
 
 There is a short overview of the mod in the tool to see the gate locations.
@@ -442,6 +455,9 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ### [0.10.6] - 2025-10-11
 
+- Added
+  - Possibility to check for updates as by clicking the `Check for Updates` menu item in the `Help` menu, as well as on the tool start.
+
 - Fixed
   - Improve gate connection logic, fixes Bug in Gate matching Logic.
   - Disabled Mods influenced on sorting order in the `Direct` mode.
@@ -461,17 +477,17 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ### [0.10.3] - 2025-09-20
 
+- Added
+  - Exporting the map to the image file (png) in the Map Viewer window (Thanks to [@Sleaker](https://steamcommunity.com/id/sleaker) for the idea and initial implementation)
+- Improved
+  - Get rid of the hardcoded DLC's list, i.e. Envoy Pack is loaded normally
+  - Main window blur on the Game Data loading
 - Fixed
   - Fixed the wrong gate connection on Galaxy map, if Gate zones names are doubled by some Mods
   - If game version is not presented in the built-in list - it will be added automatically
   - Game version updated in the Gate Keeper mod `content.xml` file on save
   - Mods not influenced on a map data is not shown in Mods list of Map Viewer window (Thanks to [@Sleaker](https://steamcommunity.com/id/sleaker) for the idea and initial implementation)
   - Save As.. button availability
-- Improved
-  - Get rid of the hardcoded DLC's list, i.e. Envoy Pack is loaded normally
-  - Main window blur on the Game Data loading
-- Added
-  - Exporting the map to the image file (png) in the Map Viewer window (Thanks to [@Sleaker](https://steamcommunity.com/id/sleaker) for the idea and initial implementation)
 
 ### [0.10.2] - 2025-07-19
 
