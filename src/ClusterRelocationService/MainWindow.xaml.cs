@@ -578,7 +578,13 @@ namespace ClusterRelocationService
             bool isRelocated = RelocatedClusters.Any(relocated =>
               relocated?.Cluster != null && StringHelper.EqualsIgnoreCase(relocated.Cluster.Macro, cluster.Macro)
             );
-            return new OverlaidClusterInfo(cluster, others, isRelocated);
+            bool isVisibleOnMap = false;
+            GalaxyMapCluster? mapCluster = GalaxyMapViewer.GetClusterByMacro(cluster.Macro);
+            if (mapCluster is GalaxyMapClusterForClusterRelocation relocationCluster)
+            {
+              isVisibleOnMap = relocationCluster.Cluster != null && ReferenceEquals(relocationCluster.Cluster, cluster);
+            }
+            return new OverlaidClusterInfo(cluster, others, isRelocated, isVisibleOnMap);
           });
         })
         .OrderBy(info => info.X)

@@ -17,8 +17,9 @@ namespace ClusterRelocationService
     public int OverlaidCount { get; }
     public string OverlaidWith { get; }
     public bool IsRelocated { get; }
+    public bool IsVisibleOnMap { get; }
 
-    public OverlaidClusterInfo(Cluster cluster, IEnumerable<Cluster> overlappingClusters, bool isRelocated)
+    public OverlaidClusterInfo(Cluster cluster, IEnumerable<Cluster> overlappingClusters, bool isRelocated, bool isVisibleOnMap)
     {
       Name = RelocatedCluster.GetClusterName(cluster);
       Macro = cluster?.Macro ?? string.Empty;
@@ -30,6 +31,7 @@ namespace ClusterRelocationService
           ? string.Empty
           : string.Join(", ", overlappingClusters.Select(c => $"{RelocatedCluster.GetClusterName(c)} ({c.Macro})"));
       IsRelocated = isRelocated;
+      IsVisibleOnMap = isVisibleOnMap;
     }
   }
 }

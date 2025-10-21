@@ -599,6 +599,16 @@
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                                           Margin="5"
                                           MouseDoubleClick="OverlaidClustersDataGrid_MouseDoubleClick">
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="FontWeight" Value="Normal"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsVisibleOnMap}" Value="True">
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGrid.RowStyle>
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Cluster"
                                                             Binding="{Binding Name}"
