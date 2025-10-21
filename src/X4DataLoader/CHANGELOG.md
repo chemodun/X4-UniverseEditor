@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.11.1...X4DataLoader@v0.11.2) (2025-10-21)
+
+
+### Bug Fixes
+
+* **Translation:** update ReferenceRegex to allow whitespace in references ([b2af344](https://github.com/chemodun/X4-UniverseEditor/commit/b2af344865054e664a2a2dd2fd6c7038f6a49b8c))
+
 ## [0.11.1](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.11.0...X4DataLoader@v0.11.1) (2025-10-05)
 
 
