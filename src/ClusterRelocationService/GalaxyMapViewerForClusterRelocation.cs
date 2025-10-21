@@ -341,6 +341,15 @@ namespace ClusterRelocationService
         }
       }
     }
+
+    public bool ShareSameCell(Position? a, Position? b)
+    {
+      if (a == null || b == null)
+      {
+        return false;
+      }
+      return Math.Abs(a.X - b.X) < ColumnWidth && Math.Abs(a.Z - b.Z) < RowHeight;
+    }
   }
 
   public class RelocationMessageEventArgs(string message) : EventArgs

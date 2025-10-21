@@ -1,7 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -440,6 +443,8 @@ namespace ClusterRelocationService
 
     public ObservableCollection<RelocatedCluster> RelocatedClusters { get; private set; } = new();
 
+    public ObservableCollection<OverlaidClusterInfo> OverlaidClusters { get; } = new();
+
     private RelocatedCluster? _relocatedClusterCurrent = null;
     public RelocatedCluster? RelocatedClusterCurrent
     {
@@ -518,6 +523,73 @@ namespace ClusterRelocationService
     private void UpdateIsModCanBeSavedAs()
     {
       IsModCanBeSavedAs = IsModCanBeSaved || (HasRelocated && NoClusterInRelocationInProcess);
+    }
+
+    private void UpdateOverlaidClustersList()
+    {
+      if (Galaxy == null || Galaxy.Clusters.Count == 0)
+      {
+        OverlaidClusters.Clear();
+        return;
+      }
+
+      List<List<Cluster>> groups = [];
+
+      foreach (Cluster cluster in Galaxy.Clusters)
+      {
+        if (cluster == null)
+        {
+          continue;
+        }
+
+        Position? position = cluster.Position;
+        if (position == null)
+        {
+          continue;
+        }
+
+        List<Cluster>? matchingGroup = null;
+        foreach (List<Cluster> existingGroup in groups)
+        {
+          if (existingGroup.Any(existing => GalaxyMapViewer.ShareSameCell(existing.Position, position)))
+          {
+            matchingGroup = existingGroup;
+            break;
+          }
+        }
+
+        if (matchingGroup == null)
+        {
+          matchingGroup = [];
+          groups.Add(matchingGroup);
+        }
+
+        matchingGroup.Add(cluster);
+      }
+
+      var overlayInfos = groups
+        .Where(group => group.Count > 1)
+        .SelectMany(group =>
+        {
+          return group.Select(cluster =>
+          {
+            List<Cluster> others = group.Where(other => !ReferenceEquals(other, cluster)).ToList();
+            bool isRelocated = RelocatedClusters.Any(relocated =>
+              relocated?.Cluster != null && StringHelper.EqualsIgnoreCase(relocated.Cluster.Macro, cluster.Macro)
+            );
+            return new OverlaidClusterInfo(cluster, others, isRelocated);
+          });
+        })
+        .OrderBy(info => info.X)
+        .ThenBy(info => info.Z)
+        .ThenBy(info => info.Macro, StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+      OverlaidClusters.Clear();
+      foreach (OverlaidClusterInfo info in overlayInfos)
+      {
+        OverlaidClusters.Add(info);
+      }
     }
 
     public string X4DataFolderPath
@@ -765,6 +837,7 @@ namespace ClusterRelocationService
       RelocatedClusters.CollectionChanged += RelocatedClusters_CollectionChanged;
 
       GalaxyMapViewer.RefreshGalaxyData();
+      UpdateOverlaidClustersList();
       Dispatcher.BeginInvoke(
         DispatcherPriority.Loaded,
         new Action(() =>
@@ -916,6 +989,7 @@ namespace ClusterRelocationService
       await ResetRelocations();
       BusyMessage = "Preparing to load X4 data...";
       Galaxy.Clear();
+      OverlaidClusters.Clear();
       _backgroundWorker.DoWork -= LoadX4DataInBackground;
       _backgroundWorker.DoWork += LoadX4DataInBackground;
       _backgroundWorker.ProgressChanged -= LoadX4DataInBackgroundProgressChanged;
@@ -1018,6 +1092,7 @@ namespace ClusterRelocationService
         }
         _hasBeenInitialized = true;
       }
+      UpdateOverlaidClustersList();
       IsBusy = false;
     }
 
@@ -1119,6 +1194,7 @@ namespace ClusterRelocationService
         RelocatedClusterCurrent = RelocatedClusters[0];
       }
       NoClusterInRelocationInProcess = true;
+      UpdateOverlaidClustersList();
     }
 
     private static bool ValidateX4DataFolder(string folderPath, out string errorMessage)
@@ -1298,6 +1374,7 @@ namespace ClusterRelocationService
       GalaxyMapViewer.OnUpdateRelocatedClusters(RelocatedClusters, e);
       IsModCanBeSaved = ClusterRelocationServiceMod.IsModChanged(RelocatedClusters);
       HasRelocated = ClusterRelocationServiceMod != null && RelocatedClusters.Count > 0;
+      UpdateOverlaidClustersList();
     }
 
     public void ButtonRelocationCancel_Click(object sender, RoutedEventArgs e)
@@ -2023,6 +2100,7 @@ namespace ClusterRelocationService
       GalaxyMapViewer.IsCovers(_markedForRelocation);
       _markedForRelocation = null;
       NoClusterInRelocationInProcess = true;
+      UpdateOverlaidClustersList();
     }
 
     private async void ExportPngButton_Click(object sender, RoutedEventArgs e)

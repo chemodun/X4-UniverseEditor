@@ -443,143 +443,200 @@
                       Margin="5">
                 <DockPanel VerticalAlignment="Stretch"
                            LastChildFill="True">
-                    <GroupBox Header="{Binding RelocatedClusters.Count}" HeaderStringFormat="Relocated Clusters: {0}"
-                              DockPanel.Dock="Bottom"
-                              Margin="5"
-                              Height="150"
-                              VerticalAlignment="Stretch">
-                        <Grid Margin="5"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="160"/>
-                            </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="DataGridGalaxyConnections"
-                                      ItemsSource="{Binding RelocatedClusters}"
-                                      SelectedItem="{Binding RelocatedClusterCurrent, Mode=TwoWay}"
-                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                      AutoGenerateColumns="False"
-                                      HorizontalAlignment="Stretch"
-                                      Margin="5"
-                                      CanUserAddRows="False"
-                                      IsReadOnly="True"
-                                      SelectionMode="Single"
-                                      MinHeight="80"
-                                      IsEnabled="{Binding NoClusterInRelocationProcess}">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Cluster"
-                                                        Binding="{Binding Name}"
-                                                        MinWidth="320"
-                                                        Width="*"/>
-                                    <DataGridTextColumn Header="Macro"
-                                                        Binding="{Binding Macro}"
-                                                        Width="*"/>
-                                    <DataGridTextColumn Header="X, Original"
-                                                        Binding="{Binding XOriginal, StringFormat={}{0:N0}}"
-                                                        Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                <Setter Property="Foreground"
-                                                        Value="{Binding XOriginal, Converter={StaticResource NumberToBrushConverter}}"/>
-                                                <Setter Property="FontWeight">
-                                                    <Setter.Value>
-                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
-                                                            <Binding Path="XOriginal"/>
-                                                            <Binding Path="XCurrent"/>
-                                                        </MultiBinding>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="X, Current"
-                                                        Binding="{Binding XCurrent, StringFormat={}{0:N0}}"
-                                                        Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                <Setter Property="Foreground"
-                                                        Value="{Binding XCurrent, Converter={StaticResource NumberToBrushConverter}}"/>
-                                                <Setter Property="FontWeight">
-                                                    <Setter.Value>
-                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
-                                                            <Binding Path="XOriginal"/>
-                                                            <Binding Path="XCurrent"/>
-                                                        </MultiBinding>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Z, Original"
-                                                        Binding="{Binding ZOriginal, StringFormat={}{0:N0}}"
-                                                        Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                <Setter Property="Foreground"
-                                                        Value="{Binding ZOriginal, Converter={StaticResource NumberToBrushConverter}}"/>
-                                                <Setter Property="FontWeight">
-                                                    <Setter.Value>
-                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
-                                                            <Binding Path="ZOriginal"/>
-                                                            <Binding Path="ZCurrent"/>
-                                                        </MultiBinding>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Z, Current"
-                                                        Binding="{Binding ZCurrent, StringFormat={}{0:N0}}"
-                                                        Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                <Setter Property="Foreground"
-                                                        Value="{Binding ZCurrent, Converter={StaticResource NumberToBrushConverter}}"/>
-                                                <Setter Property="FontWeight">
-                                                    <Setter.Value>
-                                                        <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
-                                                            <Binding Path="ZOriginal"/>
-                                                            <Binding Path="ZCurrent"/>
-                                                        </MultiBinding>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                    <TabControl DockPanel.Dock="Bottom"
+                                Margin="5"
+                                Height="150"
+                                VerticalAlignment="Stretch">
+                        <TabItem>
+                            <TabItem.Header>
+                                <TextBlock Text="{Binding RelocatedClusters.Count, StringFormat=Relocated Clusters: {0}}"/>
+                            </TabItem.Header>
+                            <Grid Margin="5"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="160"/>
+                                </Grid.ColumnDefinitions>
+                                <DataGrid x:Name="DataGridGalaxyConnections"
+                                          ItemsSource="{Binding RelocatedClusters}"
+                                          SelectedItem="{Binding RelocatedClusterCurrent, Mode=TwoWay}"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                          AutoGenerateColumns="False"
+                                          HorizontalAlignment="Stretch"
+                                          Margin="5"
+                                          CanUserAddRows="False"
+                                          IsReadOnly="True"
+                                          SelectionMode="Single"
+                                          MinHeight="80"
+                                          IsEnabled="{Binding NoClusterInRelocationProcess}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Cluster"
+                                                            Binding="{Binding Name}"
+                                                            MinWidth="320"
+                                                            Width="*"/>
+                                        <DataGridTextColumn Header="Macro"
+                                                            Binding="{Binding Macro}"
+                                                            Width="*"/>
+                                        <DataGridTextColumn Header="X, Original"
+                                                            Binding="{Binding XOriginal, StringFormat={}{0:N0}}"
+                                                            Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding XOriginal, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                    <Setter Property="FontWeight">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                                <Binding Path="XOriginal"/>
+                                                                <Binding Path="XCurrent"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="X, Current"
+                                                            Binding="{Binding XCurrent, StringFormat={}{0:N0}}"
+                                                            Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding XCurrent, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                    <Setter Property="FontWeight">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                                <Binding Path="XOriginal"/>
+                                                                <Binding Path="XCurrent"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Z, Original"
+                                                            Binding="{Binding ZOriginal, StringFormat={}{0:N0}}"
+                                                            Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding ZOriginal, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                    <Setter Property="FontWeight">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                                <Binding Path="ZOriginal"/>
+                                                                <Binding Path="ZCurrent"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Z, Current"
+                                                            Binding="{Binding ZCurrent, StringFormat={}{0:N0}}"
+                                                            Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding ZCurrent, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                    <Setter Property="FontWeight">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource BoldIfDifferentConverter}">
+                                                                <Binding Path="ZOriginal"/>
+                                                                <Binding Path="ZCurrent"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
 
-                            <Grid Grid.Column="1" Margin="5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/> <!-- button row -->
-                                    <RowDefinition Height="*" />   <!-- takes all available space -->
-                                    <RowDefinition Height="Auto"/> <!-- button row -->
-                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1"
+                                      Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <Button x:Name="ButtonRelocationCancel"
-                                        Content="Cancel Relocation"
-                                        ToolTip="This will revert the relocation and restore the cluster position to original"
-                                        Grid.Row="0"
-                                        Margin="0,5,0,0"
-                                        Width="140"
-                                        IsEnabled="{Binding IsRelocationCanBeCancelled}"
-                                        Click="ButtonRelocationCancel_Click"/>
-                                <Button x:Name="ButtonRelocationFullMess"
-                                        Content="Make a &quot;Full Mess&quot;"
-                                        ToolTip="This will relocate all clusters to the new unpredictable positions"
-                                        Grid.Row="2"
-                                        Margin="0,5,0,0"
-                                        Width="140"
-                                        Visibility="{Binding FullMessIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
-                                        Click="ButtonRelocationFullMess_Click"/>
+                                    <Button x:Name="ButtonRelocationCancel"
+                                            Content="Cancel Relocation"
+                                            ToolTip="This will revert the relocation and restore the cluster position to original"
+                                            Grid.Row="0"
+                                            Margin="0,5,0,0"
+                                            Width="140"
+                                            IsEnabled="{Binding IsRelocationCanBeCancelled}"
+                                            Click="ButtonRelocationCancel_Click"/>
+                                    <Button x:Name="ButtonRelocationFullMess"
+                                            Content="Make a &quot;Full Mess&quot;"
+                                            ToolTip="This will relocate all clusters to the new unpredictable positions"
+                                            Grid.Row="2"
+                                            Margin="0,5,0,0"
+                                            Width="140"
+                                            Visibility="{Binding FullMessIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Click="ButtonRelocationFullMess_Click"/>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </GroupBox>
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <TextBlock Text="{Binding OverlaidClusters.Count, StringFormat=Overlaid Clusters: {0}}"/>
+                            </TabItem.Header>
+                            <Grid Margin="5">
+                                <DataGrid ItemsSource="{Binding OverlaidClusters}"
+                                          AutoGenerateColumns="False"
+                                          CanUserAddRows="False"
+                                          IsReadOnly="True"
+                                          SelectionMode="Single"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          Margin="5">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Cluster"
+                                                            Binding="{Binding Name}"
+                                                            Width="2*"/>
+                                        <DataGridTextColumn Header="Macro"
+                                                            Binding="{Binding Macro}"
+                                                            Width="*"/>
+                                        <DataGridTextColumn Header="X"
+                                                            Binding="{Binding X, StringFormat={}{0:N0}}"
+                                                            Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding X, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Z"
+                                                            Binding="{Binding Z, StringFormat={}{0:N0}}"
+                                                            Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{Binding Z, Converter={StaticResource NumberToBrushConverter}}"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Conflicts"
+                                                            Binding="{Binding OverlaidCount}"
+                                                            Width="Auto"/>
+                                        <DataGridTextColumn Header="Overlaid With"
+                                                            Binding="{Binding OverlaidWith}"
+                                                            Width="2*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
                     <GroupBox Header="Galaxy Map"
                               Margin="5"
                               DockPanel.Dock="Top">
