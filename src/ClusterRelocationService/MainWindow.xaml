@@ -589,14 +589,16 @@
                                 <TextBlock Text="{Binding OverlaidClusters.Count, StringFormat=Overlaid Clusters: {0}}"/>
                             </TabItem.Header>
                             <Grid Margin="5">
-                                <DataGrid ItemsSource="{Binding OverlaidClusters}"
+                                <DataGrid x:Name="OverlaidClustersDataGrid"
+                                          ItemsSource="{Binding OverlaidClusters}"
                                           AutoGenerateColumns="False"
                                           CanUserAddRows="False"
                                           IsReadOnly="True"
                                           SelectionMode="Single"
                                           ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                          Margin="5">
+                                          Margin="5"
+                                          MouseDoubleClick="OverlaidClustersDataGrid_MouseDoubleClick">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Cluster"
                                                             Binding="{Binding Name}"

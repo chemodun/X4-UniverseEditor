@@ -1,9 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using Utilities.Logging;
 using X4DataLoader;
@@ -202,6 +205,165 @@ namespace ClusterRelocationService
         }
         _relocatedClusterCurrent = relocatedClusterCurrent;
       }
+    }
+
+    public void CenterOnCluster(string macro)
+    {
+      if (string.IsNullOrWhiteSpace(macro))
+      {
+        return;
+      }
+
+      GalaxyMapClusterForClusterRelocation? targetCluster = _clusters
+        .OfType<GalaxyMapClusterForClusterRelocation>()
+        .FirstOrDefault(c => c?.Cluster != null && StringHelper.EqualsIgnoreCase(c.Cluster.Macro, macro));
+
+      if (targetCluster != null)
+      {
+        CenterOnCluster(targetCluster);
+      }
+    }
+
+    private void CenterOnCluster(GalaxyMapClusterForClusterRelocation targetCluster)
+    {
+      if (GalaxyCanvas == null)
+      {
+        return;
+      }
+
+      Dispatcher.InvokeAsync(
+        () =>
+        {
+          if (GalaxyCanvas == null)
+          {
+            return;
+          }
+
+          GalaxyMapClusterForClusterRelocation? cluster = targetCluster;
+          string macro = cluster.Cluster?.Macro ?? string.Empty;
+
+          bool zoomAdjusted = AdjustZoomForClusterFocus();
+          if (zoomAdjusted && !string.IsNullOrWhiteSpace(macro))
+          {
+            cluster = FindClusterByMacro(macro) ?? cluster;
+          }
+
+          Polygon? clusterShape = GetClusterPolygon(cluster);
+          if (clusterShape == null)
+          {
+            return;
+          }
+
+          GalaxyCanvas.UpdateLayout();
+          clusterShape.UpdateLayout();
+
+          Rect bounds;
+          try
+          {
+            bounds = clusterShape.TransformToAncestor(GalaxyCanvas).TransformBounds(new Rect(clusterShape.RenderSize));
+          }
+          catch (InvalidOperationException)
+          {
+            return;
+          }
+
+          double viewportWidth = ViewportWidth > 0 ? ViewportWidth : ActualWidth;
+          double viewportHeight = ViewportHeight > 0 ? ViewportHeight : ActualHeight;
+          if (viewportWidth <= 0 || viewportHeight <= 0)
+          {
+            return;
+          }
+
+          double centerX = bounds.Left + (bounds.Width / 2);
+          double centerY = bounds.Top + (bounds.Height / 2);
+
+          double horizontalOffset = Math.Max(0, centerX - (viewportWidth / 2));
+          double verticalOffset = Math.Max(0, centerY - (viewportHeight / 2));
+
+          ScrollToHorizontalOffset(horizontalOffset);
+          ScrollToVerticalOffset(verticalOffset);
+        },
+        DispatcherPriority.Background
+      );
+    }
+
+    private bool AdjustZoomForClusterFocus()
+    {
+      double viewportWidth = ViewportWidth > 0 ? ViewportWidth : ActualWidth;
+      double viewportHeight = ViewportHeight > 0 ? ViewportHeight : ActualHeight;
+
+      if (viewportWidth <= 0 || viewportHeight <= 0 || HexagonWidth <= 0 || HexagonHeight <= 0 || ScaleFactor <= 0)
+      {
+        return false;
+      }
+
+      double actualHexWidth = HexagonWidth * ScaleFactor;
+      double actualHexHeight = HexagonHeight * ScaleFactor;
+
+      if (actualHexWidth <= 0 || actualHexHeight <= 0)
+      {
+        return false;
+      }
+
+      double visibleHorizontal = viewportWidth / actualHexWidth;
+      double visibleVertical = viewportHeight / actualHexHeight;
+      double clustersVisible = Math.Min(visibleHorizontal, visibleVertical);
+
+      if (clustersVisible <= 5.0)
+      {
+        return false;
+      }
+
+      double scale = clustersVisible / 5.0;
+      double desiredWidth = HexagonWidth * scale;
+
+      double maxAllowed = Math.Min(HexagonWidthMaximal, HexagonWidth * ZoomMaxFactor);
+      desiredWidth = Math.Min(desiredWidth, maxAllowed);
+
+      if (desiredWidth <= HexagonWidth * 1.01)
+      {
+        return false;
+      }
+
+      HexagonWidth = desiredWidth;
+      return true;
+    }
+
+    private GalaxyMapClusterForClusterRelocation? FindClusterByMacro(string macro)
+    {
+      if (string.IsNullOrWhiteSpace(macro))
+      {
+        return null;
+      }
+
+      return _clusters
+        .OfType<GalaxyMapClusterForClusterRelocation>()
+        .FirstOrDefault(c => c.Cluster != null && StringHelper.EqualsIgnoreCase(c.Cluster.Macro, macro));
+    }
+
+    private static Polygon? GetClusterPolygon(GalaxyMapClusterForClusterRelocation? cluster)
+    {
+      if (cluster == null)
+      {
+        return null;
+      }
+
+      if (cluster.Hexagon != null)
+      {
+        return cluster.Hexagon;
+      }
+
+      if (cluster.Sectors.Count == 1)
+      {
+        if (cluster.Sectors[0] is GalaxyMapSectorForClusterRelocation relocationSector)
+        {
+          return relocationSector.Hexagon;
+        }
+
+        return cluster.Sectors[0].Hexagon;
+      }
+
+      return null;
     }
 
     public GalaxyMapClusterForClusterRelocation? GetMapClusterForRelocated(RelocatedCluster cluster)

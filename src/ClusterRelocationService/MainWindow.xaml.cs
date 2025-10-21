@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml.Linq;
@@ -1375,6 +1376,50 @@ namespace ClusterRelocationService
       IsModCanBeSaved = ClusterRelocationServiceMod.IsModChanged(RelocatedClusters);
       HasRelocated = ClusterRelocationServiceMod != null && RelocatedClusters.Count > 0;
       UpdateOverlaidClustersList();
+    }
+
+    private void OverlaidClustersDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      if (e.ChangedButton != MouseButton.Left)
+      {
+        return;
+      }
+
+      if (sender is not DataGrid dataGrid)
+      {
+        return;
+      }
+
+      if (!TryGetDataGridRow(e.OriginalSource, out DataGridRow? row) || row?.DataContext is not OverlaidClusterInfo clusterInfo)
+      {
+        return;
+      }
+
+      if (string.IsNullOrWhiteSpace(clusterInfo.Macro))
+      {
+        return;
+      }
+
+      GalaxyMapViewer.CenterOnCluster(clusterInfo.Macro);
+      e.Handled = true;
+    }
+
+    private static bool TryGetDataGridRow(object source, out DataGridRow? row)
+    {
+      row = null;
+      if (source is not DependencyObject dependencyObject)
+      {
+        return false;
+      }
+
+      DependencyObject current = dependencyObject;
+      while (current != null && current is not DataGridRow)
+      {
+        current = VisualTreeHelper.GetParent(current);
+      }
+
+      row = current as DataGridRow;
+      return row != null;
     }
 
     public void ButtonRelocationCancel_Click(object sender, RoutedEventArgs e)
