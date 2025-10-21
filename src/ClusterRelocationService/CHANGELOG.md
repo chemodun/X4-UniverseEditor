@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.2.0...ClusterRelocationService@v1.3.0) (2025-10-21)
+
+
+### Features
+
+* **GalaxyMapViewerForClusterRelocation:** add CenterOnCluster method for cluster navigation ([e661eef](https://github.com/chemodun/X4-UniverseEditor/commit/e661eef09e29686c835aa21eb22768b729f90bc6))
+* **GalaxyMapViewerForClusterRelocation:** add ShareSameCell method ([6c0aecd](https://github.com/chemodun/X4-UniverseEditor/commit/6c0aecd12e5e634639ddf31f1ae14a6f49aad9e1))
+* **MainWindow:** add RowStyle for DataGrid to highlight visible clusters ([45344de](https://github.com/chemodun/X4-UniverseEditor/commit/45344ded0f41e3a9b1163e07ee14c6616a9ead8b))
+* **MainWindow:** enable double-click action on OverlaidClustersDataGrid ([e661eef](https://github.com/chemodun/X4-UniverseEditor/commit/e661eef09e29686c835aa21eb22768b729f90bc6))
+* **MainWindow:** implement OverlaidClusters functionality ([6c0aecd](https://github.com/chemodun/X4-UniverseEditor/commit/6c0aecd12e5e634639ddf31f1ae14a6f49aad9e1))
+* **OverlaidClusterInfo:** create OverlaidClusterInfo class ([6c0aecd](https://github.com/chemodun/X4-UniverseEditor/commit/6c0aecd12e5e634639ddf31f1ae14a6f49aad9e1))
+* **OverlaidClusterInfo:** include visibility status in cluster info ([45344de](https://github.com/chemodun/X4-UniverseEditor/commit/45344ded0f41e3a9b1163e07ee14c6616a9ead8b))
+
+
+### Documentation
+
+* **ClusterRelocationService:** add YouTube thumbnail image ([2cdc53f](https://github.com/chemodun/X4-UniverseEditor/commit/2cdc53faa4f2d66b176cb0ea7bd8287296e69f7b))
+* **README:** add new video link for Overlaid Clusters List ([e332806](https://github.com/chemodun/X4-UniverseEditor/commit/e332806d9e509de875adfd59b7cd4d314dc9fb6e))
+* **README:** add Overlaid Clusters tab and update features section ([7bad681](https://github.com/chemodun/X4-UniverseEditor/commit/7bad68155b294a981cab3f93063cfcdabf699258))
+* **README:** Update README's files ([e061d0f](https://github.com/chemodun/X4-UniverseEditor/commit/e061d0ff32b2e84686a9471ce16cb895827122e3))
+
 ## [1.2.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.1.0...ClusterRelocationService@v1.2.0) (2025-10-05)
 
 
