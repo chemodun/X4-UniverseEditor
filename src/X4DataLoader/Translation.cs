@@ -15,7 +15,7 @@ namespace X4DataLoader
       Translations = [];
     }
 
-    private static readonly Regex ReferenceRegex = new(@"\{(\d+),(\d+)\}");
+    private static readonly Regex ReferenceRegex = new(@"\{\s*(\d+)\s*,\s*(\d+)\s*\}");
     private static readonly Regex CommentRegex = new(@"\([^)]*\)");
 
     public void Clear()
