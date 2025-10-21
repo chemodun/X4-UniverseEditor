@@ -21,6 +21,7 @@ It based on funny "hidden" feature of the game engine, which allows you to defin
 [*] Validation of new locations to ensure they are valid within the game universe.
 [*] Can be used to resolve the issue with overlaid clusters, when several clusters have equal coordinates.
 [*] Can be used by modders to simplify relocation of their clusters.
+[*] Dedicated overlaid clusters browser with at-a-glance visibility highlighting and one-click map centering.
 [/list]
 [size=130][u]Disclaimer[/u][/size]
 
@@ -60,7 +61,7 @@ The mod will be saved in the game [b]Extensions[/b] folder, under [b]relocated_c
 [size=120][u]Direct Mode First Start[/u][/size]
 
 On the first start, the tool will inform you that you need to select the game folder, and will switch to the options menu tab.
-If you will unselect [b]Direct Mode[/b] - you will go via start process in "Expert" mode: [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/#first-start-in-the-expert-mode]First Start in the "Expert" Mode[/url] section.
+If you will unselect [b]Direct Mode[/b] - you will go via start process in "Expert" mode: [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService#first-start-in-the-expert-mode]First Start in the "Expert" Mode[/url] section.
 
 After selecting the game folder, the tool will start loading the game data.
 [spoiler][img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/first_start.gif[/img][/spoiler]
@@ -193,6 +194,18 @@ If you want to break current changes at once, before they are saved - and revert
 
 [spoiler][img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/reload_mod.gif[/img][/spoiler]
 
+[size=125][u]Tabs under the Galaxy Map[/u][/size]
+
+Under the Galaxy Map, there are two tabs: "Relocated Clusters" and "Overlaid Clusters".
+
+[size=120][u]Relocated Clusters Tab[/u][/size]
+
+The [b]Relocated Clusters[/b] tab is a primary interface for managing clusters that have been moved from their original positions. All controls related to relocated clusters are located here.
+
+[size=120][u]Overlaid Clusters Tab[/u][/size]
+
+The [b]Overlaid Clusters[/b] tab provides a consolidated list of cells that host multiple clusters. Entries that are currently visible on the galaxy map are shown in [b]semi-bold[/b], making it easy to spot which ones are rendered in the current view. Double-click any row to immediately center and possibly zoom-in the map on that cluster.
+
 [size=125][u]Configuration[/u][/size]
 
 [spoiler][img]https://raw.githubusercontent.com/chemodun/X4-UniverseEditor/refs/heads/main/src/ClusterRelocationService/docs/images/configuration.png[/img][/spoiler]
@@ -201,7 +214,7 @@ If you want to break current changes at once, before they are saved - and revert
 
 [size=115][u]Direct Mode Checkbox[/u][/size]
 
-Already described above in the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/#direct-mode]Direct Mode[/url] section.
+Already described above in the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService#direct-mode]Direct Mode[/url] section.
 
 [size=120][u]X4 Data Options[/u][/size]
 
@@ -321,10 +334,17 @@ Please report any issues or bugs encountered while using the tool. You can submi
 
 [size=130][u]License[/u][/size]
 
-This project is licensed under the Apache License 2.0 - see the [url=https://github.com/chemodun/X4-UniverseEditor/raw/main/src/ClusterRelocationService/../../LICENSE]LICENSE[/url] file for details.
+This project is licensed under the Apache License 2.0 - see the [url=https://github.com/chemodun/X4-UniverseEditor/raw/LICENSE]LICENSE[/url] file for details.
 
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][1.3.0] - 2025-10-21[/u][/size]
+[list]
+[*] Added
+[list]
+[*] Overlaid Clusters tab with at-a-glance visibility highlighting and double-click map centering.
+[/list]
+[/list]
 [size=125][u][1.2.0] - 2025-10-06[/u][/size]
 [list]
 [*] Added
