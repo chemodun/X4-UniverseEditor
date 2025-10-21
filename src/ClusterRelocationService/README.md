@@ -21,6 +21,7 @@ It based on funny "hidden" feature of the game engine, which allows you to defin
 - Validation of new locations to ensure they are valid within the game universe.
 - Can be used to resolve the issue with overlaid clusters, when several clusters have equal coordinates.
 - Can be used by modders to simplify relocation of their clusters.
+- Dedicated overlaid clusters browser with at-a-glance visibility highlighting and one-click map centering.
 
 ## Disclaimer
 
@@ -193,6 +194,18 @@ If you want to break current changes at once, before they are saved - and revert
 
 ![Reload the Mod](docs/images/reload_mod.gif)
 
+### Tabs under the Galaxy Map
+
+Under the Galaxy Map, there are two tabs: "Relocated Clusters" and "Overlaid Clusters".
+
+#### Relocated Clusters Tab
+
+The **Relocated Clusters** tab is a primary interface for managing clusters that have been moved from their original positions. All controls related to relocated clusters are located here.
+
+#### Overlaid Clusters Tab
+
+The **Overlaid Clusters** tab provides a consolidated list of cells that host multiple clusters. Entries that are currently visible on the galaxy map are shown in **semi-bold**, making it easy to spot which ones are rendered in the current view. Double-click any row to immediately center and possibly zoom-in the map on that cluster.
+
 ### Configuration
 
 ![Configuration](docs/images/configuration.png)
@@ -324,6 +337,11 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [1.3.0] - 2025-10-21
+
+- Added
+  - Overlaid Clusters tab with at-a-glance visibility highlighting and double-click map centering.
 
 ### [1.2.0] - 2025-10-06
 
