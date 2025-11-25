@@ -339,11 +339,12 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](../../
 
 ## Changelog
 
-### [1.3.1] - 2025-11-25
+### [1.3.2] - 2025-11-25
 
 - Fixed
   - Issue with count() in XPath.
   - Leading zeros in page and text IDs in Translations.
+  - Window Title and minimal size
 
 ### [1.3.0] - 2025-10-21
 

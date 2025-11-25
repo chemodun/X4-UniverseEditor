@@ -11,9 +11,9 @@
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
-        Title="Cluster Moving Service"
-        MinWidth="1670"
-        MinHeight="940"
+        Title="Cluster Relocation Service"
+        MinWidth="1010"
+        MinHeight="740"
         Icon="{StaticResource ProgramIcon}"
         WindowStartupLocation="CenterScreen"
         Name="ClusterRelocationService">
