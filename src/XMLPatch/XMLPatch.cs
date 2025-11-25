@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -67,7 +68,7 @@ namespace Utilities.X4XMLPatch
 
       Log.Debug($"Applying add operation: {sel} at {pos!}");
 
-      var targetElements = originalRoot.XPathSelectElements(sel);
+      IReadOnlyList<XElement> targetElements = SelectElements(originalRoot, sel);
       if (targetElements == null || !targetElements.Any())
       {
         Log.Warn(
@@ -194,7 +195,7 @@ namespace Utilities.X4XMLPatch
         return false;
       }
 
-      var targetNodes = originalRoot.XPathEvaluate(sel) as IEnumerable<object>;
+      IReadOnlyList<object> targetNodes = EvaluateNodes(originalRoot, sel);
       if (targetNodes == null || !targetNodes.Any())
       {
         Log.Warn(
@@ -255,7 +256,7 @@ namespace Utilities.X4XMLPatch
         return false;
       }
 
-      var targetNodes = originalRoot.XPathEvaluate(sel) as IEnumerable<object>;
+      IReadOnlyList<object> targetNodes = EvaluateNodes(originalRoot, sel);
       if (targetNodes == null || !targetNodes.Any())
       {
         Log.Warn(
@@ -335,13 +336,118 @@ namespace Utilities.X4XMLPatch
       foreach (var part in parts)
       {
         xpath += "/" + part;
-        var nodes = originalRoot.XPathSelectElements(xpath);
+        IReadOnlyList<XElement> nodes = SelectElements(originalRoot, xpath);
         if (nodes.Any())
         {
           lastApplicableNode = xpath;
         }
       }
       return lastApplicableNode;
+    }
+
+    private static IReadOnlyList<XElement> SelectElements(XElement root, string selector)
+    {
+      if (string.IsNullOrWhiteSpace(selector))
+      {
+        return Array.Empty<XElement>();
+      }
+
+      try
+      {
+        XPathNavigator navigator = root.CreateNavigator();
+        XPathExpression expression = navigator.Compile(selector);
+        if (navigator is IXmlNamespaceResolver resolver)
+        {
+          expression.SetContext(resolver);
+        }
+
+        object? evaluationResult = navigator.Evaluate(expression);
+        if (evaluationResult is XPathNodeIterator iterator)
+        {
+          List<XElement> elements = [];
+          while (iterator.MoveNext())
+          {
+            if (iterator.Current?.UnderlyingObject is XElement element)
+            {
+              elements.Add(element);
+            }
+          }
+          return elements;
+        }
+
+        if (evaluationResult is IEnumerable<object> enumerable)
+        {
+          List<XElement> elements = [];
+          foreach (object item in enumerable)
+          {
+            if (item is XElement element)
+            {
+              elements.Add(element);
+            }
+          }
+          if (elements.Count > 0)
+          {
+            return elements;
+          }
+        }
+
+        Log.Warn($"Selector '{selector}' evaluated to '{evaluationResult?.GetType().Name ?? "null"}', which is not a node-set.");
+      }
+      catch (XPathException ex)
+      {
+        Log.Warn($"Invalid XPath selector '{selector}': {ex.Message}");
+      }
+
+      return Array.Empty<XElement>();
+    }
+
+    private static IReadOnlyList<object> EvaluateNodes(XElement root, string selector)
+    {
+      if (string.IsNullOrWhiteSpace(selector))
+      {
+        return Array.Empty<object>();
+      }
+
+      try
+      {
+        XPathNavigator navigator = root.CreateNavigator();
+        XPathExpression expression = navigator.Compile(selector);
+        if (navigator is IXmlNamespaceResolver resolver)
+        {
+          expression.SetContext(resolver);
+        }
+
+        object? evaluationResult = navigator.Evaluate(expression);
+        if (evaluationResult is XPathNodeIterator iterator)
+        {
+          List<object> nodes = [];
+          while (iterator.MoveNext())
+          {
+            if (iterator.Current?.UnderlyingObject is XObject xObj)
+            {
+              nodes.Add(xObj);
+            }
+          }
+          return nodes;
+        }
+
+        if (evaluationResult is IEnumerable<object> enumerable)
+        {
+          List<object> nodes = enumerable.OfType<XObject>().Cast<object>().ToList();
+          if (nodes.Count > 0)
+          {
+            return nodes;
+          }
+        }
+
+        Log.Warn($"Selector '{selector}' evaluated to '{evaluationResult?.GetType().Name ?? "null"}', which is not a node-set.");
+      }
+      catch (XPathException ex)
+      {
+        Log.Warn($"Invalid XPath selector '{selector}': {ex.Message}");
+      }
+
+      return Array.Empty<object>();
     }
   }
 }
