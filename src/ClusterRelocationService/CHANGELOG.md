@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.3.1...ClusterRelocationService@v1.3.2) (2025-11-25)
+
+
+### Bug Fixes
+
+* **MainWindow.xaml:** correct window title and dimensions ([1505078](https://github.com/chemodun/X4-UniverseEditor/commit/15050784b97d020f1f5850561c6293d0b164c35b))
+
+
+### Miscellaneous Chores
+
+* **README.md:** update changelog for version 1.3.2 ([1505078](https://github.com/chemodun/X4-UniverseEditor/commit/15050784b97d020f1f5850561c6293d0b164c35b))
+
 ## [1.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.3.0...ClusterRelocationService@v1.3.1) (2025-11-25)
 
 
