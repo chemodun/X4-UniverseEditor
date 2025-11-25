@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.8...XMLPatch@v0.1.9) (2025-11-25)
+
+
+### Code Refactoring
+
+* **XMLPatch:** improve XPath element selection methods ([086f917](https://github.com/chemodun/X4-UniverseEditor/commit/086f9171a6a0617b5884e29657fb675069b128da))
+
 ## [0.1.8](https://github.com/chemodun/X4-UniverseEditor/compare/XMLPatch@v0.1.7...XMLPatch@v0.1.8) (2025-03-04)
 
 
