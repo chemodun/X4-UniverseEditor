@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.3.0...ClusterRelocationService@v1.3.1) (2025-11-25)
+
+
+### Miscellaneous Chores
+
+* **README:** update changelog for version 1.3.1 ([1c2b1e3](https://github.com/chemodun/X4-UniverseEditor/commit/1c2b1e3f07b61e275b99277672c9837f22200c5e))
+
 ## [1.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.2.0...ClusterRelocationService@v1.3.0) (2025-10-21)
 
 
