@@ -15,7 +15,7 @@ namespace X4DataLoader
       Translations = [];
     }
 
-    private static readonly Regex ReferenceRegex = new(@"\{\s*(\d+)\s*,\s*(\d+)\s*\}");
+    private static readonly Regex ReferenceRegex = new(@"\{\s*0*(\d+)\s*,\s*0*(\d+)\s*\}");
     private static readonly Regex CommentRegex = new(@"\([^)]*\)");
 
     public void Clear()
@@ -27,7 +27,7 @@ namespace X4DataLoader
     {
       foreach (var pageElement in rootElement.Descendants("page"))
       {
-        var pageId = pageElement.Attribute("id")?.Value;
+        var pageId = pageElement.Attribute("id")?.Value.TrimStart('0');
         if (pageId != null)
         {
           foreach (var element in pageElement.Descendants("t"))
@@ -69,7 +69,7 @@ namespace X4DataLoader
 
         if (Translations.TryGetValue(page, out var pageTranslations) && pageTranslations.TryGetValue(id, out var text))
         {
-          return ResolveNestedReferences(text);
+          return ResolveNestedReferences(RemoveComments(text));
         }
       }
       return reference;
