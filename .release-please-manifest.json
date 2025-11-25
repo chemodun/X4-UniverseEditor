@@ -1,5 +1,5 @@
 {
-  "src/X4DataLoader": "0.11.2",
+  "src/X4DataLoader": "0.11.3",
   "filler-one": "0.0.0",
   "src/X4DataTestConsole": "0.2.6",
   "filler-two": "0.0.0",
@@ -9,7 +9,7 @@
   "filler-four": "0.0.0",
   "src/X4Unpack": "0.3.5",
   "filler-five": "0.0.0",
-  "src/XMLPatch": "0.1.8",
+  "src/XMLPatch": "0.1.9",
   "filler-six": "0.0.0",
   "src/X4Map": "0.7.1",
   "filler-seven": "0.0.0",

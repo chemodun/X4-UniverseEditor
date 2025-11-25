@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.3](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.11.2...X4DataLoader@v0.11.3) (2025-11-25)
+
+
+### Bug Fixes
+
+* **Translation:** adjust regex for reference parsing ([cd68795](https://github.com/chemodun/X4-UniverseEditor/commit/cd6879505a264d0011e5f90e0b54b32a1088a36c))
+
 ## [0.11.2](https://github.com/chemodun/X4-UniverseEditor/compare/X4DataLoader@v0.11.1...X4DataLoader@v0.11.2) (2025-10-21)
 
 
