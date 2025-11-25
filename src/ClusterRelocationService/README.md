@@ -21,7 +21,7 @@ It based on funny "hidden" feature of the game engine, which allows you to defin
 - Validation of new locations to ensure they are valid within the game universe.
 - Can be used to resolve the issue with overlaid clusters, when several clusters have equal coordinates.
 - Can be used by modders to simplify relocation of their clusters.
-- Dedicated overlaid clusters browser with at-a-glance visibility highlighting and one-click map centering.
+- Dedicated overlaid clusters browser with at-a-glance visibility highlighting and double-click map centering.
 
 ## Disclaimer
 
@@ -338,6 +338,12 @@ Please report any issues or bugs encountered while using the tool. You can submi
 This project is licensed under the Apache License 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Changelog
+
+### [1.3.1] - 2025-11-25
+
+- Fixed
+  - Issue with count() in XPath.
+  - Leading zeros in page and text IDs in Translations.
 
 ### [1.3.0] - 2025-10-21
 
