@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.DirectoryServices;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -19,6 +20,12 @@ namespace ClusterRelocationService
     private static string T(string key, string? fallback = null)
     {
       return LocalizationManager.Shared.Translate(key, fallback ?? key);
+    }
+
+    private static string TF(string key, params object[] args)
+    {
+      string template = LocalizationManager.Shared.Translate(key, key);
+      return string.Format(CultureInfo.CurrentCulture, template, args);
     }
 
     public static readonly string ModId = "ws_3576466840";
@@ -78,7 +85,7 @@ namespace ClusterRelocationService
         string versionString = $" {_version / 100.0:F2}".Replace(',', '.');
         versionString += _isModChanged ? "*" : "";
         string gameVersion = $"{_gameVersion / 100.0:F2}".Replace(',', '.');
-        return $"{Name} v.{versionString} built {_date} for X4: Foundations v.{gameVersion}";
+        return TF("mod.title", Name, versionString, _date, gameVersion);
       }
     }
     private bool _isModChanged = false;

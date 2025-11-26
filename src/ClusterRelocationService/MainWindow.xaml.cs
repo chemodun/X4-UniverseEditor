@@ -876,7 +876,8 @@ namespace ClusterRelocationService
       Assembly assembly = Assembly.GetExecutingAssembly();
       AssemblyName assemblyName = assembly.GetName();
       _appIcon = Icon as BitmapImage ?? new BitmapImage();
-      Title = $"{Title} v{assemblyName.Version}";
+      string versionString = assemblyName.Version?.ToString(3) ?? "1.0.0";
+      Title = $"{Title} v{versionString}";
       _clusterRelocationServiceMod.SetGameVersion(X4DataVersion);
 
       // Subscribe to Validation Errors

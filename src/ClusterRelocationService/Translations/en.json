@@ -86,6 +86,9 @@
     "checkUpdate": "Check update",
     "about": "About"
   },
+  "mod": {
+    "title": "{0} v.{1} built {2} for X4: Foundations v.{3}"
+  },
   "tabs": {
     "relocated": {
       "label": "Relocated Clusters:"
