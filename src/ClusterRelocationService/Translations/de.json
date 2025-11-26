@@ -172,7 +172,7 @@
     },
     "fullMess": {
       "confirm": {
-        "title": "\"Full Mess\" Bestätigung",
+        "title": "\"Vollchaos\" Bestätigung",
         "body": "Dies verschiebt jeden Cluster an einen zufälligen Ort. Fortfahren?"
       }
     },
@@ -190,13 +190,13 @@
       "title": "Exportordner auswählen",
       "overwrite": {
         "title": "Existierende Datei überschreiben",
-        "body": "{0} already exists in the selected folder. Overwrite it?"
+        "body": "{0} existiert bereits im ausgewählten Ordner. Überschreiben?"
       }
     },
     "exportPng": {
       "title": "Galaxie Karte exportieren",
-      "filter": "PNG Image",
-      "defaultFileName": "galaxy-map.png"
+      "filter": "PNG Bild",
+      "defaultFileName": "Galaxiekarte.png"
     },
     "success": {
       "title": "Erfolg",
@@ -254,10 +254,10 @@
       "loadingData": "Fehler beim Laden der X4-Daten: {0}",
       "galaxyNotLoaded": "Galaxy-Daten sind nicht geladen.",
       "modLoadingDisabled": "Mod-Laden ist in diesem Modus deaktiviert.",
-      "modFolderMissing": "Der mod-Ordner für lokalisierte Cluster fehlt.",
+      "modFolderMissing": "Der Mod‑Ordner ‚Relocated Clusters‘ fehlt.",
       "modDataLoadFailed": "Fehler beim Laden der Mod-Daten.",
       "modDataSaveFailed": "Fehler beim Speichern der Mod-Daten.",
-      "documentationMissing": "Dokumentationsdateien fehlen.",
+      "documentationMissing": "Dokumentunionsdateien fehlen.",
       "documentationOpenFailed": "Fehler beim Öffnen der Dokumentation im Standardbrowser.",
       "relocationAssignmentFailed": "Standortverlagerung für {0} Cluster(s) nicht möglich.",
       "relocationCancelFailed": "Standortverlagerung für {0} Cluster(s) kann nicht abgebrochen werden."
@@ -265,7 +265,7 @@
     "info": {
       "modDataLoaded": "Mod-Daten geladen.",
       "modDataSaved": "Mod-Daten gespeichert.",
-      "steamStubFound": "Erkannte Steam Stub-Erweiterung; warte auf die vollständige Installation.",
+      "steamStubFound": "Steam‑Stub‑Erweiterung erkannt; warte auf die vollständige Installation.",
       "documentationOpened": "Dokumentation im Standard-Browser geöffnet."
     }
   },
@@ -276,10 +276,10 @@
       "loaded": "Daten geladen."
     },
     "fullMess": {
-      "creating": "Erstelle \"Full Mess\"..."
+      "creating": "Erstelle \"Vollchaos\"..."
     },
     "mod": {
-      "loading": "Loading mod..."
+      "loading": "Lade Mod..."
     },
     "map": {
       "exporting": "Karte wird exportiert..."
@@ -298,7 +298,7 @@
   "validation": {
     "onlyIntegers": "Nur ganzzahlige Werte sind erlaubt.",
     "range": "Der Wert muss zwischen {0} und {1} liegen.",
-    "invalid": "Invalid numeric input.",
+    "invalid": "Invalide Numerik Input.",
     "pasteNotAllowed": "Das Einfügen aus dieser Quelle ist nicht erlaubt."
   },
   "error": {
