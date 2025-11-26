@@ -28,6 +28,7 @@
     "mod": {
       "new": "Neu",
       "load": "Laden",
+      "reload": "Neu laden",
       "save": "Speichern",
       "saveAs": "Speichern als",
       "exportClusters": "Cluster exportieren"
@@ -134,5 +135,177 @@
     "dlcs": "DLC's",
     "mods": "Mods",
     "devOptions": "Entwickleroptionen"
+  },
+  "dialog": {
+    "reloadX4": {
+      "title": "X4 Daten neu laden",
+      "unsavedChanges": {
+        "body": "Beim Neuladen der Daten werden ungespeicherte Änderungen verworfen. Fortfahren?"
+      },
+      "confirm": {
+        "body": "X4 Daten jetzt neu laden?"
+      }
+    },
+    "gameFolderNotSet": {
+      "title": "Spielordner erforderlich",
+      "body": "Bitte wählen Sie zuerst den X4-Installationsordner aus."
+    },
+    "dataFolderNotSet": {
+      "title": "Datenordner erforderlich",
+      "body": "Bitte wählen Sie zuerst den entpackten X4-Datenordner aus."
+    },
+    "selectX4DataFolder": {
+      "prompt": {
+        "title": "X4 Datenordner auswählen",
+        "body": "Der konfigurierte X4-Datenordner ist ungültig. Möchten Sie jetzt einen gültigen Ordner auswählen?"
+      },
+      "browser": {
+        "title": "X4 Datenordner auswählen"
+      }
+    },
+    "invalidFolder": {
+      "title": "Ungültiger Ordner"
+    },
+    "x4Executable": {
+      "filterDescription": "X4 ausführbar (x4.exe)",
+      "title": "X4 ausführbar suchen"
+    },
+    "fullMess": {
+      "confirm": {
+        "title": "\"Vollchaos\" Bestätigung",
+        "body": "Dies verschiebt jeden Cluster an einen zufälligen Ort. Fortfahren?"
+      }
+    },
+    "loadMod": {
+      "unsavedChanges": {
+        "title": "Ungespeicherte Änderungen",
+        "body": "Sie haben ungespeicherte Änderungen. Möchten Sie einen anderen Modus weiterhin laden?"
+      },
+      "reloadRequired": {
+        "title": "Nachladen erforderlich",
+        "body": "X4-Daten müssen neu geladen werden, bevor ein Mod geladen wird. Jetzt neu laden?"
+      }
+    },
+    "exportClusters": {
+      "title": "Exportordner auswählen",
+      "overwrite": {
+        "title": "Existierende Datei überschreiben",
+        "body": "{0} existiert bereits im ausgewählten Ordner. Überschreiben?"
+      }
+    },
+    "exportPng": {
+      "title": "Galaxie Karte exportieren",
+      "filter": "PNG Bild",
+      "defaultFileName": "Galaxiekarte.png"
+    },
+    "success": {
+      "title": "Erfolg",
+      "exportPng": "Galaxy-Karte erfolgreich exportiert."
+    },
+    "error": {
+      "title": "Fehler",
+      "exportPng": "Fehler beim Exportieren von PNG: {0}",
+      "loadMod": "Fehler beim Laden von Mod: {0}"
+    },
+    "mod": {
+      "open": {
+        "filter": "Mod Content XML (content.xml)|content.xml",
+        "title": "Mod-Inhaltsdatei auswählen"
+      },
+      "invalidSelection": {
+        "body": "Der ausgewählte Ordner enthält keine gültige Modifikation."
+      },
+      "selectFolder": {
+        "title": "Mod-Ausgabeordner auswählen"
+      },
+      "overwrite": {
+        "title": "Mod-Ordner überschreiben",
+        "body": "Vorhandene Mod-Dateien im ausgewählten Ordner werden ersetzt. Fortfahren?"
+      },
+      "folderNotEmpty": {
+        "body": "Der ausgewählte Ordner ist nicht leer. Bitte wählen Sie einen leeren Ordner."
+      }
+    }
+  },
+  "status": {
+    "folder": {
+      "placeholder": "Wähle einen gültigen Ordner."
+    },
+    "relocation": {
+      "originalLocationInUse": "Ursprüngliche Cluster-Position ist bereits belegt."
+    },
+    "gameFolder": {
+      "selectValid": "Bitte wählen Sie einen gültigen X4-Spielordner aus."
+    },
+    "dataFolder": {
+      "selectValid": "Bitte wählen Sie einen gültigen X4-Datenordner aus."
+    },
+    "x4data": {
+      "folderSet": "X4 Datenordner gesetzt."
+    },
+    "x4game": {
+      "folderSet": "X4 Spielordner gesetzt."
+    },
+    "folderSelectionCancelled": "Ordnerauswahl abgebrochen.",
+    "warning": {
+      "fullMessDisabled": "Option \"Vollständigkeit\" ist deaktiviert."
+    },
+    "error": {
+      "loadingData": "Fehler beim Laden der X4-Daten: {0}",
+      "galaxyNotLoaded": "Galaxy-Daten sind nicht geladen.",
+      "modLoadingDisabled": "Mod-Laden ist in diesem Modus deaktiviert.",
+      "modFolderMissing": "Der Mod‑Ordner ‚Relocated Clusters‘ fehlt.",
+      "modDataLoadFailed": "Fehler beim Laden der Mod-Daten.",
+      "modDataSaveFailed": "Fehler beim Speichern der Mod-Daten.",
+      "documentationMissing": "Dokumentunionsdateien fehlen.",
+      "documentationOpenFailed": "Fehler beim Öffnen der Dokumentation im Standardbrowser.",
+      "relocationAssignmentFailed": "Standortverlagerung für {0} Cluster(s) nicht möglich.",
+      "relocationCancelFailed": "Standortverlagerung für {0} Cluster(s) kann nicht abgebrochen werden."
+    },
+    "info": {
+      "modDataLoaded": "Mod-Daten geladen.",
+      "modDataSaved": "Mod-Daten gespeichert.",
+      "steamStubFound": "Steam‑Stub‑Erweiterung erkannt; warte auf die vollständige Installation.",
+      "documentationOpened": "Dokumentation im Standard-Browser geöffnet."
+    }
+  },
+  "busy": {
+    "data": {
+      "preparing": "Daten werden vorbereitet...",
+      "processingFile": "Bearbeite {0}...",
+      "loaded": "Daten geladen."
+    },
+    "fullMess": {
+      "creating": "Erstelle \"Vollchaos\"..."
+    },
+    "mod": {
+      "loading": "Lade Mod..."
+    },
+    "map": {
+      "exporting": "Karte wird exportiert..."
+    }
+  },
+  "context": {
+    "clusterHeader": "Cluster: {0}",
+    "sectorHeader": "Sektor: {0}",
+    "markRelocation": "Für Umzug markieren",
+    "unmarkRelocation": "Umzug aufheben",
+    "cancelRelocation": "Umzug abbrechen",
+    "underlyingClusters": "Untere Cluster ({0})",
+    "mapCell": "Zelle ({0}, {1})",
+    "relocateHere": "Hier umziehen"
+  },
+  "validation": {
+    "onlyIntegers": "Nur ganzzahlige Werte sind erlaubt.",
+    "range": "Der Wert muss zwischen {0} und {1} liegen.",
+    "invalid": "Invalide Numerik Input.",
+    "pasteNotAllowed": "Das Einfügen aus dieser Quelle ist nicht erlaubt."
+  },
+  "error": {
+    "gameFolder": {
+      "notSet": "Spielordnerpfad ist nicht festgelegt.",
+      "missing": "Der ausgewählte Spielordner existiert nicht.",
+      "missingExe": "x4.exe wurde im ausgewählten Spielordner nicht gefunden."
+    }
   }
 }

@@ -28,6 +28,7 @@
     "mod": {
       "new": "New",
       "load": "Load",
+      "reload": "Reload",
       "save": "Save",
       "saveAs": "Save as",
       "exportClusters": "Export clusters"
@@ -134,5 +135,177 @@
     "dlcs": "DLC's",
     "mods": "Mods",
     "devOptions": "Developer options"
+  },
+  "dialog": {
+    "reloadX4": {
+      "title": "Reload X4 Data",
+      "unsavedChanges": {
+        "body": "Reloading data will discard any unsaved changes. Continue?"
+      },
+      "confirm": {
+        "body": "Reload X4 data now?"
+      }
+    },
+    "gameFolderNotSet": {
+      "title": "Game Folder Required",
+      "body": "Please select the X4 installation folder first."
+    },
+    "dataFolderNotSet": {
+      "title": "Data Folder Required",
+      "body": "Please select the extracted X4 data folder first."
+    },
+    "selectX4DataFolder": {
+      "prompt": {
+        "title": "Select X4 Data Folder",
+        "body": "The configured X4 data folder is invalid. Would you like to select a valid folder now?"
+      },
+      "browser": {
+        "title": "Choose X4 Data Folder"
+      }
+    },
+    "invalidFolder": {
+      "title": "Invalid Folder"
+    },
+    "x4Executable": {
+      "filterDescription": "X4 Executable (x4.exe)",
+      "title": "Locate X4 Executable"
+    },
+    "fullMess": {
+      "confirm": {
+        "title": "\"Full Mess\" Confirmation",
+        "body": "This will move every cluster to a random location. Continue?"
+      }
+    },
+    "loadMod": {
+      "unsavedChanges": {
+        "title": "Unsaved Changes",
+        "body": "You have unsaved changes. Continue loading another mod?"
+      },
+      "reloadRequired": {
+        "title": "Reload Required",
+        "body": "X4 data must be reloaded before loading a mod. Reload now?"
+      }
+    },
+    "exportClusters": {
+      "title": "Select Export Folder",
+      "overwrite": {
+        "title": "Overwrite Existing File",
+        "body": "{0} already exists in the selected folder. Overwrite it?"
+      }
+    },
+    "exportPng": {
+      "title": "Export Galaxy Map",
+      "filter": "PNG Image",
+      "defaultFileName": "galaxy-map.png"
+    },
+    "success": {
+      "title": "Success",
+      "exportPng": "Galaxy map exported successfully."
+    },
+    "error": {
+      "title": "Error",
+      "exportPng": "Failed to export PNG: {0}",
+      "loadMod": "Failed to load mod: {0}"
+    },
+    "mod": {
+      "open": {
+        "filter": "Mod Content XML (content.xml)|content.xml",
+        "title": "Select Mod Content File"
+      },
+      "invalidSelection": {
+        "body": "The selected folder does not contain a valid mod."
+      },
+      "selectFolder": {
+        "title": "Choose Mod Output Folder"
+      },
+      "overwrite": {
+        "title": "Overwrite Mod Folder",
+        "body": "Existing mod files in the selected folder will be replaced. Continue?"
+      },
+      "folderNotEmpty": {
+        "body": "The selected folder is not empty. Please choose an empty folder."
+      }
+    }
+  },
+  "status": {
+    "folder": {
+      "placeholder": "Select a valid folder."
+    },
+    "relocation": {
+      "originalLocationInUse": "Original cluster location is already occupied."
+    },
+    "gameFolder": {
+      "selectValid": "Please select a valid X4 game folder."
+    },
+    "dataFolder": {
+      "selectValid": "Please select a valid X4 data folder."
+    },
+    "x4data": {
+      "folderSet": "X4 data folder set."
+    },
+    "x4game": {
+      "folderSet": "X4 game folder set."
+    },
+    "folderSelectionCancelled": "Folder selection cancelled.",
+    "warning": {
+      "fullMessDisabled": "\"Full Mess\" option is disabled."
+    },
+    "error": {
+      "loadingData": "Failed to load X4 data: {0}",
+      "galaxyNotLoaded": "Galaxy data is not loaded.",
+      "modLoadingDisabled": "Mod loading is disabled in this mode.",
+      "modFolderMissing": "Relocated Clusters mod folder is missing.",
+      "modDataLoadFailed": "Failed to load mod data.",
+      "modDataSaveFailed": "Failed to save mod data.",
+      "documentationMissing": "Documentation files are missing.",
+      "documentationOpenFailed": "Failed to open documentation in the default browser.",
+      "relocationAssignmentFailed": "Unable to assign relocation for {0} cluster(s).",
+      "relocationCancelFailed": "Unable to cancel relocation for {0} cluster(s)."
+    },
+    "info": {
+      "modDataLoaded": "Mod data loaded.",
+      "modDataSaved": "Mod data saved.",
+      "steamStubFound": "Detected Steam stub extension; waiting for the full installation.",
+      "documentationOpened": "Documentation opened in the default browser."
+    }
+  },
+  "busy": {
+    "data": {
+      "preparing": "Preparing data...",
+      "processingFile": "Processing {0}...",
+      "loaded": "Data loaded."
+    },
+    "fullMess": {
+      "creating": "Creating \"Full Mess\"..."
+    },
+    "mod": {
+      "loading": "Loading mod..."
+    },
+    "map": {
+      "exporting": "Exporting map..."
+    }
+  },
+  "context": {
+    "clusterHeader": "Cluster: {0}",
+    "sectorHeader": "Sector: {0}",
+    "markRelocation": "Mark for relocation",
+    "unmarkRelocation": "Unmark relocation",
+    "cancelRelocation": "Cancel relocation",
+    "underlyingClusters": "Underlying clusters ({0})",
+    "mapCell": "Cell ({0}, {1})",
+    "relocateHere": "Relocate here"
+  },
+  "validation": {
+    "onlyIntegers": "Only integer values are allowed.",
+    "range": "Value must be between {0} and {1}.",
+    "invalid": "Invalid numeric input.",
+    "pasteNotAllowed": "Pasting from this source is not allowed."
+  },
+  "error": {
+    "gameFolder": {
+      "notSet": "Game folder path is not set.",
+      "missing": "The selected game folder does not exist.",
+      "missingExe": "x4.exe was not found in the selected game folder."
+    }
   }
 }
