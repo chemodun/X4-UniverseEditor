@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.7](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.6...ChemGateBuilder@v0.10.7) (2025-11-26)
+
+
+### Bug Fixes
+
+* **README:** correct possessive form in extension's files loading note ([4d9a2f6](https://github.com/chemodun/X4-UniverseEditor/commit/4d9a2f63a424259b8a77618f1720de266a589239))
+* **README:** correct possessive form in extension's files loading note ([6d055fe](https://github.com/chemodun/X4-UniverseEditor/commit/6d055feeda210bcc6db1741f37dff2c48d3a0ccd))
+
+
+### Documentation
+
+* **README:** Update README's files ([68a385c](https://github.com/chemodun/X4-UniverseEditor/commit/68a385c2fd755d35aa867ef3871a67f21030e22a))
+* **README:** Update README's files ([92726d9](https://github.com/chemodun/X4-UniverseEditor/commit/92726d9f6cd05263a105448ce1e520e4e47155d4))
+
 ## [0.10.6](https://github.com/chemodun/X4-UniverseEditor/compare/ChemGateBuilder@v0.10.5...ChemGateBuilder@v0.10.6) (2025-10-11)
 
 
