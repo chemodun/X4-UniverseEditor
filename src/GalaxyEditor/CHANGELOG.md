@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.2](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.1...GalaxyEditor@v0.2.2) (2025-11-26)
+
+
+### Code Refactoring
+
+* **App:** enhance NLog configuration handling to check for changes before applying updates ([57a1d97](https://github.com/chemodun/X4-UniverseEditor/commit/57a1d97853ec20790763facd9184294f3051478d))
+* **GalaxyMod:** replace FolderBrowserDialog with OpenFolderDialog ([abaf8ba](https://github.com/chemodun/X4-UniverseEditor/commit/abaf8ba79e4173460ea44fc7b18bc758d64e4d9c))
+* **GalaxyMod:** set initial directory for mod data folder dialog ([d558243](https://github.com/chemodun/X4-UniverseEditor/commit/d5582439370aa2e3efa11151bd1c80877504fc87))
+* **GalaxyMod:** update modAttributesToSave initialization syntax ([35011fa](https://github.com/chemodun/X4-UniverseEditor/commit/35011fad824ebc8a05a07ee5ec51a22db7f72626))
+* **MainWindow.xaml:** update sector size bindings for internal size limits ([63b24df](https://github.com/chemodun/X4-UniverseEditor/commit/63b24df279f3a12dcaf36074f8249502fc9800a0))
+* **MainWindow:** enhance universe ID handling and selection logic ([d558243](https://github.com/chemodun/X4-UniverseEditor/commit/d5582439370aa2e3efa11151bd1c80877504fc87))
+* **MainWindow:** optimize JsonSerializerOptions usage ([35011fa](https://github.com/chemodun/X4-UniverseEditor/commit/35011fad824ebc8a05a07ee5ec51a22db7f72626))
+* **MainWindow:** remove NLog configuration calls from property setters to streamline logging setup ([7f7960d](https://github.com/chemodun/X4-UniverseEditor/commit/7f7960d84aa0c57719c2c0f0523980f33b8f04b7))
+* **MainWindow:** remove SectorRadius parameter from GalaxyMapViewer connection ([9e7e415](https://github.com/chemodun/X4-UniverseEditor/commit/9e7e41537e6c8b65ce74515b959717f4ac240550))
+* **MainWindow:** replace FolderBrowserDialog with OpenFolderDialog ([abaf8ba](https://github.com/chemodun/X4-UniverseEditor/commit/abaf8ba79e4173460ea44fc7b18bc758d64e4d9c))
+* remove unused using directives from App.xaml.cs files ([d0badce](https://github.com/chemodun/X4-UniverseEditor/commit/d0badce43f3854723d4cb193b2c058b5459491e5))
+
 ## [0.3.0](https://github.com/chemodun/X4-UniverseEditor/compare/GalaxyEditor@v0.2.1...GalaxyEditor@v0.3.0) (2025-02-20)
 
 
