@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Cluster Relocation Service"
+    "title": "Cluster-Umzugsdienst"
   },
   "language": {
     "name": "Deutsch"
@@ -8,131 +8,131 @@
   "ribbon": {
     "tab": {
       "mod": "Mod",
-      "x4data": "X4 Data",
-      "configuration": "Configuration",
-      "help": "Help"
+      "x4data": "X4 Daten",
+      "configuration": "Konfiguration",
+      "help": "Hilfe"
     },
     "group": {
-      "modActions": "Mod Actions",
-      "program": "Program",
-      "x4data": "X4 Data",
-      "modeOptions": "Mode Options",
-      "x4dataOptions": "X4 Data Options",
-      "mapOptions": "Map Options",
-      "relocationOptions": "Relocation Options",
-      "loggingOptions": "Logging Options",
-      "otherOptions": "Other Options",
-      "helpActions": "Help Actions",
-      "localizationOptions": "Localization Options"
+      "modActions": "Mod-Aktionen",
+      "program": "Programm",
+      "x4data": "X4 Daten",
+      "modeOptions": "Modus Optionen",
+      "x4dataOptions": "X4 Datenoptionen",
+      "mapOptions": "Kartenoptionen",
+      "relocationOptions": "Standortoptionen",
+      "loggingOptions": "Logging-Optionen",
+      "otherOptions": "Andere Optionen",
+      "helpActions": "Hilfeaktionen",
+      "localizationOptions": "Lokalisierungsoptionen"
     },
     "mod": {
-      "new": "New",
-      "load": "Load",
-      "save": "Save",
-      "saveAs": "Save as",
-      "exportClusters": "Export clusters"
+      "new": "Neu",
+      "load": "Laden",
+      "save": "Speichern",
+      "saveAs": "Speichern als",
+      "exportClusters": "Cluster exportieren"
     },
     "program": {
-      "exit": "Exit"
+      "exit": "Beenden"
     },
     "x4data": {
-      "extract": "Extract",
+      "extract": "Entpacken",
       "reload": "Reload"
     }
   },
   "config": {
     "mode": {
-      "direct": "Direct mode:",
-      "direct.tooltip": "Work without extraction"
+      "direct": "Direkt-Modus:",
+      "direct.tooltip": "Arbeit ohne Extrahieren"
     },
     "x4data": {
-      "folder": "X4 Data Folder:",
-      "version": "X4 Data Version:",
-      "versionOverride.tooltip": "Override the detected version",
-      "loadMods": "Load Mods Data:",
-      "loadMods.tooltip": "Load Mods data, not only official DLC's"
+      "folder": "X4 Datenordner:",
+      "version": "X4 Datenversion:",
+      "versionOverride.tooltip": "Die erkannte Version überschreiben",
+      "loadMods": "Mods Daten laden:",
+      "loadMods.tooltip": "Mods Daten laden, nicht nur offizielle DLC's"
     },
     "x4game": {
-      "folder": "X4 Game Folder:"
+      "folder": "X4 Spielordner:"
     },
     "map": {
-      "colorsOpacity": "Colors opacity:",
-      "universeDefault": "Universe (default):"
+      "colorsOpacity": "Deckkraft der Farben:",
+      "universeDefault": "Universum (Standard):"
     },
     "relocation": {
-      "fullMess": "\"Full Mess\" is Enabled",
-      "export": "Export of Clusters is Enabled"
+      "fullMess": "\"Vollchaos\" ist aktiviert",
+      "export": "Export von Clustern ist aktiviert"
     },
     "other": {
-      "checkUpdates": "Check for Updates on StartUp"
+      "checkUpdates": "Beim Start nach Updates suchen"
     },
     "localization": {
-      "language": "Language:",
-      "language.tooltip": "Select the interface language"
+      "language": "Sprache:",
+      "language.tooltip": "Wählen Sie die Sprache der Schnittstelle"
     }
   },
   "logging": {
     "level": {
-      "error": "Error",
-      "warning": "Warning",
+      "error": "Fehler",
+      "warning": "Warnung",
       "info": "Info",
-      "debug": "Debug"
+      "debug": "Debuggen"
     },
-    "enableFile": "Enable Writing to File"
+    "enableFile": "Schreiben in Datei aktivieren"
   },
   "help": {
     "readme": "Readme",
-    "checkUpdate": "Check update",
-    "about": "About"
+    "checkUpdate": "Update prüfen",
+    "about": "Über"
   },
   "tabs": {
     "relocated": {
-      "label": "Relocated Clusters:"
+      "label": "Verortete Cluster:"
     },
     "overlaid": {
-      "label": "Overlaid Clusters:"
+      "label": "Überlagerte Cluster:"
     }
   },
   "grid": {
     "cluster": "Cluster",
-    "macro": "Macro",
+    "macro": "Makro",
     "x": {
       "original": "X, Original",
-      "current": "X, Current",
+      "current": "X, aktuell",
       "simple": "X"
     },
     "z": {
       "original": "Z, Original",
-      "current": "Z, Current",
+      "current": "Z, Strom",
       "simple": "Z"
     },
-    "conflicts": "Conflicts",
-    "overlaidWith": "Overlaid With"
+    "conflicts": "Konflikte",
+    "overlaidWith": "Überlagert mit"
   },
   "actions": {
-    "cancelRelocation": "Cancel Relocation",
-    "fullMess": "Make a \"Full Mess\""
+    "cancelRelocation": "Verlagerung abbrechen",
+    "fullMess": "Erstelle eine \"Vollchaos\""
   },
   "tooltip": {
-    "cancelRelocation": "This will revert the relocation and restore the cluster position to original",
-    "fullMess": "This will relocate all clusters to the new unpredictable positions",
-    "toggleOptions": "Toggle options visibility"
+    "cancelRelocation": "Dies wird die Standortverlagerung zurücksetzen und die Cluster Position wieder auf das Original zurücksetzen",
+    "fullMess": "Dies wird alle Cluster zu den neuen unvorhersehbaren Positionen verschieben",
+    "toggleOptions": "Sichtbarkeit von Optionen"
   },
   "section": {
-    "galaxyMap": "Galaxy Map"
+    "galaxyMap": "Galaxie Karte"
   },
   "map": {
     "scale": {
-      "label": "Scale:",
-      "tooltip": "Adjust Galaxy Map scale"
+      "label": "Maßstab:",
+      "tooltip": "Skalierung der Galaxy Map anpassen"
     },
     "export": {
-      "tooltip": "Export Galaxy Map as PNG"
+      "tooltip": "Galaxie Karte als PNG exportieren"
     }
   },
   "panel": {
     "dlcs": "DLC's",
     "mods": "Mods",
-    "devOptions": "Developer options"
+    "devOptions": "Entwickleroptionen"
   }
 }
