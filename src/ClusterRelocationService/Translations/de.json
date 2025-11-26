@@ -86,6 +86,9 @@
     "checkUpdate": "Update prüfen",
     "about": "Über"
   },
+  "mod": {
+    "title": "{0} v.{1} baute {2} für X4: Foundations v.{3}"
+  },
   "tabs": {
     "relocated": {
       "label": "Verortete Cluster:"
