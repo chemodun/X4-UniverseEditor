@@ -1805,7 +1805,7 @@ namespace ClusterRelocationService
       if (File.Exists(galaxyPath))
       {
         MessageBoxResult confirm = MessageBox.Show(
-          T("dialog.exportClusters.overwrite.body"),
+          TF("dialog.exportClusters.overwrite.body", "galaxy.xml"),
           T("dialog.exportClusters.overwrite.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
@@ -2243,7 +2243,7 @@ namespace ClusterRelocationService
       var dialog = new Microsoft.Win32.SaveFileDialog
       {
         Filter = T("dialog.exportPng.filter"),
-        Title = T("dialog.exportPng.title"),
+        Title = T("dialog.exportPng.title") + " (*.png)|*.png",
         FileName = T("dialog.exportPng.defaultFileName"),
       };
       if (dialog.ShowDialog() != true)
