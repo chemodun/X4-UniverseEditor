@@ -6,12 +6,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClusterRelocationService"
+        xmlns:loc="clr-namespace:ClusterRelocationService.Localization"
         xmlns:mapConverters="clr-namespace:X4Map.Converters;assembly=X4Map"
         xmlns:attributeConverters="clr-namespace:SharedWindows.Converters;assembly=SharedWindows"
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
-        Title="Cluster Relocation Service"
+        Title="{loc:Loc Key=app.title}"
         MinWidth="1010"
         MinHeight="740"
         Icon="{StaticResource ProgramIcon}"
@@ -115,10 +116,10 @@
         <fluent:Ribbon DockPanel.Dock="Top"
                        x:Name="RibbonMain"
                        SelectedTabIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
-            <fluent:RibbonTabItem Header="Mod"
+            <fluent:RibbonTabItem Header="{loc:Loc Key=ribbon.tab.mod}"
                                   x:Name="RibbonTabMod">
-                <fluent:RibbonGroupBox Header="Mod Actions">
-                    <fluent:Button Header="New"
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.modActions}">
+                    <fluent:Button Header="{loc:Loc Key=ribbon.mod.new}"
                                    IsEnabled="{Binding HasRelocated}"
                                    Click="ButtonNewMod_Click"
                                    Visibility="{Binding ExtractedVisibility}"
@@ -128,7 +129,7 @@
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Load"
+                    <fluent:Button Header="{loc:Loc Key=ribbon.mod.load}"
                                    x:Name="ButtonLoadMod"
                                    IsEnabled="{Binding IsDataLoaded}"
                                    Click="ButtonLoadMod_Click"
@@ -138,7 +139,7 @@
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Save"
+                    <fluent:Button Header="{loc:Loc Key=ribbon.mod.save}"
                                    IsEnabled="{Binding IsModCanBeSaved}"
                                    Click="ButtonSaveMod_Click"
                                    Style="{StaticResource FluentButtonStyle}">
@@ -147,7 +148,7 @@
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Save as"
+                    <fluent:Button Header="{loc:Loc Key=ribbon.mod.saveAs}"
                                    IsEnabled="{Binding IsModCanBeSavedAs}"
                                    Click="ButtonSaveModAs_Click"
                                    Visibility="{Binding ExtractedVisibility}"
@@ -157,7 +158,7 @@
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Export clusters"
+                    <fluent:Button Header="{loc:Loc Key=ribbon.mod.exportClusters}"
                                    IsEnabled="{Binding IsModCanBeSavedAs}"
                                    Click="ButtonExportClusters_Click"
                                    Visibility="{Binding ExportClustersIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -168,8 +169,8 @@
                         </fluent:Button.Icon>
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Program">
-                    <fluent:Button Header="Exit"
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.program}">
+                    <fluent:Button Header="{loc:Loc Key=ribbon.program.exit}"
                                    Click="ButtonExit_Click"
                                    Style="{StaticResource FluentButtonStyle}">
                         <fluent:Button.Icon>
@@ -179,18 +180,18 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="X4 Data"
+            <fluent:RibbonTabItem Header="{loc:Loc Key=ribbon.tab.x4data}"
                                   x:Name="RibbonTabX4Data"
                                   Visibility="{Binding ExtractedVisibility}">
-                <fluent:RibbonGroupBox Header="X4 Data">
-                    <fluent:Button Header="Extract"
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.x4data}">
+                    <fluent:Button Header="{loc:Loc Key=ribbon.x4data.extract}"
                                    Style="{StaticResource FluentButtonStyle}"
                                    Click="ButtonExtractX4Data_Click">
                         <fluent:Button.Icon>
                             <StaticResource ResourceKey="XIcon"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Reload"
+                    <fluent:Button Header="{loc:Loc Key=ribbon.x4data.reload}"
                                    Style="{StaticResource FluentButtonStyle}"
                                    Click="ButtonReloadX4Data_Click">
                         <fluent:Button.Icon>
@@ -200,9 +201,9 @@
                     </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Configuration"
+            <fluent:RibbonTabItem Header="{loc:Loc Key=ribbon.tab.configuration}"
                                   x:Name="RibbonTabConfiguration">
-                <fluent:RibbonGroupBox Header="Mode Options">
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.modeOptions}">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -212,7 +213,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Direct mode:"
+                           <Label Content="{loc:Loc Key=config.mode.direct}"
                                Grid.Row="0"
                                Grid.Column="0"
                                VerticalAlignment="Center"/>
@@ -222,10 +223,10 @@
                                   Grid.Row="2"
                                   Grid.Column="1"
                                   IsChecked="{Binding DirectMode}"
-                                  ToolTip="Work without extraction"/>
+                                  ToolTip="{loc:Loc Key=config.mode.direct.tooltip}"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="X4 Data Options">
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.x4dataOptions}">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -237,7 +238,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Content="X4 Data Folder:"
+                           <Label Content="{loc:Loc Key=config.x4data.folder}"
                                Grid.Row="0"
                                Grid.Column="0"
                                VerticalAlignment="Center"
@@ -257,7 +258,7 @@
                                 <StaticResource ResourceKey="XIcon"/>
                             </fluent:Button.Icon>
                         </fluent:Button>
-                        <Label Content="X4 Game Folder:"
+                           <Label Content="{loc:Loc Key=config.x4game.folder}"
                                Grid.Row="0"
                                Grid.Column="0"
                                VerticalAlignment="Center"
@@ -277,7 +278,7 @@
                                 <StaticResource ResourceKey="XIcon"/>
                             </fluent:Button.Icon>
                         </fluent:Button>
-                        <Label Content="X4 Data Version:"
+                           <Label Content="{loc:Loc Key=config.x4data.version}"
                                Grid.Row="1"
                                Grid.Column="0"
                                VerticalAlignment="Center"/>
@@ -288,7 +289,7 @@
                                   Grid.Column="1"
                                   IsChecked="{Binding X4DataVersionOverride}"
                                   Visibility="{Binding ExtractedVisibility}"
-                                  ToolTip="Override the detected version"/>
+                                  ToolTip="{loc:Loc Key=config.x4data.versionOverride.tooltip}"/>
                         <ComboBox x:Name="X4DataVersionComboBox"
                                   Grid.Row="1"
                                   Grid.Column="2"
@@ -296,7 +297,7 @@
                                   IsEnabled="{Binding NoDirectMode}"
                                   SelectedValue="{Binding X4DataVersionString, Mode=TwoWay}"
                                   ItemsSource="{Binding X4DataVersions}"/>
-                        <Label Content="Load Mods Data:"
+                           <Label Content="{loc:Loc Key=config.x4data.loadMods}"
                                Grid.Row="2"
                                Grid.Column="0"
                                VerticalAlignment="Center"/>
@@ -306,10 +307,10 @@
                                   Grid.Row="2"
                                   Grid.Column="1"
                                   IsChecked="{Binding LoadModsData}"
-                                  ToolTip="Load Mods data, not only official DLC's"/>
+                                  ToolTip="{loc:Loc Key=config.x4data.loadMods.tooltip}"/>
                     </Grid>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Map Options">
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.mapOptions}">
                     <Grid Margin="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -322,7 +323,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label Content="Colors opacity:"
+                           <Label Content="{loc:Loc Key=config.map.colorsOpacity}"
                                Grid.Row="0"
                                Grid.Column="0"
                                VerticalAlignment="Center"/>
@@ -345,7 +346,7 @@
                                 Value="{Binding MapColorsOpacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Grid.Row="0"
                                 Grid.Column="2"/>
-                        <Label Content="Universe (default):"
+                           <Label Content="{loc:Loc Key=config.map.universeDefault}"
                                Grid.Row="1"
                                Grid.Column="0"
                                VerticalAlignment="Center"/>
@@ -363,44 +364,44 @@
 
                     </Grid>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Relocation Options">
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.relocationOptions}">
                     <StackPanel>
-                        <CheckBox Content="&quot;Full Mess&quot; is Enabled"
+                        <CheckBox Content="{loc:Loc Key=config.relocation.fullMess}"
                                   Margin="5"
                                   IsChecked="{Binding FullMessIsEnabled}"/>
-                        <CheckBox Content="Export of Clusters is Enabled"
+                        <CheckBox Content="{loc:Loc Key=config.relocation.export}"
                                   Margin="5"
                                   IsChecked="{Binding ExportClustersIsEnabled}"/>
                     </StackPanel>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Logging Options">
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.loggingOptions}">
                     <StackPanel>
                         <ComboBox x:Name="LoggingLevelComboBox"
                                   Margin="5"
                                   SelectedValuePath="Content"
                                   SelectedValue="{Binding LogLevel, Mode=TwoWay}">
-                            <ComboBoxItem Content="Error"/>
-                            <ComboBoxItem Content="Warning"/>
-                            <ComboBoxItem Content="Info"/>
-                            <ComboBoxItem Content="Debug"/>
+                            <ComboBoxItem Content="{loc:Loc Key=logging.level.error}"/>
+                            <ComboBoxItem Content="{loc:Loc Key=logging.level.warning}"/>
+                            <ComboBoxItem Content="{loc:Loc Key=logging.level.info}"/>
+                            <ComboBoxItem Content="{loc:Loc Key=logging.level.debug}"/>
                         </ComboBox>
-                        <CheckBox Content="Enable Writing to File"
+                        <CheckBox Content="{loc:Loc Key=logging.enableFile}"
                                   Margin="5"
                                   IsChecked="{Binding LogToFile}"/>
                     </StackPanel>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Other Options">
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.otherOptions}">
                     <StackPanel>
-                        <CheckBox Content="Check for Updates on StartUp"
+                        <CheckBox Content="{loc:Loc Key=config.other.checkUpdates}"
                                   Margin="5"
                                   IsChecked="{Binding CheckForUpdatesOnStartUp}"/>
                     </StackPanel>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="Help"
+            <fluent:RibbonTabItem Header="{loc:Loc Key=ribbon.tab.help}"
                                   x:Name="RibbonTabHelp">
-                <fluent:RibbonGroupBox Header="Help Actions">
-                    <fluent:Button Header="Readme"
+                <fluent:RibbonGroupBox Header="{loc:Loc Key=ribbon.group.helpActions}">
+                    <fluent:Button Header="{loc:Loc Key=help.readme}"
                                    Style="{StaticResource FluentButtonStyle}"
                                    Click="ButtonReadme_Click">
                         <fluent:Button.Icon>
@@ -408,7 +409,7 @@
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="Check update"
+                    <fluent:Button Header="{loc:Loc Key=help.checkUpdate}"
                                    Style="{StaticResource FluentButtonStyle}"
                                    Click="ButtonCheckUpdate_Click">
                         <fluent:Button.Icon>
@@ -416,7 +417,7 @@
                                           Style="{StaticResource FontAwesomeIconStyle}"/>
                         </fluent:Button.Icon>
                     </fluent:Button>
-                    <fluent:Button Header="About"
+                    <fluent:Button Header="{loc:Loc Key=help.about}"
                                    Style="{StaticResource FluentButtonStyle}"
                                    Click="ButtonAbout_Click">
                         <fluent:Button.Icon>
@@ -449,7 +450,10 @@
                                 VerticalAlignment="Stretch">
                         <TabItem>
                             <TabItem.Header>
-                                <TextBlock Text="{Binding RelocatedClusters.Count, StringFormat=Relocated Clusters: {0}}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{loc:Loc Key=tabs.relocated.label}"/>
+                                    <TextBlock Text="{Binding RelocatedClusters.Count, StringFormat=' {0}'}"/>
+                                </StackPanel>
                             </TabItem.Header>
                             <Grid Margin="5"
                                   HorizontalAlignment="Stretch"
@@ -471,14 +475,14 @@
                                           MinHeight="80"
                                           IsEnabled="{Binding NoClusterInRelocationProcess}">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Cluster"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.cluster}"
                                                             Binding="{Binding Name}"
                                                             MinWidth="320"
                                                             Width="*"/>
-                                        <DataGridTextColumn Header="Macro"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.macro}"
                                                             Binding="{Binding Macro}"
                                                             Width="*"/>
-                                        <DataGridTextColumn Header="X, Original"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.x.original}"
                                                             Binding="{Binding XOriginal, StringFormat={}{0:N0}}"
                                                             Width="*">
                                             <DataGridTextColumn.ElementStyle>
@@ -497,7 +501,7 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Header="X, Current"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.x.current}"
                                                             Binding="{Binding XCurrent, StringFormat={}{0:N0}}"
                                                             Width="*">
                                             <DataGridTextColumn.ElementStyle>
@@ -516,7 +520,7 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Z, Original"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.z.original}"
                                                             Binding="{Binding ZOriginal, StringFormat={}{0:N0}}"
                                                             Width="*">
                                             <DataGridTextColumn.ElementStyle>
@@ -535,7 +539,7 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Z, Current"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.z.current}"
                                                             Binding="{Binding ZCurrent, StringFormat={}{0:N0}}"
                                                             Width="*">
                                             <DataGridTextColumn.ElementStyle>
@@ -565,17 +569,17 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <Button x:Name="ButtonRelocationCancel"
-                                            Content="Cancel Relocation"
-                                            ToolTip="This will revert the relocation and restore the cluster position to original"
+                                        <Button x:Name="ButtonRelocationCancel"
+                                            Content="{loc:Loc Key=actions.cancelRelocation}"
+                                            ToolTip="{loc:Loc Key=tooltip.cancelRelocation}"
                                             Grid.Row="0"
                                             Margin="0,5,0,0"
                                             Width="140"
                                             IsEnabled="{Binding IsRelocationCanBeCancelled}"
                                             Click="ButtonRelocationCancel_Click"/>
-                                    <Button x:Name="ButtonRelocationFullMess"
-                                            Content="Make a &quot;Full Mess&quot;"
-                                            ToolTip="This will relocate all clusters to the new unpredictable positions"
+                                        <Button x:Name="ButtonRelocationFullMess"
+                                            Content="{loc:Loc Key=actions.fullMess}"
+                                            ToolTip="{loc:Loc Key=tooltip.fullMess}"
                                             Grid.Row="2"
                                             Margin="0,5,0,0"
                                             Width="140"
@@ -586,7 +590,10 @@
                         </TabItem>
                         <TabItem>
                             <TabItem.Header>
-                                <TextBlock Text="{Binding OverlaidClusters.Count, StringFormat=Overlaid Clusters: {0}}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{loc:Loc Key=tabs.overlaid.label}"/>
+                                    <TextBlock Text="{Binding OverlaidClusters.Count, StringFormat=' {0}'}"/>
+                                </StackPanel>
                             </TabItem.Header>
                             <Grid Margin="5">
                                 <DataGrid x:Name="OverlaidClustersDataGrid"
@@ -610,13 +617,13 @@
                                         </Style>
                                     </DataGrid.RowStyle>
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Cluster"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.cluster}"
                                                             Binding="{Binding Name}"
                                                             Width="2*"/>
-                                        <DataGridTextColumn Header="Macro"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.macro}"
                                                             Binding="{Binding Macro}"
                                                             Width="*"/>
-                                        <DataGridTextColumn Header="X"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.x.simple}"
                                                             Binding="{Binding X, StringFormat={}{0:N0}}"
                                                             Width="*">
                                             <DataGridTextColumn.ElementStyle>
@@ -627,7 +634,7 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Z"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.z.simple}"
                                                             Binding="{Binding Z, StringFormat={}{0:N0}}"
                                                             Width="*">
                                             <DataGridTextColumn.ElementStyle>
@@ -638,10 +645,10 @@
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Conflicts"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.conflicts}"
                                                             Binding="{Binding OverlaidCount}"
                                                             Width="Auto"/>
-                                        <DataGridTextColumn Header="Overlaid With"
+                                        <DataGridTextColumn Header="{loc:Loc Key=grid.overlaidWith}"
                                                             Binding="{Binding OverlaidWith}"
                                                             Width="2*"/>
                                     </DataGrid.Columns>
@@ -649,7 +656,7 @@
                             </Grid>
                         </TabItem>
                     </TabControl>
-                    <GroupBox Header="Galaxy Map"
+                    <GroupBox Header="{loc:Loc Key=section.galaxyMap}"
                               Margin="5"
                               DockPanel.Dock="Top">
                         <Grid>
@@ -673,7 +680,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <Label Content="Scale:"
+                                <Label Content="{loc:Loc Key=map.scale.label}"
                                     Grid.Column="0"
                                     VerticalAlignment="Center"/>
                                 <Slider x:Name="HexagonWidthSlider"
@@ -686,13 +693,13 @@
                                         TickPlacement="BottomRight"
                                         SmallChange="10"
                                         LargeChange="100"
-                                        ToolTip="Adjust Galaxy Map scale"/>
+                                        ToolTip="{loc:Loc Key=map.scale.tooltip}"/>
                                 <Button Grid.Column="2"
                                         Margin="5,0,0,0"
                                         Width="32"
                                         Height="32"
                                         Click="ExportPngButton_Click"
-                                        ToolTip="Export Galaxy Map as PNG">
+                                        ToolTip="{loc:Loc Key=map.export.tooltip}">
                                     <Button.Content>
                                         <fa:IconImage Icon="FileImage"
                                                     IconFont="Solid"
@@ -730,7 +737,7 @@
                                         VerticalContentAlignment="Center"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Top"
-                                        ToolTip="Toggle options visibility">
+                                        ToolTip="{loc:Loc Key=tooltip.toggleOptions}">
                                     <Button.Content>
                                         <fa:IconImage Icon="{Binding OptionsVisibilitySymbol}"
                                                     Style="{StaticResource FontAwesomeIconStyle}"/>
@@ -741,7 +748,7 @@
                                             Orientation="Vertical"
                                             Visibility="{Binding OptionsVisibilityState}"
                                             Width="{Binding OptionsWidth}">
-                                    <GroupBox Header="DLC's"
+                                        <GroupBox Header="{loc:Loc Key=panel.dlcs}"
                                             Margin="5"
                                             Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsDLCsVisibilityState}">
                                         <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=DLCsOptions}">
@@ -753,7 +760,7 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </GroupBox>
-                                    <GroupBox Header="Mods"
+                                        <GroupBox Header="{loc:Loc Key=panel.mods}"
                                             Margin="5"
                                             Visibility="{Binding ElementName=GalaxyMapViewer,  Path=OptionsModsVisibilityState}">
                                         <ItemsControl ItemsSource="{Binding ElementName=GalaxyMapViewer, Path=ModsOptions}">
@@ -778,7 +785,7 @@
                                         </ItemsControl>
                                     </GroupBox>
                                 </StackPanel>
-                                <GroupBox Header="Developer options"
+                                <GroupBox Header="{loc:Loc Key=panel.devOptions}"
                                         Margin="5"
                                         Grid.Row="2"
                                         Visibility="Hidden"

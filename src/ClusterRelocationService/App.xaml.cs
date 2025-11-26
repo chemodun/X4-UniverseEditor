@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
+using Localization;
 using NLog;
 using Utilities.Logging;
 
@@ -9,6 +11,15 @@ namespace ClusterRelocationService
     protected override void OnStartup(StartupEventArgs e)
     {
       base.OnStartup(e);
+      InitializeLocalization();
+    }
+
+    private static void InitializeLocalization()
+    {
+      string baseDirectory = AppContext.BaseDirectory;
+      string translationsDirectory = Path.Combine(baseDirectory, "Translations");
+      LocalizationManager.Shared.LoadFromDirectory(translationsDirectory, defaultLanguage: "en");
+      LocalizationManager.Shared.TrySetLanguage("en");
     }
 
     public static void ConfigureNLog(LoggingConfig loggingConfig)

@@ -29,6 +29,7 @@
     <ProjectReference Include="..\X4Unpack\X4Unpack.csproj" />
     <ProjectReference Include="..\X4Map\X4Map.csproj" />
     <ProjectReference Include="..\SharedWindows\SharedWindows.csproj" />
+    <ProjectReference Include="..\Localization\Localization.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +57,10 @@
     <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
     <PackageReference Include="NLog" Version="5.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Translations\**\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
