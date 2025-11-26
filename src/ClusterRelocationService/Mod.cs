@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Localization;
 using Utilities.Logging;
 using X4DataLoader;
 using X4DataLoader.Helpers;
@@ -15,6 +16,11 @@ namespace ClusterRelocationService
 {
   public class RelocatedClustersMod : INotifyPropertyChanged
   {
+    private static string T(string key, string? fallback = null)
+    {
+      return LocalizationManager.Shared.Translate(key, fallback ?? key);
+    }
+
     public static readonly string ModId = "ws_3576466840";
     public static readonly string ModFolder = "relocated_clusters";
     public static readonly string ModName = "Relocated Clusters";
@@ -103,8 +109,8 @@ namespace ClusterRelocationService
           InitialDirectory = string.IsNullOrEmpty(currentPath)
             ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             : currentPath,
-          Filter = "Mod Content File|content.xml",
-          Title = "Select a File",
+          Filter = T("dialog.mod.open.filter"),
+          Title = T("dialog.mod.open.title"),
         };
         bool? result = dialog.ShowDialog();
         if (result != true || string.IsNullOrWhiteSpace(dialog.FileName))
@@ -155,8 +161,8 @@ namespace ClusterRelocationService
           if (!File.Exists(Path.Combine(currentPath, "ext_01.cat")))
           {
             MessageBox.Show(
-              "The selected folder does not contain a valid mod",
-              "Invalid Folder",
+              T("dialog.mod.invalidSelection.body"),
+              T("dialog.invalidFolder.title"),
               MessageBoxButton.OK,
               MessageBoxImage.Error
             );
@@ -254,7 +260,7 @@ namespace ClusterRelocationService
       string currentPath = ModFolderPath;
       if (string.IsNullOrEmpty(currentPath) || newLocation)
       {
-        var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Select a folder for the Mod" };
+        var dialog = new Microsoft.Win32.OpenFolderDialog { Title = T("dialog.mod.selectFolder.title") };
         if (string.IsNullOrEmpty(currentPath))
         {
           dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -280,8 +286,8 @@ namespace ClusterRelocationService
         if (File.Exists(pathToContext))
         {
           var confirmOverwrite = MessageBox.Show(
-            "Do you want to overwrite the existing Mod?",
-            "Confirm Overwrite",
+            T("dialog.mod.overwrite.body"),
+            T("dialog.mod.overwrite.title"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Question
           );
@@ -303,7 +309,12 @@ namespace ClusterRelocationService
         {
           if (Directory.EnumerateFileSystemEntries(currentPath).Any())
           {
-            MessageBox.Show("Folder not contains a mod, but not empty!", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(
+              T("dialog.mod.folderNotEmpty.body"),
+              T("dialog.invalidFolder.title"),
+              MessageBoxButton.OK,
+              MessageBoxImage.Error
+            );
             return false;
           }
         }

@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Localization;
 
 namespace ClusterRelocationService
 {
@@ -93,7 +94,7 @@ namespace ClusterRelocationService
         string fullText = GetFullTextAfterInput(textBox, e.Text);
         if (!_regex.IsMatch(fullText))
         {
-          OnValidationError?.Invoke("Only integer values are allowed.");
+          OnValidationError?.Invoke(T("validation.onlyIntegers"));
           e.Handled = true;
           return;
         }
@@ -106,7 +107,7 @@ namespace ClusterRelocationService
 
           if (value < min || value > max)
           {
-            OnValidationError?.Invoke($"Value must be between {min} and {max}.");
+            OnValidationError?.Invoke(TF("validation.range", min, max));
             e.Handled = true;
           }
           else
@@ -125,7 +126,7 @@ namespace ClusterRelocationService
           }
           else
           {
-            OnValidationError?.Invoke("Invalid input.");
+            OnValidationError?.Invoke(T("validation.invalid"));
             e.Handled = true;
           }
         }
@@ -143,7 +144,7 @@ namespace ClusterRelocationService
 
           if (!_regex.IsMatch(fullText))
           {
-            OnValidationError?.Invoke("Only integer values are allowed.");
+            OnValidationError?.Invoke(T("validation.onlyIntegers"));
             e.CancelCommand();
             return;
           }
@@ -155,7 +156,7 @@ namespace ClusterRelocationService
 
             if (value < min || value > max)
             {
-              OnValidationError?.Invoke($"Value must be between {min} and {max}.");
+              OnValidationError?.Invoke(TF("validation.range", min, max));
               e.CancelCommand();
             }
             else
@@ -166,13 +167,13 @@ namespace ClusterRelocationService
           else
           {
             // If parsing fails, cancel paste
-            OnValidationError?.Invoke("Invalid input.");
+            OnValidationError?.Invoke(T("validation.invalid"));
             e.CancelCommand();
           }
         }
         else
         {
-          OnValidationError?.Invoke("Pasting is not allowed.");
+          OnValidationError?.Invoke(T("validation.pasteNotAllowed"));
           e.CancelCommand();
         }
       }
@@ -188,6 +189,17 @@ namespace ClusterRelocationService
     private static string GetFullTextAfterPaste(TextBox textBox, string pasteText)
     {
       return textBox.Text.Insert(textBox.SelectionStart, pasteText);
+    }
+
+    private static string T(string key)
+    {
+      return LocalizationManager.Shared.Translate(key, key);
+    }
+
+    private static string TF(string key, params object[] args)
+    {
+      string template = LocalizationManager.Shared.Translate(key, key);
+      return string.Format(System.Globalization.CultureInfo.CurrentCulture, template, args);
     }
   }
 }

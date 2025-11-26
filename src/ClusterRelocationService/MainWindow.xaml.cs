@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -153,6 +154,17 @@ namespace ClusterRelocationService
     private string _selectedLanguageCode = LocalizationManager.Shared.CurrentLanguage;
     private string? _preferredLanguageFromConfig;
 
+    private static string T(string key, string? fallback = null)
+    {
+      return LocalizationManager.Shared.Translate(key, fallback ?? key);
+    }
+
+    private static string TF(string key, params object[] args)
+    {
+      string template = LocalizationManager.Shared.Translate(key, key);
+      return string.Format(CultureInfo.CurrentCulture, template, args);
+    }
+
     private bool _directMode = true;
     public bool DirectMode
     {
@@ -164,8 +176,8 @@ namespace ClusterRelocationService
           if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
           {
             var choice = MessageBox.Show(
-              "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
-              "Reload X4 Data",
+              T("dialog.reloadX4.unsavedChanges.body"),
+              T("dialog.reloadX4.title"),
               MessageBoxButton.YesNo,
               MessageBoxImage.Warning
             );
@@ -351,8 +363,8 @@ namespace ClusterRelocationService
           if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
           {
             var choice = MessageBox.Show(
-              "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
-              "Reload X4 Data",
+              T("dialog.reloadX4.unsavedChanges.body"),
+              T("dialog.reloadX4.title"),
               MessageBoxButton.YesNo,
               MessageBoxImage.Warning
             );
@@ -656,12 +668,12 @@ namespace ClusterRelocationService
           }
           else
           {
-            return "Please set it!";
+            return T("status.folder.placeholder");
           }
         }
         else
         {
-          return "Please set it!";
+          return T("status.folder.placeholder");
         }
       }
     }
@@ -677,12 +689,12 @@ namespace ClusterRelocationService
           }
           else
           {
-            return "Please set it!";
+            return T("status.folder.placeholder");
           }
         }
         else
         {
-          return "Please set it!";
+          return T("status.folder.placeholder");
         }
       }
     }
@@ -714,10 +726,7 @@ namespace ClusterRelocationService
           _isRelocationCanBeDeleted = value;
           if (!value && RelocatedClusterCurrent != null)
           {
-            StatusBar.SetStatusMessage(
-              "Unable to revert relocation: the original location is currently in use.",
-              StatusMessageType.Warning
-            );
+            StatusBar.SetStatusMessage(T("status.relocation.originalLocationInUse"), StatusMessageType.Warning);
           }
           OnPropertyChanged(nameof(IsRelocationCanBeCancelled));
         }
@@ -1017,7 +1026,7 @@ namespace ClusterRelocationService
         return;
       }
 
-      string target = preferredLanguageCode;
+      string target = preferredLanguageCode ?? manager.CurrentLanguage;
       if (
         string.IsNullOrWhiteSpace(target)
         || !_availableLanguages.Any(option => option.Code.Equals(target, StringComparison.OrdinalIgnoreCase))
@@ -1039,12 +1048,12 @@ namespace ClusterRelocationService
         StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
         // Prompt the user to select a valid folder
         _ = MessageBox.Show(
-          "The X4 Game folder is not set. Please set it via Configuration -> X4 Game Folder!",
-          "Invalid or missing X4 Game Folder",
+          T("dialog.gameFolderNotSet.body"),
+          T("dialog.gameFolderNotSet.title"),
           MessageBoxButton.OK,
           MessageBoxImage.Warning
         );
-        StatusBar.SetStatusMessage("Please select a valid X4 Game folder to proceed.", StatusMessageType.Warning);
+        StatusBar.SetStatusMessage(T("status.gameFolder.selectValid"), StatusMessageType.Warning);
         // Show the ribbon tab options
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabConfiguration")!;
       }
@@ -1053,12 +1062,12 @@ namespace ClusterRelocationService
         StatusBar.SetStatusMessage(errorMessageData, StatusMessageType.Error);
         // Prompt the user to select a valid folder
         _ = MessageBox.Show(
-          "The X4 Data folder is not set. Please set it via Configuration -> X4 Data Folder!",
-          "Invalid or missing X4 Data Folder",
+          T("dialog.dataFolderNotSet.body"),
+          T("dialog.dataFolderNotSet.title"),
           MessageBoxButton.OK,
           MessageBoxImage.Warning
         );
-        StatusBar.SetStatusMessage("Please select a valid X4 Data folder to proceed.", StatusMessageType.Warning);
+        StatusBar.SetStatusMessage(T("status.dataFolder.selectValid"), StatusMessageType.Warning);
         // Show the ribbon tab options
         RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabConfiguration")!;
       }
@@ -1074,7 +1083,7 @@ namespace ClusterRelocationService
       _clusterRelocationServiceMod = new("", X4UniverseId);
       _clusterRelocationServiceMod.SetGameVersion(_x4DataVersion);
       await ResetRelocations();
-      BusyMessage = "Preparing to load X4 data...";
+      BusyMessage = T("busy.data.preparing");
       Galaxy.Clear();
       OverlaidClusters.Clear();
       _backgroundWorker.DoWork -= LoadX4DataInBackground;
@@ -1095,7 +1104,7 @@ namespace ClusterRelocationService
     {
       if (e.UserState is string progressText)
       {
-        BusyMessage = $"Processing file: {progressText} ...";
+        BusyMessage = TF("busy.data.processingFile", progressText);
         StatusBar.SetStatusMessage(BusyMessage, StatusMessageType.Info, true);
       }
     }
@@ -1106,7 +1115,7 @@ namespace ClusterRelocationService
       _isFullReloadNeeded = false;
       if (e.Error != null)
       {
-        StatusBar.SetStatusMessage("Error loading X4 data: " + e.Error.Message, StatusMessageType.Error);
+        StatusBar.SetStatusMessage(TF("status.error.loadingData", e.Error.Message), StatusMessageType.Error);
         IsBusy = false;
         _hasBeenInitialized = true;
         return;
@@ -1153,18 +1162,18 @@ namespace ClusterRelocationService
         X4DataVersion = Galaxy.Version;
       }
       OnPropertyChanged(nameof(IsDataLoaded));
-      BusyMessage = "X4 data loaded successfully!";
+      BusyMessage = T("busy.data.loaded");
       RibbonMain.SelectedTabItem = (Fluent.RibbonTabItem)RibbonMain.FindName("RibbonTabMod")!;
       GalaxyMapViewer.RefreshGalaxyData();
       GalaxyMapViewer.UpdateMap();
       if (DirectMode)
       {
         await ModLoadAsync();
-        ButtonLoadMod.Header = "Reload";
+        ButtonLoadMod.Header = T("ribbon.mod.reload");
       }
       else
       {
-        ButtonLoadMod.Header = "Load";
+        ButtonLoadMod.Header = T("ribbon.mod.load");
         await AssignRelocatedClusters();
       }
       if (RelocatedClusters.Count == 0)
@@ -1266,13 +1275,12 @@ namespace ClusterRelocationService
       // Any still in queue after maxPasses could not be canceled
       if (queue.Count > 0)
       {
-        // Log or notify about unresolved relocations
-        string message = $"Could not assign {queue.Count} relocated clusters due to persistent conflicts.";
+        string message = TF("status.error.relocationAssignmentFailed", queue.Count);
         Log.Warn(message);
         StatusBar.SetStatusMessage(message, StatusMessageType.Warning);
         foreach (var rc in queue)
         {
-          Log.Warn($"Resting relocation: {rc.Cluster.Name}");
+          Log.Warn($"Resetting relocation: {rc.Cluster.Name}");
           rc.ResetPosition();
         }
       }
@@ -1293,17 +1301,17 @@ namespace ClusterRelocationService
     {
       if (string.IsNullOrEmpty(folderPath))
       {
-        errorMessage = "The X4 Program folder is not set.";
+        errorMessage = T("error.gameFolder.notSet");
         return false;
       }
       if (!Directory.Exists(folderPath))
       {
-        errorMessage = "The X4 Program folder does not exist.";
+        errorMessage = T("error.gameFolder.missing");
         return false;
       }
       if (!File.Exists(Path.Combine(folderPath, X4DataExtractionWindow.X4Executable)))
       {
-        errorMessage = "The X4 Program folder does not contain the X4 executable file.";
+        errorMessage = T("error.gameFolder.missingExe");
         return false;
       }
       errorMessage = "";
@@ -1315,8 +1323,8 @@ namespace ClusterRelocationService
       if (Galaxy.Sectors.Count > 0)
       {
         MessageBoxResult confirm = MessageBox.Show(
-          "Are you really want to reload the X4 Data?\n\nAny unsaved changes will be lost!",
-          "Reload X4 Data",
+          T("dialog.reloadX4.confirm.body"),
+          T("dialog.reloadX4.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1328,8 +1336,8 @@ namespace ClusterRelocationService
       else
       {
         MessageBoxResult confirm = MessageBox.Show(
-          "Do you have an extracted X4 data folder?\n\nIf not, you can cancel and extract the data first.",
-          "Select X4 Data Folder",
+          T("dialog.selectX4DataFolder.prompt.body"),
+          T("dialog.selectX4DataFolder.prompt.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1339,10 +1347,7 @@ namespace ClusterRelocationService
           return;
         }
       }
-      var dialog = new Microsoft.Win32.OpenFolderDialog
-      {
-        Title = "Please select the folder where the X4 extracted data files are located.",
-      };
+      var dialog = new Microsoft.Win32.OpenFolderDialog { Title = T("dialog.selectX4DataFolder.browser.title") };
       if (!string.IsNullOrEmpty(X4DataFolder))
       {
         dialog.InitialDirectory = !string.IsNullOrEmpty(X4DataFolder) && X4DataFolder != "." ? $"{X4DataFolder}\\" : ".";
@@ -1359,19 +1364,19 @@ namespace ClusterRelocationService
         if (ValidateX4DataFolder(selectedPath, out string errorMessage))
         {
           X4DataFolder = selectedPath;
-          StatusBar.SetStatusMessage("X4 Data folder set successfully.", StatusMessageType.Info);
+          StatusBar.SetStatusMessage(T("status.x4data.folderSet"), StatusMessageType.Info);
           LoadX4DataInBackgroundStart();
         }
         else
         {
           StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
-          MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+          MessageBox.Show(errorMessage, T("dialog.invalidFolder.title"), MessageBoxButton.OK, MessageBoxImage.Error);
           // Optionally, prompt again
         }
       }
       else
       {
-        StatusBar.SetStatusMessage("Folder selection was canceled or invalid.", StatusMessageType.Warning);
+        StatusBar.SetStatusMessage(T("status.folderSelectionCancelled"), StatusMessageType.Warning);
       }
     }
 
@@ -1380,8 +1385,8 @@ namespace ClusterRelocationService
       if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
       {
         var choice = MessageBox.Show(
-          "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
-          "Reload X4 Data",
+          T("dialog.reloadX4.unsavedChanges.body"),
+          T("dialog.reloadX4.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1395,8 +1400,8 @@ namespace ClusterRelocationService
         InitialDirectory = string.IsNullOrEmpty(X4GameFolder)
           ? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
           : X4GameFolder,
-        Filter = $"X4 Foundations|{X4DataExtractionWindow.X4Executable}",
-        Title = "Select the X4: Foundations executable",
+        Filter = $"{T("dialog.x4Executable.filterDescription")}|{X4DataExtractionWindow.X4Executable}",
+        Title = T("dialog.x4Executable.title"),
       };
 
       bool? result = dialog.ShowDialog();
@@ -1411,13 +1416,13 @@ namespace ClusterRelocationService
         if (ValidateX4GameFolder(selectedPath, out string errorMessage))
         {
           X4GameFolder = selectedPath;
-          StatusBar.SetStatusMessage("X4 Game folder set successfully.", StatusMessageType.Info);
+          StatusBar.SetStatusMessage(T("status.x4game.folderSet"), StatusMessageType.Info);
           LoadX4DataInBackgroundStart();
         }
         else
         {
           StatusBar.SetStatusMessage(errorMessage, StatusMessageType.Error);
-          MessageBox.Show(errorMessage, "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
+          MessageBox.Show(errorMessage, T("dialog.invalidFolder.title"), MessageBoxButton.OK, MessageBoxImage.Error);
           // Optionally, prompt again
         }
       }
@@ -1520,17 +1525,17 @@ namespace ClusterRelocationService
     {
       if (Galaxy == null || Galaxy.Sectors.Count == 0)
       {
-        StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage(T("status.error.galaxyNotLoaded"), StatusMessageType.Error);
         return;
       }
       if (!FullMessIsEnabled)
       {
-        StatusBar.SetStatusMessage("Full Mess is disabled in the configuration.", StatusMessageType.Warning);
+        StatusBar.SetStatusMessage(T("status.warning.fullMessDisabled"), StatusMessageType.Warning);
         return;
       }
       MessageBoxResult confirm = MessageBox.Show(
-        "This will reset all cluster relocations and create a Full Mess in the Galaxy Map. Continue?",
-        "Confirm Operation",
+        T("dialog.fullMess.confirm.body"),
+        T("dialog.fullMess.confirm.title"),
         MessageBoxButton.YesNo,
         MessageBoxImage.Warning
       );
@@ -1538,7 +1543,7 @@ namespace ClusterRelocationService
       {
         return;
       }
-      BusyMessage = "Creating Full Mess in the Galaxy Map...";
+      BusyMessage = T("busy.fullMess.creating");
       IsBusy = true;
       await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
 
@@ -1549,7 +1554,7 @@ namespace ClusterRelocationService
       catch (Exception ex)
       {
         Log.Warn($"Error exporting PNG: {ex}");
-        MessageBox.Show($"Error exporting PNG: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(TF("dialog.error.exportPng", ex.Message), T("dialog.error.title"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
       finally
       {
@@ -1575,19 +1580,19 @@ namespace ClusterRelocationService
       }
       if (Galaxy == null || Galaxy.Sectors.Count == 0)
       {
-        StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage(T("status.error.galaxyNotLoaded"), StatusMessageType.Error);
         return;
       }
       if (!DirectMode && !LoadModsData)
       {
-        StatusBar.SetStatusMessage("Error: Mod loading is disabled in the configuration.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage(T("status.error.modLoadingDisabled"), StatusMessageType.Error);
         return;
       }
       if (ClusterRelocationServiceMod.IsModChanged(RelocatedClusters))
       {
         MessageBoxResult confirm = MessageBox.Show(
-          "The current mod has unsaved changes. Loading a mod will discard these changes. Continue?",
-          "Confirm Load Mod",
+          T("dialog.loadMod.unsavedChanges.body"),
+          T("dialog.loadMod.unsavedChanges.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1599,8 +1604,8 @@ namespace ClusterRelocationService
       if (_isFullReloadNeeded)
       {
         MessageBoxResult confirm = MessageBox.Show(
-          "Loading a mod requires reloading the X4 data. Any unsaved changes will be lost. Continue?",
-          "Confirm Reload X4 Data",
+          T("dialog.loadMod.reloadRequired.body"),
+          T("dialog.loadMod.reloadRequired.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1611,7 +1616,7 @@ namespace ClusterRelocationService
         LoadX4DataInBackgroundStart();
         return; // Will load mod after data load completes
       }
-      BusyMessage = "Loading Mod data...";
+      BusyMessage = T("busy.mod.loading");
       IsBusy = true;
       await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
 
@@ -1622,7 +1627,7 @@ namespace ClusterRelocationService
       catch (Exception ex)
       {
         Log.Warn($"Error loading mod: {ex}");
-        MessageBox.Show($"Error loading mod: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(TF("dialog.error.loadMod", ex.Message), T("dialog.error.title"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
       finally
       {
@@ -1636,7 +1641,7 @@ namespace ClusterRelocationService
     {
       if (Galaxy == null)
       {
-        StatusBar.SetStatusMessage("Error: Galaxy data is not loaded.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage(T("status.error.galaxyNotLoaded"), StatusMessageType.Error);
         return;
       }
       string path = string.Empty;
@@ -1645,7 +1650,7 @@ namespace ClusterRelocationService
         path = Path.Combine(X4GameFolder, "extensions", RelocatedClustersMod.ModFolder);
         if (!(Directory.Exists(path) && File.Exists(Path.Combine(path, "content.xml"))))
         {
-          string message = "Error: Mod data could not be loaded: Mod folder or content.xml not found in the game extensions folder.";
+          string message = T("status.error.modFolderMissing");
           StatusBar.SetStatusMessage(message, StatusMessageType.Error);
           Log.Error(message);
           if (ClusterRelocationServiceMod == null)
@@ -1669,7 +1674,7 @@ namespace ClusterRelocationService
       if (newMod.LoadData(Galaxy, _baseGameFiles, ClusterRelocationServiceMod))
       {
         ClusterRelocationServiceMod = newMod;
-        StatusBar.SetStatusMessage("Mod data loaded successfully.", StatusMessageType.Info);
+        StatusBar.SetStatusMessage(T("status.info.modDataLoaded"), StatusMessageType.Info);
         UpdateIsModCanBeSavedAs(); // Enable Save As for non-empty mods immediately after load
       }
       else
@@ -1678,11 +1683,11 @@ namespace ClusterRelocationService
         {
           ClusterRelocationServiceMod = new(path, X4UniverseId);
           _clusterRelocationServiceMod.SetGameVersion(_x4DataVersion);
-          StatusBar.SetStatusMessage("Found Steam stub. Let's start moving clusters ...", StatusMessageType.Info);
+          StatusBar.SetStatusMessage(T("status.info.steamStubFound"), StatusMessageType.Info);
         }
         else
         {
-          StatusBar.SetStatusMessage("Error: Mod data could not be loaded.", StatusMessageType.Error);
+          StatusBar.SetStatusMessage(T("status.error.modDataLoadFailed"), StatusMessageType.Error);
           Log.Warn("Mod data could not be loaded.");
         }
         UpdateIsModCanBeSavedAs();
@@ -1733,7 +1738,7 @@ namespace ClusterRelocationService
       if (queue.Count > 0)
       {
         // Log or notify about unresolved relocations
-        string message = $"Could not cancel {queue.Count} relocations (original locations still occupied).";
+        string message = TF("status.error.relocationCancelFailed", queue.Count);
         Log.Warn(message);
         StatusBar.SetStatusMessage(message, StatusMessageType.Warning);
       }
@@ -1766,7 +1771,7 @@ namespace ClusterRelocationService
         _clusterRelocationServiceMod.SetGameVersion(X4DataVersion);
         bool saved = _clusterRelocationServiceMod.SaveData(Galaxy, RelocatedClusters);
         StatusBar.SetStatusMessage(
-          saved ? "Mod data saved successfully." : "Error: Mod data could not be saved.",
+          saved ? T("status.info.modDataSaved") : T("status.error.modDataSaveFailed"),
           saved ? StatusMessageType.Info : StatusMessageType.Error
         );
         IsModCanBeSaved = !saved || _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
@@ -1780,7 +1785,7 @@ namespace ClusterRelocationService
         _clusterRelocationServiceMod.SetGameVersion(X4DataVersion);
         bool saved = _clusterRelocationServiceMod.SaveData(Galaxy, RelocatedClusters);
         StatusBar.SetStatusMessage(
-          saved ? "Mod data saved successfully." : "Error: Mod data could not be saved.",
+          saved ? T("status.info.modDataSaved") : T("status.error.modDataSaveFailed"),
           saved ? StatusMessageType.Info : StatusMessageType.Error
         );
         IsModCanBeSaved = !saved || _clusterRelocationServiceMod.IsModChanged(RelocatedClusters);
@@ -1789,7 +1794,7 @@ namespace ClusterRelocationService
 
     public void ButtonExportClusters_Click(object sender, RoutedEventArgs e)
     {
-      var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Select a folder for the Clusters location export(galaxy.xml)" };
+      var dialog = new Microsoft.Win32.OpenFolderDialog { Title = T("dialog.exportClusters.title") };
       dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
       bool? folderSelect = dialog.ShowDialog();
       if (!folderSelect == true || string.IsNullOrWhiteSpace(dialog.FolderName))
@@ -1800,8 +1805,8 @@ namespace ClusterRelocationService
       if (File.Exists(galaxyPath))
       {
         MessageBoxResult confirm = MessageBox.Show(
-          "The galaxy.xml file already exists in the selected folder. Do you want to overwrite it?",
-          "Confirm Overwrite",
+          T("dialog.exportClusters.overwrite.body"),
+          T("dialog.exportClusters.overwrite.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1863,8 +1868,8 @@ namespace ClusterRelocationService
       if (_hasBeenInitialized && Galaxy.Sectors.Count > 0)
       {
         var choice = MessageBox.Show(
-          "This action will discard any unsaved changes to the current relocation mod. Do you want to continue?",
-          "Reload X4 Data",
+          T("dialog.reloadX4.unsavedChanges.body"),
+          T("dialog.reloadX4.title"),
           MessageBoxButton.YesNo,
           MessageBoxImage.Warning
         );
@@ -1912,7 +1917,7 @@ namespace ClusterRelocationService
       else
       {
         Log.Error("Documentation file not found.");
-        StatusBar.SetStatusMessage("Error: Documentation file not found.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage(T("status.error.documentationMissing"), StatusMessageType.Error);
       }
     }
 
@@ -1941,13 +1946,13 @@ namespace ClusterRelocationService
         if (File.Exists(readmePath) && Directory.Exists(imagesPath))
         {
           Process.Start(new ProcessStartInfo(readmePath) { UseShellExecute = true });
-          StatusBar.SetStatusMessage("Documentation opened in default browser.", StatusMessageType.Info);
+          StatusBar.SetStatusMessage(T("status.info.documentationOpened"), StatusMessageType.Info);
         }
       }
       catch (System.Exception ex)
       {
         Log.Error($"Failed to open file with default browser: {ex.Message}");
-        StatusBar.SetStatusMessage("Failed to open documentation.", StatusMessageType.Error);
+        StatusBar.SetStatusMessage(T("status.error.documentationOpenFailed"), StatusMessageType.Error);
       }
     }
 
@@ -1988,13 +1993,13 @@ namespace ClusterRelocationService
           var contextMenu = new ContextMenu();
           var headerItem = new MenuItem
           {
-            Header = $"Cluster: \"{mapCell.Cluster.Name ?? string.Empty}\"",
+            Header = TF("context.clusterHeader", mapCell.Cluster.Name ?? string.Empty),
             FontWeight = FontWeights.Bold,
             IsEnabled = false,
           };
           if (mapCell.Cluster.Sectors.Count == 1 && mapCell.Cluster.Sectors[0].Name != mapCell.Cluster.Name)
           {
-            headerItem.Header += $"\nSector : \"{mapCell.Cluster.Sectors[0].Name}\"";
+            headerItem.Header += "\n" + TF("context.sectorHeader", mapCell.Cluster.Sectors[0].Name);
           }
 
           contextMenu.Items.Add(headerItem);
@@ -2002,7 +2007,9 @@ namespace ClusterRelocationService
           var menuItem = new MenuItem
           {
             Header =
-              mapCell.IsMarkedForRelocation && _markedForRelocationOverlaid == null ? "Unmark for Relocation" : "Mark for Relocation",
+              mapCell.IsMarkedForRelocation && _markedForRelocationOverlaid == null
+                ? T("context.unmarkRelocation")
+                : T("context.markRelocation"),
           };
           menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell);
           contextMenu.Items.Add(menuItem);
@@ -2015,15 +2022,12 @@ namespace ClusterRelocationService
             {
               contextMenu.Items.Add(new Separator());
               bool isOccupied = GalaxyMapViewer.IsRelocatedClusterOriginalLocationOccupied(currentClusterRelocated);
-              var menuItemRelocation = new MenuItem { Header = "Cancel Relocation", IsEnabled = !isOccupied };
+              var menuItemRelocation = new MenuItem { Header = T("context.cancelRelocation"), IsEnabled = !isOccupied };
               menuItemRelocation.Click += (s, args) => ContextMenuRelocationDelete(currentClusterRelocated);
               contextMenu.Items.Add(menuItemRelocation);
               if (isOccupied)
               {
-                StatusBar.SetStatusMessage(
-                  "Unable to revert relocation: the original location is currently in use.",
-                  StatusMessageType.Warning
-                );
+                StatusBar.SetStatusMessage(T("status.relocation.originalLocationInUse"), StatusMessageType.Warning);
               }
             }
           }
@@ -2035,7 +2039,7 @@ namespace ClusterRelocationService
               contextMenu.Items.Add(new Separator());
               var coversHeader = new MenuItem
               {
-                Header = $"Underlying Clusters ({overlaidClusters.Count})",
+                Header = TF("context.underlyingClusters", overlaidClusters.Count),
                 FontWeight = FontWeights.Bold,
                 IsEnabled = false,
               };
@@ -2045,13 +2049,13 @@ namespace ClusterRelocationService
               {
                 var headerOfOverlaidItem = new MenuItem
                 {
-                  Header = $"Cluster: \"{overlaidCluster.Name ?? string.Empty}\"",
+                  Header = TF("context.clusterHeader", overlaidCluster.Name ?? string.Empty),
                   FontWeight = FontWeights.Bold,
                   IsEnabled = false,
                 };
                 if (overlaidCluster.Sectors.Count == 1 && overlaidCluster.Sectors[0].Name != overlaidCluster.Name)
                 {
-                  headerOfOverlaidItem.Header += $"\nSector : \"{overlaidCluster.Sectors[0].Name}\"";
+                  headerOfOverlaidItem.Header += "\n" + TF("context.sectorHeader", overlaidCluster.Sectors[0].Name);
                 }
 
                 contextMenu.Items.Add(headerOfOverlaidItem);
@@ -2060,8 +2064,8 @@ namespace ClusterRelocationService
                 {
                   Header =
                     mapCell.IsMarkedForRelocation && _markedForRelocationOverlaid == overlaidCluster
-                      ? "Unmark for Relocation"
-                      : "Mark for Relocation",
+                      ? T("context.unmarkRelocation")
+                      : T("context.markRelocation"),
                 };
                 menuItem.Click += (s, args) => ContextMenuMarkClusterForRelocation(mapCell, overlaidCluster);
                 contextMenu.Items.Add(menuItem);
@@ -2084,13 +2088,13 @@ namespace ClusterRelocationService
             contextMenu.Items.Add(
               new MenuItem
               {
-                Header = $"Map Cell: X:\"{cell.OriginalX}\", Z:\"{cell.OriginalZ}\"",
+                Header = TF("context.mapCell", cell.OriginalX, cell.OriginalZ),
                 FontWeight = FontWeights.Bold,
                 IsEnabled = false,
               }
             );
             contextMenu.Items.Add(new Separator());
-            var menuItem = new MenuItem { Header = "Relocate Here" };
+            var menuItem = new MenuItem { Header = T("context.relocateHere") };
             menuItem.Click += (s, args) => ContextMenuRelocateMarkedCluster(cell as GalaxyMapClusterForClusterRelocation);
             contextMenu.Items.Add(menuItem);
             contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
@@ -2238,14 +2242,14 @@ namespace ClusterRelocationService
     {
       var dialog = new Microsoft.Win32.SaveFileDialog
       {
-        Filter = "PNG Image|*.png",
-        Title = "Export Galaxy Map as PNG",
-        FileName = "GalaxyMap.png",
+        Filter = T("dialog.exportPng.filter"),
+        Title = T("dialog.exportPng.title"),
+        FileName = T("dialog.exportPng.defaultFileName"),
       };
       if (dialog.ShowDialog() != true)
         return;
 
-      BusyMessage = "Exporting Map...";
+      BusyMessage = T("busy.map.exporting");
       IsBusy = true;
 
       await Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
@@ -2254,12 +2258,12 @@ namespace ClusterRelocationService
       {
         await Task.Run(() => GalaxyMapViewer.ExportToPng(GalaxyMapCanvas, dialog.FileName));
 
-        MessageBox.Show("Galaxy map exported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show(T("dialog.success.exportPng"), T("dialog.success.title"), MessageBoxButton.OK, MessageBoxImage.Information);
       }
       catch (Exception ex)
       {
         Log.Warn($"Error exporting PNG: {ex}");
-        MessageBox.Show($"Error exporting PNG: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(TF("dialog.error.exportPng", ex.Message), T("dialog.error.title"), MessageBoxButton.OK, MessageBoxImage.Error);
       }
       finally
       {
