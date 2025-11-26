@@ -1,0 +1,130 @@
+{
+  "app": {
+    "title": "Cluster Relocation Service"
+  },
+  "ribbon": {
+    "tab": {
+      "mod": "Mod",
+      "x4data": "X4 Data",
+      "configuration": "Configuration",
+      "help": "Help"
+    },
+    "group": {
+      "modActions": "Mod Actions",
+      "program": "Program",
+      "x4data": "X4 Data",
+      "modeOptions": "Mode Options",
+      "x4dataOptions": "X4 Data Options",
+      "mapOptions": "Map Options",
+      "relocationOptions": "Relocation Options",
+      "loggingOptions": "Logging Options",
+      "otherOptions": "Other Options",
+      "helpActions": "Help Actions"
+    },
+    "mod": {
+      "new": "New",
+      "load": "Load",
+      "save": "Save",
+      "saveAs": "Save as",
+      "exportClusters": "Export clusters"
+    },
+    "program": {
+      "exit": "Exit"
+    },
+    "x4data": {
+      "extract": "Extract",
+      "reload": "Reload"
+    }
+  },
+  "config": {
+    "mode": {
+      "direct": "Direct mode:",
+      "direct.tooltip": "Work without extraction"
+    },
+    "x4data": {
+      "folder": "X4 Data Folder:",
+      "version": "X4 Data Version:",
+      "versionOverride.tooltip": "Override the detected version",
+      "loadMods": "Load Mods Data:",
+      "loadMods.tooltip": "Load Mods data, not only official DLC's"
+    },
+    "x4game": {
+      "folder": "X4 Game Folder:"
+    },
+    "map": {
+      "colorsOpacity": "Colors opacity:",
+      "universeDefault": "Universe (default):"
+    },
+    "relocation": {
+      "fullMess": "\"Full Mess\" is Enabled",
+      "export": "Export of Clusters is Enabled"
+    },
+    "other": {
+      "checkUpdates": "Check for Updates on StartUp"
+    }
+  },
+  "logging": {
+    "level": {
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info",
+      "debug": "Debug"
+    },
+    "enableFile": "Enable Writing to File"
+  },
+  "help": {
+    "readme": "Readme",
+    "checkUpdate": "Check update",
+    "about": "About"
+  },
+  "tabs": {
+    "relocated": {
+      "label": "Relocated Clusters:"
+    },
+    "overlaid": {
+      "label": "Overlaid Clusters:"
+    }
+  },
+  "grid": {
+    "cluster": "Cluster",
+    "macro": "Macro",
+    "x": {
+      "original": "X, Original",
+      "current": "X, Current",
+      "simple": "X"
+    },
+    "z": {
+      "original": "Z, Original",
+      "current": "Z, Current",
+      "simple": "Z"
+    },
+    "conflicts": "Conflicts",
+    "overlaidWith": "Overlaid With"
+  },
+  "actions": {
+    "cancelRelocation": "Cancel Relocation",
+    "fullMess": "Make a \"Full Mess\""
+  },
+  "tooltip": {
+    "cancelRelocation": "This will revert the relocation and restore the cluster position to original",
+    "fullMess": "This will relocate all clusters to the new unpredictable positions",
+    "toggleOptions": "Toggle options visibility"
+  },
+  "section": {
+    "galaxyMap": "Galaxy Map"
+  },
+  "map": {
+    "scale": {
+      "label": "Scale:",
+      "tooltip": "Adjust Galaxy Map scale"
+    },
+    "export": {
+      "tooltip": "Export Galaxy Map as PNG"
+    }
+  },
+  "panel": {
+    "dlcs": "DLC's",
+    "mods": "Mods",
+    "devOptions": "Developer options"
+  }
+}
