@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using Localization;
 using SharedWindows;
 using Utilities.Logging;
 using X4DataLoader;
@@ -104,6 +105,7 @@ namespace ClusterRelocationService
   public class OtherConfig
   {
     private bool _checkForUpdatesOnStartUp = false;
+    private string _languageCode = "en";
     public bool CheckForUpdatesOnStartUp
     {
       get => _checkForUpdatesOnStartUp;
@@ -117,6 +119,20 @@ namespace ClusterRelocationService
       }
     }
 
+    public string? LanguageCode
+    {
+      get => _languageCode;
+      set
+      {
+        string newValue = string.IsNullOrWhiteSpace(value) ? _languageCode : value.Trim();
+        if (!string.Equals(_languageCode, newValue, StringComparison.OrdinalIgnoreCase))
+        {
+          _languageCode = newValue;
+          OnPropertyChanged(nameof(LanguageCode));
+        }
+      }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged(string propertyName)
@@ -125,12 +141,17 @@ namespace ClusterRelocationService
     }
   }
 
+  public sealed record LanguageOption(string Code, string DisplayName);
+
   /// <summary>
   /// Interaction logic for MainWindow.xaml
   /// </summary>
   public partial class MainWindow : Window, INotifyPropertyChanged
   {
     private readonly string _configFileName;
+    private readonly ObservableCollection<LanguageOption> _availableLanguages = new();
+    private string _selectedLanguageCode = LocalizationManager.Shared.CurrentLanguage;
+    private string? _preferredLanguageFromConfig;
 
     private bool _directMode = true;
     public bool DirectMode
@@ -181,6 +202,30 @@ namespace ClusterRelocationService
           _x4GameFolder = value;
           OnPropertyChanged(nameof(X4GameFolder));
           OnPropertyChanged(nameof(X4GameFolderPath));
+          SaveConfiguration();
+        }
+      }
+    }
+
+    public ObservableCollection<LanguageOption> AvailableLanguages => _availableLanguages;
+
+    public string SelectedLanguageCode
+    {
+      get => _selectedLanguageCode;
+      set
+      {
+        string normalized = string.IsNullOrWhiteSpace(value) ? LocalizationManager.Shared.DefaultLanguage : value.Trim();
+
+        if (!_availableLanguages.Any(option => option.Code.Equals(normalized, StringComparison.OrdinalIgnoreCase)))
+        {
+          normalized = LocalizationManager.Shared.DefaultLanguage;
+        }
+
+        if (!string.Equals(_selectedLanguageCode, normalized, StringComparison.OrdinalIgnoreCase))
+        {
+          _selectedLanguageCode = normalized;
+          OnPropertyChanged(nameof(SelectedLanguageCode));
+          LocalizationManager.Shared.TrySetLanguage(_selectedLanguageCode);
           SaveConfiguration();
         }
       }
@@ -794,6 +839,7 @@ namespace ClusterRelocationService
     {
       _configFileName = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.json";
       LoadConfiguration();
+      InitializeLanguageOptions(_preferredLanguageFromConfig);
       InitializeComponent();
       DataContext = this;
       X4DataStructure.AddRange(
@@ -898,6 +944,7 @@ namespace ClusterRelocationService
           LogToFile = logging.LogToFile;
 
           CheckForUpdatesOnStartUp = other.CheckForUpdatesOnStartUp;
+          _preferredLanguageFromConfig = other.LanguageCode;
         }
       }
       else
@@ -926,7 +973,7 @@ namespace ClusterRelocationService
         Map = new MapConfig { MapColorsOpacity = MapColorsOpacity },
         Relocation = new RelocationConfig { ExportClustersIsEnabled = ExportClustersIsEnabled, FullMessIsEnabled = FullMessIsEnabled },
         Logging = new LoggingConfig { LogLevel = LogLevel, LogToFile = LogToFile },
-        Other = new OtherConfig { CheckForUpdatesOnStartUp = CheckForUpdatesOnStartUp },
+        Other = new OtherConfig { CheckForUpdatesOnStartUp = CheckForUpdatesOnStartUp, LanguageCode = SelectedLanguageCode },
       };
       if (X4UniverseId != DataLoader.DefaultUniverseId)
       {
@@ -949,6 +996,39 @@ namespace ClusterRelocationService
       }
       var jsonString = JsonSerializer.Serialize(config, JsonOptions);
       File.WriteAllText(_configFileName, jsonString);
+    }
+
+    private void InitializeLanguageOptions(string? preferredLanguageCode)
+    {
+      var manager = LocalizationManager.Shared;
+      _availableLanguages.Clear();
+
+      var orderedLanguages = manager.AvailableLanguages.OrderBy(code => code, StringComparer.OrdinalIgnoreCase);
+      foreach (string code in orderedLanguages)
+      {
+        string displayName = manager.GetLanguageDisplayName(code, code);
+        _availableLanguages.Add(new LanguageOption(code, displayName));
+      }
+
+      if (_availableLanguages.Count == 0)
+      {
+        _selectedLanguageCode = manager.DefaultLanguage;
+        OnPropertyChanged(nameof(SelectedLanguageCode));
+        return;
+      }
+
+      string target = preferredLanguageCode;
+      if (
+        string.IsNullOrWhiteSpace(target)
+        || !_availableLanguages.Any(option => option.Code.Equals(target, StringComparison.OrdinalIgnoreCase))
+      )
+      {
+        target = manager.CurrentLanguage;
+      }
+
+      _selectedLanguageCode = target;
+      OnPropertyChanged(nameof(SelectedLanguageCode));
+      manager.TrySetLanguage(target);
     }
 
     private void X4DataNotLoadedCheckAndWarning()

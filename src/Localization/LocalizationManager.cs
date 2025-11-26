@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.Json;
 
 namespace Localization;
@@ -146,6 +147,45 @@ public sealed class LocalizationManager : INotifyPropertyChanged
     return fallback ?? normalizedKey;
   }
 
+  public bool TryTranslate(string languageCode, string key, out string value)
+  {
+    if (string.IsNullOrWhiteSpace(languageCode) || string.IsNullOrWhiteSpace(key))
+    {
+      value = string.Empty;
+      return false;
+    }
+
+    return TryGetValue(languageCode, key.Trim(), out value);
+  }
+
+  public string GetLanguageDisplayName(string languageCode, string? fallback = null)
+  {
+    if (string.IsNullOrWhiteSpace(languageCode))
+    {
+      return fallback ?? string.Empty;
+    }
+
+    if (TryTranslate(languageCode, "language.name", out string value) && !string.IsNullOrWhiteSpace(value))
+    {
+      return value;
+    }
+
+    try
+    {
+      var culture = CultureInfo.GetCultureInfo(languageCode);
+      if (!string.IsNullOrWhiteSpace(culture.NativeName))
+      {
+        return culture.NativeName;
+      }
+    }
+    catch (CultureNotFoundException)
+    {
+      // Ignore and fall back
+    }
+
+    return fallback ?? languageCode;
+  }
+
   private static Dictionary<string, string> Merge(
     IReadOnlyDictionary<string, string> existing,
     IReadOnlyDictionary<string, string> additions
@@ -169,9 +209,17 @@ public sealed class LocalizationManager : INotifyPropertyChanged
   {
     value = string.Empty;
 
-    if (_catalogs.TryGetValue(languageCode, out IReadOnlyDictionary<string, string>? catalog))
+    if (string.IsNullOrWhiteSpace(languageCode) || string.IsNullOrWhiteSpace(key))
     {
-      if (catalog.TryGetValue(key, out string? localized))
+      return false;
+    }
+
+    string normalizedLanguage = NormalizeLanguageCode(languageCode);
+    string normalizedKey = key.Trim();
+
+    if (_catalogs.TryGetValue(normalizedLanguage, out IReadOnlyDictionary<string, string>? catalog))
+    {
+      if (catalog.TryGetValue(normalizedKey, out string? localized))
       {
         value = localized ?? string.Empty;
         return true;

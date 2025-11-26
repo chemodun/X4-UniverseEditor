@@ -2,6 +2,9 @@
   "app": {
     "title": "Cluster Relocation Service"
   },
+  "language": {
+    "name": "T\u00fcrk\u00e7e"
+  },
   "ribbon": {
     "tab": {
       "mod": "Mod",
@@ -19,7 +22,8 @@
       "relocationOptions": "Relocation Options",
       "loggingOptions": "Logging Options",
       "otherOptions": "Other Options",
-      "helpActions": "Help Actions"
+      "helpActions": "Help Actions",
+      "localizationOptions": "Localization Options"
     },
     "mod": {
       "new": "New",
@@ -61,6 +65,10 @@
     },
     "other": {
       "checkUpdates": "Check for Updates on StartUp"
+    },
+    "localization": {
+      "language": "Language:",
+      "language.tooltip": "Select the interface language"
     }
   },
   "logging": {
