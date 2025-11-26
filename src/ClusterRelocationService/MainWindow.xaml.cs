@@ -851,9 +851,10 @@ namespace ClusterRelocationService
       InitializeLanguageOptions(_preferredLanguageFromConfig);
       InitializeComponent();
       DataContext = this;
+      string xId = T("language.xId").PadLeft(3, '0');
       X4DataStructure.AddRange(
         [
-          new GameFilesStructureItem(id: "translations", folder: "t", ["0001-l044.xml", "0001.xml"], MatchingModes.Exact, false),
+          new GameFilesStructureItem(id: "translations", folder: "t", [$"0001-l{xId}.xml", "0001.xml"], MatchingModes.Exact, false),
           new GameFilesStructureItem(id: "colors", folder: "libraries", ["colors.xml"]),
           new GameFilesStructureItem(id: "mapDefaults", folder: "libraries", ["mapdefaults.xml"]),
           new GameFilesStructureItem(id: "clusters", folder: $"maps/{X4UniverseId}", ["clusters.xml"], MatchingModes.Suffix),
