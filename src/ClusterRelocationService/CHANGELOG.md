@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.4.0](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.3.2...ClusterRelocationService@v1.4.0) (2025-11-26)
+
+
+### Features
+
+* **clusterRelocationService:** integrate localization support ([c0100a6](https://github.com/chemodun/X4-UniverseEditor/commit/c0100a61b27f34116f0b70f8123595cb6821bcdd))
+* **LocalizationManager:** enhance language handling ([9593cd8](https://github.com/chemodun/X4-UniverseEditor/commit/9593cd884ae0a5d245e454d5ef42e02d1a3fe0da))
+* **MainWindow:** add loading appropriate game translation, based on selected translation language in a tool ([850e623](https://github.com/chemodun/X4-UniverseEditor/commit/850e62348aa94338bdc2a848bd4a2c13c688ab20))
+* **MainWindow:** add localization options to UI ([9593cd8](https://github.com/chemodun/X4-UniverseEditor/commit/9593cd884ae0a5d245e454d5ef42e02d1a3fe0da))
+* **MainWindow:** add localization support for user messages ([fdda182](https://github.com/chemodun/X4-UniverseEditor/commit/fdda182d9bd69c76d162238be8fbf97d5c19e5b2))
+* **MainWindow:** update title format to include version string ([799e634](https://github.com/chemodun/X4-UniverseEditor/commit/799e634e16fc224ec72e6fe67030c657ce7a831e))
+* **Mod:** add translation function for mod title ([799e634](https://github.com/chemodun/X4-UniverseEditor/commit/799e634e16fc224ec72e6fe67030c657ce7a831e))
+* **Mod:** implement localization for mod-related dialogs ([fdda182](https://github.com/chemodun/X4-UniverseEditor/commit/fdda182d9bd69c76d162238be8fbf97d5c19e5b2))
+* **solution:** add Localization project to solution ([c0100a6](https://github.com/chemodun/X4-UniverseEditor/commit/c0100a61b27f34116f0b70f8123595cb6821bcdd))
+* **TextBoxExtensions:** enhance validation messages with localization ([fdda182](https://github.com/chemodun/X4-UniverseEditor/commit/fdda182d9bd69c76d162238be8fbf97d5c19e5b2))
+* **translations:** add localization support for multiple languages ([9593cd8](https://github.com/chemodun/X4-UniverseEditor/commit/9593cd884ae0a5d245e454d5ef42e02d1a3fe0da))
+* **translations:** include xId in English language settings ([850e623](https://github.com/chemodun/X4-UniverseEditor/commit/850e62348aa94338bdc2a848bd4a2c13c688ab20))
+
+
+### Bug Fixes
+
+* **MainWindow:** update logging level ComboBox to use Tag instead of Content ([d107f37](https://github.com/chemodun/X4-UniverseEditor/commit/d107f37e8c444e8c459ea08ca80ad2a7607bdf2f))
+* **MainWindow:** update overwrite confirmation message format ([90f0507](https://github.com/chemodun/X4-UniverseEditor/commit/90f0507fa69f7e87e8657ad042472b612244515a))
+* **translations:** adjust PNG export filter and overwrite message ([90f0507](https://github.com/chemodun/X4-UniverseEditor/commit/90f0507fa69f7e87e8657ad042472b612244515a))
+
 ## [1.3.2](https://github.com/chemodun/X4-UniverseEditor/compare/ClusterRelocationService@v1.3.1...ClusterRelocationService@v1.3.2) (2025-11-25)
 
 
