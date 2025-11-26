@@ -190,12 +190,12 @@
       "title": "Select Export Folder",
       "overwrite": {
         "title": "Overwrite Existing File",
-        "body": "\"galaxy.xml\" already exists in the selected folder. Overwrite it?"
+        "body": "{0} already exists in the selected folder. Overwrite it?"
       }
     },
     "exportPng": {
       "title": "Export Galaxy Map",
-      "filter": "PNG Image (*.png)|*.png",
+      "filter": "PNG Image",
       "defaultFileName": "galaxy-map.png"
     },
     "success": {
