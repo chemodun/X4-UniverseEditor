@@ -378,12 +378,12 @@
                     <StackPanel>
                         <ComboBox x:Name="LoggingLevelComboBox"
                                   Margin="5"
-                                  SelectedValuePath="Content"
+                                  SelectedValuePath="Tag"
                                   SelectedValue="{Binding LogLevel, Mode=TwoWay}">
-                            <ComboBoxItem Content="{loc:Loc Key=logging.level.error}"/>
-                            <ComboBoxItem Content="{loc:Loc Key=logging.level.warning}"/>
-                            <ComboBoxItem Content="{loc:Loc Key=logging.level.info}"/>
-                            <ComboBoxItem Content="{loc:Loc Key=logging.level.debug}"/>
+                            <ComboBoxItem Tag="Error" Content="{loc:Loc Key=logging.level.error}"/>
+                            <ComboBoxItem Tag="Warning" Content="{loc:Loc Key=logging.level.warning}"/>
+                            <ComboBoxItem Tag="Info" Content="{loc:Loc Key=logging.level.info}"/>
+                            <ComboBoxItem Tag="Debug" Content="{loc:Loc Key=logging.level.debug}"/>
                         </ComboBox>
                         <CheckBox Content="{loc:Loc Key=logging.enableFile}"
                                   Margin="5"
