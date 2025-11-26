@@ -1,0 +1,3 @@
+files:
+  - source: /src/ClusterRelocationService/Translations/*.json
+    translation: /src/ClusterRelocationService/Translations/%two_letters_code%.json
